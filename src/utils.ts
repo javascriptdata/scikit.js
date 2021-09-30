@@ -12,38 +12,73 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { ArrayType1D, ArrayType2D } from "types";
-
+import { ArrayType1D, ArrayType2D } from 'types';
+import {
+  Tensor1D,
+  Tensor2D,
+  Tensor,
+  tensor1d,
+  tensor2d,
+} from '@tensorflow/tfjs-core';
+import { TypedArray } from '@tensorflow/tfjs-node';
 /**
-* Generates an array of dim (row x column) with inner values set to zero
-* @param row 
-* @param column 
-*/
-export const zeros = (row: number, column: number): ArrayType1D | ArrayType2D => {
-    const zeroData = [];
-    for (let i = 0; i < row; i++) {
-        const colData = Array(column);
-        for (let j = 0; j < column; j++) {
-            colData[j] = 0;
-        }
-        zeroData.push(colData);
+ * Generates an array of dim (row x column) with inner values set to zero
+ * @param row
+ * @param column
+ */
+export const zeros = (
+  row: number,
+  column: number
+): ArrayType1D | ArrayType2D => {
+  const zeroData = [];
+  for (let i = 0; i < row; i++) {
+    const colData = Array(column);
+    for (let j = 0; j < column; j++) {
+      colData[j] = 0;
     }
-    return zeroData;
-}
-
+    zeroData.push(colData);
+  }
+  return zeroData;
+};
 
 /**
  * Checks if array is 1D
- * @param arr The array 
-*/
+ * @param arr The array
+ */
 export const is1DArray = (arr: ArrayType1D | ArrayType2D): boolean => {
-    if (
-        typeof arr[0] == "number" ||
-        typeof arr[0] == "string" ||
-        typeof arr[0] == "boolean"
-    ) {
-        return true;
+  if (
+    typeof arr[0] == 'number' ||
+    typeof arr[0] == 'string' ||
+    typeof arr[0] == 'boolean'
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export function tensor2dConv(X: Tensor | number[][]): Tensor2D {
+  if (X instanceof Tensor) {
+    const dim = X.rank;
+    if (dim === 2) {
+      return X as Tensor2D;
     } else {
-        return false;
+      throw new RangeError('Tensor is not 2D');
     }
+  } else {
+    return tensor2d(X);
+  }
+}
+
+export function tensor1dConv(X: Tensor | number[] | TypedArray): Tensor1D {
+  if (X instanceof Tensor) {
+    const dim = X.rank;
+    if (dim === 1) {
+      return X as Tensor1D;
+    } else {
+      throw new RangeError('Tensor is not 1D');
+    }
+  } else {
+    return tensor1d(X);
+  }
 }
