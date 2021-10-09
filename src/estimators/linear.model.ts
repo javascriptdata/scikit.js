@@ -13,57 +13,37 @@
 * ==========================================================================
 */
 
-import '@tensorflow/tfjs-node';
-import {
-  Tensor,
-  Tensor1D,
-  Tensor2D,
-  losses,
-  tensor1d,
-  tensor2d,
-  train,
-} from '@tensorflow/tfjs-core';
-import {
-  layers,
-  sequential,
-  Sequential,
-  ModelFitArgs,
-  ModelCompileArgs,
-  callbacks,
-} from '@tensorflow/tfjs-layers';
-import { tensor2dConv, tensor1dConv } from '../utils';
+import '@tensorflow/tfjs-node'
+import { losses, train } from '@tensorflow/tfjs-core'
+import { callbacks } from '@tensorflow/tfjs-layers'
+import { SGD } from './sgd.linear'
 
-// First pass at a LinearRegression implementation using gradient descent
-// Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+/**
+ * LinearRegression implementation using gradient descent
+ * We aim to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+ *
+ * The heavy lifting is done in the SGD class.
+ * This simply provides sane defaults for a Linear Regression.
+ *
+ * Potentially we eventually make this class do the "exact" solution using the normal equations
+ * https://eli.thegreenplace.net/2014/derivation-of-the-normal-equation-for-linear-regression/
+ *
+ * In order to do that though, we'd need to do a matrix inversion and tensorflow.js doesn't currently support it.
+ * Moreover, for big input / output combinations SGD is faster than doing the matrix inversion anyway.
+ * So even if we do eventually do the exact solution, we should then call whichever version is faster (SGD vs Exact)
+ * depending on the size of the input.
+ */
 
 export interface LinearRegressionParams {
   /**
    * Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations
    */
-  fitIntercept?: boolean;
-
-  /**
-   * The complete list of compile args for the `model.compile` call from tensorflow.js.
-   * We aim to provide sensible defaults for LinearRegression.
-   */
-  modelCompileArgs: ModelCompileArgs;
-
-  /**
-   * The complete list of `model.fit` args from Tensorflow.js
-   * We aim to provide sensible defaults for LinearRegression.
-   */
-  modelFitArgs: ModelFitArgs;
+  fitIntercept?: boolean
 }
 
-export default class LinearRegression {
-  model: Sequential;
-  modelFitArgs: ModelFitArgs;
-  modelCompileArgs: ModelCompileArgs;
-  fitIntercept: boolean;
-
-  constructor(
-    params: LinearRegressionParams = {
-      fitIntercept: true,
+export class LinearRegression extends SGD {
+  constructor(params: LinearRegressionParams = { fitIntercept: true }) {
+    super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
         loss: losses.meanSquaredError,
@@ -73,77 +53,12 @@ export default class LinearRegression {
         batchSize: 32,
         epochs: 1000,
         verbose: 0,
-        callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })],
+        callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 30 })],
       },
-    }
-  ) {
-    this.model = sequential();
-    this.fitIntercept = Boolean(params.fitIntercept);
-    this.modelFitArgs = params.modelFitArgs;
-    this.modelCompileArgs = params.modelCompileArgs;
-  }
-
-  initializeModel(
-    inputShape: number,
-    useBias = true,
-    weightsTensors: Tensor[] = []
-  ): void {
-    const model = sequential();
-    model.add(layers.dense({ inputShape: [inputShape], units: 1, useBias }));
-    model.compile(this.modelCompileArgs);
-    if (weightsTensors?.length) {
-      model.setWeights(weightsTensors);
-    }
-    this.model = model;
-  }
-
-  async fit(X: Tensor2D | number[][], y: Tensor1D | number[]) {
-    let XTwoD = tensor2dConv(X);
-    let yOneD = tensor1dConv(y);
-    if (this.model.layers.length === 0) {
-      this.initializeModel(XTwoD.shape[1], this.fitIntercept);
-    }
-    await this.model.fit(XTwoD, yOneD, { ...this.modelFitArgs });
-  }
-
-  importModel(params: {
-    coef_: number[];
-    intercept_: number;
-  }): LinearRegression {
-    let myCoef = tensor2d(params.coef_, [params.coef_.length, 1], 'float32');
-    let myIntercept = tensor1d([params.intercept_], 'float32');
-    this.initializeModel(params.coef_.length, true, [myCoef, myIntercept]);
-    return this;
-  }
-
-  getParams(): LinearRegressionParams {
-    return {
-      fitIntercept: this.fitIntercept,
-      modelFitArgs: this.modelFitArgs,
-      modelCompileArgs: this.modelCompileArgs,
-    };
-  }
-
-  setParams(params: LinearRegressionParams): LinearRegression {
-    this.fitIntercept = Boolean(params.fitIntercept);
-    this.modelCompileArgs = params.modelCompileArgs;
-    this.modelFitArgs = params.modelFitArgs;
-    return this;
-  }
-
-  predict(X: Tensor2D | number[][]): Tensor2D {
-    let XTwoD = tensor2dConv(X);
-    if (this.model.layers.length === 0) {
-      throw new RangeError('Need to call "fit" before "predict"');
-    }
-    return this.model.predict(XTwoD) as Tensor2D;
-  }
-
-  get coef_(): Tensor {
-    return this.model.getWeights()[0];
-  }
-
-  get intercept_(): Tensor {
-    return this.model.getWeights()[1];
+      denseLayerArgs: {
+        units: 1,
+        useBias: Boolean(params.fitIntercept),
+      },
+    })
   }
 }
