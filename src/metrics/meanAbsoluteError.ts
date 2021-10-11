@@ -25,7 +25,8 @@ import {
  *
  * @param labels 1D or 2D TensorLike object
  * @param predictions 1D or 2D TensorLike object
- * @returns number
+ * @returns Tensor that is 0-dimensial (a scalar) or 1-dimensional in the case that
+ * we are computing meanAbsoluteError against 2D Tensors.
  */
 
 // computes the mean absolute error between two vectors or two matrics.
