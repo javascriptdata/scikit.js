@@ -92,4 +92,9 @@ describe('MinMaxscaler', function () {
     scaler.fit(data)
     assert.deepEqual(scaler.transform([0, 1, 10, 10]), [-3, -2, 7, 7])
   })
+  it('Errors when you pass garbage input into a MinMaxScaler', function () {
+    const data = 4
+    const scaler = new MinMaxScaler()
+    assert.throws(() => scaler.fit(data as any))
+  })
 })
