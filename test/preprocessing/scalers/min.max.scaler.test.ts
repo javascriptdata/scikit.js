@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import { MinMaxScaler } from '../../../dist'
 import { Series, DataFrame } from 'danfojs-node'
+import { tensor1d } from '@tensorflow/tfjs-core'
 
 describe('MinMaxscaler', function () {
   it('Standardize values in a DataFrame using a MinMaxScaler', function () {
@@ -96,5 +97,11 @@ describe('MinMaxscaler', function () {
     const data = 4
     const scaler = new MinMaxScaler()
     assert.throws(() => scaler.fit(data as any))
+  })
+  it('Gracefully handles Nan as inputs MinMaxScaler', function () {
+    const data = [4, 4, 'whoops', 3, 3]
+    const scaler = new MinMaxScaler()
+    scaler.fit(data as any)
+    assert.deepEqual(scaler.transform(data as number[]), [1, 1, NaN, 0, 0])
   })
 })

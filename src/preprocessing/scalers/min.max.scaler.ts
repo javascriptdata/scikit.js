@@ -18,6 +18,8 @@ import {
   ScikitVecOrMatrix,
   convertToNumericTensor1D_2D,
   convertTensorToInputType,
+  minIgnoreNan,
+  maxIgnoreNan,
 } from '../../utils'
 /**
  * Transform features by scaling each feature to a given range.
@@ -49,8 +51,8 @@ export default class MinMaxScaler {
    */
   fit(data: ScikitVecOrMatrix) {
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const max = tensorArray.max(0)
-    this.$min = tensorArray.min(0)
+    const max = maxIgnoreNan(tensorArray, 0) as Tensor1D
+    this.$min = minIgnoreNan(tensorArray, 0) as Tensor1D
     let scale = max.sub(this.$min)
 
     // But what happens if max = min, ie.. we are dealing with a constant vector?

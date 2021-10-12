@@ -19,6 +19,7 @@ import {
 } from '@tensorflow/tfjs-core/dist/types'
 import {
   DataTypeMap,
+  logicalNot,
   tensor,
   Tensor,
   Tensor1D,
@@ -26,6 +27,8 @@ import {
   Tensor2D,
   tensor2d,
   TensorLike,
+  tidy,
+  where,
 } from '@tensorflow/tfjs-node'
 import { DataFrame, Series } from 'danfojs-node'
 import { ArrayType1D, ArrayType2D } from 'types'
@@ -215,4 +218,23 @@ export function convertTensorToInputType(
   } else {
     return tensor
   }
+}
+
+// For StandardScaler, and the others, the scikit-learn
+// api ignores Nan's for it's calculation, so we should too.
+
+export function minIgnoreNan(tensor: Tensor, dim: number) {
+  return tidy(() => where(tensor.isNaN(), Infinity, tensor).min(dim))
+}
+
+export function maxIgnoreNan(tensor: Tensor, dim: number) {
+  return tidy(() => where(tensor.isNaN(), -Infinity, tensor).max(dim))
+}
+
+export function sumIgnoreNan(tensor: Tensor, dim: number) {
+  return tidy(() => where(tensor.isNaN(), 0, tensor).sum(dim))
+}
+
+export function countIgnoreNan(tensor: Tensor, dim: number) {
+  return tidy(() => where(tensor.isNaN(), 0, tensor).sum(dim))
 }
