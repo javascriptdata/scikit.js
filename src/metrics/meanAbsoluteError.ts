@@ -16,6 +16,7 @@
 import { tidy } from '@tensorflow/tfjs-core'
 import * as tf from '@tensorflow/tfjs-node'
 import {
+  assertSameShape,
   assertSameShapeAndType,
   convertToTensor1D_2D,
   ScikitVecOrMatrix,
@@ -29,9 +30,6 @@ import {
  * we are computing meanAbsoluteError against 2D Tensors.
  */
 
-// computes the mean absolute error between two vectors or two matrics.
-// Returns it as a Tensor
-
 export function meanAbsoluteError(
   labels: ScikitVecOrMatrix,
   predictions: ScikitVecOrMatrix
@@ -39,8 +37,147 @@ export function meanAbsoluteError(
   return tidy(() => {
     let labelsT = convertToTensor1D_2D(labels)
     let predictionsT = convertToTensor1D_2D(predictions)
-    assertSameShapeAndType(labelsT, predictionsT)
+    assertSameShape(labelsT, predictionsT)
 
     return tf.metrics.meanAbsoluteError(labelsT, predictionsT)
   })
+}
+
+export function meanSquaredError(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  return tidy(() => {
+    let labelsT = convertToTensor1D_2D(labels)
+    let predictionsT = convertToTensor1D_2D(predictions)
+    assertSameShape(labelsT, predictionsT)
+
+    return tf.metrics.meanSquaredError(labelsT, predictionsT)
+  })
+}
+
+/*
+  The total number of complete matches
+
+  a.equal(b).sum()
+*/
+export function accuracyScore(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+
+  return labelsT.equal(predictionsT).sum()
+}
+
+/*
+
+  Calculate AUC
+  x -> 1d shape of x coordinates
+  y -> 1d shape of y coordinates
+
+  monotically increasing for both (assert on that)
+*/
+export function auc(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  // Do slice magic
+}
+
+/*
+  yTrue.add(1).log().sub(yPred.add(1).log()).square().sum()
+*/
+export function meanSquaredLogError(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+
+  tf.square(labelsT.log1p().sub(predictionsT.log1p())).sum()
+}
+
+export function confusionMatrix(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+  return tf.confusionMatrix(labelsT, predictionsT)
+}
+
+export function hingeLoss(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+  return tf.losses.hingeLoss(labelsT, predictionsT)
+}
+
+export function huberLoss(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+  return tf.losses.huberLoss(labelsT, predictionsT)
+}
+
+export function logLoss(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+  return tf.losses.logLoss(labelsT, predictionsT)
+}
+
+export function precisionScore(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+  return tf.metrics.precision(labelsT, predictionsT)
+}
+
+export function recallScore(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+  return tf.metrics.recall(labelsT, predictionsT)
+}
+
+export function zeroOneLoss(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  return tf.sub(1, accuracyScore(labels, predictions))
+}
+
+export function r2Score(
+  labels: ScikitVecOrMatrix,
+  predictions: ScikitVecOrMatrix
+) {
+  let labelsT = convertToTensor1D_2D(labels)
+  let predictionsT = convertToTensor1D_2D(predictions)
+  assertSameShape(labelsT, predictionsT)
+
+  const numerator = tf.metrics.meanSquaredError(labelsT, predictionsT)
+  const denominator = tf.metrics.meanSquaredError(labelsT, labelsT.mean())
+
+  return tf.sub(1, numerator.div(denominator))
 }
