@@ -29,6 +29,7 @@ import {
   TensorLike,
   tidy,
   where,
+  zerosLike,
 } from '@tensorflow/tfjs-node'
 import { DataFrame, Series } from 'danfojs-node'
 import { ArrayType1D, ArrayType2D } from 'types'
@@ -223,18 +224,44 @@ export function convertTensorToInputType(
 // For StandardScaler, and the others, the scikit-learn
 // api ignores Nan's for it's calculation, so we should too.
 
-export function minIgnoreNan(tensor: Tensor, dim: number) {
+export function minIgnoreNaN(tensor: Tensor, dim: number) {
   return tidy(() => where(tensor.isNaN(), Infinity, tensor).min(dim))
 }
 
-export function maxIgnoreNan(tensor: Tensor, dim: number) {
+export function maxIgnoreNaN(tensor: Tensor, dim: number) {
   return tidy(() => where(tensor.isNaN(), -Infinity, tensor).max(dim))
 }
 
-export function sumIgnoreNan(tensor: Tensor, dim: number) {
+export function sumIgnoreNaN(tensor: Tensor, dim: number) {
   return tidy(() => where(tensor.isNaN(), 0, tensor).sum(dim))
 }
 
-export function countIgnoreNan(tensor: Tensor, dim: number) {
-  return tidy(() => where(tensor.isNaN(), 0, tensor).sum(dim))
+export function countIgnoreNaN(tensor: Tensor, dim: number) {
+  return tidy(() => logicalNot(tensor.isNaN()).sum(dim))
+}
+
+export function meanIgnoreNaN(tensor: Tensor, dim: number) {
+  return tidy(() => sumIgnoreNaN(tensor, dim).div(countIgnoreNaN(tensor, dim)))
+}
+
+export function stdIgnoreNaN(tensor: Tensor, dim: number) {
+  return tidy(() => {
+    const mean = meanIgnoreNaN(tensor, dim)
+    const countNaN = countIgnoreNaN(tensor, dim)
+
+    const numerator = sumIgnoreNaN(tensor.sub(mean).square(), dim)
+
+    // Choose biased variance over unbiased to match sklearn
+    const denominator = turnZerosToOnes(countNaN)
+
+    return numerator.div(denominator).sqrt()
+  })
+}
+
+export function turnZerosToOnes(tensor: Tensor) {
+  return tidy(() => {
+    const zeros = zerosLike(tensor)
+    const booleanAddition = tensor.equal(zeros)
+    return tensor.add(booleanAddition)
+  })
 }

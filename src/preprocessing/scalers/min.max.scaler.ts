@@ -18,8 +18,9 @@ import {
   ScikitVecOrMatrix,
   convertToNumericTensor1D_2D,
   convertTensorToInputType,
-  minIgnoreNan,
-  maxIgnoreNan,
+  minIgnoreNaN,
+  maxIgnoreNaN,
+  turnZerosToOnes,
 } from '../../utils'
 /**
  * Transform features by scaling each feature to a given range.
@@ -51,17 +52,15 @@ export default class MinMaxScaler {
    */
   fit(data: ScikitVecOrMatrix) {
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const max = maxIgnoreNan(tensorArray, 0) as Tensor1D
-    this.$min = minIgnoreNan(tensorArray, 0) as Tensor1D
+    const max = maxIgnoreNaN(tensorArray, 0) as Tensor1D
+    this.$min = minIgnoreNaN(tensorArray, 0) as Tensor1D
     let scale = max.sub(this.$min)
 
     // But what happens if max = min, ie.. we are dealing with a constant vector?
     // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
     // The common practice in cases where the vector is constant is to change the 0 elements
     // in scale to 1, so that the division doesn't fail. We do that below
-    let zeros = zerosLike(scale)
-    let booleanAddition = scale.equal(zeros)
-    this.$scale = scale.add(booleanAddition)
+    this.$scale = turnZerosToOnes(scale) as Tensor1D
 
     return this
   }

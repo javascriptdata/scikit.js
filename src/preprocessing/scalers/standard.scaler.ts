@@ -13,139 +13,95 @@
 * ==========================================================================
 */
 
-import { tensor1d, Tensor, tensor2d, moments } from "@tensorflow/tfjs-node"
-import { DataFrame, Series } from "danfojs-node"
-import { is1DArray } from "../../utils"
+import { tensor1d, Tensor, Tensor1D } from '@tensorflow/tfjs-node'
+import {
+  convertTensorToInputType,
+  convertToNumericTensor1D_2D,
+  ScikitVecOrMatrix,
+  meanIgnoreNaN,
+  turnZerosToOnes,
+  stdIgnoreNaN,
+} from '../../utils'
 
 /**
  * Standardize features by removing the mean and scaling to unit variance.
- * The standard score of a sample x is calculated as: `z = (x - u) / s`, 
+ * The standard score of a sample x is calculated as: `z = (x - u) / s`,
  * where `u` is the mean of the training samples, and `s` is the standard deviation of the training samples.
  */
 export default class StandardScaler {
-    private $std: Tensor
-    private $mean: Tensor
+  $std: Tensor
+  $mean: Tensor
 
-    constructor() {
-        this.$std = tensor1d([])
-        this.$mean = tensor1d([])
-    }
+  constructor() {
+    this.$std = tensor1d([])
+    this.$mean = tensor1d([])
+  }
 
-    private $getTensor(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        let $tensorArray;
+  /**
+   * Fit a StandardScaler to the data.
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns StandardScaler
+   * @example
+   * const scaler = new StandardScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   */
+  fit(data: ScikitVecOrMatrix) {
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const std = stdIgnoreNaN(tensorArray, 0)
+    this.$mean = meanIgnoreNaN(tensorArray, 0)
 
-        if (data instanceof Array) {
-            if (is1DArray(data)) {
-                $tensorArray = tensor1d(data as number[])
-            } else {
-                $tensorArray = tensor2d(data)
-            }
-        } else if (data instanceof DataFrame) {
-            $tensorArray = tensor2d(data.values as number[][])
-        } else if (data instanceof Series) {
-            $tensorArray = tensor1d(data.values as number[])
-        } else if (data instanceof Tensor) {
-            $tensorArray = data
-        } else {
-            throw new Error("ParamError: data must be one of Array, DataFrame or Series")
-        }
-        return $tensorArray
-    }
-    /**
-     * Fit a StandardScaler to the data.
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns StandardScaler
-     * @example
-     * const scaler = new StandardScaler()
-     * scaler.fit([1, 2, 3, 4, 5])
-     */
-    public fit(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        const tensorArray = this.$getTensor(data)
-        this.$std = moments(tensorArray, 0).variance.sqrt();
-        this.$mean = tensorArray.mean(0);
-        return this
-    }
+    // Deal with zero variance issues
+    this.$std = turnZerosToOnes(std) as Tensor1D
+    return this
+  }
 
-    /**
-     * Transform the data using the fitted scaler
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns Array, Tensor, DataFrame or Series object
-     * @example
-     * const scaler = new StandardScaler()
-     * scaler.fit([1, 2, 3, 4, 5])
-     * scaler.transform([1, 2, 3, 4, 5])
-     * // [0.0, 0.0, 0.0, 0.0, 0.0]
-     * */
-    public transform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        const tensorArray = this.$getTensor(data)
-        const outputData = tensorArray.sub(this.$mean).div(this.$std)
+  /**
+   * Transform the data using the fitted scaler
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new StandardScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   * scaler.transform([1, 2, 3, 4, 5])
+   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * */
+  transform(data: ScikitVecOrMatrix) {
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const outputData = tensorArray.sub(this.$mean).div(this.$std)
+    return convertTensorToInputType(outputData, data)
+  }
 
-        if (Array.isArray(data)) {
-            return outputData.arraySync()
+  /**
+   * Fit and transform the data using the fitted scaler
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new StandardScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   * scaler.fitTransform([1, 2, 3, 4, 5])
+   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * */
+  fitTransform(data: ScikitVecOrMatrix) {
+    this.fit(data)
+    return this.transform(data)
+  }
 
-        } else if (data instanceof Series) {
-            return new Series(outputData, {
-                index: data.index,
-            });
+  /**
+   * Inverse transform the data using the fitted scaler
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new StandardScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   * scaler.transform([1, 2, 3, 4, 5])
+   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * scaler.inverseTransform([0.0, 0.0, 0.0, 0.0, 0.0])
+   * // [1, 2, 3, 4, 5]
+   * */
+  inverseTransform(data: ScikitVecOrMatrix) {
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const outputData = tensorArray.mul(this.$std).add(this.$mean)
 
-        } else if (data instanceof DataFrame) {
-            return new DataFrame(outputData, {
-                index: data.index,
-                columns: data.columns,
-            });
-        } else {
-            return outputData
-        }
-    }
-
-    /**
-     * Fit and transform the data using the fitted scaler
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns Array, Tensor, DataFrame or Series object
-     * @example
-     * const scaler = new StandardScaler()
-     * scaler.fit([1, 2, 3, 4, 5])
-     * scaler.fitTransform([1, 2, 3, 4, 5])
-     * // [0.0, 0.0, 0.0, 0.0, 0.0]
-     * */
-    public fitTransform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        this.fit(data)
-        return this.transform(data)
-    }
-
-    /**
-     * Inverse transform the data using the fitted scaler
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns Array, Tensor, DataFrame or Series object
-     * @example
-     * const scaler = new StandardScaler()
-     * scaler.fit([1, 2, 3, 4, 5])
-     * scaler.transform([1, 2, 3, 4, 5])
-     * // [0.0, 0.0, 0.0, 0.0, 0.0]
-     * scaler.inverseTransform([0.0, 0.0, 0.0, 0.0, 0.0])
-     * // [1, 2, 3, 4, 5]
-     * */
-    public inverseTransform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        const tensorArray = this.$getTensor(data)
-        const outputData = tensorArray.mul(this.$std).add(this.$mean)
-
-        if (Array.isArray(data)) {
-            return outputData.arraySync()
-
-        } else if (data instanceof Series) {
-            return new Series(outputData, {
-                index: data.index,
-            });
-
-        } else if (data instanceof DataFrame) {
-            return new DataFrame(outputData, {
-                index: data.index,
-                columns: data.columns,
-            });
-        } else {
-            return outputData
-        }
-    }
+    return convertTensorToInputType(outputData, data)
+  }
 }
-
-
