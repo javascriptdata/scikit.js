@@ -13,26 +13,25 @@
 * ==========================================================================
 */
 
-import { Tensor, tensor1d } from '@tensorflow/tfjs-node'
-import { DataFrame, Series } from 'danfojs-node'
-import { convertToTensor } from 'utils'
-
+import { Tensor1D, tensor1d, zerosLike } from '@tensorflow/tfjs-node'
+import {
+  ScikitVecOrMatrix,
+  convertToNumericTensor1D_2D,
+  convertTensorToInputType,
+} from '../../utils'
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
  * that it is in the given range on the training set, e.g. between the maximum and minimum value.
  */
 
-export interface possibleUserData {
-  data: number[] | number[][] | Tensor | DataFrame | Series
-}
 export default class MinMaxScaler {
-  _max: Tensor
-  _min: Tensor
+  $scale: Tensor1D
+  $min: Tensor1D
 
   constructor() {
-    this._max = tensor1d([])
-    this._min = tensor1d([])
+    this.$scale = tensor1d([])
+    this.$min = tensor1d([])
   }
 
   /**
@@ -43,15 +42,25 @@ export default class MinMaxScaler {
    * const scaler = new MinMaxScaler()
    * scaler.fit([1, 2, 3, 4, 5])
    * // MinMaxScaler {
-   * //   _max: [5],
-   * //   _min: [1]
+   * //   $max: [5],
+   * //   $min: [1]
    * // }
    *
    */
-  fit(data: number[] | number[][] | Tensor | DataFrame | Series) {
-    const tensorArray = convertToTensor(data)
-    this._max = tensorArray.max(0)
-    this._min = tensorArray.min(0)
+  fit(data: ScikitVecOrMatrix) {
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const max = tensorArray.max(0)
+    this.$min = tensorArray.min(0)
+    let scale = max.sub(this.$min)
+
+    // But what happens if max = min, ie.. we are dealing with a constant vector?
+    // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
+    // The common practice in cases where the vector is constant is to change the 0 elements
+    // in scale to 1, so that the division doesn't fail. We do that below
+    let zeros = zerosLike(scale)
+    let booleanAddition = scale.equal(zeros)
+    this.$scale = scale.add(booleanAddition)
+
     return this
   }
 
@@ -65,24 +74,10 @@ export default class MinMaxScaler {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
-  transform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-    const tensorArray = convertToTensor(data)
-    const outputData = tensorArray.sub(this._min).div(this._max.sub(this._min))
-
-    if (Array.isArray(data)) {
-      return outputData.arraySync()
-    } else if (data instanceof Series) {
-      return new Series(outputData, {
-        index: data.index,
-      })
-    } else if (data instanceof DataFrame) {
-      return new DataFrame(outputData, {
-        index: data.index,
-        columns: data.columns,
-      })
-    } else {
-      return outputData
-    }
+  transform(data: ScikitVecOrMatrix) {
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const outputData = tensorArray.sub(this.$min).div(this.$scale)
+    return convertTensorToInputType(outputData, data)
   }
 
   /**
@@ -94,7 +89,8 @@ export default class MinMaxScaler {
    * scaler.fitTransform([1, 2, 3, 4, 5])
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
-  fitTransform(data: number[] | number[][] | Tensor | DataFrame | Series) {
+  fitTransform(data: ScikitVecOrMatrix) {
+    // Should we just have a mixin that does this?
     this.fit(data)
     return this.transform(data)
   }
@@ -109,23 +105,9 @@ export default class MinMaxScaler {
    * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-    const tensorArray = convertToTensor(data)
-    const outputData = tensorArray.mul(this._max.sub(this._min)).add(this._min)
-
-    if (Array.isArray(data)) {
-      return outputData.arraySync()
-    } else if (data instanceof Series) {
-      return new Series(outputData, {
-        index: data.index,
-      })
-    } else if (data instanceof DataFrame) {
-      return new DataFrame(outputData, {
-        index: data.index,
-        columns: data.columns,
-      })
-    } else {
-      return outputData
-    }
+  inverseTransform(data: ScikitVecOrMatrix) {
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const outputData = tensorArray.mul(this.$scale).add(this.$min)
+    return convertTensorToInputType(outputData, data)
   }
 }
