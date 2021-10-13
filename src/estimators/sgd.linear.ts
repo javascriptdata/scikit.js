@@ -28,8 +28,13 @@ import {
   ModelFitArgs,
   ModelCompileArgs,
 } from '@tensorflow/tfjs-layers'
-import { tensor2dConv, tensor1dConv } from '../utils'
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
+import {
+  convertToNumericTensor1D_2D,
+  convertToNumericTensor2D,
+  Scikit2D,
+  ScikitVecOrMatrix,
+} from '../utils'
 
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
@@ -107,10 +112,15 @@ export class SGD {
    * @returns {void}
    */
 
-  initializeModel(inputShape: number, weightsTensors: Tensor[] = []): void {
+  initializeModel(
+    XShape: number[],
+    yShape: number[],
+    weightsTensors: Tensor[] = []
+  ): void {
+    this.denseLayerArgs.units = yShape.length
     const model = sequential()
     model.add(
-      layers.dense({ inputShape: [inputShape], ...this.denseLayerArgs })
+      layers.dense({ inputShape: [XShape[1]], ...this.denseLayerArgs })
     )
     model.compile(this.modelCompileArgs)
     if (weightsTensors?.length) {
@@ -126,8 +136,8 @@ export class SGD {
    *
    * This is to facilitate the case where we predict multiple targets, or in the case
    * of classification where we are predicting a 2D Matrix of probability class labels.
-   * @param {Tensor2D | number[][]} X The 2DTensor / 2D Array that you wish to use as a training matrix
-   * @param {Tensor1D | number[]} y The output vector that you wish to predict
+   * @param {Scikit2D} X The 2DTensor / 2D Array that you wish to use as a training matrix
+   * @param {ScikitVecOrMatrix} y Either 1D or 2D array / Tensor that you wish to predict
    *
    * @returns {Promise<SGD>} Returns the predictions.
    *
@@ -141,11 +151,12 @@ export class SGD {
    * // lr model weights have been updated
    */
 
-  async fit(X: Tensor2D | number[][], y: Tensor1D | number[]): Promise<SGD> {
-    let XTwoD = tensor2dConv(X)
-    let yOneD = tensor1dConv(y)
+  async fit(X: Scikit2D, y: ScikitVecOrMatrix): Promise<SGD> {
+    let XTwoD = convertToNumericTensor2D(X)
+    let yOneD = convertToNumericTensor1D_2D(y)
+
     if (this.model.layers.length === 0) {
-      this.initializeModel(XTwoD.shape[1])
+      this.initializeModel(XTwoD.shape, yOneD.shape)
     }
     await this.model.fit(XTwoD, yOneD, { ...this.modelFitArgs })
     return this
@@ -173,9 +184,13 @@ export class SGD {
    */
 
   importModel(params: { coef_: number[]; intercept_: number }): SGD {
+    // TODO: Need to update for possible 2D coef case, and 1D intercept case
     let myCoef = tensor2d(params.coef_, [params.coef_.length, 1], 'float32')
     let myIntercept = tensor1d([params.intercept_], 'float32')
-    this.initializeModel(params.coef_.length, [myCoef, myIntercept])
+    this.initializeModel(myCoef.shape, myIntercept.shape, [
+      myCoef,
+      myIntercept,
+    ])
     return this
   }
 
@@ -250,7 +265,7 @@ export class SGD {
    *
    * This is to facilitate the case where we predict multiple targets, or in the case
    * of classification where we are predicting a 2D Matrix of probability class labels.
-   * @param {Tensor2D | number[][]} X The 2DTensor / 2D Array that you wish to run through
+   * @param {Scikit2D} X The 2DTensor / 2D Array that you wish to run through
    * your model and make predictions.
    *
    * @returns {Tensor2D} Returns the predictions.
@@ -266,8 +281,8 @@ export class SGD {
    * // => tensor2d([[ 4.5, 10.3, 19.1, 0.22 ]])
    */
 
-  predict(X: Tensor2D | number[][]): Tensor2D {
-    let XTwoD = tensor2dConv(X)
+  predict(X: Scikit2D): Tensor2D {
+    let XTwoD = convertToNumericTensor2D(X)
     if (this.model.layers.length === 0) {
       throw new RangeError('Need to call "fit" before "predict"')
     }

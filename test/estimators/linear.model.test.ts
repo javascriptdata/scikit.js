@@ -19,6 +19,19 @@ describe('LinearRegression', function () {
     assert.isTrue(roughlyEqual(lr.intercept_ as number, 0))
   })
 
+  it('Works on small multi-output example (small example)', async function () {
+    const lr = new LinearRegression()
+    await lr.fit(
+      [[1], [2]],
+      [
+        [2, 1],
+        [4, 2],
+      ]
+    )
+
+    assert.isTrue(tensorEqual(lr.coef_, tf.tensor2d([[2, 1]]), 0.1))
+  })
+
   it('Works on arrays with no intercept (small example)', async function () {
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit([[1], [2]], [2, 4])
