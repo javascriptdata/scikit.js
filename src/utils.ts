@@ -83,7 +83,9 @@ export const is1DArray = (arr: ArrayType1D | ArrayType2D): boolean => {
 export function convertToTensor1D(data: Scikit1D, dtype?: DataType): Tensor1D {
   if (data instanceof Series) {
     // Do type inference if no dtype is passed, otherwise try to parse as that dtype
-    return dtype ? tensor1d(data.values, dtype) : tensor1d(data.values)
+    return dtype
+      ? (data.tensor.asType(dtype) as Tensor1D)
+      : (data.tensor as Tensor1D)
   }
   if (data instanceof Tensor) {
     if (data.shape.length === 1) {
@@ -103,8 +105,8 @@ export function convertToTensor1D(data: Scikit1D, dtype?: DataType): Tensor1D {
 export function convertToTensor2D(data: Scikit2D, dtype?: DataType): Tensor2D {
   if (data instanceof DataFrame) {
     return dtype
-      ? tensor2d(data.values, undefined, dtype)
-      : tensor2d(data.values)
+      ? (data.tensor.asType(dtype) as Tensor2D)
+      : (data.tensor as Tensor2D)
   }
   if (data instanceof Tensor) {
     if (data.shape.length === 2) {
@@ -181,10 +183,10 @@ export function convertToTensor(
   dtype?: keyof DataTypeMap
 ): Tensor {
   if (data instanceof DataFrame) {
-    return tensor2d(data.values, shape && [shape[0], shape[1]], dtype)
+    return data.tensor
   }
   if (data instanceof Series) {
-    return tensor1d(data.values, dtype)
+    return data.tensor
   }
   if (data instanceof Tensor) {
     let newData = data
