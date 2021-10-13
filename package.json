@@ -12,7 +12,7 @@
   ],
   "dependencies": {
     "@tensorflow/tfjs-node": "3.6.1",
-    "danfojs-node": "0.3.0"
+    "danfojs-node": "0.3.1"
   },
   "scripts": {
     "test": "nyc mocha --require ts-node/register test/**/**/*.test.ts",
