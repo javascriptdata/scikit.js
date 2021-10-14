@@ -13,12 +13,12 @@
 * ==========================================================================
 */
 
-import { tidy } from '@tensorflow/tfjs-core'
+import { Tensor1D, tidy } from '@tensorflow/tfjs-core'
 import * as tf from '@tensorflow/tfjs-node'
 import {
   assertSameShape,
-  assertSameShapeAndType,
   convertToTensor1D_2D,
+  Scikit1D,
   ScikitVecOrMatrix,
 } from '../utils'
 
@@ -101,14 +101,15 @@ export function meanSquaredLogError(
   tf.square(labelsT.log1p().sub(predictionsT.log1p())).sum()
 }
 
-export function confusionMatrix(
-  labels: ScikitVecOrMatrix,
-  predictions: ScikitVecOrMatrix
-) {
-  let labelsT = convertToTensor1D_2D(labels)
-  let predictionsT = convertToTensor1D_2D(predictions)
+export function confusionMatrix(labels: Scikit1D, predictions: Scikit1D) {
+  let labelsT = convertToTensor1D_2D(labels) as Tensor1D
+  let predictionsT = convertToTensor1D_2D(predictions) as Tensor1D
   assertSameShape(labelsT, predictionsT)
-  return tf.confusionMatrix(labelsT, predictionsT)
+  return tf.math.confusionMatrix(
+    labelsT,
+    predictionsT,
+    tf.unique(labelsT).values.size
+  )
 }
 
 export function hingeLoss(
