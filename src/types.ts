@@ -13,13 +13,6 @@
 * ==========================================================================
 */
 
-import {
-  isTypedArray,
-  isNumber,
-  isBoolean,
-  isString,
-} from '@tensorflow/tfjs-core/dist/util_base'
-import { inferShape } from '@tensorflow/tfjs-core/dist/tensor_util_env'
 import { Tensor, Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { DataFrame, Series } from 'danfojs-node'
 import { DataType, TensorLike } from '@tensorflow/tfjs-node'
@@ -41,6 +34,80 @@ export type ArrayType2D = Array<
 >
 
 // Boolean functions to check all types defined above
+export function isString(value: {}): value is string {
+  return typeof value === 'string' || value instanceof String
+}
+
+export function isBoolean(value: {}): boolean {
+  return typeof value === 'boolean'
+}
+
+export function isNumber(value: {}): boolean {
+  return typeof value === 'number'
+}
+
+export function assert(expr: boolean, msg: () => string) {
+  if (!expr) {
+    throw new Error(typeof msg === 'string' ? msg : msg())
+  }
+}
+export function inferShape(val: TensorLike, dtype?: DataType): number[] {
+  let firstElem: typeof val = val
+
+  if (isTypedArray(val)) {
+    return dtype === 'string' ? [] : [val.length]
+  }
+  if (!Array.isArray(val)) {
+    return [] // Scalar.
+  }
+  const shape: number[] = []
+
+  while (
+    Array.isArray(firstElem) ||
+    (isTypedArray(firstElem) && dtype !== 'string')
+  ) {
+    shape.push(firstElem.length)
+    firstElem = firstElem[0]
+  }
+  if (Array.isArray(val)) {
+    deepAssertShapeConsistency(val, shape, [])
+  }
+
+  return shape
+}
+
+function deepAssertShapeConsistency(
+  val: TensorLike,
+  shape: number[],
+  indices: number[]
+) {
+  indices = indices || []
+  if (!Array.isArray(val) && !isTypedArray(val)) {
+    assert(
+      shape.length === 0,
+      () =>
+        `Element arr[${indices.join('][')}] is a primitive, ` +
+        `but should be an array/TypedArray of ${shape[0]} elements`
+    )
+    return
+  }
+  assert(
+    shape.length > 0,
+    () =>
+      `Element arr[${indices.join('][')}] should be a primitive, ` +
+      `but is an array of ${val.length} elements`
+  )
+  assert(
+    val.length === shape[0],
+    () =>
+      `Element arr[${indices.join('][')}] should have ${shape[0]} ` +
+      `elements, but has ${val.length} elements`
+  )
+  const subShape = shape.slice(1)
+  for (let i = 0; i < val.length; ++i) {
+    deepAssertShapeConsistency(val[i], subShape, indices.concat(i))
+  }
+}
 
 export function inferDtype(values: TensorLike): DataType | null {
   if (Array.isArray(values)) {
@@ -60,7 +127,16 @@ export function inferDtype(values: TensorLike): DataType | null {
   // Failed inference
   return null
 }
-export { isTypedArray, inferShape }
+export function isTypedArray(a: {}): a is
+  | Float32Array
+  | Int32Array
+  | Uint8Array {
+  return (
+    a instanceof Float32Array ||
+    a instanceof Int32Array ||
+    a instanceof Uint8Array
+  )
+}
 
 export function isScikitLike1D(arr: any): arr is ScikitLike1D {
   const shape = inferShape(arr)

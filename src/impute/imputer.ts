@@ -14,7 +14,7 @@
 */
 
 import { convertToNumericTensor1D_2D, meanIgnoreNaNSafe } from 'utils'
-import { ScikitVecOrMatrix } from 'types'
+import { ScikitVecOrMatrix } from '../types'
 import { quantile } from 'simple-statistics'
 
 type Strategy = 'mean' | 'median' | 'mostFrequent' | 'constant'

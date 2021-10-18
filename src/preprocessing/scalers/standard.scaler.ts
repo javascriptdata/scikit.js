@@ -21,7 +21,7 @@ import {
   turnZerosToOnes,
   stdIgnoreNaN,
 } from '../../utils'
-import { ScikitVecOrMatrix } from 'types'
+import { ScikitVecOrMatrix } from '../../types'
 
 /**
  * Standardize features by removing the mean and scaling to unit variance.

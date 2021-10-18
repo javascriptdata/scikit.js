@@ -21,7 +21,7 @@ import {
   maxIgnoreNaN,
   turnZerosToOnes,
 } from '../../utils'
-import { ScikitVecOrMatrix } from 'types'
+import { ScikitVecOrMatrix } from '../../types'
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
