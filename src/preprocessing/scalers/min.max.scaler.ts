@@ -15,13 +15,13 @@
 
 import { Tensor1D, tensor1d, zerosLike } from '@tensorflow/tfjs-node'
 import {
-  ScikitVecOrMatrix,
   convertToNumericTensor1D_2D,
   convertTensorToInputType,
   minIgnoreNaN,
   maxIgnoreNaN,
   turnZerosToOnes,
 } from '../../utils'
+import { ScikitVecOrMatrix } from 'types'
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such

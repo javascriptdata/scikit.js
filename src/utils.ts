@@ -12,11 +12,7 @@
 * limitations under the License.
 * ==========================================================================
 */
-import {
-  DataType,
-  TensorLike1D,
-  TensorLike2D,
-} from '@tensorflow/tfjs-core/dist/types'
+import { DataType } from '@tensorflow/tfjs-core/dist/types'
 import {
   DataTypeMap,
   logicalNot,
@@ -32,47 +28,16 @@ import {
   zerosLike,
 } from '@tensorflow/tfjs-node'
 import { DataFrame, Series } from 'danfojs-node'
-import { ArrayType1D, ArrayType2D } from 'types'
-
-export type Scikit1D = TensorLike1D | Tensor1D | Series
-export type Scikit2D = TensorLike2D | Tensor2D | DataFrame
-export type ScikitVecOrMatrix = Scikit1D | Scikit2D
-
-/**
- * Generates an array of dim (row x column) with inner values set to zero
- * @param row
- * @param column
- */
-export const zeros = (
-  row: number,
-  column: number
-): ArrayType1D | ArrayType2D => {
-  const zeroData = []
-  for (let i = 0; i < row; i++) {
-    const colData = Array(column)
-    for (let j = 0; j < column; j++) {
-      colData[j] = 0
-    }
-    zeroData.push(colData)
-  }
-  return zeroData
-}
-
-/**
- * Checks if array is 1D
- * @param arr The array
- */
-export const is1DArray = (arr: ArrayType1D | ArrayType2D): boolean => {
-  if (
-    typeof arr[0] == 'number' ||
-    typeof arr[0] == 'string' ||
-    typeof arr[0] == 'boolean'
-  ) {
-    return true
-  } else {
-    return false
-  }
-}
+import {
+  inferShape,
+  isScikitLike1D,
+  isScikitLike2D,
+  Scikit1D,
+  Scikit2D,
+  ScikitLike1D,
+  ScikitVecOrMatrix,
+} from 'types'
+import { isTypedArray } from 'util/types'
 
 /**
  *
@@ -120,7 +85,15 @@ export function convertToTensor2D(data: Scikit2D, dtype?: DataType): Tensor2D {
       )
     }
   }
-  return dtype ? tensor2d(data, undefined, dtype) : tensor2d(data)
+  if (Array.isArray(data) && isTypedArray(data[0])) {
+    const shape = inferShape(data) as [number, number]
+    const newData = data.map((el) => Array.from(el as number[]))
+    return dtype ? tensor2d(newData, shape, dtype) : tensor2d(newData, shape)
+  }
+
+  return dtype
+    ? tensor2d(data as any, undefined, dtype)
+    : tensor2d(data as any, undefined)
 }
 
 export function convertToTensor1D_2D(
@@ -153,29 +126,29 @@ export function convertToNumericTensor1D_2D(
   return newTensor
 }
 
-export function assertSameShape(a: Tensor, b: Tensor) {
-  if (a.shape.length !== b.shape.length) {
-    throw new Error(
-      'ParamError: Shapes don"t match for these two Tensors. They are different dimensions'
-    )
-  }
-  for (let i = 0; i < a.shape.length; i++) {
-    if (a.shape[i] !== b.shape[i]) {
-      throw new Error('ParamError: Shapes do not match for these tensors')
-    }
-  }
-}
+// export function assertSameShape(a: Tensor, b: Tensor) {
+//   if (a.shape.length !== b.shape.length) {
+//     throw new Error(
+//       'ParamError: Shapes don"t match for these two Tensors. They are different dimensions'
+//     )
+//   }
+//   for (let i = 0; i < a.shape.length; i++) {
+//     if (a.shape[i] !== b.shape[i]) {
+//       throw new Error('ParamError: Shapes do not match for these tensors')
+//     }
+//   }
+// }
 
-export function assertSameType(a: Tensor, b: Tensor) {
-  if (a.dtype !== b.dtype) {
-    throw new Error('ParamError: These two Tensors do not have the same dtype')
-  }
-}
+// export function assertSameType(a: Tensor, b: Tensor) {
+//   if (a.dtype !== b.dtype) {
+//     throw new Error('ParamError: These two Tensors do not have the same dtype')
+//   }
+// }
 
-export function assertSameShapeAndType(a: Tensor, b: Tensor) {
-  assertSameShape(a, b)
-  assertSameType(a, b)
-}
+// export function assertSameShapeAndType(a: Tensor, b: Tensor) {
+//   assertSameShape(a, b)
+//   assertSameType(a, b)
+// }
 
 export function convertToTensor(
   data: TensorLike | Tensor | DataFrame | Series,
@@ -223,6 +196,54 @@ export function convertTensorToInputType(
   }
 }
 
+/*
+  After running some tests, I've concluded that the fastest way to 
+  get the min, mean, median, most_frequent, etc... is to not copy the array.
+  So the "fastest" way to perform any action is to simply loop over the initial
+  array if the user passes in an array, or to use Tensor methods if the user 
+  passes in a Tensor.
+
+  The "copying" of the array into a tf Tensor is way slower than simply writing the
+  for loop.
+*/
+
+/*What are the type buckets */
+
+function loopMin(arr: ScikitLike1D): number | string | boolean {
+  let min = arr[0]
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] < min) {
+      min = arr[i]
+    }
+  }
+  return min
+}
+
+function worldsFastestMin(arr: ScikitVecOrMatrix): Tensor1D {
+  if (arr instanceof Tensor) {
+    return arr.min(0)
+  }
+  if (arr instanceof Series) {
+    // Technically this makes a copy of the array without nulls
+    // so there is opportunity to speed this up without making the
+    // array copy
+    return tensor1d([arr.min()])
+  }
+  if (arr instanceof DataFrame) {
+    // Same comment as above
+    return arr.tensor.min(0)
+  }
+  if (isScikitLike2D(arr)) {
+    let result = arr.map((el) => loopMin(el)) as ScikitLike1D
+    return tensor1d(result)
+  }
+  if (isScikitLike1D(arr)) {
+    let result = [loopMin(arr)] as ScikitLike1D
+    return tensor1d(result)
+  }
+  throw new Error('Not the proper format')
+}
+
 // For StandardScaler, and the others, the scikit-learn
 // api ignores Nan's for it's calculation, so we should too.
 
@@ -244,6 +265,12 @@ export function countIgnoreNaN(tensor: Tensor, dim: number) {
 
 export function meanIgnoreNaN(tensor: Tensor, dim: number) {
   return tidy(() => sumIgnoreNaN(tensor, dim).div(countIgnoreNaN(tensor, dim)))
+}
+
+export function meanIgnoreNaNSafe(tensor: Tensor, dim: number) {
+  return tidy(() =>
+    sumIgnoreNaN(tensor, dim).div(turnZerosToOnes(countIgnoreNaN(tensor, dim)))
+  )
 }
 
 export function stdIgnoreNaN(tensor: Tensor, dim: number) {

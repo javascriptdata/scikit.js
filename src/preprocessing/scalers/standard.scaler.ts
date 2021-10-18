@@ -17,11 +17,11 @@ import { tensor1d, Tensor, Tensor1D } from '@tensorflow/tfjs-node'
 import {
   convertTensorToInputType,
   convertToNumericTensor1D_2D,
-  ScikitVecOrMatrix,
   meanIgnoreNaN,
   turnZerosToOnes,
   stdIgnoreNaN,
 } from '../../utils'
+import { ScikitVecOrMatrix } from 'types'
 
 /**
  * Standardize features by removing the mean and scaling to unit variance.
