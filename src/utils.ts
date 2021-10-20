@@ -152,6 +152,16 @@ export function convertToTensor1D_2D(
   }
 }
 
+export function convertToNumericTensor2D(data: Scikit2D, dtype?: DataType) {
+  const newTensor = convertToTensor2D(data, dtype)
+  if (newTensor.dtype === 'string') {
+    throw new Error(
+      "ParamError: data has string dtype, can't convert to numeric Tensor"
+    )
+  }
+  return newTensor
+}
+
 export function convertToNumericTensor1D_2D(
   data: ScikitVecOrMatrix,
   dtype?: DataType
@@ -188,7 +198,6 @@ export function convertToTensor(
   }
   return tensor(data, shape, dtype)
 }
-
 export function convertTensorToInputType(
   tensor: Tensor,
   inputData: ScikitVecOrMatrix

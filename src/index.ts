@@ -13,20 +13,28 @@
 * ==========================================================================
 */
 
+import { LinearRegression } from './estimators/linear.model'
+import { LassoRegression } from './estimators/lasso.regression'
+import { RidgeRegression } from './estimators/ridge.regression'
+import { ElasticNet } from './estimators/elastic.net'
 import MinMaxScaler from './preprocessing/scalers/min.max.scaler'
 import StandardScaler from './preprocessing/scalers/standard.scaler'
 import MaxAbsScaler from './preprocessing/scalers/max.abs.scaler'
+import SimpleImputer from './impute/simple.imputer'
 import getDummies from './preprocessing/encoders/dummy.encoder'
 import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
-import SimpleImputer from './impute/simple.imputer'
 
 export {
-  SimpleImputer,
   MinMaxScaler,
   StandardScaler,
   MaxAbsScaler,
-  getDummies,
   OneHotEncoder,
   LabelEncoder,
+  SimpleImputer,
+  getDummies,
+  LinearRegression,
+  LassoRegression,
+  RidgeRegression,
+  ElasticNet,
 }

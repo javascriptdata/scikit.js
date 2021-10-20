@@ -16,7 +16,7 @@
     "simple-statistics": "^7.7.0"
   },
   "scripts": {
-    "test": "nyc mocha --require ts-node/register 'test/**/**/*.test.ts'",
+    "test": "nyc mocha --require ts-node/register 'test/**/*.test.ts'",
     "test:clean": "yarn build:clean && yarn test",
     "dev": "nodemon",
     "build": "tsc",

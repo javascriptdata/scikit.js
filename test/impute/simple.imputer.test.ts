@@ -11,7 +11,6 @@ describe('SimpleImputer', function () {
     const expected = [1, 2, 3, 4, 4]
 
     const returned = imputer.fitTransform(data)
-    console.log(returned)
     assert.deepEqual(returned, expected)
     assert.deepEqual(imputer.transform([2, NaN]), [2, 3])
   })
@@ -23,7 +22,6 @@ describe('SimpleImputer', function () {
     const expected = [2, 3, 4]
 
     const returned = imputer.fitTransform(data)
-    console.log(returned)
     assert.deepEqual(returned, expected)
     assert.deepEqual(imputer.transform([2, NaN]), [2, 3])
   })
@@ -35,7 +33,6 @@ describe('SimpleImputer', function () {
     const expected = [2, 4, 4, 6]
 
     const returned = imputer.fitTransform(data)
-    console.log(returned)
     assert.deepEqual(returned, expected)
     assert.deepEqual(imputer.transform([2, NaN]), [2, 4])
   })
