@@ -22,13 +22,14 @@ import { isScikitVecOrMatrix, assert, isScikit1D } from '../types.utils'
 import { median } from 'simple-statistics'
 
 /**
- * Standardize features by removing the mean and scaling to unit variance.
- * The standard score of a sample x is calculated as: `z = (x - u) / s`,
- * where `u` is the mean of the training samples, and `s` is the standard deviation of the training samples.
+ * Supported strategies for DummyRegressor
  */
 
 type Strategy = 'mean' | 'median' | 'constant'
 
+/**
+ * Creates an estimator that guesses a prediction based on simple rules.
+ */
 export default class DummyRegressor {
   $fill: number
   $strategy: string
@@ -39,12 +40,13 @@ export default class DummyRegressor {
   }
 
   /**
-   * Fit a StandardScaler to the data.
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns StandardScaler
+   * Fit a DummyClassifier to the data.
+   * @param X Array, Tensor, DataFrame or Series object
+   * @param y Array, Series object
+   * @returns DummyClassifier
    * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
+   * const dummy = new DummyClassifier()
+   * dummy.fit([[1,1], [2,2], [3,3]],[1, 2, 3])
    */
   fit(X: ScikitVecOrMatrix, y: Scikit1D): DummyRegressor {
     assert(isScikit1D(y), 'Data can not be converted to a 1D or 2D matrix.')
@@ -68,14 +70,14 @@ export default class DummyRegressor {
   }
 
   /**
-   * Transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
+   * Predicts response on given example data
+   * @param X Array, Tensor, DataFrame or Series object
    * @returns Array, Tensor, DataFrame or Series object
    * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * const dummy = new DummyRegressor('median')
+   * dummy.fit([1, 3, 3, 10, 20])
+   * dummy.predict([1, 2, 3, 4, 5])
+   * // [3, 3, 3, 3, 3]
    * */
   predict(X: ScikitVecOrMatrix) {
     assert(
@@ -88,14 +90,15 @@ export default class DummyRegressor {
   }
 
   /**
-   * Fit and transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
+   * Fit and transform the data using the fitted dummy
+   * @param X Array, Tensor, DataFrame or Series object
+   * @param y Array, or Series object
    * @returns Array, Tensor, DataFrame or Series object
    * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.fitTransform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * const dummy = new DummyRegressor()
+   * dummy.fit([1, 2, 3, 4, 5])
+   * dummy.fitTransform([1, 2, 3, 4, 5])
+   * // [3, 3, 3, 3, 3]
    * */
   fitPredict(X: ScikitVecOrMatrix, y: Scikit1D) {
     return this.fit(X, y).predict(X)

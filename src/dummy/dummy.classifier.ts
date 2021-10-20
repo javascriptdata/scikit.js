@@ -21,14 +21,15 @@ import { Scikit1D, ScikitVecOrMatrix } from '../types'
 import { isScikitVecOrMatrix, assert, isScikit1D } from '../types.utils'
 import { modeFast } from 'simple-statistics'
 import { uniq, sample } from 'lodash'
-/**
- * Standardize features by removing the mean and scaling to unit variance.
- * The standard score of a sample x is calculated as: `z = (x - u) / s`,
- * where `u` is the mean of the training samples, and `s` is the standard deviation of the training samples.
- */
 
+/**
+ * Supported strategies for this classifier.
+ */
 type Strategy = 'mostFrequent' | 'uniform' | 'constant'
 
+/**
+ * Creates an estimator that guesses a class label based on simple rules.
+ */
 export default class DummyClassifier {
   $fill: number
   $strategy: string
@@ -41,12 +42,13 @@ export default class DummyClassifier {
   }
 
   /**
-   * Fit a StandardScaler to the data.
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns StandardScaler
+   * Fit a DummyClassifier to the data.
+   * @param X Array, Tensor, DataFrame or Series object
+   * @param y Array, Series object
+   * @returns DummyClassifier
    * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
+   * const dummy = new DummyClassifier()
+   * dummy.fit([[1,1], [2,2], [3,3]],[1, 2, 3])
    */
   fit(X: ScikitVecOrMatrix, y: Scikit1D): DummyClassifier {
     assert(isScikit1D(y), 'Data can not be converted to a 1D or 2D matrix.')
@@ -70,14 +72,14 @@ export default class DummyClassifier {
   }
 
   /**
-   * Transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
+   * Predicts response on given example data
+   * @param X Array, Tensor, DataFrame or Series object
    * @returns Array, Tensor, DataFrame or Series object
    * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * const dummy = new DummyClassifier()
+   * dummy.fit([1, 3, 3, 4, 5])
+   * dummy.predict([1, 2, 3, 4, 5])
+   * // [3, 3, 3, 3, 3]
    * */
   predict(X: ScikitVecOrMatrix) {
     assert(
@@ -103,13 +105,14 @@ export default class DummyClassifier {
   }
 
   /**
-   * Fit and transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
+   * Fit and transform the data using the fitted dummy
+   * @param X Array, Tensor, DataFrame or Series object
+   * @param y Array, or Series object
    * @returns Array, Tensor, DataFrame or Series object
    * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.fitTransform([1, 2, 3, 4, 5])
+   * const dummy = new DummyClassifier()
+   * dummy.fit([1, 2, 3, 4, 5])
+   * dummy.fitTransform([1, 2, 3, 4, 5])
    * // [0.0, 0.0, 0.0, 0.0, 0.0]
    * */
   fitPredict(X: ScikitVecOrMatrix, y: Scikit1D) {
