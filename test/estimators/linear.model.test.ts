@@ -73,7 +73,7 @@ describe('LinearRegression', function () {
   })
 
   it('Works on arrays with none zero intercept (medium example)', async function () {
-    const sizeOfMatrix = 10000
+    const sizeOfMatrix = 1000
     const seed = 42
     let mediumX = tf.randomUniform(
       [sizeOfMatrix, 2],
