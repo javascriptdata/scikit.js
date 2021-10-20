@@ -13,10 +13,10 @@
 * ==========================================================================
 */
 
-import { Tensor, tensor1d } from "@tensorflow/tfjs-node"
-import { DataFrame, Series } from "danfojs-node"
-import { is1DArray, zeros } from "../../utils"
-
+import { oneHot, tensor1d, Tensor2D, unique } from '@tensorflow/tfjs-node'
+import { DataFrame, Series } from 'danfojs-node'
+import { convertToTensor1D } from '../../utils'
+import { Scikit1D, Scikit2D } from '../../types'
 /**
  * Fits a OneHotEncoder to the data.
  * @example
@@ -24,91 +24,79 @@ import { is1DArray, zeros } from "../../utils"
  * const encoder = new OneHotEncoder()
  * encoder.fit(["a", "b", "c"])
  * ```
-*/
+ */
 export default class OneHotEncoder {
-    private $labels: Array<string | number | boolean>
+  $labels: Map<string | number | boolean, number>
 
-    constructor() {
-        this.$labels = []
+  constructor() {
+    this.$labels = new Map()
+  }
+  /**
+   * Fits a OneHotEncoder to the data.
+   * @param data 1d array of labels, Tensor, or  Series to be encoded.
+   * @returns OneHotEncoder
+   * @example
+   * ```js
+   * const encoder = new OneHotEncoder()
+   * encoder.fit(["a", "b", "c"])
+   * ```
+   */
+  fit(data: Scikit1D) {
+    // I convert to a 1D Tensor first because it does all
+    // the error checking to ensure that this is actually a 1D array / Tensor
+    const data1D = convertToTensor1D(data)
+
+    // I would've liked to use the tf.unique function but it's not supported in
+    // node yet. Apparently it is supported in wasm, webgl though :/
+    const values = Array.from(new Set(data1D.arraySync()))
+    values.forEach((el, i) => {
+      this.$labels.set(el, i)
+    })
+    return this
+  }
+
+  /**
+   * Encodes the data using the fitted OneHotEncoder.
+   * @param data 1d array of labels, Tensor, or  Series to be encoded.
+   * @example
+   * ```js
+   * const encoder = new OneHotEncoder()
+   * encoder.fit(["a", "b", "c"])
+   * encoder.transform(["a", "b", "c"])
+   * ```
+   */
+  transform(data: Scikit1D): Scikit2D {
+    const data1D = convertToTensor1D(data)
+    const dataOneHotIndices = tensor1d(
+      data1D.arraySync().map((el) => {
+        let val = this.$labels.get(el)
+        return val === undefined ? -1 : val
+      }),
+      'int32'
+    )
+    const oneHotArr = oneHot(dataOneHotIndices, this.$labels.size)
+
+    if (data instanceof Array) {
+      return oneHotArr.arraySync() as number[][]
+    } else if (data instanceof Series) {
+      return new DataFrame(oneHotArr, {
+        index: data.index,
+      })
+    } else {
+      return oneHotArr as Tensor2D
     }
+  }
 
-    private $getData(data: Array<string | number> | Tensor | Series) {
-        let $data: Array<string | number>
-
-        if (data instanceof Array) {
-            if (is1DArray(data)) {
-                $data = data
-            } else {
-                throw new Error("ValueError: data must be a 1D array.")
-            }
-        } else if (data instanceof Series) {
-            $data = data.values as Array<string | number>
-        } else if (data instanceof Tensor) {
-            $data = data.arraySync() as Array<string | number>
-        } else {
-            throw new Error("ParamError: data must be one of Array, 1d Tensor or Series.")
-        }
-        return $data
-    }
-
-    /**
-     * Fits a OneHotEncoder to the data.
-     * @param data 1d array of labels, Tensor, or  Series to be encoded.
-     * @returns OneHotEncoder
-     * @example
-     * ```js
-     * const encoder = new OneHotEncoder()
-     * encoder.fit(["a", "b", "c"])
-     * ```
-    */
-    public fit(data: Array<string | number> | Tensor | Series) {
-        const $data = this.$getData(data)
-        const dataSet = Array.from(new Set($data))
-        this.$labels = dataSet
-        return this
-    }
-
-    /**
-     * Encodes the data using the fitted OneHotEncoder.
-     * @param data 1d array of labels, Tensor, or  Series to be encoded.
-     * @example
-     * ```js
-     * const encoder = new OneHotEncoder()
-     * encoder.fit(["a", "b", "c"])
-     * encoder.transform(["a", "b", "c"])
-     * ```
-     */
-    public transform(data: Array<string | number> | Tensor | Series): DataFrame | Tensor | number[][] {
-        const $data = this.$getData(data)
-        const oneHotArr: any = zeros($data.length, this.$labels.length)
-
-        for (let i = 0; i < $data.length; i++) {
-            const index = this.$labels.indexOf($data[i])
-            oneHotArr[i][index] = 1
-        }
-
-        if (data instanceof Array) {
-            return oneHotArr
-        } else if (data instanceof Series) {
-            return new DataFrame(oneHotArr, {
-                index: data.index,
-            })
-        } else {
-            return tensor1d(oneHotArr)
-        }
-    }
-
-    /**
-     * Fit and transform the data using the fitted OneHotEncoder.
-     * @param data 1d array of labels, Tensor, or  Series to be encoded.
-     * @example
-     * ```js
-     * const encoder = new OneHotEncoder()
-     * encoder.fitTransform(["a", "b", "c"])
-     * ```
-     */
-    public fitTransform(data: Array<string | number> | Tensor | Series): DataFrame | Tensor | number[][] {
-        this.fit(data)
-        return this.transform(data)
-    }
+  /**
+   * Fit and transform the data using the fitted OneHotEncoder.
+   * @param data 1d array of labels, Tensor, or  Series to be encoded.
+   * @example
+   * ```js
+   * const encoder = new OneHotEncoder()
+   * encoder.fitTransform(["a", "b", "c"])
+   * ```
+   */
+  fitTransform(data: Scikit1D): Scikit2D {
+    return this.fit(data).transform(data)
+  }
 }

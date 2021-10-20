@@ -13,15 +13,28 @@
 * ==========================================================================
 */
 
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
+import { DataFrame, Series } from 'danfojs-node'
+
+// The Types that Scikit uses
+export type TypedArray = Float32Array | Int32Array | Uint8Array
+export type ScikitLike1D = TypedArray | number[] | boolean[] | string[]
+export type ScikitLike2D = TypedArray[] | number[][] | boolean[][] | string[][]
+export type Scikit1D = ScikitLike1D | Tensor1D | Series
+export type Scikit2D = ScikitLike2D | Tensor2D | DataFrame
+export type ScikitVecOrMatrix = Scikit1D | Scikit2D
 
 export type ArrayType1D = Array<
-    number
-    | string
-    | boolean
-    | (number | string | boolean)>
+  number | string | boolean | (number | string | boolean)
+>
 
 export type ArrayType2D = Array<
-    number[]
-    | string[]
-    | boolean[]
-    | (number | string | boolean)[]>
+  number[] | string[] | boolean[] | (number | string | boolean)[]
+>
+
+export type Iterable<K> = {
+  [index: number]: K
+  length: number
+}
+
+export type Strategy = 'mean' | 'median' | 'mostFrequent' | 'constant'

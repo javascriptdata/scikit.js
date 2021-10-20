@@ -13,147 +13,112 @@
 * ==========================================================================
 */
 
-import { Tensor, tensor1d, tensor2d } from "@tensorflow/tfjs-node"
-import { DataFrame, Series } from "danfojs-node"
-import { is1DArray } from "../../utils"
-
+import { Tensor1D, tensor1d } from '@tensorflow/tfjs-node'
+import {
+  convertToNumericTensor1D_2D,
+  convertTensorToInputType,
+} from '../../utils'
+import { ScikitVecOrMatrix } from '../../types'
+import { isScikitVecOrMatrix, assert } from '../../types.utils'
+import { tensorMin, tensorMax, turnZerosToOnes } from '../../math'
 /**
  * Transform features by scaling each feature to a given range.
- * This estimator scales and translates each feature individually such 
+ * This estimator scales and translates each feature individually such
  * that it is in the given range on the training set, e.g. between the maximum and minimum value.
-*/
+ */
+
 export default class MinMaxScaler {
-    private $max: Tensor
-    private $min: Tensor
+  $scale: Tensor1D
+  $min: Tensor1D
 
-    constructor() {
-        this.$max = tensor1d([])
-        this.$min = tensor1d([])
-    }
+  constructor() {
+    this.$scale = tensor1d([])
+    this.$min = tensor1d([])
+  }
 
-    private $getTensor(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        let $tensorArray;
+  /**
+   * Fits a MinMaxScaler to the data
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns MinMaxScaler
+   * @example
+   * const scaler = new MinMaxScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   * // MinMaxScaler {
+   * //   $max: [5],
+   * //   $min: [1]
+   * // }
+   *
+   */
+  fit(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
 
-        if (data instanceof Array) {
-            if (is1DArray(data)) {
-                $tensorArray = tensor1d(data as number[])
-            } else {
-                $tensorArray = tensor2d(data)
-            }
-        } else if (data instanceof DataFrame) {
-            $tensorArray = tensor2d(data.values as number[][])
-        } else if (data instanceof Series) {
-            $tensorArray = tensor1d(data.values as number[])
-        } else if (data instanceof Tensor) {
-            $tensorArray = data
-        } else {
-            throw new Error("ParamError: data must be one of Array, DataFrame or Series")
-        }
-        return $tensorArray
-    }
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const max = tensorMax(tensorArray, 0, true) as Tensor1D
+    this.$min = tensorMin(tensorArray, 0, true) as Tensor1D
+    let scale = max.sub(this.$min)
 
-    /**
-     * Fits a MinMaxScaler to the data
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns MinMaxScaler
-     * @example
-     * const scaler = new MinMaxScaler()
-     * scaler.fit([1, 2, 3, 4, 5])
-     * // MinMaxScaler {
-     * //   $max: [5],
-     * //   $min: [1]
-     * // }
-     *
-     */
-    public fit(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        const tensorArray = this.$getTensor(data)
-        this.$max = tensorArray.max(0)
-        this.$min = tensorArray.min(0)
-        return this
-    }
+    // But what happens if max = min, ie.. we are dealing with a constant vector?
+    // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
+    // The common practice in cases where the vector is constant is to change the 0 elements
+    // in scale to 1, so that the division doesn't fail. We do that below
+    this.$scale = turnZerosToOnes(scale) as Tensor1D
 
-    /**
-     * Transform the data using the fitted scaler
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns Array, Tensor, DataFrame or Series object
-     * @example
-     * const scaler = new MinMaxScaler()
-     * scaler.fit([1, 2, 3, 4, 5])
-     * scaler.transform([1, 2, 3, 4, 5])
-     * // [0, 0.25, 0.5, 0.75, 1]
-     * */
-    public transform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        const tensorArray = this.$getTensor(data)
-        const outputData = tensorArray
-            .sub(this.$min)
-            .div(this.$max.sub(this.$min))
+    return this
+  }
 
-        if (Array.isArray(data)) {
-            return outputData.arraySync()
+  /**
+   * Transform the data using the fitted scaler
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new MinMaxScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   * scaler.transform([1, 2, 3, 4, 5])
+   * // [0, 0.25, 0.5, 0.75, 1]
+   * */
+  transform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const outputData = tensorArray.sub(this.$min).div(this.$scale)
+    return convertTensorToInputType(outputData, data)
+  }
 
-        } else if (data instanceof Series) {
-            return new Series(outputData, {
-                index: data.index,
-            });
+  /**
+   * Inverse transform the data using the fitted scaler
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new MinMaxScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
+   * // [1, 2, 3, 4, 5]
+   * */
+  inverseTransform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
+    const tensorArray = convertToNumericTensor1D_2D(data)
+    const outputData = tensorArray.mul(this.$scale).add(this.$min)
+    return convertTensorToInputType(outputData, data)
+  }
 
-        } else if (data instanceof DataFrame) {
-            return new DataFrame(outputData, {
-                index: data.index,
-                columns: data.columns,
-            });
-        } else {
-            return outputData
-        }
-    }
-
-    /**
-     * Fit the data and transform it
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns Array, Tensor, DataFrame or Series object
-     * @example
-     * const scaler = new MinMaxScaler()
-     * scaler.fitTransform([1, 2, 3, 4, 5])
-     * // [0, 0.25, 0.5, 0.75, 1]
-     * */
-    public fitTransform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        this.fit(data)
-        return this.transform(data)
-    }
-
-    /**
-     * Inverse transform the data using the fitted scaler
-     * @param data Array, Tensor, DataFrame or Series object
-     * @returns Array, Tensor, DataFrame or Series object
-     * @example
-     * const scaler = new MinMaxScaler()
-     * scaler.fit([1, 2, 3, 4, 5])
-     * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
-     * // [1, 2, 3, 4, 5]
-     * */
-    public inverseTransform(data: number[] | number[][] | Tensor | DataFrame | Series) {
-        const tensorArray = this.$getTensor(data)
-        const outputData = tensorArray
-            .mul(this.$max.sub(this.$min))
-            .add(this.$min)
-
-        if (Array.isArray(data)) {
-            return outputData.arraySync()
-
-        } else if (data instanceof Series) {
-            return new Series(outputData, {
-                index: data.index,
-            });
-
-        } else if (data instanceof DataFrame) {
-            return new DataFrame(outputData, {
-                index: data.index,
-                columns: data.columns,
-            });
-        } else {
-            return outputData
-        }
-    }
-
+  /**
+   * Fit the data and transform it
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new MinMaxScaler()
+   * scaler.fitTransform([1, 2, 3, 4, 5])
+   * // [0, 0.25, 0.5, 0.75, 1]
+   * */
+  fitTransform(data: ScikitVecOrMatrix) {
+    return this.fit(data).transform(data)
+  }
 }
-
-
