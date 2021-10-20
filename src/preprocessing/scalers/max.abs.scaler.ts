@@ -13,36 +13,40 @@
 * ==========================================================================
 */
 
-import { tensor1d, Tensor, Tensor1D } from '@tensorflow/tfjs-node'
+import { Tensor1D, tensor1d, zerosLike } from '@tensorflow/tfjs-node'
 import {
-  convertTensorToInputType,
   convertToNumericTensor1D_2D,
+  convertTensorToInputType,
 } from '../../utils'
 import { ScikitVecOrMatrix } from '../../types'
-import { isScikitVecOrMatrix, assert } from '../../types.utils'
-import { tensorMean, tensorStd, turnZerosToOnes } from '../../math'
+import { assert, isScikitVecOrMatrix } from '../../types.utils'
+import { tensorMax, turnZerosToOnes } from '../../math'
 
 /**
- * Standardize features by removing the mean and scaling to unit variance.
- * The standard score of a sample x is calculated as: `z = (x - u) / s`,
- * where `u` is the mean of the training samples, and `s` is the standard deviation of the training samples.
+ * Transform features by scaling each feature to a given range.
+ * This estimator scales and translates each feature individually such
+ * that it is in the given range on the training set, e.g. between the maximum and minimum value.
  */
-export default class StandardScaler {
-  $std: Tensor
-  $mean: Tensor
+
+export default class MaxAbsScaler {
+  $scale: Tensor1D
 
   constructor() {
-    this.$std = tensor1d([])
-    this.$mean = tensor1d([])
+    this.$scale = tensor1d([])
   }
 
   /**
-   * Fit a StandardScaler to the data.
+   * Fits a MinMaxScaler to the data
    * @param data Array, Tensor, DataFrame or Series object
-   * @returns StandardScaler
+   * @returns MinMaxScaler
    * @example
-   * const scaler = new StandardScaler()
+   * const scaler = new MinMaxScaler()
    * scaler.fit([1, 2, 3, 4, 5])
+   * // MinMaxScaler {
+   * //   $max: [5],
+   * //   $min: [1]
+   * // }
+   *
    */
   fit(data: ScikitVecOrMatrix) {
     assert(
@@ -50,11 +54,11 @@ export default class StandardScaler {
       'Data can not be converted to a 1D or 2D matrix.'
     )
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const std = tensorStd(tensorArray, 0, true)
-    this.$mean = tensorMean(tensorArray, 0, true)
+    const scale = tensorMax(tensorArray.abs(), 0, true) as Tensor1D
 
-    // Deal with zero variance issues
-    this.$std = turnZerosToOnes(std) as Tensor1D
+    // Deal with 0 scale values
+    this.$scale = turnZerosToOnes(scale) as Tensor1D
+
     return this
   }
 
@@ -63,10 +67,10 @@ export default class StandardScaler {
    * @param data Array, Tensor, DataFrame or Series object
    * @returns Array, Tensor, DataFrame or Series object
    * @example
-   * const scaler = new StandardScaler()
+   * const scaler = new MinMaxScaler()
    * scaler.fit([1, 2, 3, 4, 5])
    * scaler.transform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * // [0, 0.25, 0.5, 0.75, 1]
    * */
   transform(data: ScikitVecOrMatrix) {
     assert(
@@ -74,7 +78,7 @@ export default class StandardScaler {
       'Data can not be converted to a 1D or 2D matrix.'
     )
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const outputData = tensorArray.sub(this.$mean).div(this.$std)
+    const outputData = tensorArray.div(this.$scale)
     return convertTensorToInputType(outputData, data)
   }
 
@@ -83,11 +87,9 @@ export default class StandardScaler {
    * @param data Array, Tensor, DataFrame or Series object
    * @returns Array, Tensor, DataFrame or Series object
    * @example
-   * const scaler = new StandardScaler()
+   * const scaler = new MinMaxScaler()
    * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
-   * scaler.inverseTransform([0.0, 0.0, 0.0, 0.0, 0.0])
+   * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
    * // [1, 2, 3, 4, 5]
    * */
   inverseTransform(data: ScikitVecOrMatrix) {
@@ -96,20 +98,18 @@ export default class StandardScaler {
       'Data can not be converted to a 1D or 2D matrix.'
     )
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const outputData = tensorArray.mul(this.$std).add(this.$mean)
-
+    const outputData = tensorArray.mul(this.$scale)
     return convertTensorToInputType(outputData, data)
   }
 
   /**
-   * Fit and transform the data using the fitted scaler
+   * Fit the data and transform it
    * @param data Array, Tensor, DataFrame or Series object
    * @returns Array, Tensor, DataFrame or Series object
    * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
+   * const scaler = new MinMaxScaler()
    * scaler.fitTransform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * // [0, 0.25, 0.5, 0.75, 1]
    * */
   fitTransform(data: ScikitVecOrMatrix) {
     return this.fit(data).transform(data)

@@ -12,14 +12,9 @@
 * limitations under the License.
 * ==========================================================================
 */
-import {
-  DataType,
-  TensorLike1D,
-  TensorLike2D,
-} from '@tensorflow/tfjs-core/dist/types'
+import { DataType } from '@tensorflow/tfjs-core/dist/types'
 import {
   DataTypeMap,
-  logicalNot,
   tensor,
   Tensor,
   Tensor1D,
@@ -27,16 +22,16 @@ import {
   Tensor2D,
   tensor2d,
   TensorLike,
-  tidy,
-  where,
-  zerosLike,
 } from '@tensorflow/tfjs-node'
 import { DataFrame, Series } from 'danfojs-node'
-import { ArrayType1D, ArrayType2D } from 'types'
-
-export type Scikit1D = TensorLike1D | Tensor1D | Series
-export type Scikit2D = TensorLike2D | Tensor2D | DataFrame
-export type ScikitVecOrMatrix = Scikit1D | Scikit2D
+import {
+  ArrayType1D,
+  ArrayType2D,
+  Scikit1D,
+  Scikit2D,
+  ScikitVecOrMatrix,
+} from './types'
+import { inferShape, isTypedArray } from './types.utils'
 
 /**
  * Generates an array of dim (row x column) with inner values set to zero
@@ -73,7 +68,6 @@ export const is1DArray = (arr: ArrayType1D | ArrayType2D): boolean => {
     return false
   }
 }
-
 /**
  *
  * @param data Scikit1D One dimensional array of data
@@ -102,6 +96,16 @@ export function convertToTensor1D(data: Scikit1D, dtype?: DataType): Tensor1D {
   return dtype ? tensor1d(data, dtype) : tensor1d(data)
 }
 
+export function convertToNumericTensor1D(data: Scikit1D, dtype?: DataType) {
+  const newTensor = convertToTensor1D(data, dtype)
+  if (newTensor.dtype === 'string') {
+    throw new Error(
+      "ParamError: data has string dtype, can't convert to numeric Tensor"
+    )
+  }
+  return newTensor
+}
+
 export function convertToTensor2D(data: Scikit2D, dtype?: DataType): Tensor2D {
   if (data instanceof DataFrame) {
     return dtype
@@ -120,7 +124,15 @@ export function convertToTensor2D(data: Scikit2D, dtype?: DataType): Tensor2D {
       )
     }
   }
-  return dtype ? tensor2d(data, undefined, dtype) : tensor2d(data)
+  if (Array.isArray(data) && isTypedArray(data[0])) {
+    const shape = inferShape(data) as [number, number]
+    const newData = data.map((el) => Array.from(el as number[]))
+    return dtype ? tensor2d(newData, shape, dtype) : tensor2d(newData, shape)
+  }
+
+  return dtype
+    ? tensor2d(data as any, undefined, dtype)
+    : tensor2d(data as any, undefined)
 }
 
 export function convertToTensor1D_2D(
@@ -161,30 +173,6 @@ export function convertToNumericTensor1D_2D(
     )
   }
   return newTensor
-}
-
-export function assertSameShape(a: Tensor, b: Tensor) {
-  if (a.shape.length !== b.shape.length) {
-    throw new Error(
-      'ParamError: Shapes don"t match for these two Tensors. They are different dimensions'
-    )
-  }
-  for (let i = 0; i < a.shape.length; i++) {
-    if (a.shape[i] !== b.shape[i]) {
-      throw new Error('ParamError: Shapes do not match for these tensors')
-    }
-  }
-}
-
-export function assertSameType(a: Tensor, b: Tensor) {
-  if (a.dtype !== b.dtype) {
-    throw new Error('ParamError: These two Tensors do not have the same dtype')
-  }
-}
-
-export function assertSameShapeAndType(a: Tensor, b: Tensor) {
-  assertSameShape(a, b)
-  assertSameType(a, b)
 }
 
 export function convertToTensor(
@@ -230,77 +218,4 @@ export function convertTensorToInputType(
   } else {
     return tensor
   }
-}
-
-// For StandardScaler, and the others, the scikit-learn
-// api ignores Nan's for it's calculation, so we should too.
-
-export function minIgnoreNaN(tensor: Tensor, dim: number) {
-  return tidy(() => where(tensor.isNaN(), Infinity, tensor).min(dim))
-}
-
-export function maxIgnoreNaN(tensor: Tensor, dim: number) {
-  return tidy(() => where(tensor.isNaN(), -Infinity, tensor).max(dim))
-}
-
-export function sumIgnoreNaN(tensor: Tensor, dim: number) {
-  return tidy(() => where(tensor.isNaN(), 0, tensor).sum(dim))
-}
-
-export function countIgnoreNaN(tensor: Tensor, dim: number) {
-  return tidy(() => logicalNot(tensor.isNaN()).sum(dim))
-}
-
-export function meanIgnoreNaN(tensor: Tensor, dim: number) {
-  return tidy(() => sumIgnoreNaN(tensor, dim).div(countIgnoreNaN(tensor, dim)))
-}
-
-export function stdIgnoreNaN(tensor: Tensor, dim: number) {
-  return tidy(() => {
-    const mean = meanIgnoreNaN(tensor, dim)
-    const countNaN = countIgnoreNaN(tensor, dim)
-
-    const numerator = sumIgnoreNaN(tensor.sub(mean).square(), dim)
-
-    // Choose biased variance over unbiased to match sklearn
-    const denominator = turnZerosToOnes(countNaN)
-
-    return numerator.div(denominator).sqrt()
-  })
-}
-
-export function turnZerosToOnes(tensor: Tensor) {
-  return tidy(() => {
-    const zeros = zerosLike(tensor)
-    const booleanAddition = tensor.equal(zeros)
-    return tensor.add(booleanAddition)
-  })
-}
-
-export function inferModelReturnType(yShape: number[], y: ScikitVecOrMatrix) {
-  if (y instanceof DataFrame) {
-    return 'DataFrame'
-  }
-  if (y instanceof Series) {
-    return 'Series'
-  }
-  if (y instanceof Tensor) {
-    if (yShape.length === 1) {
-      return 'Tensor1D'
-    }
-    if (yShape.length === 2) {
-      return 'Tensor2D'
-    }
-    throw new Error(
-      'ParamError: the type of the predictor variable could not be understood'
-    )
-  }
-
-  if (yShape.length === 1) {
-    return 'Array1D'
-  }
-  if (yShape.length === 2) {
-    return 'Array2D'
-  }
-  throw new Error("ParamError: Can't infer type of output")
 }

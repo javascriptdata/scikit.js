@@ -32,10 +32,8 @@ import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
 import {
   convertToNumericTensor1D_2D,
   convertToNumericTensor2D,
-  Scikit2D,
-  ScikitVecOrMatrix,
 } from '../utils'
-
+import { Scikit2D, ScikitVecOrMatrix } from '../types'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
