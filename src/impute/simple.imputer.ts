@@ -13,46 +13,61 @@
 * ==========================================================================
 */
 
-import { convertToNumericTensor1D_2D, meanIgnoreNaNSafe } from 'utils'
-import { ScikitVecOrMatrix } from '../types'
-import { quantile } from 'simple-statistics'
+import { convertToNumericTensor1D, convertTensorToInputType } from '../utils'
+import { Scikit1D, Strategy } from '../types'
+import { tensorMean } from '../math'
+import { median, modeFast } from 'simple-statistics'
+import { where } from '@tensorflow/tfjs-core'
 
-type Strategy = 'mean' | 'median' | 'mostFrequent' | 'constant'
-
-export class SimpleImputer {
+export default class SimpleImputer {
   missingValues: number | string | null | undefined
-  strategy: Strategy
   fillValue: any = undefined
+  strategy: Strategy
+
   constructor(
-    missingValues: number | string | null | undefined = NaN,
     strategy: Strategy = 'mean',
-    fillValue: any = null
+    fillValue: any = null,
+    missingValues: number | string | null | undefined = NaN
   ) {
     this.missingValues = missingValues
     this.strategy = strategy
     this.fillValue = fillValue
   }
 
-  fit(X: ScikitVecOrMatrix) {
+  fit(data: Scikit1D): SimpleImputer {
+    const newTensor = convertToNumericTensor1D(data)
+    newTensor.print()
     // Fill with value passed into fillValue argument
     if (this.strategy === 'constant') {
       return this
     }
     if (this.strategy === 'mean') {
-      const newTensor = convertToNumericTensor1D_2D(X)
-      const mean = meanIgnoreNaNSafe(newTensor, 0)
+      const mean = tensorMean(newTensor, 0, true)
       this.fillValue = mean
+      return this
     }
     if (this.strategy === 'mostFrequent') {
-      console.log('here')
+      const array = newTensor.arraySync()
+      this.fillValue = modeFast(array as number[])
+      return this
     }
     if (this.strategy === 'median') {
-      console.log('Support median')
+      const array = newTensor.arraySync()
+      this.fillValue = median(array as number[])
+      return this
     }
     throw new Error(
       `Strategy ${this.strategy} is unsupported. Supported strategies are 'mean', 'median', 'mostFrequent', and 'constant'`
     )
   }
 
-  transform(X: ScikitVecOrMatrix) {}
+  transform(data: Scikit1D): Scikit1D {
+    const newTensor = convertToNumericTensor1D(data)
+    const filledTensor = where(newTensor.isNaN(), this.fillValue, newTensor)
+    return convertTensorToInputType(filledTensor, data) as Scikit1D
+  }
+
+  fitTransform(data: Scikit1D): Scikit1D {
+    return this.fit(data).transform(data)
+  }
 }

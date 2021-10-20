@@ -13,15 +13,14 @@
 * ==========================================================================
 */
 
-import { Tensor1D, tensor1d, zerosLike } from '@tensorflow/tfjs-node'
+import { Tensor1D, tensor1d } from '@tensorflow/tfjs-node'
 import {
   convertToNumericTensor1D_2D,
   convertTensorToInputType,
-  minIgnoreNaN,
-  maxIgnoreNaN,
-  turnZerosToOnes,
 } from '../../utils'
 import { ScikitVecOrMatrix } from '../../types'
+import { isScikitVecOrMatrix, assert } from '../../types.utils'
+import { tensorMin, tensorMax, turnZerosToOnes } from '../../math'
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
@@ -51,9 +50,14 @@ export default class MinMaxScaler {
    *
    */
   fit(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
+
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const max = maxIgnoreNaN(tensorArray, 0) as Tensor1D
-    this.$min = minIgnoreNaN(tensorArray, 0) as Tensor1D
+    const max = tensorMax(tensorArray, 0, true) as Tensor1D
+    this.$min = tensorMin(tensorArray, 0, true) as Tensor1D
     let scale = max.sub(this.$min)
 
     // But what happens if max = min, ie.. we are dealing with a constant vector?
@@ -76,24 +80,13 @@ export default class MinMaxScaler {
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
   transform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
     const outputData = tensorArray.sub(this.$min).div(this.$scale)
     return convertTensorToInputType(outputData, data)
-  }
-
-  /**
-   * Fit the data and transform it
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fitTransform([1, 2, 3, 4, 5])
-   * // [0, 0.25, 0.5, 0.75, 1]
-   * */
-  fitTransform(data: ScikitVecOrMatrix) {
-    // Should we just have a mixin that does this?
-    this.fit(data)
-    return this.transform(data)
   }
 
   /**
@@ -107,8 +100,25 @@ export default class MinMaxScaler {
    * // [1, 2, 3, 4, 5]
    * */
   inverseTransform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
     const outputData = tensorArray.mul(this.$scale).add(this.$min)
     return convertTensorToInputType(outputData, data)
+  }
+
+  /**
+   * Fit the data and transform it
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new MinMaxScaler()
+   * scaler.fitTransform([1, 2, 3, 4, 5])
+   * // [0, 0.25, 0.5, 0.75, 1]
+   * */
+  fitTransform(data: ScikitVecOrMatrix) {
+    return this.fit(data).transform(data)
   }
 }

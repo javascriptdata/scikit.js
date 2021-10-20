@@ -19,8 +19,10 @@ import MaxAbsScaler from './preprocessing/scalers/max.abs.scaler'
 import getDummies from './preprocessing/encoders/dummy.encoder'
 import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
+import SimpleImputer from './impute/simple.imputer'
 
 export {
+  SimpleImputer,
   MinMaxScaler,
   StandardScaler,
   MaxAbsScaler,

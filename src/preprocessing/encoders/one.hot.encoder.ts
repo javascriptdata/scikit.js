@@ -26,7 +26,7 @@ import { Scikit1D, Scikit2D } from '../../types'
  * ```
  */
 export default class OneHotEncoder {
-  private $labels: Map<string | number | boolean, number>
+  $labels: Map<string | number | boolean, number>
 
   constructor() {
     this.$labels = new Map()
@@ -41,7 +41,7 @@ export default class OneHotEncoder {
    * encoder.fit(["a", "b", "c"])
    * ```
    */
-  public fit(data: Scikit1D) {
+  fit(data: Scikit1D) {
     // I convert to a 1D Tensor first because it does all
     // the error checking to ensure that this is actually a 1D array / Tensor
     const data1D = convertToTensor1D(data)
@@ -65,7 +65,7 @@ export default class OneHotEncoder {
    * encoder.transform(["a", "b", "c"])
    * ```
    */
-  public transform(data: Scikit1D): Scikit2D {
+  transform(data: Scikit1D): Scikit2D {
     const data1D = convertToTensor1D(data)
     const dataOneHotIndices = tensor1d(
       data1D.arraySync().map((el) => {
@@ -96,8 +96,7 @@ export default class OneHotEncoder {
    * encoder.fitTransform(["a", "b", "c"])
    * ```
    */
-  public fitTransform(data: Scikit1D): Scikit2D {
-    this.fit(data)
-    return this.transform(data)
+  fitTransform(data: Scikit1D): Scikit2D {
+    return this.fit(data).transform(data)
   }
 }

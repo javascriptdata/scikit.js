@@ -17,11 +17,10 @@ import { tensor1d, Tensor, Tensor1D } from '@tensorflow/tfjs-node'
 import {
   convertTensorToInputType,
   convertToNumericTensor1D_2D,
-  meanIgnoreNaN,
-  turnZerosToOnes,
-  stdIgnoreNaN,
 } from '../../utils'
 import { ScikitVecOrMatrix } from '../../types'
+import { isScikitVecOrMatrix, assert } from '../../types.utils'
+import { tensorMean, tensorStd, turnZerosToOnes } from '../../math'
 
 /**
  * Standardize features by removing the mean and scaling to unit variance.
@@ -46,9 +45,13 @@ export default class StandardScaler {
    * scaler.fit([1, 2, 3, 4, 5])
    */
   fit(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const std = stdIgnoreNaN(tensorArray, 0)
-    this.$mean = meanIgnoreNaN(tensorArray, 0)
+    const std = tensorStd(tensorArray, 0, true)
+    this.$mean = tensorMean(tensorArray, 0, true)
 
     // Deal with zero variance issues
     this.$std = turnZerosToOnes(std) as Tensor1D
@@ -66,24 +69,13 @@ export default class StandardScaler {
    * // [0.0, 0.0, 0.0, 0.0, 0.0]
    * */
   transform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
     const outputData = tensorArray.sub(this.$mean).div(this.$std)
     return convertTensorToInputType(outputData, data)
-  }
-
-  /**
-   * Fit and transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.fitTransform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
-   * */
-  fitTransform(data: ScikitVecOrMatrix) {
-    this.fit(data)
-    return this.transform(data)
   }
 
   /**
@@ -99,9 +91,27 @@ export default class StandardScaler {
    * // [1, 2, 3, 4, 5]
    * */
   inverseTransform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
     const outputData = tensorArray.mul(this.$std).add(this.$mean)
 
     return convertTensorToInputType(outputData, data)
+  }
+
+  /**
+   * Fit and transform the data using the fitted scaler
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new StandardScaler()
+   * scaler.fit([1, 2, 3, 4, 5])
+   * scaler.fitTransform([1, 2, 3, 4, 5])
+   * // [0.0, 0.0, 0.0, 0.0, 0.0]
+   * */
+  fitTransform(data: ScikitVecOrMatrix) {
+    return this.fit(data).transform(data)
   }
 }

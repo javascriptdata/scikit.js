@@ -17,11 +17,11 @@ import { Tensor1D, tensor1d, zerosLike } from '@tensorflow/tfjs-node'
 import {
   convertToNumericTensor1D_2D,
   convertTensorToInputType,
-  minIgnoreNaN,
-  maxIgnoreNaN,
-  turnZerosToOnes,
 } from '../../utils'
 import { ScikitVecOrMatrix } from '../../types'
+import { assert, isScikitVecOrMatrix } from '../../types.utils'
+import { tensorMax, turnZerosToOnes } from '../../math'
+
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
@@ -49,8 +49,12 @@ export default class MaxAbsScaler {
    *
    */
   fit(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
-    const scale = maxIgnoreNaN(tensorArray.abs(), 0) as Tensor1D
+    const scale = tensorMax(tensorArray.abs(), 0, true) as Tensor1D
 
     // Deal with 0 scale values
     this.$scale = turnZerosToOnes(scale) as Tensor1D
@@ -69,24 +73,13 @@ export default class MaxAbsScaler {
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
   transform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
     const outputData = tensorArray.div(this.$scale)
     return convertTensorToInputType(outputData, data)
-  }
-
-  /**
-   * Fit the data and transform it
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fitTransform([1, 2, 3, 4, 5])
-   * // [0, 0.25, 0.5, 0.75, 1]
-   * */
-  fitTransform(data: ScikitVecOrMatrix) {
-    // Should we just have a mixin that does this?
-    this.fit(data)
-    return this.transform(data)
   }
 
   /**
@@ -100,8 +93,25 @@ export default class MaxAbsScaler {
    * // [1, 2, 3, 4, 5]
    * */
   inverseTransform(data: ScikitVecOrMatrix) {
+    assert(
+      isScikitVecOrMatrix(data),
+      'Data can not be converted to a 1D or 2D matrix.'
+    )
     const tensorArray = convertToNumericTensor1D_2D(data)
     const outputData = tensorArray.mul(this.$scale)
     return convertTensorToInputType(outputData, data)
+  }
+
+  /**
+   * Fit the data and transform it
+   * @param data Array, Tensor, DataFrame or Series object
+   * @returns Array, Tensor, DataFrame or Series object
+   * @example
+   * const scaler = new MinMaxScaler()
+   * scaler.fitTransform([1, 2, 3, 4, 5])
+   * // [0, 0.25, 0.5, 0.75, 1]
+   * */
+  fitTransform(data: ScikitVecOrMatrix) {
+    return this.fit(data).transform(data)
   }
 }
