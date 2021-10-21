@@ -18,17 +18,19 @@ import { Scikit1D, Strategy } from '../types'
 import { tensorMean } from '../math'
 import { median, modeFast } from 'simple-statistics'
 import { where } from '@tensorflow/tfjs-core'
+import { TransformerMixin } from '../mixins'
 
-export default class SimpleImputer {
+export default class SimpleImputer extends TransformerMixin {
   missingValues: number | string | null | undefined
-  fillValue: any = undefined
+  fillValue: number | string = 0
   strategy: Strategy
 
   constructor(
     strategy: Strategy = 'mean',
-    fillValue: any = null,
+    fillValue: number | string = 0,
     missingValues: number | string | null | undefined = NaN
   ) {
+    super()
     this.missingValues = missingValues
     this.strategy = strategy
     this.fillValue = fillValue
@@ -36,14 +38,13 @@ export default class SimpleImputer {
 
   fit(data: Scikit1D): SimpleImputer {
     const newTensor = convertToNumericTensor1D(data)
-    newTensor.print()
     // Fill with value passed into fillValue argument
     if (this.strategy === 'constant') {
       return this
     }
     if (this.strategy === 'mean') {
       const mean = tensorMean(newTensor, 0, true)
-      this.fillValue = mean
+      this.fillValue = mean.dataSync()[0]
       return this
     }
     if (this.strategy === 'mostFrequent') {
@@ -65,9 +66,5 @@ export default class SimpleImputer {
     const newTensor = convertToNumericTensor1D(data)
     const filledTensor = where(newTensor.isNaN(), this.fillValue, newTensor)
     return convertTensorToInputType(filledTensor, data) as Scikit1D
-  }
-
-  fitTransform(data: Scikit1D): Scikit1D {
-    return this.fit(data).transform(data)
   }
 }

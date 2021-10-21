@@ -16,22 +16,24 @@
 import { tensor1d, Tensor, Tensor1D } from '@tensorflow/tfjs-node'
 import {
   convertTensorToInputType,
-  convertToNumericTensor1D_2D,
+  convertToNumericTensor1D_2D
 } from '../../utils'
 import { ScikitVecOrMatrix } from '../../types'
 import { isScikitVecOrMatrix, assert } from '../../types.utils'
 import { tensorMean, tensorStd, turnZerosToOnes } from '../../math'
+import { TransformerMixin } from '../../mixins'
 
 /**
  * Standardize features by removing the mean and scaling to unit variance.
  * The standard score of a sample x is calculated as: `z = (x - u) / s`,
  * where `u` is the mean of the training samples, and `s` is the standard deviation of the training samples.
  */
-export default class StandardScaler {
+export default class StandardScaler extends TransformerMixin {
   $std: Tensor
   $mean: Tensor
 
   constructor() {
+    super()
     this.$std = tensor1d([])
     this.$mean = tensor1d([])
   }
@@ -99,19 +101,5 @@ export default class StandardScaler {
     const outputData = tensorArray.mul(this.$std).add(this.$mean)
 
     return convertTensorToInputType(outputData, data)
-  }
-
-  /**
-   * Fit and transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.fitTransform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
-   * */
-  fitTransform(data: ScikitVecOrMatrix) {
-    return this.fit(data).transform(data)
   }
 }

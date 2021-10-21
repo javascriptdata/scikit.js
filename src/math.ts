@@ -4,14 +4,14 @@ import { Iterable } from './types'
 import { assert } from './types.utils'
 
 /*
-In creating the preprocessors, I wanted functions that computed the min, max, mean, 
+In creating the preprocessors, I wanted functions that computed the min, max, mean,
 etc... but that also ignored NaN values. The min / max functions that come from
 Tensorflow don't support ignoring NaN's, so we perform some magic to get the result.
 
-After running some tests, I've concluded that the fastest way to 
+After running some tests, I've concluded that the fastest way to
 get the min, mean, median, most_frequent, etc... is to not copy the input array.
 So the "fastest" way to perform any action is to simply loop over the initial
-array if the user passes in an array, or to use Tensor methods if the user 
+array if the user passes in an array, or to use Tensor methods if the user
 passes in a Tensor.
 
 The "copying" of the array into a tf Tensor is way slower than simply writing the

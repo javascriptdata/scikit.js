@@ -36,5 +36,5 @@ export {
   LinearRegression,
   LassoRegression,
   RidgeRegression,
-  ElasticNet,
+  ElasticNet
 }

@@ -11,14 +11,14 @@ describe('MaxAbsScaler', function () {
       [-1, 5],
       [-0.5, 5],
       [0, 10],
-      [1, 10],
+      [1, 10]
     ]
 
     const expected = [
       [-1, 0.5],
       [-0.5, 0.5],
       [0, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     scaler.fit(new DataFrame(data))
@@ -32,14 +32,14 @@ describe('MaxAbsScaler', function () {
       [-1, 5],
       [-0.5, 5],
       [0, 10],
-      [1, 10],
+      [1, 10]
     ]
 
     const expected = [
       [-1, 0.5],
       [-0.5, 0.5],
       [0, 1],
-      [1, 1],
+      [1, 1]
     ]
     const resultDf = scaler.fitTransform(new DataFrame(data)) as DataFrame
 
@@ -59,11 +59,11 @@ describe('MaxAbsScaler', function () {
       [-1, 2],
       [-0.5, 6],
       [0, 10],
-      [1, 18],
+      [1, 18]
     ]
     const df = new DataFrame(data, {
       index: [1, 2, 3, 4],
-      columns: ['a', 'b'],
+      columns: ['a', 'b']
     })
 
     const scaler = new MaxAbsScaler()

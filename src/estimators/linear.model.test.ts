@@ -3,10 +3,10 @@ import * as tf from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
 import { LinearRegression } from '../../dist'
 import 'mocha'
-import { tensorEqual } from '../utils.test'
-import { tensor, Tensor1D, tensor2d, Tensor2D } from '@tensorflow/tfjs-core'
+import { tensorEqual } from '../utils'
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 
-function roughlyEqual(a: number, b: number, tol: number = 0.1) {
+function roughlyEqual(a: number, b: number, tol = 0.1) {
   return Math.abs(a - b) < tol
 }
 
@@ -25,7 +25,7 @@ describe('LinearRegression', function () {
       [[1], [2]],
       [
         [2, 1],
-        [4, 2],
+        [4, 2]
       ]
     )
 
