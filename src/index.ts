@@ -17,6 +17,7 @@ import { LinearRegression } from './estimators/linear.model'
 import { LassoRegression } from './estimators/lasso.regression'
 import { RidgeRegression } from './estimators/ridge.regression'
 import { ElasticNet } from './estimators/elastic.net'
+import * as metrics from './metrics/metrics'
 import MinMaxScaler from './preprocessing/scalers/min.max.scaler'
 import StandardScaler from './preprocessing/scalers/standard.scaler'
 import MaxAbsScaler from './preprocessing/scalers/max.abs.scaler'
@@ -37,4 +38,5 @@ export {
   LassoRegression,
   RidgeRegression,
   ElasticNet,
+  metrics,
 }
