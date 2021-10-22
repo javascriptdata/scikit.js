@@ -18,6 +18,8 @@ import { LassoRegression } from './estimators/lasso.regression'
 import { RidgeRegression } from './estimators/ridge.regression'
 import { ElasticNet } from './estimators/elastic.net'
 import * as metrics from './metrics/metrics'
+import DummyRegressor from './dummy/dummy.regressor'
+import DummyClassifier from './dummy/dummy.classifier'
 import MinMaxScaler from './preprocessing/scalers/min.max.scaler'
 import StandardScaler from './preprocessing/scalers/standard.scaler'
 import MaxAbsScaler from './preprocessing/scalers/max.abs.scaler'
@@ -34,6 +36,8 @@ export {
   LabelEncoder,
   SimpleImputer,
   getDummies,
+  DummyRegressor,
+  DummyClassifier,
   LinearRegression,
   LassoRegression,
   RidgeRegression,
