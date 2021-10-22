@@ -7,7 +7,7 @@ export class TransformerMixin {
 
 export class PredictorMixin {
   [x: string]: any
-  fitPredict(X: any) {
-    return this.fit(X).predict(X)
+  fitPredict(X: any, y: any) {
+    return this.fit(X, y).predict(X)
   }
 }
