@@ -12,7 +12,7 @@
   ],
   "dependencies": {
     "@tensorflow/tfjs-node": "3.6.1",
-    "@types/lodash": "^4.14.175",
+    "@types/lodash": "^4.14.176",
     "danfojs-node": "0.3.1",
     "lodash": "^4.17.21",
     "simple-statistics": "^7.7.0"

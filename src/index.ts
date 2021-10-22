@@ -17,6 +17,7 @@ import { LinearRegression } from './estimators/linear.model'
 import { LassoRegression } from './estimators/lasso.regression'
 import { RidgeRegression } from './estimators/ridge.regression'
 import { ElasticNet } from './estimators/elastic.net'
+import * as metrics from './metrics/metrics'
 import DummyRegressor from './dummy/dummy.regressor'
 import DummyClassifier from './dummy/dummy.classifier'
 import MinMaxScaler from './preprocessing/scalers/min.max.scaler'
@@ -41,4 +42,5 @@ export {
   LassoRegression,
   RidgeRegression,
   ElasticNet,
+  metrics,
 }
