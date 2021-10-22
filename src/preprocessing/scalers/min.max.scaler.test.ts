@@ -9,7 +9,7 @@ describe('MinMaxscaler', function () {
       [-1, 2],
       [-0.5, 6],
       [0, 10],
-      [1, 18],
+      [1, 18]
     ]
     const scaler = new MinMaxScaler()
 
@@ -17,7 +17,7 @@ describe('MinMaxscaler', function () {
       [0, 0],
       [0.25, 0.25],
       [0.5, 0.5],
-      [1, 1],
+      [1, 1]
     ]
     const transformedData = [[1.5, 0]]
 
@@ -31,7 +31,7 @@ describe('MinMaxscaler', function () {
       [-1, 2],
       [-0.5, 6],
       [0, 10],
-      [1, 18],
+      [1, 18]
     ]
     const scaler = new MinMaxScaler()
     const resultDf = scaler.fitTransform(new DataFrame(data)) as DataFrame
@@ -40,7 +40,7 @@ describe('MinMaxscaler', function () {
       [0, 0],
       [0.25, 0.25],
       [0.5, 0.5],
-      [1, 1],
+      [1, 1]
     ]
     assert.deepEqual(resultDf.values, expected)
   })
@@ -58,11 +58,11 @@ describe('MinMaxscaler', function () {
       [-1, 2],
       [-0.5, 6],
       [0, 10],
-      [1, 18],
+      [1, 18]
     ]
     const df = new DataFrame(data, {
       index: [1, 2, 3, 4],
-      columns: ['a', 'b'],
+      columns: ['a', 'b']
     })
 
     const scaler = new MinMaxScaler()
@@ -77,7 +77,7 @@ describe('MinMaxscaler', function () {
     const scaler = new MinMaxScaler()
     const result = [
       0, 0.029411764815449715, 0.0049019609577953815, 0.5980392098426819, 1,
-      0.18627451360225677,
+      0.18627451360225677
     ]
     const transformedData = [0.029411764815449715, 0.029411764815449715]
     scaler.fit(new Series(data))

@@ -16,11 +16,12 @@
 import { Tensor1D, tensor1d, zerosLike } from '@tensorflow/tfjs-node'
 import {
   convertToNumericTensor1D_2D,
-  convertTensorToInputType,
+  convertTensorToInputType
 } from '../../utils'
 import { ScikitVecOrMatrix } from '../../types'
 import { assert, isScikitVecOrMatrix } from '../../types.utils'
 import { tensorMax, turnZerosToOnes } from '../../math'
+import { TransformerMixin } from '../../mixins'
 
 /**
  * Transform features by scaling each feature to a given range.
@@ -28,10 +29,11 @@ import { tensorMax, turnZerosToOnes } from '../../math'
  * that it is in the given range on the training set, e.g. between the maximum and minimum value.
  */
 
-export default class MaxAbsScaler {
+export default class MaxAbsScaler extends TransformerMixin {
   $scale: Tensor1D
 
   constructor() {
+    super()
     this.$scale = tensor1d([])
   }
 
@@ -100,18 +102,5 @@ export default class MaxAbsScaler {
     const tensorArray = convertToNumericTensor1D_2D(data)
     const outputData = tensorArray.mul(this.$scale)
     return convertTensorToInputType(outputData, data)
-  }
-
-  /**
-   * Fit the data and transform it
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fitTransform([1, 2, 3, 4, 5])
-   * // [0, 0.25, 0.5, 0.75, 1]
-   * */
-  fitTransform(data: ScikitVecOrMatrix) {
-    return this.fit(data).transform(data)
   }
 }

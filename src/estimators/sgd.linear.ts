@@ -19,21 +19,22 @@ import {
   Tensor1D,
   Tensor2D,
   tensor1d,
-  tensor2d,
+  tensor2d
 } from '@tensorflow/tfjs-core'
 import {
   layers,
   sequential,
   Sequential,
   ModelFitArgs,
-  ModelCompileArgs,
+  ModelCompileArgs
 } from '@tensorflow/tfjs-layers'
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
 import {
   convertToNumericTensor1D_2D,
-  convertToNumericTensor2D,
+  convertToNumericTensor2D
 } from '../utils'
 import { Scikit2D, ScikitVecOrMatrix } from '../types'
+import { PredictorMixin } from '../mixins'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -71,12 +72,12 @@ export interface SGDParams {
   modelFitArgs: ModelFitArgs
 
   /**
-   * The arguments for a single dense layer in tensorflow. This also defaults to 
+   * The arguments for a single dense layer in tensorflow. This also defaults to
    * different settings based on the regressor / classifier. An example dense layer
    * might look like.
    *  const model = sequential()
       model.add(
-        layers.dense({ inputShape: [100], 
+        layers.dense({ inputShape: [100],
         units: 1,
         useBias: true,
       })
@@ -85,13 +86,14 @@ export interface SGDParams {
   denseLayerArgs: DenseLayerArgs
 }
 
-export class SGD {
+export class SGD extends PredictorMixin {
   model: Sequential
   modelFitArgs: ModelFitArgs
   modelCompileArgs: ModelCompileArgs
   denseLayerArgs: DenseLayerArgs
 
   constructor(params: SGDParams) {
+    super()
     this.model = sequential()
     this.modelFitArgs = params.modelFitArgs
     this.modelCompileArgs = params.modelCompileArgs
@@ -187,7 +189,7 @@ export class SGD {
     let myIntercept = tensor1d([params.intercept_], 'float32')
     this.initializeModel(myCoef.shape, myIntercept.shape, [
       myCoef,
-      myIntercept,
+      myIntercept
     ])
     return this
   }
@@ -203,7 +205,7 @@ export class SGD {
    *
    * lr = new LinearRegression()
    * lr.getParams()
-   * // => 
+   * // =>
     {
       modelCompileArgs: {
         optimizer: train.adam(0.1),
@@ -227,7 +229,7 @@ export class SGD {
     return {
       modelFitArgs: this.modelFitArgs,
       modelCompileArgs: this.modelCompileArgs,
-      denseLayerArgs: this.denseLayerArgs,
+      denseLayerArgs: this.denseLayerArgs
     }
   }
 
@@ -303,7 +305,7 @@ export class SGD {
    * await lr.fit(X, [1,2,3]);
    * lr.coef_
    * // => tensor1d([[ 1.2, 3.3, 1.1, 0.2 ]])
-   * 
+   *
    * await lr.fit(X, [ [1,2], [3,4], [5,6] ]);
    * lr.coef_
    * // => tensor2d([ [1.2, 3.3], [3.4, 5.6], [4.5, 6.7] ])

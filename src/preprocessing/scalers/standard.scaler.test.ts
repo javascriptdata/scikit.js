@@ -8,7 +8,7 @@ describe('StandardScaler', function () {
       [0, 0],
       [0, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     const scaler = new StandardScaler()
@@ -18,7 +18,7 @@ describe('StandardScaler', function () {
       [-1, -1],
       [-1, -1],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
     const resultDf = scaler.transform(new DataFrame(data)) as DataFrame
     assert.deepEqual(resultDf.values, expected)
@@ -29,7 +29,7 @@ describe('StandardScaler', function () {
       [0, 0],
       [0, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     const scaler = new StandardScaler()
@@ -39,7 +39,7 @@ describe('StandardScaler', function () {
       [-1, -1],
       [-1, -1],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
     assert.deepEqual(resultDf.values, expected)
   })
@@ -48,7 +48,7 @@ describe('StandardScaler', function () {
       [0, 0],
       [0, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     const scaler = new StandardScaler()
@@ -57,7 +57,7 @@ describe('StandardScaler', function () {
       [-1, -1],
       [-1, -1],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]) as any
 
     assert.deepEqual(resultDf, data)
@@ -67,7 +67,7 @@ describe('StandardScaler', function () {
       [0, 0],
       [0, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     const scaler = new StandardScaler()
@@ -76,7 +76,7 @@ describe('StandardScaler', function () {
       [-1, -1],
       [-1, -1],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     assert.deepEqual(scaler.transform(data) as any, expected)

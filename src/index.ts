@@ -42,5 +42,5 @@ export {
   LassoRegression,
   RidgeRegression,
   ElasticNet,
-  metrics,
+  metrics
 }

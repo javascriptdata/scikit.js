@@ -175,7 +175,8 @@ export function confusionMatrix(labels: Scikit1D, predictions: Scikit1D) {
   y -> 1d shape of y coordinates
 
   monotically increasing for both (assert on that)
-*/
+
 export function auc(labels: Scikit1D, predictions: Scikit1D) {
-  // Do slice magic
+  Do slice magic
 }
+*/

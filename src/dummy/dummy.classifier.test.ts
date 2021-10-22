@@ -9,13 +9,13 @@ describe('DummyClassifier', function () {
       [-1, 5],
       [-0.5, 5],
       [0, 10],
-      [1, 10],
+      [1, 10]
     ]
     const y = [10, 20, 20, 30]
     const predictX = [
       [1, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     clf.fit(X, y)
@@ -27,13 +27,13 @@ describe('DummyClassifier', function () {
     const X = [
       [-1, 5],
       [-0.5, 5],
-      [0, 10],
+      [0, 10]
     ]
     const y = [10, 12, 30]
     const predictX = [
       [1, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     clf.fit(X, y)
@@ -44,7 +44,7 @@ describe('DummyClassifier', function () {
     const X = [
       [-1, 5],
       [-0.5, 5],
-      [0, 10],
+      [0, 10]
     ]
 
     const y = [1, 2, 3]

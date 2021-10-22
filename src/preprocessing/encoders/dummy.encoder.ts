@@ -12,10 +12,9 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { DataFrame, Series } from "danfojs-node"
-import { zeros } from "../../utils"
-import { ArrayType1D, ArrayType2D } from "../../types"
-
+import { DataFrame, Series } from 'danfojs-node'
+import { zeros } from '../../utils'
+import { ArrayType1D, ArrayType2D } from '../../types'
 
 /**
  * Generate one-hot encoding for categorical columns in an Array, Series or Dataframe.
@@ -31,124 +30,142 @@ import { ArrayType1D, ArrayType2D } from "../../types"
  * df2.print();
  */
 function dummyEncode(
-    data: Series | DataFrame,
-    options?: {
-        columns?: string | Array<string>,
-        prefix?: string | Array<string>,
-        prefixSeparator?: string | Array<string>
-    }) {
-    let { columns, prefix, prefixSeparator } = { columns: null, prefix: null, prefixSeparator: "_", ...options }
+  data: Series | DataFrame,
+  options?: {
+    columns?: string | Array<string>
+    prefix?: string | Array<string>
+    prefixSeparator?: string | Array<string>
+  }
+) {
+  let { columns, prefix, prefixSeparator } = {
+    columns: null,
+    prefix: null,
+    prefixSeparator: '_',
+    ...options
+  }
 
-    if (!data) {
-        throw new Error('ParamError: data must be one of Array, Series or DataFrame')
-    }
+  if (!data) {
+    throw new Error(
+      'ParamError: data must be one of Array, Series or DataFrame'
+    )
+  }
 
-    if (data instanceof Series || data instanceof DataFrame) {
-        if (!columns) {
-            const colsWithStringDtype: Array<string> = []
-            data.dtypes.forEach((dtype, index) => {
-                if (dtype === "string") {
-                    colsWithStringDtype.push(data.columns[index])
-                }
-            })
-            columns = colsWithStringDtype as string[]
+  if (data instanceof Series || data instanceof DataFrame) {
+    if (!columns) {
+      const colsWithStringDtype: Array<string> = []
+      data.dtypes.forEach((dtype, index) => {
+        if (dtype === 'string') {
+          colsWithStringDtype.push(data.columns[index])
         }
+      })
+      columns = colsWithStringDtype as string[]
+    }
+  } else {
+    throw new Error(
+      'ParamError: data must be one of Array, Series or DataFrame'
+    )
+  }
+
+  if (typeof columns === 'string') {
+    columns = [columns]
+    if (Array.isArray(prefix) && prefix.length === 1) {
+      prefix = prefix
+    } else if (typeof prefix === 'string') {
+      prefix = [prefix]
     } else {
-        throw new Error('ParamError: data must be one of Array, Series or DataFrame')
+      throw new Error(
+        'ParamError: prefix must be a string, or an array of same length as columns'
+      )
     }
 
-
-    if (typeof columns === "string") {
-        columns = [columns]
-        if (Array.isArray(prefix) && prefix.length === 1) {
-            prefix = prefix
-        } else if (typeof prefix === "string") {
-            prefix = [prefix]
-        } else {
-            throw new Error('ParamError: prefix must be a string, or an array of same length as columns')
-        }
-
-        if (Array.isArray(prefixSeparator) && prefixSeparator.length === 1) {
-            prefixSeparator = prefixSeparator
-        } else if (typeof prefixSeparator === "string") {
-            prefixSeparator = [prefixSeparator]
-        } else {
-            throw new Error('ParamError: prefix must be a string, or an array of same length as columns')
-        }
-    } else if (Array.isArray(columns)) {
-        if (prefix) {
-            if (Array.isArray(prefix) && prefix.length !== columns.length) {
-                throw new Error(`ParamError: prefix and data array must be of the same length. If you need to use the same prefix, then pass a string param instead. e.g {prefix: "${prefix}"}`)
-            }
-
-            if (typeof prefix === "string") {
-                prefix = columns.map(_ => prefix as string)
-            }
-        }
-
-        if (prefixSeparator) {
-            if (Array.isArray(prefixSeparator) && prefixSeparator.length !== columns.length) {
-                throw new Error(`ParamError: prefixSeparator and data array must be of the same length. If you need to use the same prefix separator, then pass a string param instead. e.g {prefixSeparator: "${prefixSeparator}"}`)
-            }
-
-            if (typeof prefixSeparator === "string") {
-                prefixSeparator = columns.map(_ => prefixSeparator as string)
-            }
-        }
-
+    if (Array.isArray(prefixSeparator) && prefixSeparator.length === 1) {
+      prefixSeparator = prefixSeparator
+    } else if (typeof prefixSeparator === 'string') {
+      prefixSeparator = [prefixSeparator]
     } else {
-        throw new Error('ParamError: columns must be a string or an array of strings')
+      throw new Error(
+        'ParamError: prefix must be a string, or an array of same length as columns'
+      )
+    }
+  } else if (Array.isArray(columns)) {
+    if (prefix) {
+      if (Array.isArray(prefix) && prefix.length !== columns.length) {
+        throw new Error(
+          `ParamError: prefix and data array must be of the same length. If you need to use the same prefix, then pass a string param instead. e.g {prefix: "${prefix}"}`
+        )
+      }
+
+      if (typeof prefix === 'string') {
+        prefix = columns.map((_) => prefix as string)
+      }
     }
 
-    if (data instanceof Series) {
-        const colData = data.values as ArrayType1D
-        const newColumnNames = []
-        const uniqueValues = Array.from(new Set(colData))
-        const oneHotArr: any = zeros(colData.length, uniqueValues.length)
+    if (prefixSeparator) {
+      if (
+        Array.isArray(prefixSeparator) &&
+        prefixSeparator.length !== columns.length
+      ) {
+        throw new Error(
+          `ParamError: prefixSeparator and data array must be of the same length. If you need to use the same prefix separator, then pass a string param instead. e.g {prefixSeparator: "${prefixSeparator}"}`
+        )
+      }
 
-        for (let i = 0; i < colData.length; i++) {
-            const index = uniqueValues.indexOf(colData[i])
-            oneHotArr[i][index] = 1
-        }
+      if (typeof prefixSeparator === 'string') {
+        prefixSeparator = columns.map((_) => prefixSeparator as string)
+      }
+    }
+  } else {
+    throw new Error(
+      'ParamError: columns must be a string or an array of strings'
+    )
+  }
 
-        for (let i = 0; i < uniqueValues.length; i++) {
-            const prefixToAdd = prefix ? prefix[0] : i
-            newColumnNames.push(`${prefixToAdd}${prefixSeparator[0]}${uniqueValues[i]}`)
+  if (data instanceof Series) {
+    const colData = data.values as ArrayType1D
+    const newColumnNames = []
+    const uniqueValues = Array.from(new Set(colData))
+    const oneHotArr: any = zeros(colData.length, uniqueValues.length)
 
-        }
-
-        return new DataFrame(oneHotArr, { columns: newColumnNames })
-
-    } else {
-
-        const dfWithSelectedColumnsDropped = data.drop({ columns })
-        let newData = dfWithSelectedColumnsDropped?.values as ArrayType2D
-        const newColumnNames = dfWithSelectedColumnsDropped?.columns as Array<string>
-
-        for (let i = 0; i < columns.length; i++) {
-            const column = columns[i]
-            const colData = data.column(column).values as Array<string | number>
-
-            const uniqueValues = Array.from(new Set(colData))
-            const oneHotArr: any = zeros(colData.length, uniqueValues.length)
-
-            for (let j = 0; j < colData.length; j++) {
-                const index = uniqueValues.indexOf(colData[j])
-                oneHotArr[j][index] = 1
-                const prefixToAdd = prefix ? prefix[i] : column
-                newColumnNames.push(`${prefixToAdd}${prefixSeparator[i]}${colData[j]}`)
-            }
-
-            for (let k = 0; k < newData.length; k++) {
-                newData[k] = [...newData[k], ...oneHotArr[k]]
-
-            }
-
-        }
-
-        return new DataFrame(newData, { columns: newColumnNames })
+    for (let i = 0; i < colData.length; i++) {
+      const index = uniqueValues.indexOf(colData[i])
+      oneHotArr[i][index] = 1
     }
 
+    for (let i = 0; i < uniqueValues.length; i++) {
+      const prefixToAdd = prefix ? prefix[0] : i
+      newColumnNames.push(
+        `${prefixToAdd}${prefixSeparator[0]}${uniqueValues[i]}`
+      )
+    }
+
+    return new DataFrame(oneHotArr, { columns: newColumnNames })
+  } else {
+    const dfWithSelectedColumnsDropped = data.drop({ columns })
+    let newData = dfWithSelectedColumnsDropped?.values as ArrayType2D
+    const newColumnNames =
+      dfWithSelectedColumnsDropped?.columns as Array<string>
+
+    for (let i = 0; i < columns.length; i++) {
+      const column = columns[i]
+      const colData = data.column(column).values as Array<string | number>
+
+      const uniqueValues = Array.from(new Set(colData))
+      const oneHotArr: any = zeros(colData.length, uniqueValues.length)
+
+      for (let j = 0; j < colData.length; j++) {
+        const index = uniqueValues.indexOf(colData[j])
+        oneHotArr[j][index] = 1
+        const prefixToAdd = prefix ? prefix[i] : column
+        newColumnNames.push(`${prefixToAdd}${prefixSeparator[i]}${colData[j]}`)
+      }
+
+      for (let k = 0; k < newData.length; k++) {
+        newData[k] = [...newData[k], ...oneHotArr[k]]
+      }
+    }
+
+    return new DataFrame(newData, { columns: newColumnNames })
+  }
 }
 
 export default dummyEncode

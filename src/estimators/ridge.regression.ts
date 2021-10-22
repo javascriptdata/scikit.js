@@ -34,19 +34,19 @@ export class RidgeRegression extends SGD {
       modelCompileArgs: {
         optimizer: train.adam(0.1),
         loss: losses.meanSquaredError,
-        metrics: ['mse'],
+        metrics: ['mse']
       },
       modelFitArgs: {
         batchSize: 32,
         epochs: 1000,
         verbose: 0,
-        callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })],
+        callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })]
       },
       denseLayerArgs: {
         units: 1,
         kernelRegularizer: regularizers.l2({ l2: params.alpha }),
-        useBias: Boolean(params.fitIntercept),
-      },
+        useBias: Boolean(params.fitIntercept)
+      }
     })
   }
 }

@@ -15,12 +15,13 @@
 
 import {
   convertToNumericTensor1D,
-  convertToNumericTensor1D_2D,
+  convertToNumericTensor1D_2D
 } from '../utils'
 import { Scikit1D, ScikitVecOrMatrix } from '../types'
 import { isScikitVecOrMatrix, assert, isScikit1D } from '../types.utils'
 import { modeFast } from 'simple-statistics'
 import { uniq, sample } from 'lodash'
+import { PredictorMixin } from '../mixins'
 
 /**
  * Supported strategies for this classifier.
@@ -30,12 +31,13 @@ type Strategy = 'mostFrequent' | 'uniform' | 'constant'
 /**
  * Creates an estimator that guesses a class label based on simple rules.
  */
-export default class DummyClassifier {
+export default class DummyClassifier extends PredictorMixin {
   $fill: number
   $strategy: string
-  $uniques: Array<any>
+  $uniques: number[] | string[]
 
   constructor(strategy: Strategy = 'mostFrequent', fill?: number) {
+    super()
     this.$fill = fill || 0
     this.$strategy = strategy
     this.$uniques = []
@@ -102,20 +104,5 @@ export default class DummyClassifier {
       returnArr.push(sample(this.$uniques))
     }
     return returnArr
-  }
-
-  /**
-   * Fit and transform the data using the fitted dummy
-   * @param X Array, Tensor, DataFrame or Series object
-   * @param y Array, or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const dummy = new DummyClassifier()
-   * dummy.fit([1, 2, 3, 4, 5])
-   * dummy.fitTransform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
-   * */
-  fitPredict(X: ScikitVecOrMatrix, y: Scikit1D) {
-    return this.fit(X, y).predict(X)
   }
 }

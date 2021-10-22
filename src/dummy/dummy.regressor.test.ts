@@ -8,13 +8,13 @@ describe('DummyRegressor', function () {
     const X = [
       [-1, 5],
       [-0.5, 5],
-      [0, 10],
+      [0, 10]
     ]
     const y = [10, 20, 30]
     const predictX = [
       [1, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     reg.fit(X, y)
@@ -26,13 +26,13 @@ describe('DummyRegressor', function () {
     const X = [
       [-1, 5],
       [-0.5, 5],
-      [0, 10],
+      [0, 10]
     ]
     const y = [10, 12, 30]
     const predictX = [
       [1, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     reg.fit(X, y)
@@ -44,13 +44,13 @@ describe('DummyRegressor', function () {
     const X = [
       [-1, 5],
       [-0.5, 5],
-      [0, 10],
+      [0, 10]
     ]
     const y = [10, 12, 30]
     const predictX = [
       [1, 0],
       [1, 1],
-      [1, 1],
+      [1, 1]
     ]
 
     reg.fit(X, y)

@@ -15,11 +15,12 @@
 
 import {
   convertToNumericTensor1D,
-  convertToNumericTensor1D_2D,
+  convertToNumericTensor1D_2D
 } from '../utils'
 import { Scikit1D, ScikitVecOrMatrix } from '../types'
 import { isScikitVecOrMatrix, assert, isScikit1D } from '../types.utils'
 import { median } from 'simple-statistics'
+import { PredictorMixin } from '../mixins'
 
 /**
  * Supported strategies for DummyRegressor
@@ -30,11 +31,12 @@ type Strategy = 'mean' | 'median' | 'constant'
 /**
  * Creates an estimator that guesses a prediction based on simple rules.
  */
-export default class DummyRegressor {
+export default class DummyRegressor extends PredictorMixin {
   $fill: number
   $strategy: string
 
   constructor(strategy: Strategy = 'mean', fill?: number) {
+    super()
     this.$fill = fill || 0
     this.$strategy = strategy
   }
@@ -87,20 +89,5 @@ export default class DummyRegressor {
     let newData = convertToNumericTensor1D_2D(X)
     let length = newData.shape[0]
     return Array(length).fill(this.$fill)
-  }
-
-  /**
-   * Fit and transform the data using the fitted dummy
-   * @param X Array, Tensor, DataFrame or Series object
-   * @param y Array, or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const dummy = new DummyRegressor()
-   * dummy.fit([1, 2, 3, 4, 5])
-   * dummy.fitTransform([1, 2, 3, 4, 5])
-   * // [3, 3, 3, 3, 3]
-   * */
-  fitPredict(X: ScikitVecOrMatrix, y: Scikit1D) {
-    return this.fit(X, y).predict(X)
   }
 }

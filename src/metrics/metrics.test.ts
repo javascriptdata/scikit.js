@@ -42,7 +42,7 @@ describe('Metrics', function () {
     assert.deepEqual(confusion, [
       [2, 0, 0],
       [0, 0, 1],
-      [1, 0, 2],
+      [1, 0, 2]
     ])
   })
   it('hingeLoss', function () {

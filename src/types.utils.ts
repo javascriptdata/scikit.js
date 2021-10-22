@@ -21,7 +21,7 @@ import {
   Scikit2D,
   ScikitLike1D,
   ScikitLike2D,
-  ScikitVecOrMatrix,
+  ScikitVecOrMatrix
 } from './types'
 
 export function isString(value: {}): value is string {

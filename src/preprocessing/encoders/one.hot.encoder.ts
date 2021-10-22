@@ -17,6 +17,7 @@ import { oneHot, tensor1d, Tensor2D, unique } from '@tensorflow/tfjs-node'
 import { DataFrame, Series } from 'danfojs-node'
 import { convertToTensor1D } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
+import { TransformerMixin } from '../../mixins'
 /**
  * Fits a OneHotEncoder to the data.
  * @example
@@ -25,10 +26,11 @@ import { Scikit1D, Scikit2D } from '../../types'
  * encoder.fit(["a", "b", "c"])
  * ```
  */
-export default class OneHotEncoder {
+export default class OneHotEncoder extends TransformerMixin {
   $labels: Map<string | number | boolean, number>
 
   constructor() {
+    super()
     this.$labels = new Map()
   }
   /**
@@ -80,23 +82,10 @@ export default class OneHotEncoder {
       return oneHotArr.arraySync() as number[][]
     } else if (data instanceof Series) {
       return new DataFrame(oneHotArr, {
-        index: data.index,
+        index: data.index
       })
     } else {
       return oneHotArr as Tensor2D
     }
-  }
-
-  /**
-   * Fit and transform the data using the fitted OneHotEncoder.
-   * @param data 1d array of labels, Tensor, or  Series to be encoded.
-   * @example
-   * ```js
-   * const encoder = new OneHotEncoder()
-   * encoder.fitTransform(["a", "b", "c"])
-   * ```
-   */
-  fitTransform(data: Scikit1D): Scikit2D {
-    return this.fit(data).transform(data)
   }
 }

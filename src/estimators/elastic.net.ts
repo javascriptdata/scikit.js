@@ -34,22 +34,22 @@ export class ElasticNet extends SGD {
       modelCompileArgs: {
         optimizer: train.adam(0.1),
         loss: losses.meanSquaredError,
-        metrics: ['mse'],
+        metrics: ['mse']
       },
       modelFitArgs: {
         batchSize: 32,
         epochs: 1000,
         verbose: 0,
-        callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })],
+        callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })]
       },
       denseLayerArgs: {
         units: 1,
         kernelRegularizer: regularizers.l1l2({
           l1: params.alpha * params.l1Ratio,
-          l2: 0.5 * params.alpha * (1 - params.l1Ratio),
+          l2: 0.5 * params.alpha * (1 - params.l1Ratio)
         }),
-        useBias: Boolean(params.fitIntercept),
-      },
+        useBias: Boolean(params.fitIntercept)
+      }
     })
   }
 }

@@ -16,12 +16,12 @@ describe('OneHotEncoder', function () {
       [0, 1, 0],
       [0, 0, 1],
       [0, 0, 1],
-      [0, 1, 0],
+      [0, 1, 0]
     ]
     assert.deepEqual(encode.transform(data), expected)
     assert.deepEqual(encode.transform(['man', 'cat']), [
       [0, 0, 1],
-      [0, 1, 0],
+      [0, 1, 0]
     ])
   })
   it('OneHotEncoder works on Series', function () {
@@ -38,7 +38,7 @@ describe('OneHotEncoder', function () {
       [0, 1, 0],
       [0, 0, 1],
       [0, 0, 1],
-      [0, 1, 0],
+      [0, 1, 0]
     ]
     assert.deepEqual((encoder.transform(series) as DataFrame).values, expected)
   })
@@ -57,7 +57,7 @@ describe('OneHotEncoder', function () {
       [0, 1, 0],
       [0, 0, 1],
       [0, 0, 1],
-      [0, 1, 0],
+      [0, 1, 0]
     ]
     assert.deepEqual(result.values, expected)
   })
@@ -65,7 +65,7 @@ describe('OneHotEncoder', function () {
   it('Correct index is returned after transformation', function () {
     const data = ['dog', 'cat', 'man', 'dog', 'cat', 'man', 'man', 'cat']
     const series = new Series(data, {
-      index: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+      index: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     })
     const encoder = new OneHotEncoder()
     const result = encoder.fitTransform(series) as DataFrame
@@ -78,7 +78,7 @@ describe('OneHotEncoder', function () {
       [0, 1, 0],
       [0, 0, 1],
       [0, 0, 1],
-      [0, 1, 0],
+      [0, 1, 0]
     ]
     assert.deepEqual(result.values, expected)
     assert.deepEqual(result.index, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])

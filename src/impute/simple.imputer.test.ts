@@ -1,6 +1,5 @@
 import { assert } from 'chai'
 import { SimpleImputer } from '../../dist'
-import { Series, DataFrame } from 'danfojs-node'
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy. In this strategy, we give the fill value', function () {
