@@ -1,7 +1,7 @@
 import { assert } from 'chai'
-import { MaxAbsScaler } from '../../../dist'
+import MaxAbsScaler from './max.abs.scaler'
 import { Series, DataFrame } from 'danfojs-node'
-import { tensor1d } from '@tensorflow/tfjs-core'
+import { tensor2d } from '@tensorflow/tfjs-core'
 
 describe('MaxAbsScaler', function () {
   it('Standardize values in a DataFrame using a MaxAbsScaler', function () {
@@ -22,9 +22,9 @@ describe('MaxAbsScaler', function () {
     ]
 
     scaler.fit(new DataFrame(data))
-    const resultDf = scaler.transform(new DataFrame(data)) as DataFrame
+    const resultDf = new DataFrame(scaler.transform(new DataFrame(data)))
     assert.deepEqual(resultDf.values, expected)
-    assert.deepEqual(scaler.transform([[2, 5]]) as any, [[2, 0.5]])
+    assert.deepEqual(scaler.transform([[2, 5]]).arraySync(), [[2, 0.5]])
   })
   it('fitTransform using a MaxAbsScaler', function () {
     const scaler = new MaxAbsScaler()
@@ -41,57 +41,37 @@ describe('MaxAbsScaler', function () {
       [0, 1],
       [1, 1]
     ]
-    const resultDf = scaler.fitTransform(new DataFrame(data)) as DataFrame
+    const resultDf = new DataFrame(scaler.fitTransform(new DataFrame(data)))
 
     assert.deepEqual(resultDf.values, expected)
   })
   it('InverseTransform with MaxAbsScaler', function () {
     const scaler = new MaxAbsScaler()
-    scaler.fit([1, 5, 10, 10, 5]) // scaling factor is 10
-    const resultTransform = scaler.transform([10, 5, 50, 100, 50])
-    assert.deepEqual(resultTransform, [1, 0.5, 5, 10, 5])
-
-    const resultInverse = scaler.inverseTransform([0.1, 0.5, 1, 1, 0.5])
-    assert.deepEqual([1, 5, 10, 10, 5], resultInverse)
-  })
-  it('Index and columns are kept after transformation', function () {
-    const data = [
-      [-1, 2],
-      [-0.5, 6],
-      [0, 10],
-      [1, 18]
-    ]
-    const df = new DataFrame(data, {
-      index: [1, 2, 3, 4],
-      columns: ['a', 'b']
-    })
-
-    const scaler = new MaxAbsScaler()
-    scaler.fit(df)
-    const resultDf = scaler.transform(df) as DataFrame
-
-    assert.deepEqual(resultDf.index, [1, 2, 3, 4])
-    assert.deepEqual(resultDf.columns, ['a', 'b'])
-  })
-  it('Standardize values in a Series using a MaxAbsScaler', function () {
-    const data = [5, 5, 10, -10, -5]
-    const scaler = new MaxAbsScaler()
-    const result = [0.5, 0.5, 1, -1, -0.5]
-
-    scaler.fit(new Series(data))
-    assert.deepEqual(
-      (scaler.transform(new Series(data)) as Series).values,
-      result
+    // const first = [1, 5, 10, 10, 5]
+    // const second = [10, 5, 50, 100, 50]
+    // const third = [1, 0.5, 5, 10, 5]
+    scaler.fit(tensor2d([1, 5, 10, 10, 5], [5, 1])) // scaling factor is 10
+    const resultTransform = scaler.transform(
+      tensor2d([10, 5, 50, 100, 50], [5, 1])
     )
-    assert.deepEqual(scaler.transform([100, -1000]), [10, -100])
+    assert.deepEqual(resultTransform.arraySync().flat(), [1, 0.5, 5, 10, 5])
+
+    const resultInverse = scaler.inverseTransform(
+      tensor2d([0.1, 0.5, 1, 1, 0.5], [5, 1])
+    )
+    assert.deepEqual([1, 5, 10, 10, 5], resultInverse.arraySync().flat())
   })
   it('Handles pathological examples with constant features with MaxAbsScaler', function () {
-    const data = [0, 0, 0, 0]
+    const data = [[0, 0, 0, 0]]
     const scaler = new MaxAbsScaler()
     scaler.fit(data)
-    assert.deepEqual(scaler.transform([0, 0, 0, 0]), [0, 0, 0, 0])
+    assert.deepEqual(scaler.transform([[0, 0, 0, 0]]).arraySync(), [
+      [0, 0, 0, 0]
+    ])
 
-    assert.deepEqual(scaler.transform([10, 10, -10, 10]), [10, 10, -10, 10])
+    assert.deepEqual(scaler.transform([[10, 10, -10, 10]]).arraySync(), [
+      [10, 10, -10, 10]
+    ])
   })
   it('Errors when you pass garbage input into a MaxAbsScaler', function () {
     const data = 4
@@ -99,9 +79,15 @@ describe('MaxAbsScaler', function () {
     assert.throws(() => scaler.fit(data as any))
   })
   it('Gracefully handles Nan as inputs MaxAbsScaler', function () {
-    const data = [4, 4, 'whoops', 4, -4]
+    const data = tensor2d([4, 4, 'whoops', 4, -4] as any, [5, 1])
     const scaler = new MaxAbsScaler()
     scaler.fit(data as any)
-    assert.deepEqual(scaler.transform(data as number[]), [1, 1, NaN, 1, -1])
+    assert.deepEqual(scaler.transform(data as any).arraySync(), [
+      [1],
+      [1],
+      [NaN],
+      [1],
+      [-1]
+    ])
   })
 })

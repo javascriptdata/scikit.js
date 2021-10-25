@@ -13,15 +13,12 @@
 * ==========================================================================
 */
 
-import { Tensor1D, tensor1d, zerosLike } from '@tensorflow/tfjs-node'
-import {
-  convertToNumericTensor1D_2D,
-  convertTensorToInputType
-} from '../../utils'
-import { ScikitVecOrMatrix } from '../../types'
-import { assert, isScikitVecOrMatrix } from '../../types.utils'
+import { Tensor1D, tensor1d, Tensor2D } from '@tensorflow/tfjs-node'
+import { convertToNumericTensor2D } from '../../utils'
+import { assert, isScikit2D } from '../../types.utils'
 import { tensorMax, turnZerosToOnes } from '../../math'
 import { TransformerMixin } from '../../mixins'
+import { Scikit2D } from '../../types'
 
 /**
  * Transform features by scaling each feature to a given range.
@@ -50,12 +47,9 @@ export default class MaxAbsScaler extends TransformerMixin {
    * // }
    *
    */
-  fit(data: ScikitVecOrMatrix) {
-    assert(
-      isScikitVecOrMatrix(data),
-      'Data can not be converted to a 1D or 2D matrix.'
-    )
-    const tensorArray = convertToNumericTensor1D_2D(data)
+  fit(data: Scikit2D): MaxAbsScaler {
+    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(data)
     const scale = tensorMax(tensorArray.abs(), 0, true) as Tensor1D
 
     // Deal with 0 scale values
@@ -74,14 +68,11 @@ export default class MaxAbsScaler extends TransformerMixin {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
-  transform(data: ScikitVecOrMatrix) {
-    assert(
-      isScikitVecOrMatrix(data),
-      'Data can not be converted to a 1D or 2D matrix.'
-    )
-    const tensorArray = convertToNumericTensor1D_2D(data)
-    const outputData = tensorArray.div(this.$scale)
-    return convertTensorToInputType(outputData, data)
+  transform(data: Scikit2D): Tensor2D {
+    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(data)
+    const outputData = tensorArray.div<Tensor2D>(this.$scale)
+    return outputData
   }
 
   /**
@@ -94,13 +85,10 @@ export default class MaxAbsScaler extends TransformerMixin {
    * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(data: ScikitVecOrMatrix) {
-    assert(
-      isScikitVecOrMatrix(data),
-      'Data can not be converted to a 1D or 2D matrix.'
-    )
-    const tensorArray = convertToNumericTensor1D_2D(data)
-    const outputData = tensorArray.mul(this.$scale)
-    return convertTensorToInputType(outputData, data)
+  inverseTransform(data: Scikit2D): Tensor2D {
+    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(data)
+    const outputData = tensorArray.mul<Tensor2D>(this.$scale)
+    return outputData
   }
 }

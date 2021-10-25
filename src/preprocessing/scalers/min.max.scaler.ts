@@ -13,13 +13,10 @@
 * ==========================================================================
 */
 
-import { Tensor1D, tensor1d } from '@tensorflow/tfjs-node'
-import {
-  convertToNumericTensor1D_2D,
-  convertTensorToInputType
-} from '../../utils'
-import { ScikitVecOrMatrix } from '../../types'
-import { isScikitVecOrMatrix, assert } from '../../types.utils'
+import { Tensor1D, tensor1d, Tensor2D } from '@tensorflow/tfjs-node'
+import { convertToNumericTensor2D } from '../../utils'
+import { Scikit2D } from '../../types'
+import { isScikit2D, assert } from '../../types.utils'
 import { tensorMin, tensorMax, turnZerosToOnes } from '../../math'
 import { TransformerMixin } from '../../mixins'
 /**
@@ -51,13 +48,10 @@ export default class MinMaxScaler extends TransformerMixin {
    * // }
    *
    */
-  fit(data: ScikitVecOrMatrix) {
-    assert(
-      isScikitVecOrMatrix(data),
-      'Data can not be converted to a 1D or 2D matrix.'
-    )
+  fit(data: Scikit2D): MinMaxScaler {
+    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
 
-    const tensorArray = convertToNumericTensor1D_2D(data)
+    const tensorArray = convertToNumericTensor2D(data)
     const max = tensorMax(tensorArray, 0, true) as Tensor1D
     this.$min = tensorMin(tensorArray, 0, true) as Tensor1D
     let scale = max.sub(this.$min)
@@ -81,14 +75,11 @@ export default class MinMaxScaler extends TransformerMixin {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
-  transform(data: ScikitVecOrMatrix) {
-    assert(
-      isScikitVecOrMatrix(data),
-      'Data can not be converted to a 1D or 2D matrix.'
-    )
-    const tensorArray = convertToNumericTensor1D_2D(data)
-    const outputData = tensorArray.sub(this.$min).div(this.$scale)
-    return convertTensorToInputType(outputData, data)
+  transform(data: Scikit2D): Tensor2D {
+    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(data)
+    const outputData = tensorArray.sub(this.$min).div<Tensor2D>(this.$scale)
+    return outputData
   }
 
   /**
@@ -101,13 +92,10 @@ export default class MinMaxScaler extends TransformerMixin {
    * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(data: ScikitVecOrMatrix) {
-    assert(
-      isScikitVecOrMatrix(data),
-      'Data can not be converted to a 1D or 2D matrix.'
-    )
-    const tensorArray = convertToNumericTensor1D_2D(data)
-    const outputData = tensorArray.mul(this.$scale).add(this.$min)
-    return convertTensorToInputType(outputData, data)
+  inverseTransform(data: Scikit2D): Tensor2D {
+    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(data)
+    const outputData = tensorArray.mul(this.$scale).add<Tensor2D>(this.$min)
+    return outputData
   }
 }

@@ -1,7 +1,8 @@
 import { assert } from 'chai'
-import { MinMaxScaler } from '../../../dist'
-import { Series, DataFrame } from 'danfojs-node'
-import { tensor1d } from '@tensorflow/tfjs-core'
+import MinMaxScaler from './min.max.scaler'
+import { DataFrame } from 'danfojs-node'
+import { tensor2d } from '@tensorflow/tfjs-core'
+import { convertTensorToInputType } from '../../utils'
 
 describe('MinMaxscaler', function () {
   it('Standardize values in a DataFrame using a MinMaxScaler', function () {
@@ -22,9 +23,9 @@ describe('MinMaxscaler', function () {
     const transformedData = [[1.5, 0]]
 
     scaler.fit(new DataFrame(data))
-    const resultDf = scaler.transform(new DataFrame(data)) as DataFrame
+    const resultDf = new DataFrame(scaler.transform(new DataFrame(data)))
     assert.deepEqual(resultDf.values, expected)
-    assert.deepEqual(scaler.transform([[2, 2]]) as any, transformedData)
+    assert.deepEqual(scaler.transform([[2, 2]]).arraySync(), transformedData)
   })
   it('fitTransform using a MinMaxScaler', function () {
     const data = [
@@ -34,7 +35,7 @@ describe('MinMaxscaler', function () {
       [1, 18]
     ]
     const scaler = new MinMaxScaler()
-    const resultDf = scaler.fitTransform(new DataFrame(data)) as DataFrame
+    const resultDf = new DataFrame(scaler.fitTransform(new DataFrame(data)))
 
     const expected = [
       [0, 0],
@@ -46,12 +47,18 @@ describe('MinMaxscaler', function () {
   })
   it('InverseTransform with MinMaxScaler', function () {
     const scaler = new MinMaxScaler()
-    scaler.fit([1, 2, 3, 4, 5])
-    const resultTransform = scaler.transform([1, 2, 3, 4, 5])
-    const resultInverse = scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
+    const data = tensor2d([1, 2, 3, 4, 5], [5, 1])
+    scaler.fit(data)
+    const resultTransform = scaler.transform(data)
+    const resultInverse = scaler.inverseTransform(
+      tensor2d([0, 0.25, 0.5, 0.75, 1], [5, 1])
+    )
 
-    assert.deepEqual(resultTransform, [0, 0.25, 0.5, 0.75, 1])
-    assert.deepEqual([1, 2, 3, 4, 5], resultInverse)
+    assert.deepEqual(
+      resultTransform.arraySync().flat(),
+      [0, 0.25, 0.5, 0.75, 1]
+    )
+    assert.deepEqual(data.arraySync(), resultInverse.arraySync())
   })
   it('Index and columns are kept after transformation', function () {
     const data = [
@@ -67,31 +74,25 @@ describe('MinMaxscaler', function () {
 
     const scaler = new MinMaxScaler()
     scaler.fit(df)
-    const resultDf = scaler.transform(df) as DataFrame
+    const resultDf = convertTensorToInputType(
+      scaler.transform(df),
+      df
+    ) as DataFrame
 
     assert.deepEqual(resultDf.index, [1, 2, 3, 4])
     assert.deepEqual(resultDf.columns, ['a', 'b'])
   })
-  it('Standardize values in a Series using a MinMaxScaler', function () {
-    const data = [-1, 2, -0.5, 60, 101, 18]
-    const scaler = new MinMaxScaler()
-    const result = [
-      0, 0.029411764815449715, 0.0049019609577953815, 0.5980392098426819, 1,
-      0.18627451360225677
-    ]
-    const transformedData = [0.029411764815449715, 0.029411764815449715]
-    scaler.fit(new Series(data))
-    assert.deepEqual(
-      (scaler.transform(new Series(data)) as Series).values,
-      result
-    )
-    assert.deepEqual(scaler.transform([2, 2]), transformedData)
-  })
   it('Handles pathological examples with constant features with MinMaxScaler', function () {
-    const data = [3, 3, 3, 3, 3]
+    const data = tensor2d([3, 3, 3, 3, 3], [5, 1])
     const scaler = new MinMaxScaler()
     scaler.fit(data)
-    assert.deepEqual(scaler.transform([0, 1, 10, 10]), [-3, -2, 7, 7])
+    assert.deepEqual(
+      scaler
+        .transform(tensor2d([0, 1, 10, 10], [4, 1]))
+        .arraySync()
+        .flat(),
+      [-3, -2, 7, 7]
+    )
   })
   it('Errors when you pass garbage input into a MinMaxScaler', function () {
     const data = 4
@@ -99,9 +100,15 @@ describe('MinMaxscaler', function () {
     assert.throws(() => scaler.fit(data as any))
   })
   it('Gracefully handles Nan as inputs MinMaxScaler', function () {
-    const data = [4, 4, 'whoops', 3, 3]
+    const data = tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
     const scaler = new MinMaxScaler()
-    scaler.fit(data as any)
-    assert.deepEqual(scaler.transform(data as number[]), [1, 1, NaN, 0, 0])
+    scaler.fit(data)
+    assert.deepEqual(scaler.transform(data).arraySync().flat(), [
+      1,
+      1,
+      NaN,
+      0,
+      0
+    ])
   })
 })
