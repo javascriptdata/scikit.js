@@ -27,6 +27,7 @@ import SimpleImputer from './impute/simple.imputer'
 import getDummies from './preprocessing/encoders/dummy.encoder'
 import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
+import Pipeline from './pipeline/pipeline'
 
 export {
   MinMaxScaler,
@@ -42,5 +43,6 @@ export {
   LassoRegression,
   RidgeRegression,
   ElasticNet,
-  metrics
+  metrics,
+  Pipeline
 }
