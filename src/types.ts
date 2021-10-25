@@ -38,3 +38,9 @@ export type Iterable<K> = {
 }
 
 export type Strategy = 'mean' | 'median' | 'mostFrequent' | 'constant'
+
+export interface Transformer {
+  fit(X: Scikit2D, y?: Scikit1D): any
+  transform(X: Scikit2D, y?: Scikit1D): Tensor2D
+  fitTransform(X: Scikit2D, y?: Scikit1D): Tensor2D
+}

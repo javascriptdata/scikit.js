@@ -15,7 +15,7 @@
 
 import { Tensor1D, tensor1d, Tensor2D } from '@tensorflow/tfjs-node'
 import { convertToNumericTensor2D } from '../../utils'
-import { Scikit2D } from '../../types'
+import { Scikit2D, Transformer } from '../../types'
 import { isScikit2D, assert } from '../../types.utils'
 import { tensorMin, tensorMax, turnZerosToOnes } from '../../math'
 import { TransformerMixin } from '../../mixins'
@@ -25,7 +25,10 @@ import { TransformerMixin } from '../../mixins'
  * that it is in the given range on the training set, e.g. between the maximum and minimum value.
  */
 
-export default class MinMaxScaler extends TransformerMixin {
+export default class MinMaxScaler
+  extends TransformerMixin
+  implements Transformer
+{
   $scale: Tensor1D
   $min: Tensor1D
 

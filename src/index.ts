@@ -28,6 +28,7 @@ import getDummies from './preprocessing/encoders/dummy.encoder'
 import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
 import Pipeline from './pipeline/pipeline'
+import ColumnTransformer from './compose/column.transformer'
 
 export {
   MinMaxScaler,
@@ -44,5 +45,6 @@ export {
   RidgeRegression,
   ElasticNet,
   metrics,
-  Pipeline
+  Pipeline,
+  ColumnTransformer
 }
