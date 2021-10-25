@@ -43,9 +43,9 @@ export default class StandardScaler extends TransformerMixin {
    * const scaler = new StandardScaler()
    * scaler.fit([1, 2, 3, 4, 5])
    */
-  fit(data: Scikit2D): StandardScaler {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  fit(X: Scikit2D): StandardScaler {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const std = tensorStd(tensorArray, 0, true)
     this.$mean = tensorMean(tensorArray, 0, true)
 
@@ -64,9 +64,9 @@ export default class StandardScaler extends TransformerMixin {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0.0, 0.0, 0.0, 0.0, 0.0]
    * */
-  transform(data: Scikit2D): Tensor2D {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  transform(X: Scikit2D): Tensor2D {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.sub(this.$mean).div<Tensor2D>(this.$std)
     return outputData
   }
@@ -83,9 +83,9 @@ export default class StandardScaler extends TransformerMixin {
    * scaler.inverseTransform([0.0, 0.0, 0.0, 0.0, 0.0])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(data: Scikit2D): Tensor2D {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  inverseTransform(X: Scikit2D): Tensor2D {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.mul(this.$std).add<Tensor2D>(this.$mean)
     return outputData
   }

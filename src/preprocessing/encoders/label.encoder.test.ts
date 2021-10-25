@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import LabelEncoder from './label.encoder'
+import { LabelEncoder } from '../../../dist'
 import { Series } from 'danfojs-node'
 
 describe('LabelEncoder', function () {

@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import MinMaxScaler from './min.max.scaler'
+import { MinMaxScaler } from '../../../dist'
 import { DataFrame } from 'danfojs-node'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { convertTensorToInputType } from '../../utils'

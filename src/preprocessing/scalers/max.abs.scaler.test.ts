@@ -1,6 +1,6 @@
 import { assert } from 'chai'
-import MaxAbsScaler from './max.abs.scaler'
-import { Series, DataFrame } from 'danfojs-node'
+import { MaxAbsScaler } from '../../../dist'
+import { DataFrame } from 'danfojs-node'
 import { tensor2d } from '@tensorflow/tfjs-core'
 
 describe('MaxAbsScaler', function () {

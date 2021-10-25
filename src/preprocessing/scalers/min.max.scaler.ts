@@ -48,10 +48,10 @@ export default class MinMaxScaler extends TransformerMixin {
    * // }
    *
    */
-  fit(data: Scikit2D): MinMaxScaler {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
+  fit(X: Scikit2D): MinMaxScaler {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
 
-    const tensorArray = convertToNumericTensor2D(data)
+    const tensorArray = convertToNumericTensor2D(X)
     const max = tensorMax(tensorArray, 0, true) as Tensor1D
     this.$min = tensorMin(tensorArray, 0, true) as Tensor1D
     let scale = max.sub(this.$min)
@@ -75,9 +75,9 @@ export default class MinMaxScaler extends TransformerMixin {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
-  transform(data: Scikit2D): Tensor2D {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  transform(X: Scikit2D): Tensor2D {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.sub(this.$min).div<Tensor2D>(this.$scale)
     return outputData
   }
@@ -92,9 +92,9 @@ export default class MinMaxScaler extends TransformerMixin {
    * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(data: Scikit2D): Tensor2D {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  inverseTransform(X: Scikit2D): Tensor2D {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.mul(this.$scale).add<Tensor2D>(this.$min)
     return outputData
   }

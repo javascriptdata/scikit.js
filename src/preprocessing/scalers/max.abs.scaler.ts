@@ -47,9 +47,9 @@ export default class MaxAbsScaler extends TransformerMixin {
    * // }
    *
    */
-  fit(data: Scikit2D): MaxAbsScaler {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  fit(X: Scikit2D): MaxAbsScaler {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const scale = tensorMax(tensorArray.abs(), 0, true) as Tensor1D
 
     // Deal with 0 scale values
@@ -68,9 +68,9 @@ export default class MaxAbsScaler extends TransformerMixin {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
-  transform(data: Scikit2D): Tensor2D {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  transform(X: Scikit2D): Tensor2D {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.div<Tensor2D>(this.$scale)
     return outputData
   }
@@ -85,9 +85,9 @@ export default class MaxAbsScaler extends TransformerMixin {
    * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(data: Scikit2D): Tensor2D {
-    assert(isScikit2D(data), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(data)
+  inverseTransform(X: Scikit2D): Tensor2D {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.mul<Tensor2D>(this.$scale)
     return outputData
   }

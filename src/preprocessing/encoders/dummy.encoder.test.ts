@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import getDummies from './dummy.encoder'
+import { getDummies } from '../../../dist'
 import { DataFrame, Series } from 'danfojs-node'
 
 describe('DummyEncoder', function () {
