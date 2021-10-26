@@ -27,6 +27,7 @@ import SimpleImputer from './impute/simple.imputer'
 import getDummies from './preprocessing/encoders/dummy.encoder'
 import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
+import OrdinalEncoder from './preprocessing/encoders/ordinal.encoder'
 import Pipeline from './pipeline/pipeline'
 import ColumnTransformer from './compose/column.transformer'
 import RobustScaler from './preprocessing/scalers/robust.scaler'
@@ -48,5 +49,6 @@ export {
   ElasticNet,
   metrics,
   Pipeline,
-  ColumnTransformer
+  ColumnTransformer,
+  OrdinalEncoder
 }

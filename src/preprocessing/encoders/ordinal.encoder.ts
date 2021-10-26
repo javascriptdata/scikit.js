@@ -13,19 +13,19 @@
 * ==========================================================================
 */
 
-import { concat, oneHot, tensor2d, Tensor2D } from '@tensorflow/tfjs-node'
+import { tensor2d, Tensor2D } from '@tensorflow/tfjs-node'
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
 /**
- * Fits a OneHotEncoder to the data.
+ * Fits a OrdinalEncoder to the data.
  * @example
  * ```js
- * const encoder = new OneHotEncoder()
+ * const encoder = new OrdinalEncoder()
  * encoder.fit(["a", "b", "c"])
  * ```
  */
-export default class OneHotEncoder extends TransformerMixin {
+export default class OrdinalEncoder extends TransformerMixin {
   $labels: Map<string | number | boolean, number>[]
 
   constructor() {
@@ -49,17 +49,17 @@ export default class OneHotEncoder extends TransformerMixin {
   }
 
   /**
-   * Fits a OneHotEncoder to the data.
+   * Fits a OrdinalEncoder to the data.
    * @param data 1d array of labels, Tensor, or  Series to be encoded.
-   * @returns OneHotEncoder
+   * @returns OrdinalEncoder
    * @example
    * ```js
-   * const encoder = new OneHotEncoder()
+   * const encoder = new OrdinalEncoder()
    * encoder.fit(["a", "b", "c"])
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  fit(X: Scikit2D, y?: Scikit1D): OneHotEncoder {
+  fit(X: Scikit2D, y?: Scikit1D): OrdinalEncoder {
     const array2D = convertTo2DArray(X)
     this.loopOver2DArrayToSetLabels(array2D)
     return this
@@ -93,10 +93,6 @@ export default class OneHotEncoder extends TransformerMixin {
   transform(X: Scikit2D, y?: Scikit1D): Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
-    const newTensor = tensor2d(result2D, undefined, 'int32')
-    return concat(
-      newTensor.unstack(1).map((el, i) => oneHot(el, this.$labels[i].size)),
-      1
-    ) as Tensor2D
+    return tensor2d(result2D, undefined, 'int32')
   }
 }
