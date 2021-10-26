@@ -16,7 +16,8 @@
 import { convertToNumericTensor2D } from '../utils'
 import { Scikit2D, Strategy } from '../types'
 import { tensorMean } from '../math'
-import { median, modeFast } from 'simple-statistics'
+import { median } from 'mathjs'
+import { modeFast } from 'simple-statistics'
 import {
   Tensor1D,
   tensor1d,

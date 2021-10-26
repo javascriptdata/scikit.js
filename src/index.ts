@@ -29,11 +29,13 @@ import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
 import Pipeline from './pipeline/pipeline'
 import ColumnTransformer from './compose/column.transformer'
+import RobustScaler from './preprocessing/scalers/robust.scaler'
 
 export {
   MinMaxScaler,
   StandardScaler,
   MaxAbsScaler,
+  RobustScaler,
   OneHotEncoder,
   LabelEncoder,
   SimpleImputer,
