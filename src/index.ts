@@ -27,6 +27,7 @@ import SimpleImputer from './impute/simple.imputer'
 import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
 import OrdinalEncoder from './preprocessing/encoders/ordinal.encoder'
+import Normalizer from './preprocessing/scalers/normalizer'
 import Pipeline from './pipeline/pipeline'
 import ColumnTransformer from './compose/column.transformer'
 import RobustScaler from './preprocessing/scalers/robust.scaler'
@@ -36,6 +37,7 @@ export {
   StandardScaler,
   MaxAbsScaler,
   RobustScaler,
+  Normalizer,
   OneHotEncoder,
   LabelEncoder,
   SimpleImputer,
