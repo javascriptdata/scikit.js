@@ -62,9 +62,9 @@ export default class SimpleImputer extends TransformerMixin {
   }
 
   fit(X: Scikit2D): SimpleImputer {
-    const newTensor = convertToNumericTensor2D(X)
     // Fill with value passed into fillValue argument
     if (this.strategy === 'constant') {
+      const newTensor = convertToNumericTensor2D(X)
       assert(
         this.fillValue.size === newTensor.shape[1],
         "Fill value length doesn't match Tensor shape"
@@ -76,11 +76,13 @@ export default class SimpleImputer extends TransformerMixin {
       return this
     }
     if (this.strategy === 'mean') {
+      const newTensor = convertToNumericTensor2D(X)
       const mean = tensorMean(newTensor, 0, true)
       this.fillValue = mean as Tensor1D
       return this
     }
     if (this.strategy === 'mostFrequent') {
+      const newTensor = convertToNumericTensor2D(X)
       const mostFrequents = newTensor
         .transpose<Tensor2D>()
         .arraySync()
@@ -91,6 +93,7 @@ export default class SimpleImputer extends TransformerMixin {
       return this
     }
     if (this.strategy === 'median') {
+      const newTensor = convertToNumericTensor2D(X)
       const medians = newTensor
         .transpose<Tensor2D>()
         .arraySync()
