@@ -19,7 +19,7 @@ import {
 } from '../utils'
 import { Scikit1D, ScikitVecOrMatrix } from '../types'
 import { isScikitVecOrMatrix, assert, isScikit1D } from '../types.utils'
-import { median } from 'simple-statistics'
+import { median } from 'mathjs'
 import { PredictorMixin } from '../mixins'
 
 /**

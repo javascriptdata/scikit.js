@@ -12,41 +12,31 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { Tensor, tensor1d } from '@tensorflow/tfjs-node'
+import { Tensor, Tensor1D, tensor1d } from '@tensorflow/tfjs-node'
 import { Series } from 'danfojs-node'
 import { is1DArray } from '../../utils'
 import { TransformerMixin } from '../../mixins'
+import { Scikit1D } from '../../types'
 
 /**
  * Encode target labels with value between 0 and n_classes-1.
  */
 export default class LabelEncoder extends TransformerMixin {
-  private $labels: { [key: string]: number }
+  private $labels: Map<string | number | boolean, number>
 
   constructor() {
     super()
-    this.$labels = {}
+    this.$labels = new Map<string | number | boolean, number>()
   }
 
-  private $getData(data: Array<string | number> | Tensor | Series) {
-    let $data: Array<string | number>
-
-    if (data instanceof Array) {
-      if (is1DArray(data)) {
-        $data = data
-      } else {
-        throw new Error('ValueError: data must be a 1D array.')
-      }
-    } else if (data instanceof Series) {
-      $data = data.values as Array<string | number>
-    } else if (data instanceof Tensor) {
-      $data = data.arraySync() as Array<string | number>
-    } else {
-      throw new Error(
-        'ParamError: data must be one of Array, 1d Tensor or Series.'
-      )
+  convertTo1DArray(X: Scikit1D): Iterable<string | number | boolean> {
+    if (X instanceof Series) {
+      return X.values as any[]
     }
-    return $data
+    if (X instanceof Tensor) {
+      return X.arraySync()
+    }
+    return X
   }
 
   /**
@@ -58,14 +48,13 @@ export default class LabelEncoder extends TransformerMixin {
    * encoder.fit(["a", "b", "c", "d"])
    * ```
    */
-  fit(data: Array<string | number> | Tensor | Series) {
-    const $data = this.$getData(data)
-    const dataSet = Array.from(new Set($data))
-    const tempObj: { [key: string | number]: number } = {}
+  fit(X: Scikit1D): LabelEncoder {
+    const arr = this.convertTo1DArray(X)
+    const dataSet = Array.from(new Set(arr))
+
     dataSet.forEach((value, index) => {
-      tempObj[value] = index
+      this.$labels.set(value, index)
     })
-    this.$labels = tempObj
     return this
   }
 
@@ -80,19 +69,13 @@ export default class LabelEncoder extends TransformerMixin {
    * // [0, 1, 2, 3]
    * ```
    */
-  transform(data: Array<string | number> | Tensor | Series) {
-    const $data = this.$getData(data)
-    const encodedData: Array<number> = $data.map((value) => {
-      return this.$labels[value]
+  transform(X: Scikit1D): Tensor1D {
+    const arr = this.convertTo1DArray(X)
+    const encodedData = (arr as any).map((value: any) => {
+      let val = this.$labels.get(value)
+      return val === undefined ? -1 : val
     })
-
-    if (data instanceof Array) {
-      return encodedData
-    } else if (data instanceof Series) {
-      return new Series(encodedData)
-    } else {
-      return tensor1d(encodedData)
-    }
+    return tensor1d(encodedData)
   }
 
   /**
@@ -106,29 +89,14 @@ export default class LabelEncoder extends TransformerMixin {
    * // ["a", "b", "c", "d"]
    * ```
    */
-  inverseTransform(data: Array<number> | Tensor | Series) {
-    const $data = this.$getData(data)
-    const tempData = $data.map((value) => {
-      return Object.keys(this.$labels).find(
-        (key) => this.$labels[key] === value
-      )
-    })
+  inverseTransform(X: Scikit1D): any[] {
+    const arr = this.convertTo1DArray(X)
+    const invMap = new Map(Array.from(this.$labels, (a) => a.reverse()) as any)
 
-    const decodedData = tempData.map((value) => {
-      if (isNaN(parseInt(value as any))) {
-        return value
-      } else {
-        return Number(value)
-      }
+    const tempData = (arr as any).map((value: any) => {
+      return invMap.get(value) === undefined ? null : invMap.get(value)
     })
-
-    if (data instanceof Array) {
-      return decodedData
-    } else if (data instanceof Series) {
-      return new Series(decodedData)
-    } else {
-      return tensor1d(decodedData as any)
-    }
+    return tempData
   }
 
   /**
@@ -143,7 +111,7 @@ export default class LabelEncoder extends TransformerMixin {
    * ```
    */
   get nClasses(): number {
-    return Object.keys(this.$labels).length
+    return this.$labels.size
   }
 
   /**
@@ -157,7 +125,7 @@ export default class LabelEncoder extends TransformerMixin {
    * // {a: 0, b: 1, c: 2, d: 3}
    * ```
    */
-  get classes(): { [key: string]: number } {
+  get classes(): Map<string | number | boolean, number> {
     return this.$labels
   }
 }

@@ -13,25 +13,23 @@
 * ==========================================================================
 */
 
-import { Tensor1D, tensor1d, Tensor2D } from '@tensorflow/tfjs-node'
+import { abs, Tensor1D, tensor1d, Tensor2D } from '@tensorflow/tfjs-node'
 import { convertToNumericTensor2D } from '../../utils'
-import { assert, isScikit2D } from '../../types.utils'
-import { tensorMax, turnZerosToOnes } from '../../math'
+import { Scikit2D, Transformer } from '../../types'
+import { isScikit2D, assert } from '../../types.utils'
+import { tensorMin, tensorMax, turnZerosToOnes } from '../../math'
 import { TransformerMixin } from '../../mixins'
-import { Scikit2D } from '../../types'
-
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
  * that it is in the given range on the training set, e.g. between the maximum and minimum value.
  */
 
-export default class MaxAbsScaler extends TransformerMixin {
-  $scale: Tensor1D
-
-  constructor() {
+export default class Normalizer extends TransformerMixin {
+  norm: string
+  constructor(norm = 'l2') {
     super()
-    this.$scale = tensor1d([])
+    this.norm = norm
   }
 
   /**
@@ -47,14 +45,8 @@ export default class MaxAbsScaler extends TransformerMixin {
    * // }
    *
    */
-  fit(X: Scikit2D): MaxAbsScaler {
+  fit(X: Scikit2D): Normalizer {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(X)
-    const scale = tensorMax(tensorArray.abs(), 0, true) as Tensor1D
-
-    // Deal with 0 scale values
-    this.$scale = turnZerosToOnes(scale) as Tensor1D
-
     return this
   }
 
@@ -71,24 +63,16 @@ export default class MaxAbsScaler extends TransformerMixin {
   transform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.div<Tensor2D>(this.$scale)
-    return outputData
-  }
-
-  /**
-   * Inverse transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
-   * // [1, 2, 3, 4, 5]
-   * */
-  inverseTransform(X: Scikit2D): Tensor2D {
-    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul<Tensor2D>(this.$scale)
-    return outputData
+    if (this.norm === 'l1') {
+      const means = abs(tensorArray).sum(1).reshape([-1, 1])
+      return tensorArray.div(means)
+    }
+    if (this.norm === 'l2') {
+      const means = tensorArray.square().sum(1).sqrt().reshape([-1, 1])
+      return tensorArray.div(means)
+    }
+    // max case
+    const means = abs(tensorArray).max(1).reshape([-1, 1])
+    return tensorArray.div(means)
   }
 }

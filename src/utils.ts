@@ -33,7 +33,8 @@ import {
   ArrayType2D,
   Scikit1D,
   Scikit2D,
-  ScikitVecOrMatrix
+  ScikitVecOrMatrix,
+  TypedArray
 } from './types'
 import { inferShape, isTypedArray } from './types.utils'
 
@@ -259,4 +260,42 @@ export const tensorEqual = (
     throw new Error('tensor1 and tensor2 not of same shape')
   }
   return Boolean(lessEqual(max(abs(sub(tensor1, tensor2))), tol).dataSync()[0])
+}
+
+export const arrayEqual = (
+  array: Array<any> | any,
+  array2: Array<any> | any,
+  tol = 0
+): boolean => {
+  if (!Array.isArray(array) && !Array.isArray(array2)) {
+    return Math.abs(array - array2) <= tol
+  }
+  if (array.length !== array2.length) {
+    return false
+  }
+
+  for (let i = 0; i < array.length; i++) {
+    if (!arrayEqual(array[i], array2[i], tol)) {
+      return false
+    }
+  }
+  return true
+}
+
+export function convertTo2DArray(data: Scikit2D) {
+  if (data instanceof DataFrame) {
+    return data.values
+  }
+  if (data instanceof Tensor) {
+    return data.arraySync()
+  }
+  return data
+}
+
+export function arrayTo2DColumn(array: any[] | TypedArray) {
+  let newArray = []
+  for (let i = 0; i < array.length; i++) {
+    newArray.push([array[i]])
+  }
+  return newArray
 }

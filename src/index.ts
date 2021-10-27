@@ -24,23 +24,31 @@ import MinMaxScaler from './preprocessing/scalers/min.max.scaler'
 import StandardScaler from './preprocessing/scalers/standard.scaler'
 import MaxAbsScaler from './preprocessing/scalers/max.abs.scaler'
 import SimpleImputer from './impute/simple.imputer'
-import getDummies from './preprocessing/encoders/dummy.encoder'
 import OneHotEncoder from './preprocessing/encoders/one.hot.encoder'
 import LabelEncoder from './preprocessing/encoders/label.encoder'
+import OrdinalEncoder from './preprocessing/encoders/ordinal.encoder'
+import Normalizer from './preprocessing/scalers/normalizer'
+import Pipeline from './pipeline/pipeline'
+import ColumnTransformer from './compose/column.transformer'
+import RobustScaler from './preprocessing/scalers/robust.scaler'
 
 export {
   MinMaxScaler,
   StandardScaler,
   MaxAbsScaler,
+  RobustScaler,
+  Normalizer,
   OneHotEncoder,
   LabelEncoder,
   SimpleImputer,
-  getDummies,
   DummyRegressor,
   DummyClassifier,
   LinearRegression,
   LassoRegression,
   RidgeRegression,
   ElasticNet,
-  metrics
+  metrics,
+  Pipeline,
+  ColumnTransformer,
+  OrdinalEncoder
 }
