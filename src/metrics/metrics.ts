@@ -169,14 +169,21 @@ export function confusionMatrix(labels: Scikit1D, predictions: Scikit1D) {
     .confusionMatrix(labelsT, predictionsT, uniqueNumber.length)
     .arraySync()
 }
-/*
-  TODO: Calculate AUC
-  x -> 1d shape of x coordinates
-  y -> 1d shape of y coordinates
 
-  monotically increasing for both (assert on that)
-
-export function auc(labels: Scikit1D, predictions: Scikit1D) {
-  Do slice magic
+export function rocAucScore(labels: Scikit1D, predictions: Scikit1D) {
+  const { labelsT, predictionsT } = assertInputIsWellFormed(
+    labels,
+    predictions
+  )
+  // Todo: This can prob be done faster with tensor magic
+  let x = labelsT.arraySync()
+  let y = predictionsT.arraySync()
+  x.push(1)
+  y.push(1)
+  let area = 0
+  for (let i = 0; i < x.length - 1; i++) {
+    area += x[i] * y[i + 1] - x[i + 1] * y[i]
+  }
+  area -= 1
+  return Math.abs(area) / 2
 }
-*/
