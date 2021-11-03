@@ -13,7 +13,14 @@
 * ==========================================================================
 */
 
-import { concat, oneHot, tensor2d, Tensor2D } from '@tensorflow/tfjs-node'
+import {
+  concat,
+  oneHot,
+  Tensor1D,
+  tensor1d,
+  tensor2d,
+  Tensor2D
+} from '@tensorflow/tfjs-node'
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
@@ -98,5 +105,17 @@ export default class OneHotEncoder extends TransformerMixin {
       newTensor.unstack(1).map((el, i) => oneHot(el, this.$labels[i].size)),
       1
     ) as Tensor2D
+  }
+  // Only works for single column OneHotEncoding
+  inverseTransform(X: Tensor2D): any[] {
+    const tensorLabels = X.argMax(1) as Tensor1D
+    const invMap = new Map(
+      Array.from(this.$labels[0], (a) => a.reverse()) as any
+    )
+
+    const tempData = tensorLabels.arraySync().map((value) => {
+      return invMap.get(value) === undefined ? null : invMap.get(value)
+    })
+    return tempData
   }
 }
