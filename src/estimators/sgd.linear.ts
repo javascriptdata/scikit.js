@@ -37,7 +37,6 @@ import {
 import { Scikit2D, ScikitVecOrMatrix } from '../types'
 import { PredictorMixin } from '../mixins'
 import OneHotEncoder from '../preprocessing/encoders/one.hot.encoder'
-import { round } from '@tensorflow/tfjs-node'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -332,8 +331,6 @@ export class SGD extends PredictorMixin {
     }
     if (this.isClassification) {
       let yLabels = this.model.predict(XTwoD) as Tensor2D
-      console.log('Predicted Values')
-      yLabels.print()
       return tensor1d(this.oneHot.inverseTransform(yLabels)).reshape([-1, 1])
     }
     return this.model.predict(XTwoD) as Tensor2D
