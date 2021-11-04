@@ -19,7 +19,8 @@ import {
   Tensor1D,
   Tensor2D,
   tensor1d,
-  tensor2d
+  tensor2d,
+  losses
 } from '@tensorflow/tfjs-core'
 import {
   layers,
@@ -35,6 +36,7 @@ import {
 } from '../utils'
 import { Scikit2D, ScikitVecOrMatrix } from '../types'
 import { PredictorMixin } from '../mixins'
+import OneHotEncoder from '../preprocessing/encoders/one.hot.encoder'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -84,6 +86,14 @@ export interface SGDParams {
       )
    */
   denseLayerArgs: DenseLayerArgs
+
+  /**
+   * This class specifies that we are building a linear model that uses SGD. But there still is the
+   * question, "Is this model performing classification or regression"? This argument answers that
+   * definitely. It's a boolean that is true when the model aims to perform classification
+   */
+
+  isClassification?: boolean
 }
 
 export class SGD extends PredictorMixin {
@@ -92,12 +102,42 @@ export class SGD extends PredictorMixin {
   modelCompileArgs: ModelCompileArgs
   denseLayerArgs: DenseLayerArgs
 
+  /* For Classification */
+  isClassification: boolean
+  oneHot: OneHotEncoder
+
   constructor(params: SGDParams) {
     super()
     this.model = sequential()
     this.modelFitArgs = params.modelFitArgs
     this.modelCompileArgs = params.modelCompileArgs
     this.denseLayerArgs = params.denseLayerArgs
+    this.isClassification = Boolean(params.isClassification)
+    // TODO: Implement "drop" mechanics for OneHotEncoder
+    // There is a possibility to do a drop => if_binary which would
+    // squash down on the number of variables that we'd have to learn
+    this.oneHot = new OneHotEncoder()
+  }
+
+  initializeModelForClassification(y: Tensor1D | Tensor2D): Tensor2D {
+    let yToInt = y.toInt()
+    // This covers the case of a dependent variable that is already one hot encoded.
+    // There are other cases where you do "multi-variable output which isn't one hot encoded"
+    // Like say you were predicting which diseases a person could have (hasCancer, hasMeningitis, etc)
+    // Then you would have to run a sigmoid on each independent variable
+    if (yToInt.shape.length === 2) {
+      this.modelCompileArgs.loss = losses.softmaxCrossEntropy
+      return yToInt as Tensor2D
+    } else {
+      const yTwoD = y.reshape([-1, 1])
+      const yTwoDOneHotEncoded = this.oneHot.fitTransform(yTwoD)
+      if (this.oneHot.$labels[0].size > 2) {
+        this.modelCompileArgs.loss = losses.softmaxCrossEntropy
+      } else {
+        this.modelCompileArgs.loss = losses.sigmoidCrossEntropy
+      }
+      return yTwoDOneHotEncoded
+    }
   }
 
   /**
@@ -113,14 +153,14 @@ export class SGD extends PredictorMixin {
    */
 
   initializeModel(
-    XShape: number[],
-    yShape: number[],
+    X: Tensor2D,
+    y: Tensor1D | Tensor2D,
     weightsTensors: Tensor[] = []
   ): void {
-    this.denseLayerArgs.units = yShape.length
+    this.denseLayerArgs.units = y.shape.length === 1 ? 1 : y.shape[1]
     const model = sequential()
     model.add(
-      layers.dense({ inputShape: [XShape[1]], ...this.denseLayerArgs })
+      layers.dense({ inputShape: [X.shape[1]], ...this.denseLayerArgs })
     )
     model.compile(this.modelCompileArgs)
     if (weightsTensors?.length) {
@@ -155,9 +195,14 @@ export class SGD extends PredictorMixin {
     let XTwoD = convertToNumericTensor2D(X)
     let yOneD = convertToNumericTensor1D_2D(y)
 
-    if (this.model.layers.length === 0) {
-      this.initializeModel(XTwoD.shape, yOneD.shape)
+    if (this.isClassification) {
+      yOneD = this.initializeModelForClassification(yOneD)
     }
+
+    if (this.model.layers.length === 0) {
+      this.initializeModel(XTwoD, yOneD)
+    }
+
     await this.model.fit(XTwoD, yOneD, { ...this.modelFitArgs })
     return this
   }
@@ -187,10 +232,7 @@ export class SGD extends PredictorMixin {
     // TODO: Need to update for possible 2D coef case, and 1D intercept case
     let myCoef = tensor2d(params.coef_, [params.coef_.length, 1], 'float32')
     let myIntercept = tensor1d([params.intercept_], 'float32')
-    this.initializeModel(myCoef.shape, myIntercept.shape, [
-      myCoef,
-      myIntercept
-    ])
+    this.initializeModel(myCoef, myIntercept, [myCoef, myIntercept])
     return this
   }
 
@@ -229,7 +271,8 @@ export class SGD extends PredictorMixin {
     return {
       modelFitArgs: this.modelFitArgs,
       modelCompileArgs: this.modelCompileArgs,
-      denseLayerArgs: this.denseLayerArgs
+      denseLayerArgs: this.denseLayerArgs,
+      isClassification: Boolean(this.isClassification)
     }
   }
 
@@ -281,10 +324,14 @@ export class SGD extends PredictorMixin {
    * // => tensor2d([[ 4.5, 10.3, 19.1, 0.22 ]])
    */
 
-  predict(X: Scikit2D): Tensor2D {
+  predict(X: Scikit2D): Tensor1D | Tensor2D {
     let XTwoD = convertToNumericTensor2D(X)
     if (this.model.layers.length === 0) {
       throw new RangeError('Need to call "fit" before "predict"')
+    }
+    if (this.isClassification) {
+      let yLabels = this.model.predict(XTwoD) as Tensor2D
+      return tensor1d(this.oneHot.inverseTransform(yLabels)).reshape([-1, 1])
     }
     return this.model.predict(XTwoD) as Tensor2D
   }

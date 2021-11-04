@@ -1,3 +1,4 @@
+import { tensor2d } from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
 import { OneHotEncoder } from '../../../dist'
 import { arrayTo2DColumn } from '../../utils'
@@ -26,6 +27,15 @@ describe('OneHotEncoder', function () {
         [0, 0, 1],
         [0, 1, 0]
       ]
+    )
+    assert.deepEqual(
+      encode.inverseTransform(
+        tensor2d([
+          [0, 0, 1],
+          [0, 1, 0]
+        ])
+      ),
+      ['man', 'cat']
     )
   })
   it('OneHotEncoder works on 2DArray', function () {
