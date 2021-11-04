@@ -65,4 +65,14 @@ describe('Metrics', function () {
     const predictions = [4, 5, 4, 8]
     assert.deepEqual(metrics.zeroOneLoss(labels, predictions), 0.5)
   })
+  it('rocAucScore (easy)', function () {
+    const labels = [0.5]
+    const predictions = [1]
+    assert.deepEqual(metrics.rocAucScore(labels, predictions), 0.75)
+  })
+  it('rocAucScore (also easy)', function () {
+    const labels = [0.25, 0.75]
+    const predictions = [0.5, 0.5]
+    assert.deepEqual(metrics.rocAucScore(labels, predictions), 0.5)
+  })
 })
