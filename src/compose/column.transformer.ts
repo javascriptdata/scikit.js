@@ -13,14 +13,19 @@ function isStringArray(arr: any): arr is string[] {
   return Array.isArray(arr) && typeof arr[0] === 'string'
 }
 
+export interface ColumnTransformerParams {
+  transformers?: TransformerTriple
+  remainder?: TransformerOrString
+}
+
 export default class ColumnTransformer {
   transformers: TransformerTriple
   remainder: TransformerOrString
 
-  constructor(
-    transformers: TransformerTriple,
-    remainder: TransformerOrString = 'drop'
-  ) {
+  constructor({
+    transformers = [],
+    remainder = 'drop'
+  }: ColumnTransformerParams = {}) {
     this.transformers = transformers
     this.remainder = remainder
   }

@@ -4,9 +4,13 @@ import { Scikit1D, Scikit2D } from 'types'
 
 export type Bunch = [string, any]
 
+export interface PipelineParams {
+  steps?: Array<Bunch>
+}
+
 export default class Pipeline {
   steps: Array<Bunch>
-  constructor(steps: Array<Bunch>) {
+  constructor({ steps = [] }: PipelineParams = {}) {
     this.steps = steps
   }
 

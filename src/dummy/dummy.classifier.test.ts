@@ -22,7 +22,7 @@ describe('DummyClassifier', function () {
     assert.deepEqual(clf.predict(predictX), [20, 20, 20])
   })
   it('Use DummyClassifier on simple example (constant)', function () {
-    const clf = new DummyClassifier('constant', 10)
+    const clf = new DummyClassifier({ strategy: 'constant', fill: 10 })
 
     const X = [
       [-1, 5],
@@ -40,7 +40,7 @@ describe('DummyClassifier', function () {
     assert.deepEqual(clf.predict(predictX), [10, 10, 10])
   })
   it('Use DummyClassifier on simple example (uniform)', function () {
-    const scaler = new DummyClassifier('uniform')
+    const scaler = new DummyClassifier({ strategy: 'uniform' })
     const X = [
       [-1, 5],
       [-0.5, 5],

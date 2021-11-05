@@ -13,10 +13,12 @@ describe('Pipeline', function () {
       [1, 0] // [.5, 0]
     ]
     const y = [5, 6, 4, 1.5]
-    const pipeline = new Pipeline([
-      ['minmax', new MinMaxScaler()],
-      ['lr', new LinearRegression({ fitIntercept: false })]
-    ])
+    const pipeline = new Pipeline({
+      steps: [
+        ['minmax', new MinMaxScaler()],
+        ['lr', new LinearRegression({ fitIntercept: false })]
+      ]
+    })
 
     await pipeline.fit(X, y)
 
@@ -34,11 +36,16 @@ describe('Pipeline', function () {
       [1, 0] // [.5, 0]
     ]
     const y = [5, 6, 4, 1.5]
-    const pipeline = new Pipeline([
-      ['simpleImputer', new SimpleImputer('constant', [0, 3])],
-      ['minmax', new MinMaxScaler()],
-      ['lr', new LinearRegression({ fitIntercept: false })]
-    ])
+    const pipeline = new Pipeline({
+      steps: [
+        [
+          'simpleImputer',
+          new SimpleImputer({ strategy: 'constant', fillValue: [0, 3] })
+        ],
+        ['minmax', new MinMaxScaler()],
+        ['lr', new LinearRegression({ fitIntercept: false })]
+      ]
+    })
 
     await pipeline.fit(X, y)
 

@@ -42,7 +42,7 @@ export interface LinearRegressionParams {
 }
 
 export class LinearRegression extends SGD {
-  constructor(params: LinearRegressionParams = { fitIntercept: true }) {
+  constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
@@ -57,7 +57,7 @@ export class LinearRegression extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        useBias: Boolean(params.fitIntercept)
+        useBias: Boolean(fitIntercept)
       }
     })
   }

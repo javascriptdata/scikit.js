@@ -44,21 +44,27 @@ function removeMissingValuesFromArray(arr: any[]) {
   return values
 }
 
+export interface SimpleImputerParams {
+  strategy?: Strategy
+  fillValue?: number[] | string[]
+  missingValues?: number | string | null | undefined
+}
+
 // TODO: Make SimpleImputer work on strings
 export default class SimpleImputer extends TransformerMixin {
   missingValues: number | string | null | undefined
   fillValue: Tensor1D
   strategy: Strategy
 
-  constructor(
-    strategy: Strategy = 'mean',
-    fillValue: number[] | string[] = [],
-    missingValues: number | string | null | undefined = NaN
-  ) {
+  constructor({
+    strategy = 'mean',
+    fillValue = [],
+    missingValues = NaN
+  }: SimpleImputerParams = {}) {
     super()
     this.missingValues = missingValues
     this.strategy = strategy
-    this.fillValue = tensor1d(fillValue)
+    this.fillValue = tensor1d(fillValue || [])
   }
 
   fit(X: Scikit2D): SimpleImputer {

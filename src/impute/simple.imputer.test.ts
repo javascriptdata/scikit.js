@@ -4,7 +4,7 @@ import { SimpleImputer } from '../../dist'
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
-    const imputer = new SimpleImputer('constant', [3])
+    const imputer = new SimpleImputer({ strategy: 'constant', fillValue: [3] })
 
     const data = tensor2d([1, 2, NaN, 4, 4], [5, 1])
 
@@ -21,7 +21,10 @@ describe('SimpleImputer', function () {
     )
   })
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
-    const imputer = new SimpleImputer('constant', [3, 4])
+    const imputer = new SimpleImputer({
+      strategy: 'constant',
+      fillValue: [3, 4]
+    })
 
     const data = tensor2d([
       [1, NaN],
@@ -46,7 +49,7 @@ describe('SimpleImputer', function () {
     )
   })
   it('Imputes with "mean" strategy. In this strategy, we give the fill value', function () {
-    const imputer = new SimpleImputer('mean')
+    const imputer = new SimpleImputer({ strategy: 'mean' })
 
     const data = [
       [2, 3],
@@ -76,7 +79,7 @@ describe('SimpleImputer', function () {
     )
   })
   it('Imputes with "median" strategy. In this strategy, we give the fill value', function () {
-    const imputer = new SimpleImputer('median')
+    const imputer = new SimpleImputer({ strategy: 'median' })
 
     const data = [
       [2, 3],
@@ -98,7 +101,7 @@ describe('SimpleImputer', function () {
   })
 
   it('Imputes with "mostFrequent" strategy. In this strategy, we give the fill value', function () {
-    const imputer = new SimpleImputer('mostFrequent')
+    const imputer = new SimpleImputer({ strategy: 'mostFrequent' })
 
     const data = [
       [2, 3],

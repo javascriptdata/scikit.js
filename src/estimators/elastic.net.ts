@@ -29,7 +29,7 @@ export interface ElasticNetParams {
 }
 
 export class ElasticNet extends SGD {
-  constructor(params: ElasticNetParams) {
+  constructor({ alpha, l1Ratio, fitIntercept }: ElasticNetParams) {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
@@ -45,10 +45,10 @@ export class ElasticNet extends SGD {
       denseLayerArgs: {
         units: 1,
         kernelRegularizer: regularizers.l1l2({
-          l1: params.alpha * params.l1Ratio,
-          l2: 0.5 * params.alpha * (1 - params.l1Ratio)
+          l1: alpha * l1Ratio,
+          l2: 0.5 * alpha * (1 - l1Ratio)
         }),
-        useBias: Boolean(params.fitIntercept)
+        useBias: Boolean(fitIntercept)
       }
     })
   }

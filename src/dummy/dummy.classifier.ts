@@ -28,6 +28,11 @@ import { PredictorMixin } from '../mixins'
  */
 type Strategy = 'mostFrequent' | 'uniform' | 'constant'
 
+export interface DummyClassifierParams {
+  strategy?: Strategy
+  fill?: number
+}
+
 /**
  * Creates an estimator that guesses a class label based on simple rules.
  */
@@ -36,7 +41,10 @@ export default class DummyClassifier extends PredictorMixin {
   $strategy: string
   $uniques: number[] | string[]
 
-  constructor(strategy: Strategy = 'mostFrequent', fill?: number) {
+  constructor({
+    strategy = 'mostFrequent',
+    fill
+  }: DummyClassifierParams = {}) {
     super()
     this.$fill = fill || 0
     this.$strategy = strategy

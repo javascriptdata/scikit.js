@@ -28,7 +28,7 @@ export interface LassoParams {
 }
 
 export class LassoRegression extends SGD {
-  constructor(params: LassoParams) {
+  constructor({ fitIntercept, alpha }: LassoParams) {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
@@ -43,8 +43,8 @@ export class LassoRegression extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        kernelRegularizer: regularizers.l1({ l1: params.alpha }),
-        useBias: Boolean(params.fitIntercept)
+        kernelRegularizer: regularizers.l1({ l1: alpha }),
+        useBias: Boolean(fitIntercept)
       }
     })
   }

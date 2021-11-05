@@ -28,14 +28,30 @@ import { PredictorMixin } from '../mixins'
 
 type Strategy = 'mean' | 'median' | 'constant'
 
-/**
- * Creates an estimator that guesses a prediction based on simple rules.
- */
+export interface DummyRegressorParams {
+  /**
+   * The strategy that this DummyRegressor will use to make a prediction.
+   * Accepted values are 'mean', 'median', and 'constant'
+   *
+   * If 'mean' is chosen then the DummyRegressor will just "guess" the 'mean'
+   * of the target variable as it's prediction.
+   */
+  strategy: Strategy
+
+  /**
+   * In the case where you chose 'constant' as your strategy, the fill number
+   * will be the number that is predicted for any input.
+   */
+  fill?: number
+}
+
 export default class DummyRegressor extends PredictorMixin {
   $fill: number
   $strategy: string
 
-  constructor(strategy: Strategy = 'mean', fill?: number) {
+  constructor(
+    { strategy, fill }: DummyRegressorParams = { strategy: 'mean' }
+  ) {
     super()
     this.$fill = fill || 0
     this.$strategy = strategy
