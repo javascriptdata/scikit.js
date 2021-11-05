@@ -26,10 +26,9 @@ import { PredictorMixin } from '../mixins'
 /**
  * Supported strategies for this classifier.
  */
-type Strategy = 'mostFrequent' | 'uniform' | 'constant'
 
 export interface DummyClassifierParams {
-  strategy?: Strategy
+  strategy?: 'mostFrequent' | 'uniform' | 'constant'
   fill?: number
 }
 

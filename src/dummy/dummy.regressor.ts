@@ -26,8 +26,6 @@ import { PredictorMixin } from '../mixins'
  * Supported strategies for DummyRegressor
  */
 
-type Strategy = 'mean' | 'median' | 'constant'
-
 export interface DummyRegressorParams {
   /**
    * The strategy that this DummyRegressor will use to make a prediction.
@@ -36,7 +34,7 @@ export interface DummyRegressorParams {
    * If 'mean' is chosen then the DummyRegressor will just "guess" the 'mean'
    * of the target variable as it's prediction.
    */
-  strategy: Strategy
+  strategy?: 'mean' | 'median' | 'constant'
 
   /**
    * In the case where you chose 'constant' as your strategy, the fill number
@@ -49,9 +47,7 @@ export default class DummyRegressor extends PredictorMixin {
   $fill: number
   $strategy: string
 
-  constructor(
-    { strategy, fill }: DummyRegressorParams = { strategy: 'mean' }
-  ) {
+  constructor({ strategy = 'mean', fill }: DummyRegressorParams = {}) {
     super()
     this.$fill = fill || 0
     this.$strategy = strategy
