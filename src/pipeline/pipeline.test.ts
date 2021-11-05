@@ -24,7 +24,7 @@ describe('Pipeline', function () {
 
     assert.deepEqual(pipeline.steps[0][1].$min.arraySync(), [0, 0])
     assert.deepEqual(
-      tensorEqual(pipeline.steps[1][1].coef_, tensor1d([3, 4]), 0.2),
+      tensorEqual(pipeline.steps[1][1].coef_, tensor1d([3, 4]), 0.3),
       true
     )
   })
@@ -51,7 +51,7 @@ describe('Pipeline', function () {
 
     assert.deepEqual(pipeline.steps[1][1].$min.arraySync(), [0, 0])
     assert.deepEqual(
-      tensorEqual(pipeline.steps[2][1].coef_, tensor1d([3, 4]), 0.1),
+      tensorEqual(pipeline.steps[2][1].coef_, tensor1d([3, 4]), 0.3),
       true
     )
   })
