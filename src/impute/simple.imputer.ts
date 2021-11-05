@@ -50,8 +50,8 @@ export interface SimpleImputerParams {
   missingValues?: number | string | null | undefined
 }
 
-// TODO: Make SimpleImputer work on strings
 export default class SimpleImputer extends TransformerMixin {
+  // TODO: Make SimpleImputer work on strings
   missingValues: number | string | null | undefined
   fillValue: Tensor1D
   strategy: Strategy

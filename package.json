@@ -16,7 +16,9 @@
     "danfojs-node": "0.3.1",
     "lodash": "^4.17.21",
     "mathjs": "^9.5.1",
-    "simple-statistics": "^7.7.0"
+    "simple-statistics": "^7.7.0",
+    "typedoc": "^0.22.7",
+    "typedoc-plugin-markdown": "^3.11.3"
   },
   "scripts": {
     "test": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
@@ -24,6 +26,8 @@
     "dev": "nodemon",
     "build": "tsc",
     "build:clean": "rimraf ./build && tsc",
+    "build:docs": "cd docs && yarn build",
+    "build:type": "typedoc --out docs2 src/index.ts",
     "prettier": "prettier --check './src'",
     "lint": "eslint ./src/**/*.ts",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
@@ -66,6 +70,7 @@
     "@typescript-eslint/parser": "^5.1.0",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
+    "docusaurus": "^1.14.7",
     "eslint": "^8.0.1",
     "jsdoc": "^3.6.7",
     "mocha": "^7.2.0",
