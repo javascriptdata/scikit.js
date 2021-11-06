@@ -1,3 +1,12 @@
+---
+id: "index"
+title: "scikit.js"
+slug: "/api/"
+sidebar_label: "Readme"
+sidebar_position: 0
+custom_edit_url: null
+---
+
 # scikit.js
 
 JavaScript package for predictive data analysis and machine learning. Generic math operations are powered by Tensorflowjs core layer.

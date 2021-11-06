@@ -25,9 +25,13 @@ import { TransformerMixin } from '../../mixins'
  * that it is in the given range on the training set, e.g. between the maximum and minimum value.
  */
 
+export interface NormalizerParams {
+  norm?: 'l2' | 'l1' | 'max'
+}
+
 export default class Normalizer extends TransformerMixin {
   norm: string
-  constructor(norm = 'l2') {
+  constructor({ norm = 'l2' }: NormalizerParams = {}) {
     super()
     this.norm = norm
   }

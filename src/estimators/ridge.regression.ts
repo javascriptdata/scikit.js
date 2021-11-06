@@ -23,13 +23,16 @@ import { regularizers } from '@tensorflow/tfjs-node'
 // This is a placeholder until we can do an analytic solution instead
 // https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html
 
-export interface RidgeRegression {
-  fitIntercept: boolean
-  alpha: number
+export interface RidgeRegressionParams {
+  fitIntercept?: boolean
+  alpha?: number
 }
 
 export class RidgeRegression extends SGD {
-  constructor(params: RidgeRegression) {
+  constructor({
+    fitIntercept = true,
+    alpha = 0.01
+  }: RidgeRegressionParams = {}) {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
@@ -44,8 +47,8 @@ export class RidgeRegression extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        kernelRegularizer: regularizers.l2({ l2: params.alpha }),
-        useBias: Boolean(params.fitIntercept)
+        kernelRegularizer: regularizers.l2({ l2: alpha }),
+        useBias: Boolean(fitIntercept)
       }
     })
   }

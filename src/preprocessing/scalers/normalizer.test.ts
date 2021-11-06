@@ -12,7 +12,7 @@ describe('Normalizer', function () {
       [0, 10],
       [10, 20]
     ]
-    const scaler = new Normalizer('l1')
+    const scaler = new Normalizer({ norm: 'l1' })
 
     const expected = [
       [-0.5, 0.5],
@@ -49,7 +49,7 @@ describe('Normalizer', function () {
       [-3, 4],
       [0, 10]
     ]
-    const scaler = new Normalizer('max')
+    const scaler = new Normalizer({ norm: 'max' })
     const resultDf = scaler.fitTransform(data)
 
     const expected = [

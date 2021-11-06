@@ -10,10 +10,12 @@ describe('ColumnTransformer', function () {
       [2, 0] // [.5, 0]
     ]
 
-    const transformer = new ColumnTransformer([
-      ['minmax', new MinMaxScaler(), [0]],
-      ['simpleImpute', new SimpleImputer('median'), [1]]
-    ])
+    const transformer = new ColumnTransformer({
+      transformers: [
+        ['minmax', new MinMaxScaler(), [0]],
+        ['simpleImpute', new SimpleImputer({ strategy: 'median' }), [1]]
+      ]
+    })
 
     let result = transformer.fitTransform(X)
     const expected = [

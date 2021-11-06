@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { DummyRegressor } from '../../dist'
+import DummyRegressor from './dummy.regressor'
 
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {
@@ -21,7 +21,7 @@ describe('DummyRegressor', function () {
     assert.deepEqual(reg.predict(predictX), [20, 20, 20])
   })
   it('Use DummyRegressor on simple example (median)', function () {
-    const reg = new DummyRegressor('median')
+    const reg = new DummyRegressor({ strategy: 'median' })
 
     const X = [
       [-1, 5],
@@ -39,7 +39,7 @@ describe('DummyRegressor', function () {
     assert.deepEqual(reg.predict(predictX), [12, 12, 12])
   })
   it('Use DummyRegressor on simple example (constant)', function () {
-    const reg = new DummyRegressor('constant', 10)
+    const reg = new DummyRegressor({ strategy: 'constant', fill: 10 })
 
     const X = [
       [-1, 5],

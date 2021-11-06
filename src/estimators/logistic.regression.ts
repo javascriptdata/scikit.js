@@ -29,15 +29,13 @@ export interface LogisticRegressionParams {
 }
 
 export class LogisticRegression extends SGD {
-  constructor(
-    params: LogisticRegressionParams = {
-      fitIntercept: true,
-      C: 1,
-      penalty: 'l2'
-    }
-  ) {
-    if (params.C === undefined) {
-      params.C = 1
+  constructor({
+    penalty = 'l2',
+    C = 1,
+    fitIntercept = true
+  }: LogisticRegressionParams = {}) {
+    if (C === undefined) {
+      C = 1
     }
     // Assume Binary classification
     // If we call fit, and it isn't binary then update args
@@ -55,15 +53,15 @@ export class LogisticRegression extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        useBias: Boolean(params.fitIntercept),
+        useBias: Boolean(fitIntercept),
         activation: 'softmax',
         kernelInitializer: initializers.zeros(),
         biasInitializer: initializers.zeros(),
         kernelRegularizer:
-          params.penalty === 'l2'
-            ? regularizers.l2({ l2: params.C })
-            : params.penalty === 'l1'
-            ? regularizers.l1({ l1: params.C })
+          penalty === 'l2'
+            ? regularizers.l2({ l2: C })
+            : penalty === 'l1'
+            ? regularizers.l1({ l1: C })
             : undefined
       },
       isClassification: true

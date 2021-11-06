@@ -106,13 +106,18 @@ export class SGD extends PredictorMixin {
   isClassification: boolean
   oneHot: OneHotEncoder
 
-  constructor(params: SGDParams) {
+  constructor({
+    modelFitArgs,
+    modelCompileArgs,
+    denseLayerArgs,
+    isClassification
+  }: SGDParams) {
     super()
     this.model = sequential()
-    this.modelFitArgs = params.modelFitArgs
-    this.modelCompileArgs = params.modelCompileArgs
-    this.denseLayerArgs = params.denseLayerArgs
-    this.isClassification = Boolean(params.isClassification)
+    this.modelFitArgs = modelFitArgs
+    this.modelCompileArgs = modelCompileArgs
+    this.denseLayerArgs = denseLayerArgs
+    this.isClassification = Boolean(isClassification)
     // TODO: Implement "drop" mechanics for OneHotEncoder
     // There is a possibility to do a drop => if_binary which would
     // squash down on the number of variables that we'd have to learn

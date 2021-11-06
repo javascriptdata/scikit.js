@@ -26,7 +26,11 @@ import { PredictorMixin } from '../mixins'
 /**
  * Supported strategies for this classifier.
  */
-type Strategy = 'mostFrequent' | 'uniform' | 'constant'
+
+export interface DummyClassifierParams {
+  strategy?: 'mostFrequent' | 'uniform' | 'constant'
+  fill?: number
+}
 
 /**
  * Creates an estimator that guesses a class label based on simple rules.
@@ -36,7 +40,10 @@ export default class DummyClassifier extends PredictorMixin {
   $strategy: string
   $uniques: number[] | string[]
 
-  constructor(strategy: Strategy = 'mostFrequent', fill?: number) {
+  constructor({
+    strategy = 'mostFrequent',
+    fill
+  }: DummyClassifierParams = {}) {
     super()
     this.$fill = fill || 0
     this.$strategy = strategy
