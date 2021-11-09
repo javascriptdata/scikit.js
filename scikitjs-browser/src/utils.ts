@@ -26,8 +26,8 @@ import {
   Tensor2D,
   tensor2d,
   TensorLike
-} from '@tensorflow/tfjs-node'
-import { DataFrame, Series } from 'danfojs-node'
+} from '@tensorflow/tfjs'
+import { DataFrame, Series } from 'danfojs'
 import {
   ArrayType1D,
   ArrayType2D,

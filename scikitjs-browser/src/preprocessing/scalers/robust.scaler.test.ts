@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { RobustScaler } from '../../../dist'
-import { DataFrame } from 'danfojs-node'
+import { DataFrame } from 'danfojs'
 import { arrayEqual } from '../../utils'
 
 describe('RobustScaler', function () {

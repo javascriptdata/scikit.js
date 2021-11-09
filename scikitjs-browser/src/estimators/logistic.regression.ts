@@ -13,11 +13,11 @@
 // * ==========================================================================
 // */
 
-import '@tensorflow/tfjs-node'
+import '@tensorflow/tfjs'
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGD } from './sgd.linear'
-import { initializers, regularizers } from '@tensorflow/tfjs-node'
+import { initializers, regularizers } from '@tensorflow/tfjs'
 
 // First pass at a LogisticRegression implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html

@@ -13,11 +13,11 @@
 * ==========================================================================
 */
 
-import '@tensorflow/tfjs-node'
+import '@tensorflow/tfjs'
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGD } from './sgd.linear'
-import { regularizers } from '@tensorflow/tfjs-node'
+import { regularizers } from '@tensorflow/tfjs'
 
 // RidgeRegression implementation using gradient descent
 // This is a placeholder until we can do an analytic solution instead

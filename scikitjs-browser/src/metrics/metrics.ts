@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { metrics, losses, math, sub, square } from '@tensorflow/tfjs-node'
+import { metrics, losses, math, sub, square } from '@tensorflow/tfjs'
 import { convertToNumericTensor1D } from '../utils'
 import { Scikit1D } from '../types'
 import { assert, isScikit1D } from '../types.utils'

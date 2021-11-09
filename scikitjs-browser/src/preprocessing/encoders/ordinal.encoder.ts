@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { tensor2d, Tensor2D } from '@tensorflow/tfjs-node'
+import { tensor2d, Tensor2D } from '@tensorflow/tfjs'
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'

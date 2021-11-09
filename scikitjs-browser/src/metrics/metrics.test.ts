@@ -28,11 +28,11 @@ describe('Metrics', function () {
     assert.deepEqual(metrics.meanSquaredError(labels, predictions), 1)
   })
   it('meanSquaredLogError', function () {
-    const labels = [3, 5, 2.5, 7]
-    const predictions = [2.5, 5, 4, 8]
+    const labels = [1]
+    const predictions = [2]
     assert.deepEqual(
       metrics.meanSquaredLogError(labels, predictions),
-      0.03973011299967766
+      0.16440196335315704
     )
   })
   it('confusionMatrix', function () {

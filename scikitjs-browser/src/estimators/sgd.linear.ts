@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import '@tensorflow/tfjs-node'
+import '@tensorflow/tfjs'
 import {
   Tensor,
   Tensor1D,

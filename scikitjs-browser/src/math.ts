@@ -1,5 +1,5 @@
 import { onesLike, Tensor, tidy, where } from '@tensorflow/tfjs-core'
-import { logicalNot, zerosLike } from '@tensorflow/tfjs-node'
+import { logicalNot, zerosLike } from '@tensorflow/tfjs'
 import { Iterable } from './types'
 import { assert } from './types.utils'
 

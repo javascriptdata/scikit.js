@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { tensor1d, Tensor, Tensor1D, Tensor2D } from '@tensorflow/tfjs-node'
+import { tensor1d, Tensor, Tensor1D, Tensor2D } from '@tensorflow/tfjs'
 import { convertToNumericTensor2D } from '../../utils'
 import { Scikit2D } from '../../types'
 import { isScikit2D, assert } from '../../types.utils'

@@ -1,5 +1,5 @@
 import { concat, Tensor2D } from '@tensorflow/tfjs-core'
-import { DataFrame } from 'danfojs-node'
+import { DataFrame } from 'danfojs'
 import { Scikit1D, Scikit2D, Transformer } from '../types'
 
 // When you pass a single string or int, it "pulls" a 1D column

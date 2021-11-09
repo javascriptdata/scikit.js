@@ -20,7 +20,7 @@ import {
   tensor1d,
   tensor2d,
   Tensor2D
-} from '@tensorflow/tfjs-node'
+} from '@tensorflow/tfjs'
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'

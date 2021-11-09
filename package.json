@@ -1,0 +1,23 @@
+{
+  "name": "scikit",
+  "version": "1.0.0",
+  "description": "Scikit-Learn for JS",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test:clean": "cd scikitjs-node && yarn test:clean && cd ../scikitjs-browser && yarn test:clean",
+    "build": "cd scikitjs-node && yarn build && cd ../scikitjs-browser && yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dcrescim/scikit.js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dcrescim/scikit.js/issues"
+  },
+  "homepage": "https://github.com/dcrescim/scikit.js#readme"
+}

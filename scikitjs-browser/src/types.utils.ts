@@ -14,8 +14,8 @@
 */
 
 import { Tensor } from '@tensorflow/tfjs-core'
-import { DataFrame, Series } from 'danfojs-node'
-import { DataType, TensorLike } from '@tensorflow/tfjs-node'
+import { DataFrame, Series } from 'danfojs'
+import { DataType, TensorLike } from '@tensorflow/tfjs'
 import {
   Scikit1D,
   Scikit2D,

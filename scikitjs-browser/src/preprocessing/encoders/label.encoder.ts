@@ -12,8 +12,8 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { Tensor, Tensor1D, tensor1d } from '@tensorflow/tfjs-node'
-import { Series } from 'danfojs-node'
+import { Tensor, Tensor1D, tensor1d } from '@tensorflow/tfjs'
+import { Series } from 'danfojs'
 import { is1DArray } from '../../utils'
 import { TransformerMixin } from '../../mixins'
 import { Scikit1D } from '../../types'

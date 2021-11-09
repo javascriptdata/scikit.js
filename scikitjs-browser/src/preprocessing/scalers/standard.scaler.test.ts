@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { StandardScaler } from '../../../dist'
-import { DataFrame } from 'danfojs-node'
+import { DataFrame } from 'danfojs'
 
 describe('StandardScaler', function () {
   it('StandardScaler works for DataFrame', function () {

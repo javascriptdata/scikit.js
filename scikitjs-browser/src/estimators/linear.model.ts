@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import '@tensorflow/tfjs-node'
+import '@tensorflow/tfjs'
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGD } from './sgd.linear'

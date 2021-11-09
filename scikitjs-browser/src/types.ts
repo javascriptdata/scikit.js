@@ -14,7 +14,7 @@
 */
 
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
-import { DataFrame, Series } from 'danfojs-node'
+import { DataFrame, Series } from 'danfojs'
 
 // The Types that Scikit uses
 export type TypedArray = Float32Array | Int32Array | Uint8Array

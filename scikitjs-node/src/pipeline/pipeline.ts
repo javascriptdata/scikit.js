@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { assert } from 'console'
+import { assert } from '../types.utils'
 import { Scikit1D, Scikit2D } from 'types'
 
 export type Bunch = [string, any]
