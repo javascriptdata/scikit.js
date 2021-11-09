@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/dcrescim/scikit.js/issues"
   },
-  "homepage": "https://github.com/dcrescim/scikit.js#readme"
+  "homepage": "https://github.com/dcrescim/scikit.js#readme",
+  "devDependencies": {
+    "yarn": "^1.22.17"
+  }
 }
