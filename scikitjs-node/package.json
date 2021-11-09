@@ -1,5 +1,5 @@
 {
-  "name": "scikit.js",
+  "name": "scikitjs-node",
   "version": "0.0.1",
   "description": "JavaScript package for predictive data analysis and machine learning.",
   "main": "dist/index.js",
@@ -60,7 +60,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/opensource9ja/danfojs.git"
+    "url": "git+https://github.com/opensource9ja/scikitjs.git"
   },
   "keywords": [
     "pandas",
@@ -71,9 +71,9 @@
   "author": "Rising Odegua <risingodegua@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/opensource9ja/danfojs/issues"
+    "url": "https://github.com/opensource9ja/scikitjs/issues"
   },
-  "homepage": "https://github.com/opensource9ja/danfojs#readme",
+  "homepage": "https://github.com/opensource9ja/scikitjs#readme",
   "nyc": {
     "reporter": [
       "lcov",

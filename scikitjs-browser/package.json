@@ -1,5 +1,5 @@
 {
-  "name": "scikit.js",
+  "name": "scikitjs",
   "version": "0.0.1",
   "description": "JavaScript package for predictive data analysis and machine learning.",
   "main": "dist/index.js",
