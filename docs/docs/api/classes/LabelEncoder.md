@@ -26,7 +26,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:27](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L27)
+[preprocessing/encoders/label.encoder.ts:27](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L27)
 
 ## Properties
 
@@ -36,7 +36,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:25](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L25)
+[preprocessing/encoders/label.encoder.ts:25](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L25)
 
 ## Accessors
 
@@ -62,7 +62,7 @@ mapping of classes to integers.
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:128](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L128)
+[preprocessing/encoders/label.encoder.ts:128](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L128)
 
 ___
 
@@ -88,7 +88,7 @@ number of classes.
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:113](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L113)
+[preprocessing/encoders/label.encoder.ts:113](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L113)
 
 ## Methods
 
@@ -108,7 +108,7 @@ number of classes.
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:32](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L32)
+[preprocessing/encoders/label.encoder.ts:32](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L32)
 
 ___
 
@@ -136,7 +136,7 @@ encoder.fit(["a", "b", "c", "d"])
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:51](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L51)
+[preprocessing/encoders/label.encoder.ts:51](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L51)
 
 ___
 
@@ -160,7 +160,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/mixins.ts#L3)
+[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
 
 ___
 
@@ -190,7 +190,7 @@ console.log(encoder.inverseTransform([0, 1, 2, 3]))
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:92](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L92)
+[preprocessing/encoders/label.encoder.ts:92](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L92)
 
 ___
 
@@ -220,4 +220,4 @@ console.log(encoder.transform(["a", "b", "c", "d"]))
 
 #### Defined in
 
-[preprocessing/encoders/label.encoder.ts:72](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/label.encoder.ts#L72)
+[preprocessing/encoders/label.encoder.ts:72](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/label.encoder.ts#L72)

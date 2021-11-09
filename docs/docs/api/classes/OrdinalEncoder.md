@@ -32,7 +32,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/encoders/ordinal.encoder.ts:31](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/ordinal.encoder.ts#L31)
+[preprocessing/encoders/ordinal.encoder.ts:31](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/ordinal.encoder.ts#L31)
 
 ## Properties
 
@@ -42,7 +42,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/encoders/ordinal.encoder.ts:29](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/ordinal.encoder.ts#L29)
+[preprocessing/encoders/ordinal.encoder.ts:29](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/ordinal.encoder.ts#L29)
 
 ## Methods
 
@@ -73,7 +73,7 @@ OrdinalEncoder
 
 #### Defined in
 
-[preprocessing/encoders/ordinal.encoder.ts:62](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/ordinal.encoder.ts#L62)
+[preprocessing/encoders/ordinal.encoder.ts:62](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/ordinal.encoder.ts#L62)
 
 ___
 
@@ -97,7 +97,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/mixins.ts#L3)
+[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[preprocessing/encoders/ordinal.encoder.ts:36](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/ordinal.encoder.ts#L36)
+[preprocessing/encoders/ordinal.encoder.ts:36](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/ordinal.encoder.ts#L36)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[preprocessing/encoders/ordinal.encoder.ts:68](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/ordinal.encoder.ts#L68)
+[preprocessing/encoders/ordinal.encoder.ts:68](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/ordinal.encoder.ts#L68)
 
 ___
 
@@ -167,4 +167,4 @@ encoder.transform(["a", "b", "c"])
 
 #### Defined in
 
-[preprocessing/encoders/ordinal.encoder.ts:93](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/ordinal.encoder.ts#L93)
+[preprocessing/encoders/ordinal.encoder.ts:93](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/ordinal.encoder.ts#L93)

@@ -25,7 +25,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[metrics/metrics.ts:41](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L41)
+[metrics/metrics.ts:41](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L41)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:160](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L160)
+[metrics/metrics.ts:160](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L160)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:120](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L120)
+[metrics/metrics.ts:120](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L120)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:129](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L129)
+[metrics/metrics.ts:129](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L129)
 
 ___
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:138](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L138)
+[metrics/metrics.ts:138](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L138)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:88](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L88)
+[metrics/metrics.ts:88](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L88)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:100](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L100)
+[metrics/metrics.ts:100](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L100)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:109](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L109)
+[metrics/metrics.ts:109](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L109)
 
 ___
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:53](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L53)
+[metrics/metrics.ts:53](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L53)
 
 ___
 
@@ -214,7 +214,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:71](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L71)
+[metrics/metrics.ts:71](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L71)
 
 ___
 
@@ -235,7 +235,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:62](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L62)
+[metrics/metrics.ts:62](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L62)
 
 ___
 
@@ -256,7 +256,7 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:173](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L173)
+[metrics/metrics.ts:173](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L173)
 
 ___
 
@@ -277,4 +277,4 @@ ___
 
 #### Defined in
 
-[metrics/metrics.ts:147](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/metrics/metrics.ts#L147)
+[metrics/metrics.ts:147](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/metrics/metrics.ts#L147)

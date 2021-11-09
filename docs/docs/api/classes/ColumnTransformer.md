@@ -20,7 +20,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[compose/column.transformer.ts:25](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/compose/column.transformer.ts#L25)
+[compose/column.transformer.ts:25](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/compose/column.transformer.ts#L25)
 
 ## Properties
 
@@ -30,7 +30,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[compose/column.transformer.ts:23](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/compose/column.transformer.ts#L23)
+[compose/column.transformer.ts:23](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/compose/column.transformer.ts#L23)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-[compose/column.transformer.ts:22](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/compose/column.transformer.ts#L22)
+[compose/column.transformer.ts:22](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/compose/column.transformer.ts#L22)
 
 ## Methods
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[compose/column.transformer.ts:46](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/compose/column.transformer.ts#L46)
+[compose/column.transformer.ts:46](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/compose/column.transformer.ts#L46)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[compose/column.transformer.ts:72](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/compose/column.transformer.ts#L72)
+[compose/column.transformer.ts:72](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/compose/column.transformer.ts#L72)
 
 ___
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[compose/column.transformer.ts:33](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/compose/column.transformer.ts#L33)
+[compose/column.transformer.ts:33](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/compose/column.transformer.ts#L33)
 
 ___
 
@@ -124,4 +124,4 @@ ___
 
 #### Defined in
 
-[compose/column.transformer.ts:58](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/compose/column.transformer.ts#L58)
+[compose/column.transformer.ts:58](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/compose/column.transformer.ts#L58)

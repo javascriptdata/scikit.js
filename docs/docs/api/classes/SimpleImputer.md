@@ -30,7 +30,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[impute/simple.imputer.ts:59](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/impute/simple.imputer.ts#L59)
+[impute/simple.imputer.ts:59](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/impute/simple.imputer.ts#L59)
 
 ## Properties
 
@@ -40,7 +40,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[impute/simple.imputer.ts:56](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/impute/simple.imputer.ts#L56)
+[impute/simple.imputer.ts:56](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/impute/simple.imputer.ts#L56)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[impute/simple.imputer.ts:55](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/impute/simple.imputer.ts#L55)
+[impute/simple.imputer.ts:55](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/impute/simple.imputer.ts#L55)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[impute/simple.imputer.ts:57](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/impute/simple.imputer.ts#L57)
+[impute/simple.imputer.ts:57](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/impute/simple.imputer.ts#L57)
 
 ## Methods
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[impute/simple.imputer.ts:70](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/impute/simple.imputer.ts#L70)
+[impute/simple.imputer.ts:70](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/impute/simple.imputer.ts#L70)
 
 ___
 
@@ -104,7 +104,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/mixins.ts#L3)
+[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
 
 ___
 
@@ -124,4 +124,4 @@ ___
 
 #### Defined in
 
-[impute/simple.imputer.ts:117](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/impute/simple.imputer.ts#L117)
+[impute/simple.imputer.ts:117](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/impute/simple.imputer.ts#L117)

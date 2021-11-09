@@ -32,7 +32,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/min.max.scaler.ts:35](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/scalers/min.max.scaler.ts#L35)
+[preprocessing/scalers/min.max.scaler.ts:35](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/min.max.scaler.ts#L35)
 
 ## Properties
 
@@ -42,7 +42,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/min.max.scaler.ts:33](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/scalers/min.max.scaler.ts#L33)
+[preprocessing/scalers/min.max.scaler.ts:33](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/min.max.scaler.ts#L33)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[preprocessing/scalers/min.max.scaler.ts:32](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/scalers/min.max.scaler.ts#L32)
+[preprocessing/scalers/min.max.scaler.ts:32](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/min.max.scaler.ts#L32)
 
 ## Methods
 
@@ -88,7 +88,7 @@ Transformer.fit
 
 #### Defined in
 
-[preprocessing/scalers/min.max.scaler.ts:54](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/scalers/min.max.scaler.ts#L54)
+[preprocessing/scalers/min.max.scaler.ts:54](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/min.max.scaler.ts#L54)
 
 ___
 
@@ -116,7 +116,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/mixins.ts#L3)
+[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
 
 ___
 
@@ -146,7 +146,7 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/min.max.scaler.ts:98](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/scalers/min.max.scaler.ts#L98)
+[preprocessing/scalers/min.max.scaler.ts:98](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/min.max.scaler.ts#L98)
 
 ___
 
@@ -180,4 +180,4 @@ Transformer.transform
 
 #### Defined in
 
-[preprocessing/scalers/min.max.scaler.ts:81](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/scalers/min.max.scaler.ts#L81)
+[preprocessing/scalers/min.max.scaler.ts:81](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/min.max.scaler.ts#L81)

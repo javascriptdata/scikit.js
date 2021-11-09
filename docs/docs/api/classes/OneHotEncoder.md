@@ -32,7 +32,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/encoders/one.hot.encoder.ts:38](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/one.hot.encoder.ts#L38)
+[preprocessing/encoders/one.hot.encoder.ts:38](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/one.hot.encoder.ts#L38)
 
 ## Properties
 
@@ -42,7 +42,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/encoders/one.hot.encoder.ts:36](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/one.hot.encoder.ts#L36)
+[preprocessing/encoders/one.hot.encoder.ts:36](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/one.hot.encoder.ts#L36)
 
 ## Methods
 
@@ -73,7 +73,7 @@ OneHotEncoder
 
 #### Defined in
 
-[preprocessing/encoders/one.hot.encoder.ts:69](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/one.hot.encoder.ts#L69)
+[preprocessing/encoders/one.hot.encoder.ts:69](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/one.hot.encoder.ts#L69)
 
 ___
 
@@ -97,7 +97,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/mixins.ts#L3)
+[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[preprocessing/encoders/one.hot.encoder.ts:110](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/one.hot.encoder.ts#L110)
+[preprocessing/encoders/one.hot.encoder.ts:110](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/one.hot.encoder.ts#L110)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[preprocessing/encoders/one.hot.encoder.ts:43](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/one.hot.encoder.ts#L43)
+[preprocessing/encoders/one.hot.encoder.ts:43](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/one.hot.encoder.ts#L43)
 
 ___
 
@@ -157,7 +157,7 @@ ___
 
 #### Defined in
 
-[preprocessing/encoders/one.hot.encoder.ts:75](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/one.hot.encoder.ts#L75)
+[preprocessing/encoders/one.hot.encoder.ts:75](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/one.hot.encoder.ts#L75)
 
 ___
 
@@ -187,4 +187,4 @@ encoder.transform(["a", "b", "c"])
 
 #### Defined in
 
-[preprocessing/encoders/one.hot.encoder.ts:100](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/preprocessing/encoders/one.hot.encoder.ts#L100)
+[preprocessing/encoders/one.hot.encoder.ts:100](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/encoders/one.hot.encoder.ts#L100)

@@ -30,7 +30,7 @@ SGD.constructor
 
 #### Defined in
 
-[estimators/logistic.regression.ts:32](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/logistic.regression.ts#L32)
+[estimators/logistic.regression.ts:32](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/logistic.regression.ts#L32)
 
 ## Properties
 
@@ -44,7 +44,7 @@ SGD.denseLayerArgs
 
 #### Defined in
 
-[estimators/sgd.linear.ts:103](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L103)
+[estimators/sgd.linear.ts:103](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L103)
 
 ___
 
@@ -58,7 +58,7 @@ SGD.isClassification
 
 #### Defined in
 
-[estimators/sgd.linear.ts:106](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L106)
+[estimators/sgd.linear.ts:106](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L106)
 
 ___
 
@@ -72,7 +72,7 @@ SGD.model
 
 #### Defined in
 
-[estimators/sgd.linear.ts:100](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L100)
+[estimators/sgd.linear.ts:100](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L100)
 
 ___
 
@@ -86,7 +86,7 @@ SGD.modelCompileArgs
 
 #### Defined in
 
-[estimators/sgd.linear.ts:102](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L102)
+[estimators/sgd.linear.ts:102](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L102)
 
 ___
 
@@ -100,7 +100,7 @@ SGD.modelFitArgs
 
 #### Defined in
 
-[estimators/sgd.linear.ts:101](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L101)
+[estimators/sgd.linear.ts:101](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L101)
 
 ___
 
@@ -114,7 +114,7 @@ SGD.oneHot
 
 #### Defined in
 
-[estimators/sgd.linear.ts:107](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L107)
+[estimators/sgd.linear.ts:107](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L107)
 
 ## Accessors
 
@@ -153,7 +153,7 @@ SGD.coef\_
 
 #### Defined in
 
-[estimators/sgd.linear.ts:367](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L367)
+[estimators/sgd.linear.ts:367](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L367)
 
 ___
 
@@ -194,7 +194,7 @@ SGD.intercept\_
 
 #### Defined in
 
-[estimators/sgd.linear.ts:403](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L403)
+[estimators/sgd.linear.ts:403](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L403)
 
 ## Methods
 
@@ -237,7 +237,7 @@ SGD.fit
 
 #### Defined in
 
-[estimators/sgd.linear.ts:199](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L199)
+[estimators/sgd.linear.ts:199](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L199)
 
 ___
 
@@ -262,7 +262,7 @@ SGD.fitPredict
 
 #### Defined in
 
-[mixins.ts:10](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/mixins.ts#L10)
+[mixins.ts:10](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L10)
 
 ___
 
@@ -310,7 +310,7 @@ SGD.getParams
 
 #### Defined in
 
-[estimators/sgd.linear.ts:275](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L275)
+[estimators/sgd.linear.ts:275](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L275)
 
 ___
 
@@ -352,7 +352,7 @@ SGD.importModel
 
 #### Defined in
 
-[estimators/sgd.linear.ts:236](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L236)
+[estimators/sgd.linear.ts:236](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L236)
 
 ___
 
@@ -387,7 +387,7 @@ SGD.initializeModel
 
 #### Defined in
 
-[estimators/sgd.linear.ts:160](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L160)
+[estimators/sgd.linear.ts:160](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L160)
 
 ___
 
@@ -411,7 +411,7 @@ SGD.initializeModelForClassification
 
 #### Defined in
 
-[estimators/sgd.linear.ts:127](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L127)
+[estimators/sgd.linear.ts:127](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L127)
 
 ___
 
@@ -454,7 +454,7 @@ SGD.predict
 
 #### Defined in
 
-[estimators/sgd.linear.ts:332](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L332)
+[estimators/sgd.linear.ts:332](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L332)
 
 ___
 
@@ -495,4 +495,4 @@ SGD.setParams
 
 #### Defined in
 
-[estimators/sgd.linear.ts:302](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/estimators/sgd.linear.ts#L302)
+[estimators/sgd.linear.ts:302](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/estimators/sgd.linear.ts#L302)

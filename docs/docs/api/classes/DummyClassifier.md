@@ -32,7 +32,7 @@ PredictorMixin.constructor
 
 #### Defined in
 
-[dummy/dummy.classifier.ts:43](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/dummy/dummy.classifier.ts#L43)
+[dummy/dummy.classifier.ts:43](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.classifier.ts#L43)
 
 ## Properties
 
@@ -42,7 +42,7 @@ PredictorMixin.constructor
 
 #### Defined in
 
-[dummy/dummy.classifier.ts:39](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/dummy/dummy.classifier.ts#L39)
+[dummy/dummy.classifier.ts:39](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.classifier.ts#L39)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[dummy/dummy.classifier.ts:40](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/dummy/dummy.classifier.ts#L40)
+[dummy/dummy.classifier.ts:40](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.classifier.ts#L40)
 
 ___
 
@@ -62,7 +62,7 @@ ___
 
 #### Defined in
 
-[dummy/dummy.classifier.ts:41](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/dummy/dummy.classifier.ts#L41)
+[dummy/dummy.classifier.ts:41](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.classifier.ts#L41)
 
 ## Methods
 
@@ -91,7 +91,7 @@ DummyClassifier
 
 #### Defined in
 
-[dummy/dummy.classifier.ts:62](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/dummy/dummy.classifier.ts#L62)
+[dummy/dummy.classifier.ts:62](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.classifier.ts#L62)
 
 ___
 
@@ -116,7 +116,7 @@ PredictorMixin.fitPredict
 
 #### Defined in
 
-[mixins.ts:10](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/mixins.ts#L10)
+[mixins.ts:10](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L10)
 
 ___
 
@@ -146,4 +146,4 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[dummy/dummy.classifier.ts:93](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/dummy/dummy.classifier.ts#L93)
+[dummy/dummy.classifier.ts:93](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.classifier.ts#L93)

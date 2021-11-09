@@ -20,7 +20,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[pipeline/pipeline.ts:13](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/pipeline/pipeline.ts#L13)
+[pipeline/pipeline.ts:13](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/pipeline/pipeline.ts#L13)
 
 ## Properties
 
@@ -30,7 +30,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[pipeline/pipeline.ts:12](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/pipeline/pipeline.ts#L12)
+[pipeline/pipeline.ts:12](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/pipeline/pipeline.ts#L12)
 
 ## Methods
 
@@ -51,7 +51,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[pipeline/pipeline.ts:17](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/pipeline/pipeline.ts#L17)
+[pipeline/pipeline.ts:17](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/pipeline/pipeline.ts#L17)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[pipeline/pipeline.ts:61](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/pipeline/pipeline.ts#L61)
+[pipeline/pipeline.ts:61](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/pipeline/pipeline.ts#L61)
 
 ___
 
@@ -93,7 +93,7 @@ ___
 
 #### Defined in
 
-[pipeline/pipeline.ts:40](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/pipeline/pipeline.ts#L40)
+[pipeline/pipeline.ts:40](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/pipeline/pipeline.ts#L40)
 
 ___
 
@@ -113,7 +113,7 @@ ___
 
 #### Defined in
 
-[pipeline/pipeline.ts:50](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/pipeline/pipeline.ts#L50)
+[pipeline/pipeline.ts:50](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/pipeline/pipeline.ts#L50)
 
 ___
 
@@ -133,4 +133,4 @@ ___
 
 #### Defined in
 
-[pipeline/pipeline.ts:30](https://github.com/dcrescim/scikit.js/blob/ecc4160/src/pipeline/pipeline.ts#L30)
+[pipeline/pipeline.ts:30](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/pipeline/pipeline.ts#L30)
