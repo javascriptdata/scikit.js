@@ -1,5 +1,5 @@
 import { concat, Tensor2D } from '@tensorflow/tfjs-core'
-import { DataFrame } from 'danfojs-node'
+import { dfd } from '../globals'
 import { Scikit1D, Scikit2D, Transformer } from '../types'
 
 // When you pass a single string or int, it "pulls" a 1D column
@@ -30,7 +30,7 @@ export default class ColumnTransformer {
     this.remainder = remainder
   }
 
-  getColumns(X: DataFrame, selectedColumns: Selection): Tensor2D {
+  getColumns(X: dfd.DataFrame, selectedColumns: Selection): Tensor2D {
     if (isStringArray(selectedColumns)) {
       return X.loc({ columns: selectedColumns }).tensor as Tensor2D
     }
@@ -44,7 +44,7 @@ export default class ColumnTransformer {
   }
 
   fit(X: Scikit2D, y?: Scikit1D) {
-    const newDf = X instanceof DataFrame ? X : new DataFrame(X)
+    const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
 
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
@@ -56,7 +56,7 @@ export default class ColumnTransformer {
   }
 
   transform(X: Scikit2D, y?: Scikit1D) {
-    const newDf = X instanceof DataFrame ? X : new DataFrame(X)
+    const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
 
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {
@@ -70,7 +70,7 @@ export default class ColumnTransformer {
   }
 
   fitTransform(X: Scikit2D, y?: Scikit1D) {
-    const newDf = X instanceof DataFrame ? X : new DataFrame(X)
+    const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
 
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {

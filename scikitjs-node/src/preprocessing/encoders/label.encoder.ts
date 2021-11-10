@@ -12,12 +12,13 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { Tensor, Tensor1D, tensor1d } from '@tensorflow/tfjs-node'
-import { Series } from 'danfojs-node'
+// import * as tf from '@tensorflow/tfjs-node'
+
 import { is1DArray } from '../../utils'
 import { TransformerMixin } from '../../mixins'
 import { Scikit1D } from '../../types'
 
+import { tf, dfd } from '../../globals'
 /**
  * Encode target labels with value between 0 and n_classes-1.
  */
@@ -30,10 +31,10 @@ export default class LabelEncoder extends TransformerMixin {
   }
 
   convertTo1DArray(X: Scikit1D): Iterable<string | number | boolean> {
-    if (X instanceof Series) {
+    if (X instanceof dfd.Series) {
       return X.values as any[]
     }
-    if (X instanceof Tensor) {
+    if (X instanceof tf.Tensor) {
       return X.arraySync()
     }
     return X
@@ -69,13 +70,13 @@ export default class LabelEncoder extends TransformerMixin {
    * // [0, 1, 2, 3]
    * ```
    */
-  transform(X: Scikit1D): Tensor1D {
+  transform(X: Scikit1D): tf.Tensor1D {
     const arr = this.convertTo1DArray(X)
     const encodedData = (arr as any).map((value: any) => {
       let val = this.$labels.get(value)
       return val === undefined ? -1 : val
     })
-    return tensor1d(encodedData)
+    return tf.tensor1d(encodedData)
   }
 
   /**

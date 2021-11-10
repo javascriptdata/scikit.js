@@ -13,21 +13,7 @@
 * ==========================================================================
 */
 import { DataType } from '@tensorflow/tfjs-core/dist/types'
-import {
-  abs,
-  DataTypeMap,
-  lessEqual,
-  max,
-  sub,
-  tensor,
-  Tensor,
-  Tensor1D,
-  tensor1d,
-  Tensor2D,
-  tensor2d,
-  TensorLike
-} from '@tensorflow/tfjs-node'
-import { DataFrame, Series } from 'danfojs-node'
+
 import {
   ArrayType1D,
   ArrayType2D,
@@ -38,6 +24,7 @@ import {
 } from './types'
 import { inferShape, isTypedArray } from './types.utils'
 
+import { tf, dfd } from './globals'
 /**
  * Generates an array of dim (row x column) with inner values set to zero
  * @param row
@@ -79,14 +66,17 @@ export const is1DArray = (arr: ArrayType1D | ArrayType2D): boolean => {
  * @returns Tensor1D. If you pass in something that isn't 1D, then it will throw an error.
  * This is the case with 2D Tensors as well. If you really want to reshape them then use tf.reshape
  */
-export function convertToTensor1D(data: Scikit1D, dtype?: DataType): Tensor1D {
-  if (data instanceof Series) {
+export function convertToTensor1D(
+  data: Scikit1D,
+  dtype?: DataType
+): tf.Tensor1D {
+  if (data instanceof dfd.Series) {
     // Do type inference if no dtype is passed, otherwise try to parse as that dtype
     return dtype
-      ? (data.tensor.asType(dtype) as Tensor1D)
-      : (data.tensor as Tensor1D)
+      ? (data.tensor.asType(dtype) as tf.Tensor1D)
+      : (data.tensor as tf.Tensor1D)
   }
-  if (data instanceof Tensor) {
+  if (data instanceof tf.Tensor) {
     if (data.shape.length === 1) {
       if (!dtype || data.dtype == dtype) {
         return data
@@ -98,7 +88,7 @@ export function convertToTensor1D(data: Scikit1D, dtype?: DataType): Tensor1D {
       )
     }
   }
-  return dtype ? tensor1d(data, dtype) : tensor1d(data)
+  return dtype ? tf.tensor1d(data, dtype) : tf.tensor1d(data)
 }
 
 export function convertToNumericTensor1D(data: Scikit1D, dtype?: DataType) {
@@ -111,13 +101,16 @@ export function convertToNumericTensor1D(data: Scikit1D, dtype?: DataType) {
   return newTensor
 }
 
-export function convertToTensor2D(data: Scikit2D, dtype?: DataType): Tensor2D {
-  if (data instanceof DataFrame) {
+export function convertToTensor2D(
+  data: Scikit2D,
+  dtype?: DataType
+): tf.Tensor2D {
+  if (data instanceof dfd.DataFrame) {
     return dtype
-      ? (data.tensor.asType(dtype) as Tensor2D)
-      : (data.tensor as Tensor2D)
+      ? (data.tensor.asType(dtype) as tf.Tensor2D)
+      : (data.tensor as tf.Tensor2D)
   }
-  if (data instanceof Tensor) {
+  if (data instanceof tf.Tensor) {
     if (data.shape.length === 2) {
       if (!dtype || data.dtype == dtype) {
         return data
@@ -132,24 +125,26 @@ export function convertToTensor2D(data: Scikit2D, dtype?: DataType): Tensor2D {
   if (Array.isArray(data) && isTypedArray(data[0])) {
     const shape = inferShape(data) as [number, number]
     const newData = data.map((el) => Array.from(el as number[]))
-    return dtype ? tensor2d(newData, shape, dtype) : tensor2d(newData, shape)
+    return dtype
+      ? tf.tensor2d(newData, shape, dtype)
+      : tf.tensor2d(newData, shape)
   }
 
   return dtype
-    ? tensor2d(data as any, undefined, dtype)
-    : tensor2d(data as any, undefined)
+    ? tf.tensor2d(data as any, undefined, dtype)
+    : tf.tensor2d(data as any, undefined)
 }
 
 export function convertToTensor1D_2D(
   data: ScikitVecOrMatrix,
   dtype?: DataType
-): Tensor1D | Tensor2D {
+): tf.Tensor1D | tf.Tensor2D {
   try {
-    const new1DTensor = convertToTensor1D(data as Tensor1D, dtype)
+    const new1DTensor = convertToTensor1D(data as tf.Tensor1D, dtype)
     return new1DTensor
   } catch (e) {
     try {
-      const new2DTensor = convertToTensor2D(data as Tensor2D, dtype)
+      const new2DTensor = convertToTensor2D(data as tf.Tensor2D, dtype)
       return new2DTensor
     } catch (newE) {
       throw new Error('ParamError: Can"t convert data into 1D or 2D tensor')
@@ -181,17 +176,17 @@ export function convertToNumericTensor1D_2D(
 }
 
 export function convertToTensor(
-  data: TensorLike | Tensor | DataFrame | Series,
+  data: tf.TensorLike | tf.Tensor | dfd.DataFrame | dfd.Series,
   shape?: number[],
-  dtype?: keyof DataTypeMap
-): Tensor {
-  if (data instanceof DataFrame) {
+  dtype?: keyof tf.DataTypeMap
+): tf.Tensor {
+  if (data instanceof dfd.DataFrame) {
     return data.tensor
   }
-  if (data instanceof Series) {
+  if (data instanceof dfd.Series) {
     return data.tensor
   }
-  if (data instanceof Tensor) {
+  if (data instanceof tf.Tensor) {
     let newData = data
     if (shape) {
       newData = newData.reshape(shape)
@@ -201,21 +196,21 @@ export function convertToTensor(
     }
     return newData
   }
-  return tensor(data, shape, dtype)
+  return tf.tensor(data, shape, dtype)
 }
 export function convertTensorToInputType(
-  tensor: Tensor,
+  tensor: tf.Tensor,
   inputData: ScikitVecOrMatrix
 ) {
-  if (inputData instanceof Tensor) {
+  if (inputData instanceof tf.Tensor) {
     return tensor
-  } else if (inputData instanceof DataFrame) {
-    return new DataFrame(tensor, {
+  } else if (inputData instanceof dfd.DataFrame) {
+    return new dfd.DataFrame(tensor, {
       index: inputData.index,
       columns: inputData.columns
     })
-  } else if (inputData instanceof Series) {
-    return new Series(tensor, {
+  } else if (inputData instanceof dfd.Series) {
+    return new dfd.Series(tensor, {
       index: inputData.index
     })
   } else if (Array.isArray(inputData)) {
@@ -231,7 +226,10 @@ export function convertTensorToInputType(
  * @param tensor2
  * @returns
  */
-export const shapeEqual = (tensor1: Tensor, tensor2: Tensor): boolean => {
+export const shapeEqual = (
+  tensor1: tf.Tensor,
+  tensor2: tf.Tensor
+): boolean => {
   const shape1 = tensor1.shape
   const shape2 = tensor2.shape
   if (shape1.length != shape2.length) {
@@ -252,14 +250,16 @@ export const shapeEqual = (tensor1: Tensor, tensor2: Tensor): boolean => {
  * @param
  */
 export const tensorEqual = (
-  tensor1: Tensor,
-  tensor2: Tensor,
+  tensor1: tf.Tensor,
+  tensor2: tf.Tensor,
   tol = 0
 ): boolean => {
   if (!shapeEqual(tensor1, tensor2)) {
     throw new Error('tensor1 and tensor2 not of same shape')
   }
-  return Boolean(lessEqual(max(abs(sub(tensor1, tensor2))), tol).dataSync()[0])
+  return Boolean(
+    tf.lessEqual(tf.max(tf.abs(tf.sub(tensor1, tensor2))), tol).dataSync()[0]
+  )
 }
 
 export const arrayEqual = (
@@ -283,10 +283,10 @@ export const arrayEqual = (
 }
 
 export function convertTo2DArray(data: Scikit2D) {
-  if (data instanceof DataFrame) {
+  if (data instanceof dfd.DataFrame) {
     return data.values
   }
-  if (data instanceof Tensor) {
+  if (data instanceof tf.Tensor) {
     return data.arraySync()
   }
   return data

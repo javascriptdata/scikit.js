@@ -13,17 +13,12 @@
 * ==========================================================================
 */
 
-import {
-  concat,
-  oneHot,
-  Tensor1D,
-  tensor1d,
-  tensor2d,
-  Tensor2D
-} from '@tensorflow/tfjs-node'
+// import * as tf from '@tensorflow/tfjs-node'
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
+
+import { tf } from '../../globals'
 /**
  * Fits a OneHotEncoder to the data.
  * @example
@@ -97,18 +92,18 @@ export default class OneHotEncoder extends TransformerMixin {
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(X: Scikit2D, y?: Scikit1D): Tensor2D {
+  transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
-    const newTensor = tensor2d(result2D, undefined, 'int32')
-    return concat(
-      newTensor.unstack(1).map((el, i) => oneHot(el, this.$labels[i].size)),
+    const newTensor = tf.tensor2d(result2D, undefined, 'int32')
+    return tf.concat(
+      newTensor.unstack(1).map((el, i) => tf.oneHot(el, this.$labels[i].size)),
       1
-    ) as Tensor2D
+    ) as tf.Tensor2D
   }
   // Only works for single column OneHotEncoding
-  inverseTransform(X: Tensor2D): any[] {
-    const tensorLabels = X.argMax(1) as Tensor1D
+  inverseTransform(X: tf.Tensor2D): any[] {
+    const tensorLabels = X.argMax(1) as tf.Tensor1D
     const invMap = new Map(
       Array.from(this.$labels[0], (a) => a.reverse()) as any
     )

@@ -14,14 +14,14 @@
 */
 
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
-import { DataFrame, Series } from 'danfojs-node'
+import { dfd } from './globals'
 
 // The Types that Scikit uses
 export type TypedArray = Float32Array | Int32Array | Uint8Array
 export type ScikitLike1D = TypedArray | number[] | boolean[] | string[]
 export type ScikitLike2D = TypedArray[] | number[][] | boolean[][] | string[][]
-export type Scikit1D = ScikitLike1D | Tensor1D | Series
-export type Scikit2D = ScikitLike2D | Tensor2D | DataFrame
+export type Scikit1D = ScikitLike1D | Tensor1D | dfd.Series
+export type Scikit2D = ScikitLike2D | Tensor2D | dfd.DataFrame
 export type ScikitVecOrMatrix = Scikit1D | Scikit2D
 
 export type ArrayType1D = Array<

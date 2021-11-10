@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { MinMaxScaler } from '../../../dist'
-import { DataFrame } from 'danfojs-node'
+import { dfd } from '../../globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { convertTensorToInputType } from '../../utils'
 
@@ -22,8 +22,10 @@ describe('MinMaxscaler', function () {
     ]
     const transformedData = [[1.5, 0]]
 
-    scaler.fit(new DataFrame(data))
-    const resultDf = new DataFrame(scaler.transform(new DataFrame(data)))
+    scaler.fit(new dfd.DataFrame(data))
+    const resultDf = new dfd.DataFrame(
+      scaler.transform(new dfd.DataFrame(data))
+    )
     assert.deepEqual(resultDf.values, expected)
     assert.deepEqual(scaler.transform([[2, 2]]).arraySync(), transformedData)
   })
@@ -35,7 +37,9 @@ describe('MinMaxscaler', function () {
       [1, 18]
     ]
     const scaler = new MinMaxScaler()
-    const resultDf = new DataFrame(scaler.fitTransform(new DataFrame(data)))
+    const resultDf = new dfd.DataFrame(
+      scaler.fitTransform(new dfd.DataFrame(data))
+    )
 
     const expected = [
       [0, 0],
@@ -67,7 +71,7 @@ describe('MinMaxscaler', function () {
       [0, 10],
       [1, 18]
     ]
-    const df = new DataFrame(data, {
+    const df = new dfd.DataFrame(data, {
       index: [1, 2, 3, 4],
       columns: ['a', 'b']
     })
@@ -77,7 +81,7 @@ describe('MinMaxscaler', function () {
     const resultDf = convertTensorToInputType(
       scaler.transform(df),
       df
-    ) as DataFrame
+    ) as dfd.DataFrame
 
     assert.deepEqual(resultDf.index, [1, 2, 3, 4])
     assert.deepEqual(resultDf.columns, ['a', 'b'])

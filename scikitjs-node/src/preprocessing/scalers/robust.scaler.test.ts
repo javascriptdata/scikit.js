@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { RobustScaler } from '../../../dist'
-import { DataFrame } from 'danfojs-node'
+import { dfd } from '../../globals'
 import { arrayEqual } from '../../utils'
 
 describe('RobustScaler', function () {
@@ -19,8 +19,8 @@ describe('RobustScaler', function () {
       [1, 0, -1.6]
     ]
 
-    scaler.fit(new DataFrame(X))
-    const resultDf = new DataFrame(scaler.transform(new DataFrame(X)))
+    scaler.fit(new dfd.DataFrame(X))
+    const resultDf = new dfd.DataFrame(scaler.transform(new dfd.DataFrame(X)))
     assert.isTrue(arrayEqual(resultDf.values, expected, 0.1))
   })
 })

@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { Normalizer } from '../../../dist'
-import { DataFrame } from 'danfojs-node'
+import { dfd } from '../../globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { arrayEqual } from '../../utils'
 
@@ -22,8 +22,10 @@ describe('Normalizer', function () {
     ]
     const transformedData = [[0.5, 0.5]]
 
-    scaler.fit(new DataFrame(data))
-    const resultDf = new DataFrame(scaler.transform(new DataFrame(data)))
+    scaler.fit(new dfd.DataFrame(data))
+    const resultDf = new dfd.DataFrame(
+      scaler.transform(new dfd.DataFrame(data))
+    )
     assert.isTrue(arrayEqual(resultDf.values, expected, 0.1))
     assert.deepEqual(scaler.transform([[2, 2]]).arraySync(), transformedData)
   })

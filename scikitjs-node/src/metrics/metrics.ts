@@ -13,11 +13,13 @@
 * ==========================================================================
 */
 
-import { metrics, losses, math, sub, square } from '@tensorflow/tfjs-node'
+// import * as tf from '@tensorflow/tfjs-node'
 import { convertToNumericTensor1D } from '../utils'
 import { Scikit1D } from '../types'
 import { assert, isScikit1D } from '../types.utils'
 import { uniq } from 'lodash'
+
+import { tf } from '../globals'
 
 function assertInputIsWellFormed(labels: Scikit1D, predictions: Scikit1D) {
   assert(isScikit1D(labels), "Labels can't be converted to a 1D Tensor")
@@ -55,7 +57,7 @@ export function precisionScore(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = metrics.precision(labelsT, predictionsT)
+  const result = tf.metrics.precision(labelsT, predictionsT)
   return result.dataSync()[0]
 }
 
@@ -64,7 +66,7 @@ export function recallScore(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = metrics.recall(labelsT, predictionsT)
+  const result = tf.metrics.recall(labelsT, predictionsT)
   return result.dataSync()[0]
 }
 
@@ -74,10 +76,10 @@ export function r2Score(labels: Scikit1D, predictions: Scikit1D) {
     predictions
   )
 
-  const numerator = metrics.meanSquaredError(labelsT, predictionsT)
-  const denominator = metrics.meanSquaredError(labelsT, labelsT.mean())
+  const numerator = tf.metrics.meanSquaredError(labelsT, predictionsT)
+  const denominator = tf.metrics.meanSquaredError(labelsT, labelsT.mean())
 
-  const result = sub(1, numerator.div(denominator))
+  const result = tf.sub(1, numerator.div(denominator))
   return result.dataSync()[0]
 }
 
@@ -93,7 +95,7 @@ export function meanAbsoluteError(
     labels,
     predictions
   )
-  const result = metrics.meanAbsoluteError(labelsT, predictionsT)
+  const result = tf.metrics.meanAbsoluteError(labelsT, predictionsT)
   return result.dataSync()[0]
 }
 
@@ -102,7 +104,7 @@ export function meanSquaredError(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = metrics.meanSquaredError(labelsT, predictionsT)
+  const result = tf.metrics.meanSquaredError(labelsT, predictionsT)
   return result.dataSync()[0]
 }
 
@@ -111,7 +113,8 @@ export function meanSquaredLogError(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = square(labelsT.log1p().sub(predictionsT.log1p()))
+  const result = tf
+    .square(labelsT.log1p().sub(predictionsT.log1p()))
     .sum()
     .div(labelsT.size)
   return result.dataSync()[0]
@@ -122,7 +125,7 @@ export function hingeLoss(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = losses.hingeLoss(labelsT, predictionsT)
+  const result = tf.losses.hingeLoss(labelsT, predictionsT)
   return result.dataSync()[0]
 }
 
@@ -131,7 +134,7 @@ export function huberLoss(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = losses.huberLoss(labelsT, predictionsT)
+  const result = tf.losses.huberLoss(labelsT, predictionsT)
   return result.dataSync()[0]
 }
 
@@ -140,7 +143,7 @@ export function logLoss(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = losses.logLoss(labelsT, predictionsT)
+  const result = tf.losses.logLoss(labelsT, predictionsT)
   return result.dataSync()[0]
 }
 
@@ -149,7 +152,7 @@ export function zeroOneLoss(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  const result = sub(1, accuracyScore(labelsT, predictionsT))
+  const result = tf.sub(1, accuracyScore(labelsT, predictionsT))
   return result.dataSync()[0]
 }
 
@@ -165,7 +168,7 @@ export function confusionMatrix(labels: Scikit1D, predictions: Scikit1D) {
 
   const uniqueNumber = uniq(labelsT.dataSync())
 
-  return math
+  return tf.math
     .confusionMatrix(labelsT, predictionsT, uniqueNumber.length)
     .arraySync()
 }

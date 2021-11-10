@@ -1,8 +1,9 @@
 import { onesLike, Tensor, tidy, where } from '@tensorflow/tfjs-core'
-import { logicalNot, zerosLike } from '@tensorflow/tfjs-node'
+// import * as tf from '@tensorflow/tfjs-node'
 import { Iterable } from './types'
 import { assert } from './types.utils'
 
+import { tf } from './globals'
 /*
 In creating the preprocessors, I wanted functions that computed the min, max, mean,
 etc... but that also ignored NaN values. The min / max functions that come from
@@ -147,7 +148,7 @@ export function tensorCount(
   ignoreNaN?: boolean
 ) {
   if (ignoreNaN) {
-    return tidy(() => logicalNot(tensor.isNaN()).sum(axis))
+    return tidy(() => tf.logicalNot(tensor.isNaN()).sum(axis))
   }
 
   // Could definitely do this faster
@@ -219,7 +220,7 @@ export function tensorStd(tensor: Tensor, dim: number, ignoreNaN?: boolean) {
 
 export function turnZerosToOnes(tensor: Tensor) {
   return tidy(() => {
-    const zeros = zerosLike(tensor)
+    const zeros = tf.zerosLike(tensor)
     const booleanAddition = tensor.equal(zeros)
     return tensor.add(booleanAddition)
   })

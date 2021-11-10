@@ -13,13 +13,15 @@
 * ==========================================================================
 */
 
-import { Tensor1D, tensor1d, Tensor2D } from '@tensorflow/tfjs-node'
+// import * as tf from '@tensorflow/tfjs-node'
 import { convertToNumericTensor2D } from '../../utils'
 import { Scikit2D } from '../../types'
 import { isScikit2D, assert } from '../../types.utils'
 import { turnZerosToOnes } from '../../math'
 import { TransformerMixin } from '../../mixins'
 import { quantileSeq } from 'mathjs'
+
+import { tf } from '../../globals'
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
@@ -43,13 +45,13 @@ function removeMissingValuesFromArray(arr: any[]) {
 }
 
 export default class RobustScaler extends TransformerMixin {
-  $scale: Tensor1D
-  $center: Tensor1D
+  $scale: tf.Tensor1D
+  $center: tf.Tensor1D
 
   constructor() {
     super()
-    this.$scale = tensor1d([])
-    this.$center = tensor1d([])
+    this.$scale = tf.tensor1d([])
+    this.$center = tf.tensor1d([])
   }
 
   /**
@@ -70,20 +72,20 @@ export default class RobustScaler extends TransformerMixin {
 
     const tensorArray = convertToNumericTensor2D(X)
     const quantiles = tensorArray
-      .transpose<Tensor2D>()
+      .transpose<tf.Tensor2D>()
       .arraySync()
       .map((arr: number[] | string[]) =>
         quantileSeq(removeMissingValuesFromArray(arr), [0.25, 0.5, 0.75])
       )
 
-    this.$center = tensor1d(quantiles.map((el: any) => el[1]))
-    const scale = tensor1d(quantiles.map((el: any) => el[2] - el[0]))
+    this.$center = tf.tensor1d(quantiles.map((el: any) => el[1]))
+    const scale = tf.tensor1d(quantiles.map((el: any) => el[2] - el[0]))
 
     // But what happens if max = min, ie.. we are dealing with a constant vector?
     // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
     // The common practice in cases where the vector is constant is to change the 0 elements
     // in scale to 1, so that the division doesn't fail. We do that below
-    this.$scale = turnZerosToOnes(scale) as Tensor1D
+    this.$scale = turnZerosToOnes(scale) as tf.Tensor1D
     return this
   }
 
@@ -97,10 +99,12 @@ export default class RobustScaler extends TransformerMixin {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0, 0.25, 0.5, 0.75, 1]
    * */
-  transform(X: Scikit2D): Tensor2D {
+  transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.sub(this.$center).div<Tensor2D>(this.$scale)
+    const outputData = tensorArray
+      .sub(this.$center)
+      .div<tf.Tensor2D>(this.$scale)
     return outputData
   }
 
@@ -114,10 +118,10 @@ export default class RobustScaler extends TransformerMixin {
    * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(X: Scikit2D): Tensor2D {
+  inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul(this.$scale).add<Tensor2D>(this.$min)
+    const outputData = tensorArray.mul(this.$scale).add<tf.Tensor2D>(this.$min)
     return outputData
   }
 }
