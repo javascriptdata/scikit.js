@@ -10,6 +10,7 @@
   "scripts": {
     "test": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
     "test:clean": "yarn build:clean && yarn test && yarn lint && yarn prettier",
+    "copy:shared": "cp -r ../shared/* src",
     "build": "tsc",
     "build:clean": "rimraf ./build && tsc",
     "prettier": "prettier --check './src'",
