@@ -1,6 +1,6 @@
 ---
 id: "index"
-title: "scikit.js"
+title: "scikitjs-node"
 slug: "/api/"
 sidebar_label: "Readme"
 sidebar_position: 0

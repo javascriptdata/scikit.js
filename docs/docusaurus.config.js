@@ -106,7 +106,7 @@ const config = {
 
       // Plugin / TypeDoc options
       {
-        entryPoints: ['../scikitjs-node/src/index.ts'],
+        entryPoints: ['../scikitjs-node/src/shared/index.ts'],
         tsconfig: '../scikitjs-node/tsconfig.json'
       }
     ]

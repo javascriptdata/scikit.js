@@ -24,7 +24,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/robust.scaler.ts:49](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/robust.scaler.ts#L49)
+preprocessing/scalers/robust.scaler.ts:50
 
 ## Properties
 
@@ -34,7 +34,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/robust.scaler.ts:47](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/robust.scaler.ts#L47)
+preprocessing/scalers/robust.scaler.ts:48
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[preprocessing/scalers/robust.scaler.ts:46](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/robust.scaler.ts#L46)
+preprocessing/scalers/robust.scaler.ts:47
 
 ## Methods
 
@@ -76,7 +76,7 @@ RobustScaler
 
 #### Defined in
 
-[preprocessing/scalers/robust.scaler.ts:68](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/robust.scaler.ts#L68)
+preprocessing/scalers/robust.scaler.ts:69
 
 ___
 
@@ -100,7 +100,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
+mixins.ts:3
 
 ___
 
@@ -130,7 +130,7 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/robust.scaler.ts:117](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/robust.scaler.ts#L117)
+preprocessing/scalers/robust.scaler.ts:120
 
 ___
 
@@ -160,4 +160,4 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/robust.scaler.ts:100](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/robust.scaler.ts#L100)
+preprocessing/scalers/robust.scaler.ts:101

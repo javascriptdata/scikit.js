@@ -28,7 +28,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/max.abs.scaler.ts:32](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/max.abs.scaler.ts#L32)
+preprocessing/scalers/max.abs.scaler.ts:32
 
 ## Properties
 
@@ -38,7 +38,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/max.abs.scaler.ts:30](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/max.abs.scaler.ts#L30)
+preprocessing/scalers/max.abs.scaler.ts:30
 
 ## Methods
 
@@ -70,7 +70,7 @@ MinMaxScaler
 
 #### Defined in
 
-[preprocessing/scalers/max.abs.scaler.ts:50](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/max.abs.scaler.ts#L50)
+preprocessing/scalers/max.abs.scaler.ts:50
 
 ___
 
@@ -94,7 +94,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
+mixins.ts:3
 
 ___
 
@@ -124,7 +124,7 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/max.abs.scaler.ts:88](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/max.abs.scaler.ts#L88)
+preprocessing/scalers/max.abs.scaler.ts:88
 
 ___
 
@@ -154,4 +154,4 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/max.abs.scaler.ts:71](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/max.abs.scaler.ts#L71)
+preprocessing/scalers/max.abs.scaler.ts:71

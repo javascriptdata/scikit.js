@@ -2,22 +2,24 @@
   "name": "scikitjs-node",
   "version": "0.0.1",
   "description": "JavaScript package for predictive data analysis and machine learning.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/shared/index.js",
+  "types": "dist/shared/index.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
-    "test": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
-    "test:clean": "yarn build:clean && yarn test && yarn lint && yarn prettier",
-    "copy:shared": "cp -r ../shared/* src",
-    "build": "tsc",
-    "build:clean": "rimraf ./build && tsc",
+    "test": "yarn clean && yarn build:only && yarn test:src && yarn prettier && yarn delete:shared",
+    "build": "yarn clean && yarn build:only && yarn delete:shared",
+    "build:only": "yarn copy:shared && yarn tsc",
     "prettier": "prettier --check './src'",
     "lint": "eslint ./src/**/*.ts",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=lcov",
-    "patch": "npm version patch"
+    "patch": "npm version patch",
+    "copy:shared": "cp -r ../shared src",
+    "delete:shared": "rm -r src/shared",
+    "test:src": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
+    "clean": "rimraf ./dist && rimraf ./src/shared"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "3.6.1",
@@ -33,6 +35,7 @@
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.10.4",
     "@babel/register": "^7.10.1",
+    "@rollup/plugin-typescript": "^8.3.0",
     "@types/chai": "^4.2.19",
     "@types/lodash": "^4.14.176",
     "@types/mocha": "^8.2.2",
@@ -48,9 +51,11 @@
     "nyc": "^15.1.0",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
+    "rollup": "^2.59.0",
+    "rollup-plugin-typescript2": "^0.30.0",
     "ts-node": "^10.0.0",
-    "tslib": "^2.3.1",
-    "typescript": "^4.4.2",
+    "tslib": "*",
+    "typescript": "^4.4.4",
     "yarn": "^1.22.10"
   },
   "publishConfig": {

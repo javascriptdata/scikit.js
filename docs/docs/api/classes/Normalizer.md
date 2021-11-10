@@ -30,7 +30,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/normalizer.ts:34](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/normalizer.ts#L34)
+preprocessing/scalers/normalizer.ts:34
 
 ## Properties
 
@@ -40,7 +40,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/normalizer.ts:33](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/normalizer.ts#L33)
+preprocessing/scalers/normalizer.ts:33
 
 ## Methods
 
@@ -72,7 +72,7 @@ MinMaxScaler
 
 #### Defined in
 
-[preprocessing/scalers/normalizer.ts:52](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/normalizer.ts#L52)
+preprocessing/scalers/normalizer.ts:52
 
 ___
 
@@ -96,7 +96,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
+mixins.ts:3
 
 ___
 
@@ -126,4 +126,4 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/normalizer.ts:67](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/normalizer.ts#L67)
+preprocessing/scalers/normalizer.ts:67

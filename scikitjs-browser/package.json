@@ -3,20 +3,23 @@
   "version": "0.0.1",
   "description": "JavaScript package for predictive data analysis and machine learning.",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/shared/index.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
-    "test": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
-    "test:clean": "yarn build:clean && yarn test && yarn lint && yarn prettier",
-    "build": "rollup -c",
-    "build:clean": "rimraf ./build && yarn build",
+    "test": "yarn clean && yarn build:only && yarn test:src && yarn prettier && yarn delete:shared",
+    "build": "yarn clean && yarn build:only && yarn delete:shared",
+    "build:only": "yarn copy:shared && rollup -c",
     "prettier": "prettier --check './src'",
     "lint": "eslint ./src/**/*.ts",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=lcov",
-    "patch": "npm version patch"
+    "patch": "npm version patch",
+    "copy:shared": "cp -r ../shared src/shared",
+    "delete:shared": "rm -r src/shared",
+    "test:src": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
+    "clean": "rimraf ./dist && rimraf ./src/shared"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^3.11.0",

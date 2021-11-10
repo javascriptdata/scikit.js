@@ -7,9 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test:clean": "cd scikitjs-node && yarn test:clean && cd ../scikitjs-browser && yarn test:clean",
+    "test": "cd scikitjs-node && yarn test && cd ../scikitjs-browser && yarn test",
     "build": "cd scikitjs-node && yarn build && cd ../scikitjs-browser && yarn build",
-    "build:docs": "cd docs && yarn build",
+    "build:docs": "cd scikitjs-node && yarn build:only && cd ../docs && yarn build",
     "postinstall": "(cd docs && yarn install); (cd scikitjs-browser && yarn install); (cd scikitjs-node && yarn install)"
   },
   "repository": {
@@ -23,6 +23,11 @@
   },
   "homepage": "https://github.com/dcrescim/scikit.js#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "eslint": "^8.2.0",
+    "rollup-plugin-terser": "^7.0.2",
     "yarn": "^1.22.17"
   }
 }

@@ -28,7 +28,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/standard.scaler.ts:32](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/standard.scaler.ts#L32)
+preprocessing/scalers/standard.scaler.ts:32
 
 ## Properties
 
@@ -38,7 +38,7 @@ TransformerMixin.constructor
 
 #### Defined in
 
-[preprocessing/scalers/standard.scaler.ts:30](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/standard.scaler.ts#L30)
+preprocessing/scalers/standard.scaler.ts:30
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[preprocessing/scalers/standard.scaler.ts:29](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/standard.scaler.ts#L29)
+preprocessing/scalers/standard.scaler.ts:29
 
 ## Methods
 
@@ -76,7 +76,7 @@ StandardScaler
 
 #### Defined in
 
-[preprocessing/scalers/standard.scaler.ts:46](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/standard.scaler.ts#L46)
+preprocessing/scalers/standard.scaler.ts:46
 
 ___
 
@@ -100,7 +100,7 @@ TransformerMixin.fitTransform
 
 #### Defined in
 
-[mixins.ts:3](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L3)
+mixins.ts:3
 
 ___
 
@@ -132,7 +132,7 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/standard.scaler.ts:86](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/standard.scaler.ts#L86)
+preprocessing/scalers/standard.scaler.ts:86
 
 ___
 
@@ -162,4 +162,4 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[preprocessing/scalers/standard.scaler.ts:67](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/preprocessing/scalers/standard.scaler.ts#L67)
+preprocessing/scalers/standard.scaler.ts:67

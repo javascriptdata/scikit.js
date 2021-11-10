@@ -5,7 +5,7 @@ import { terser } from 'rollup-plugin-terser'
 
 export default [
   {
-    input: 'src/index.ts',
+    input: 'src/shared/index.ts',
     output: {
       file: `dist/scikit.min.js`,
       format: 'umd',
@@ -22,7 +22,7 @@ export default [
     ]
   },
   {
-    input: 'src/index.ts',
+    input: 'src/shared/index.ts',
     plugins: [typescript({ module: 'esnext' })],
     output: {
       dir: 'dist',

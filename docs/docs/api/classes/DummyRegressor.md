@@ -30,7 +30,7 @@ PredictorMixin.constructor
 
 #### Defined in
 
-[dummy/dummy.regressor.ts:50](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.regressor.ts#L50)
+dummy/dummy.regressor.ts:50
 
 ## Properties
 
@@ -40,7 +40,7 @@ PredictorMixin.constructor
 
 #### Defined in
 
-[dummy/dummy.regressor.ts:47](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.regressor.ts#L47)
+dummy/dummy.regressor.ts:47
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[dummy/dummy.regressor.ts:48](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.regressor.ts#L48)
+dummy/dummy.regressor.ts:48
 
 ## Methods
 
@@ -79,7 +79,7 @@ DummyClassifier
 
 #### Defined in
 
-[dummy/dummy.regressor.ts:65](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.regressor.ts#L65)
+dummy/dummy.regressor.ts:65
 
 ___
 
@@ -104,7 +104,7 @@ PredictorMixin.fitPredict
 
 #### Defined in
 
-[mixins.ts:10](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/mixins.ts#L10)
+mixins.ts:10
 
 ___
 
@@ -134,4 +134,4 @@ Array, Tensor, DataFrame or Series object
 
 #### Defined in
 
-[dummy/dummy.regressor.ts:96](https://github.com/dcrescim/scikit.js/blob/ae98366/scikitjs-node/src/dummy/dummy.regressor.ts#L96)
+dummy/dummy.regressor.ts:96
