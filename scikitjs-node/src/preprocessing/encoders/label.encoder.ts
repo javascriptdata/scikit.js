@@ -12,7 +12,6 @@
 * limitations under the License.
 * ==========================================================================
 */
-// import * as tf from '@tensorflow/tfjs-node'
 
 import { is1DArray } from '../../utils'
 import { TransformerMixin } from '../../mixins'
