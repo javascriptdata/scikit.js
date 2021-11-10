@@ -14,7 +14,6 @@
 */
 
 import { Tensor } from '@tensorflow/tfjs-core'
-// import * as tf from '@tensorflow/tfjs-node'
 import {
   Scikit1D,
   Scikit2D,

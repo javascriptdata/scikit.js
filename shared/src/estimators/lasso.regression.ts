@@ -13,11 +13,10 @@
 * ==========================================================================
 */
 
-import '@tensorflow/tfjs-node'
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGD } from './sgd.linear'
-import { regularizers } from '@tensorflow/tfjs-node'
+import { tf } from '../globals'
 
 // First pass at a LassoRegression implementation using gradient descent
 // Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html#sklearn.linear_model.Lasso
@@ -43,7 +42,7 @@ export class LassoRegression extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        kernelRegularizer: regularizers.l1({ l1: alpha }),
+        kernelRegularizer: tf.regularizers.l1({ l1: alpha }),
         useBias: Boolean(fitIntercept)
       }
     })

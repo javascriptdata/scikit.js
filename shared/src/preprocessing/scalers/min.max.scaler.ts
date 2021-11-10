@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-// import * as tf from '@tensorflow/tfjs-node'
 import { convertToNumericTensor2D } from '../../utils'
 import { Scikit2D, Transformer } from '../../types'
 import { isScikit2D, assert } from '../../types.utils'

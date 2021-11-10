@@ -13,11 +13,10 @@
 * ==========================================================================
 */
 
-import '@tensorflow/tfjs-node'
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGD } from './sgd.linear'
-import { regularizers } from '@tensorflow/tfjs-node'
+import { tf } from '../globals'
 
 // RidgeRegression implementation using gradient descent
 // This is a placeholder until we can do an analytic solution instead
@@ -47,7 +46,7 @@ export class RidgeRegression extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        kernelRegularizer: regularizers.l2({ l2: alpha }),
+        kernelRegularizer: tf.regularizers.l2({ l2: alpha }),
         useBias: Boolean(fitIntercept)
       }
     })
