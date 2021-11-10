@@ -12,7 +12,6 @@
 * limitations under the License.
 * ==========================================================================
 */
-
 import { LinearRegression } from './estimators/linear.model'
 import { LassoRegression } from './estimators/lasso.regression'
 import { RidgeRegression } from './estimators/ridge.regression'

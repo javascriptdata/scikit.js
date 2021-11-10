@@ -13,11 +13,10 @@
 // * ==========================================================================
 // */
 
-import '@tensorflow/tfjs'
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGD } from './sgd.linear'
-import { initializers, regularizers } from '@tensorflow/tfjs'
+import { tf } from '../globals'
 
 // First pass at a LogisticRegression implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
@@ -55,13 +54,13 @@ export class LogisticRegression extends SGD {
         units: 1,
         useBias: Boolean(fitIntercept),
         activation: 'softmax',
-        kernelInitializer: initializers.zeros(),
-        biasInitializer: initializers.zeros(),
+        kernelInitializer: tf.initializers.zeros(),
+        biasInitializer: tf.initializers.zeros(),
         kernelRegularizer:
           penalty === 'l2'
-            ? regularizers.l2({ l2: C })
+            ? tf.regularizers.l2({ l2: C })
             : penalty === 'l1'
-            ? regularizers.l1({ l1: C })
+            ? tf.regularizers.l1({ l1: C })
             : undefined
       },
       isClassification: true

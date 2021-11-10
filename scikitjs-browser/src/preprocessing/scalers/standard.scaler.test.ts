@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { StandardScaler } from '../../../dist'
-import { DataFrame } from 'danfojs'
+import { dfd } from '../../globals'
 
 describe('StandardScaler', function () {
   it('StandardScaler works for DataFrame', function () {
@@ -12,7 +12,7 @@ describe('StandardScaler', function () {
     ]
 
     const scaler = new StandardScaler()
-    scaler.fit(new DataFrame(data))
+    scaler.fit(new dfd.DataFrame(data))
 
     const expected = [
       [-1, -1],
@@ -20,7 +20,9 @@ describe('StandardScaler', function () {
       [1, 1],
       [1, 1]
     ]
-    const resultDf = new DataFrame(scaler.transform(new DataFrame(data)))
+    const resultDf = new dfd.DataFrame(
+      scaler.transform(new dfd.DataFrame(data))
+    )
     assert.deepEqual(resultDf.values, expected)
     assert.deepEqual(scaler.transform([[2, 2]]).arraySync(), [[3, 3]])
   })
@@ -33,7 +35,9 @@ describe('StandardScaler', function () {
     ]
 
     const scaler = new StandardScaler()
-    const resultDf = new DataFrame(scaler.fitTransform(new DataFrame(data)))
+    const resultDf = new dfd.DataFrame(
+      scaler.fitTransform(new dfd.DataFrame(data))
+    )
 
     const expected = [
       [-1, -1],

@@ -13,26 +13,26 @@
 * ==========================================================================
 */
 
-import { tensor1d, Tensor, Tensor1D, Tensor2D } from '@tensorflow/tfjs'
 import { convertToNumericTensor2D } from '../../utils'
 import { Scikit2D } from '../../types'
 import { isScikit2D, assert } from '../../types.utils'
 import { tensorMean, tensorStd, turnZerosToOnes } from '../../math'
 import { TransformerMixin } from '../../mixins'
 
+import { tf } from '../../globals'
 /**
  * Standardize features by removing the mean and scaling to unit variance.
  * The standard score of a sample x is calculated as: `z = (x - u) / s`,
  * where `u` is the mean of the training samples, and `s` is the standard deviation of the training samples.
  */
 export default class StandardScaler extends TransformerMixin {
-  $std: Tensor
-  $mean: Tensor
+  $std: tf.Tensor
+  $mean: tf.Tensor
 
   constructor() {
     super()
-    this.$std = tensor1d([])
-    this.$mean = tensor1d([])
+    this.$std = tf.tensor1d([])
+    this.$mean = tf.tensor1d([])
   }
 
   /**
@@ -50,7 +50,7 @@ export default class StandardScaler extends TransformerMixin {
     this.$mean = tensorMean(tensorArray, 0, true)
 
     // Deal with zero variance issues
-    this.$std = turnZerosToOnes(std) as Tensor1D
+    this.$std = turnZerosToOnes(std) as tf.Tensor1D
     return this
   }
 
@@ -64,10 +64,10 @@ export default class StandardScaler extends TransformerMixin {
    * scaler.transform([1, 2, 3, 4, 5])
    * // [0.0, 0.0, 0.0, 0.0, 0.0]
    * */
-  transform(X: Scikit2D): Tensor2D {
+  transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.sub(this.$mean).div<Tensor2D>(this.$std)
+    const outputData = tensorArray.sub(this.$mean).div<tf.Tensor2D>(this.$std)
     return outputData
   }
 
@@ -83,10 +83,10 @@ export default class StandardScaler extends TransformerMixin {
    * scaler.inverseTransform([0.0, 0.0, 0.0, 0.0, 0.0])
    * // [1, 2, 3, 4, 5]
    * */
-  inverseTransform(X: Scikit2D): Tensor2D {
+  inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul(this.$std).add<Tensor2D>(this.$mean)
+    const outputData = tensorArray.mul(this.$std).add<tf.Tensor2D>(this.$mean)
     return outputData
   }
 }

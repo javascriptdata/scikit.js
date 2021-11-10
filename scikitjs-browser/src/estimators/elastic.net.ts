@@ -13,11 +13,10 @@
 * ==========================================================================
 */
 
-import '@tensorflow/tfjs'
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGD } from './sgd.linear'
-import { regularizers } from '@tensorflow/tfjs'
+import { tf } from '../globals'
 
 // First pass at a ElasticNet implementation using gradient descent
 // Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html#sklearn.linear_model.ElasticNet
@@ -44,7 +43,7 @@ export class ElasticNet extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        kernelRegularizer: regularizers.l1l2({
+        kernelRegularizer: tf.regularizers.l1l2({
           l1: alpha * l1Ratio,
           l2: 0.5 * alpha * (1 - l1Ratio)
         }),

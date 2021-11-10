@@ -1,10 +1,10 @@
 import { assert } from 'chai'
 import { LabelEncoder } from '../../../dist'
-import { Series } from 'danfojs'
+import { dfd } from '../../globals'
 
 describe('LabelEncoder', function () {
   it('LabelEncoder works for Series', function () {
-    const sf = new Series([1, 2, 2, 6])
+    const sf = new dfd.Series([1, 2, 2, 6])
     const scaler = new LabelEncoder()
     scaler.fit(sf)
     const expected = [0, 1, 1, 2]

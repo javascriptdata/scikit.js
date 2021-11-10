@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { MaxAbsScaler } from '../../../dist'
-import { DataFrame } from 'danfojs'
+import { dfd } from '../../globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 
 describe('MaxAbsScaler', function () {
@@ -21,8 +21,10 @@ describe('MaxAbsScaler', function () {
       [1, 1]
     ]
 
-    scaler.fit(new DataFrame(data))
-    const resultDf = new DataFrame(scaler.transform(new DataFrame(data)))
+    scaler.fit(new dfd.DataFrame(data))
+    const resultDf = new dfd.DataFrame(
+      scaler.transform(new dfd.DataFrame(data))
+    )
     assert.deepEqual(resultDf.values, expected)
     assert.deepEqual(scaler.transform([[2, 5]]).arraySync(), [[2, 0.5]])
   })
@@ -41,7 +43,9 @@ describe('MaxAbsScaler', function () {
       [0, 1],
       [1, 1]
     ]
-    const resultDf = new DataFrame(scaler.fitTransform(new DataFrame(data)))
+    const resultDf = new dfd.DataFrame(
+      scaler.fitTransform(new dfd.DataFrame(data))
+    )
 
     assert.deepEqual(resultDf.values, expected)
   })

@@ -13,10 +13,11 @@
 * ==========================================================================
 */
 
-import { tensor2d, Tensor2D } from '@tensorflow/tfjs'
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
+
+import { tf } from '../../globals'
 /**
  * Fits a OrdinalEncoder to the data.
  * @example
@@ -90,9 +91,9 @@ export default class OrdinalEncoder extends TransformerMixin {
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(X: Scikit2D, y?: Scikit1D): Tensor2D {
+  transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
-    return tensor2d(result2D, undefined, 'int32')
+    return tf.tensor2d(result2D, undefined, 'int32')
   }
 }

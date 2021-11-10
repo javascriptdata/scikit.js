@@ -14,8 +14,6 @@
 */
 
 import { Tensor } from '@tensorflow/tfjs-core'
-import { DataFrame, Series } from 'danfojs'
-import { DataType, TensorLike } from '@tensorflow/tfjs'
 import {
   Scikit1D,
   Scikit2D,
@@ -23,6 +21,8 @@ import {
   ScikitLike2D,
   ScikitVecOrMatrix
 } from './types'
+
+import { tf, dfd } from './globals'
 
 export function isString(value: {}): value is string {
   return typeof value === 'string' || value instanceof String
@@ -41,7 +41,7 @@ export function assert(expr: boolean, msg: string) {
     throw new Error(msg)
   }
 }
-export function inferShape(val: TensorLike, dtype?: DataType): number[] {
+export function inferShape(val: tf.TensorLike, dtype?: tf.DataType): number[] {
   let firstElem: typeof val = val
 
   if (isTypedArray(val)) {
@@ -67,7 +67,7 @@ export function inferShape(val: TensorLike, dtype?: DataType): number[] {
 }
 
 export function deepAssertShapeConsistency(
-  val: TensorLike,
+  val: tf.TensorLike,
   shape: number[],
   indices: number[]
 ) {
@@ -96,7 +96,7 @@ export function deepAssertShapeConsistency(
   }
 }
 
-export function inferDtype(values: TensorLike): DataType | null {
+export function inferDtype(values: tf.TensorLike): tf.DataType | null {
   if (Array.isArray(values)) {
     return inferDtype(values[0])
   }
@@ -137,7 +137,7 @@ export function isScikitLike2D(arr: any): arr is ScikitLike2D {
 }
 
 export function isScikit1D(arr: any): arr is Scikit1D {
-  if (arr instanceof Series) {
+  if (arr instanceof dfd.Series) {
     return true
   }
   if (arr instanceof Tensor) {
@@ -147,7 +147,7 @@ export function isScikit1D(arr: any): arr is Scikit1D {
 }
 
 export function isScikit2D(arr: any): arr is Scikit2D {
-  if (arr instanceof DataFrame) {
+  if (arr instanceof dfd.DataFrame) {
     return true
   }
   if (arr instanceof Tensor) {
