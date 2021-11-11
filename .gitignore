@@ -102,3 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Any copied src from shared
+scikitjs-node/src/shared
+scikitjs-browser/src/shared
