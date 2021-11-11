@@ -27,7 +27,7 @@ export interface ElasticNetParams {
   fitIntercept: number
 }
 
-export class ElasticNet extends SGD {
+export default class ElasticNet extends SGD {
   constructor({ alpha, l1Ratio, fitIntercept }: ElasticNetParams) {
     super({
       modelCompileArgs: {

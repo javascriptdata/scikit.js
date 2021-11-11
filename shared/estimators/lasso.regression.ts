@@ -26,7 +26,7 @@ export interface LassoParams {
   alpha: number
 }
 
-export class LassoRegression extends SGD {
+export default class LassoRegression extends SGD {
   constructor({ fitIntercept, alpha }: LassoParams) {
     super({
       modelCompileArgs: {

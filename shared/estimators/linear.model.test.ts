@@ -1,7 +1,7 @@
 import '@tensorflow/tfjs-backend-webgl'
 import * as tf from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
-import { LinearRegression } from './linear.model'
+import LinearRegression from './linear.model'
 import 'mocha'
 import { tensorEqual } from '../utils'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'

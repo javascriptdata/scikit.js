@@ -27,7 +27,7 @@ export interface LogisticRegressionParams {
   fitIntercept?: boolean
 }
 
-export class LogisticRegression extends SGD {
+export default class LogisticRegression extends SGD {
   constructor({
     penalty = 'l2',
     C = 1,

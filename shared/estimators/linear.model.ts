@@ -40,7 +40,7 @@ export interface LinearRegressionParams {
   fitIntercept?: boolean
 }
 
-export class LinearRegression extends SGD {
+export default class LinearRegression extends SGD {
   constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
     super({
       modelCompileArgs: {

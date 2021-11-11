@@ -27,7 +27,7 @@ export interface RidgeRegressionParams {
   alpha?: number
 }
 
-export class RidgeRegression extends SGD {
+export default class RidgeRegression extends SGD {
   constructor({
     fitIntercept = true,
     alpha = 0.01
