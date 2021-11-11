@@ -1,91 +1,33 @@
 {
-  "name": "scikit.js",
-  "version": "0.0.1",
-  "description": "JavaScript package for predictive data analysis and machine learning.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "name": "scikit",
+  "version": "1.0.0",
+  "description": "Scikit-Learn for JS",
+  "main": "index.js",
   "directories": {
-    "test": "test"
-  },
-  "files": [
-    "dist/"
-  ],
-  "dependencies": {
-    "@tensorflow/tfjs-node": "3.6.1",
-    "@types/lodash": "^4.14.176",
-    "danfojs-node": "0.3.1",
-    "lodash": "^4.17.21",
-    "mathjs": "^9.5.1",
-    "simple-statistics": "^7.7.0",
-    "typedoc": "^0.22.7",
-    "typedoc-plugin-markdown": "^3.11.3"
+    "doc": "docs"
   },
   "scripts": {
-    "test": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
-    "test:clean": "yarn build:clean && yarn test && yarn lint && yarn prettier",
-    "dev": "nodemon",
-    "build": "tsc",
-    "build:clean": "rimraf ./build && tsc",
+    "test:clean": "cd scikitjs-node && yarn test && cd ../scikitjs-browser && yarn test",
+    "build": "cd scikitjs-node && yarn build && cd ../scikitjs-browser && yarn build",
     "build:docs": "cd docs && yarn build",
-    "build:type": "typedoc --out docs2 src/index.ts",
-    "prettier": "prettier --check './src'",
-    "lint": "eslint ./src/**/*.ts",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
-    "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=lcov",
-    "patch": "npm version patch"
-  },
-  "publishConfig": {
-    "access": "public",
-    "branches": [
-      "master"
-    ]
+    "postinstall": "(cd docs && yarn install); (cd scikitjs-browser && yarn install); (cd scikitjs-node && yarn install)"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/opensource9ja/danfojs.git"
+    "url": "git+https://github.com/dcrescim/scikit.js.git"
   },
-  "keywords": [
-    "pandas",
-    "data-analysis",
-    "data-manipulation",
-    "analysis"
-  ],
-  "author": "Rising Odegua <risingodegua@gmail.com>",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/opensource9ja/danfojs/issues"
+    "url": "https://github.com/dcrescim/scikit.js/issues"
   },
-  "homepage": "https://github.com/opensource9ja/danfojs#readme",
+  "homepage": "https://github.com/dcrescim/scikit.js#readme",
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/plugin-transform-runtime": "^7.12.10",
-    "@babel/preset-env": "^7.10.4",
-    "@babel/register": "^7.10.1",
-    "@types/chai": "^4.2.19",
-    "@types/mocha": "^8.2.2",
-    "@types/node": "^16.9.6",
-    "@types/table": "^6.3.2",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
-    "@typescript-eslint/parser": "^5.1.0",
-    "chai": "^4.2.0",
-    "coveralls": "^3.1.0",
-    "docusaurus": "^1.14.7",
-    "eslint": "^8.0.1",
-    "jsdoc": "^3.6.7",
-    "mocha": "^7.2.0",
-    "nodemon": "^2.0.7",
-    "nyc": "^15.1.0",
-    "prettier": "^2.4.1",
-    "rimraf": "^3.0.2",
-    "ts-node": "^10.0.0",
-    "typescript": "^4.4.2",
-    "yarn": "^1.22.10"
-  },
-  "nyc": {
-    "reporter": [
-      "lcov",
-      "text"
-    ]
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "eslint": "^8.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "yarn": "^1.22.17"
   }
 }

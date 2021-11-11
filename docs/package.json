@@ -3,13 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build:node": "cd ../scikitjs-node && yarn build:only && cd ../docs",
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
+    "start": "yarn build:node && docusaurus start",
+    "build": "yarn build:node && docusaurus build",
     "clear": "docusaurus clear",
-    "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc"
