@@ -12,7 +12,7 @@
 * limitations under the License.
 * ==========================================================================
 */
-import LinearRegression from './estimators/linear.model'
+import LinearRegression from './estimators/linear.regression'
 import LassoRegression from './estimators/lasso.regression'
 import RidgeRegression from './estimators/ridge.regression'
 import ElasticNet from './estimators/elastic.net'
