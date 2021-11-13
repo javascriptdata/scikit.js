@@ -36,6 +36,7 @@ export default class KMeans {
     this.maxIter = maxIter
     this.tol = tol
     this.clusterCenters = tensor2d([[]])
+    this.randomState = randomState
   }
 
   initCentroids(X: Tensor2D, strategy = 'random') {
