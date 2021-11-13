@@ -50,12 +50,11 @@
     "data-manipulation",
     "analysis"
   ],
-  "author": "Rising Odegua <risingodegua@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/opensource9ja/danfojs/issues"
+    "url": "https://github.com/opensource9ja/scikit.js/issues"
   },
-  "homepage": "https://github.com/opensource9ja/danfojs#readme",
+  "homepage": "https://github.com/opensource9ja/scikit.js#readme",
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
