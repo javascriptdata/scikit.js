@@ -4,7 +4,7 @@ import { assert } from 'chai'
 import { tensor2d } from '@tensorflow/tfjs-core'
 
 // TODO: Improve on kmeans cluster testing
-describe.only('clusters:k_means', () => {
+describe('clusters:k_means', () => {
   const X = tensor2d([
     [1, 2],
     [1, 4],
