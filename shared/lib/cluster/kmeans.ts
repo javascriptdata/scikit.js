@@ -1,7 +1,6 @@
 import {
   div,
   equal,
-  randomNormal,
   scalar,
   squaredDifference,
   sum,
@@ -12,11 +11,37 @@ import {
 } from '@tensorflow/tfjs-core'
 import { tf } from '../../globals'
 
+// Modified Fisher-Yates algorithm which takes
+// a seed and selects n random numbers from a
+// set of integers going from 0 to size-1
+function sampleWithoutReplacement(size: number, n: number, seed?: number) {
+  let curMap = new Map<number, number>()
+  let finalNumbs = []
+  let randoms = tf.randomUniform([n], 0, size, 'float32', seed).dataSync()
+  for (let i = 0; i < randoms.length; i++) {
+    randoms[i] = (randoms[i] * (size - i)) / size
+    let randInt = Math.floor(randoms[i])
+    let lastIndex = size - i - 1
+    if (curMap.get(randInt) === undefined) {
+      curMap.set(randInt, randInt)
+    }
+    if (curMap.get(lastIndex) === undefined) {
+      curMap.set(lastIndex, lastIndex)
+    }
+    let holder = curMap.get(lastIndex) as number
+    curMap.set(lastIndex, curMap.get(randInt) as number)
+    curMap.set(randInt, holder)
+    finalNumbs.push(curMap.get(lastIndex) as number)
+  }
+
+  return finalNumbs
+}
+
 export interface KMeansParams {
   nClusters?: number
   maxIter?: number
   tol?: number
-  randomState?: number | null
+  randomState?: number
 }
 
 export default class KMeans {
@@ -24,13 +49,13 @@ export default class KMeans {
   maxIter: number
   tol: number
   clusterCenters: Tensor2D
-  randomState: number
+  randomState?: number
 
   constructor({
     nClusters = 8,
     maxIter = 2,
     tol = 0.0001,
-    randomState = 0
+    randomState
   }: KMeansParams = {}) {
     this.nClusters = nClusters
     this.maxIter = maxIter
@@ -41,7 +66,12 @@ export default class KMeans {
 
   initCentroids(X: Tensor2D, strategy = 'random') {
     // random strategy
-    this.clusterCenters = randomNormal([this.nClusters, X.shape[1]])
+    let indices = sampleWithoutReplacement(
+      X.shape[0],
+      this.nClusters,
+      this.randomState
+    )
+    this.clusterCenters = tf.gather(X, indices)
   }
 
   closestCentroid(X: Tensor2D, strategy = 'euclidean'): Tensor1D {
@@ -71,7 +101,6 @@ export default class KMeans {
   }
   fit(X: Tensor2D): KMeans {
     this.initCentroids(X)
-    this.clusterCenters.print()
     for (let i = 0; i < this.maxIter; i++) {
       const centroidPicks = this.closestCentroid(X)
       this.clusterCenters = this.updateCentroids(X, centroidPicks)

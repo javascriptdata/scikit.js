@@ -43,7 +43,7 @@ describe.only('clusters:k_means', () => {
       ],
       k: 2
     }
-    const kmean = new KMeans({ nClusters: 2 })
+    const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
     assert.deepEqual(
       expecterdCluster.centroids,
