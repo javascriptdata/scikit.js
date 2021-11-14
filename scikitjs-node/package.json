@@ -1,6 +1,6 @@
 {
   "name": "scikitjs-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "JavaScript package for predictive data analysis and machine learning.",
   "main": "dist/shared/index.js",
   "types": "dist/shared/index.d.ts",
@@ -16,7 +16,7 @@
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=lcov",
     "patch": "npm version patch",
-    "copy:shared": "cp -r ../shared src",
+    "copy:shared": "cp -r ../shared/lib src && mv src/lib src/shared",
     "delete:shared": "rm -r src/shared",
     "test:src": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
     "clean": "rimraf ./dist && rimraf ./src/shared"
