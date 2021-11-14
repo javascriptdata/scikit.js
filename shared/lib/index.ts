@@ -31,6 +31,7 @@ import Normalizer from './preprocessing/scalers/normalizer'
 import Pipeline from './pipeline/pipeline'
 import ColumnTransformer from './compose/column.transformer'
 import RobustScaler from './preprocessing/scalers/robust.scaler'
+import KMeans from './cluster/kmeans'
 
 export {
   MinMaxScaler,
@@ -51,5 +52,6 @@ export {
   metrics,
   Pipeline,
   ColumnTransformer,
-  OrdinalEncoder
+  OrdinalEncoder,
+  KMeans
 }

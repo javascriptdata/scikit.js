@@ -44,6 +44,9 @@ export interface KMeansParams {
   randomState?: number
 }
 
+/**
+ * KMeans aims to cluster the input
+ */
 export default class KMeans {
   nClusters: number
   maxIter: number
