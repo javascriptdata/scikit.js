@@ -13,15 +13,43 @@ function isStringArray(arr: any): arr is string[] {
   return Array.isArray(arr) && typeof arr[0] === 'string'
 }
 
+/**
+ * The parameters for the Column Transormer which is a reallly cool thing HELLLLO
+ */
 export interface ColumnTransformerParams {
+  /**
+   * A list of transformations. Every element is itself a list [name, Transformer, Selection].
+   */
   transformers?: TransformerTriple
+  /**
+   * What should we do with the remainder columns? Possible values for remainder are a Transformer that
+   * will be applied to all remaining columns. It can also be 'passthrough' which simply passes the columns
+   * untouched through this, or 'drop', which drops all untransformed columns
+   */
   remainder?: TransformerOrString
 }
 
+/**
+ * The ColumnTransformer transformers a 2D matrix of mixed types, with possibly missing values
+ * into a 2DMatrix that is ready to be put into a machine learning model. Usually this class does
+ * the heavy lifting associated with imputing missing data, one hot encoding categorical variables,
+ * and any other preprocessing steps that are deemed necessary (standard scaling, etc).
+ *
+ * @example
+ * ```js
+ * let mine = console.log(1+2)
+ * ```
+ */
 export default class ColumnTransformer {
+  /** A list of transformations and column numbers to apply that transformation */
   transformers: TransformerTriple
+  /** The remainder option which can be a Transformer, 'drop', or 'passthrough' */
   remainder: TransformerOrString
 
+  /**
+   * Constructs the ColumnTransformer class
+   * @param {Object} options - An object which contains the transformers list and the remainder text
+   */
   constructor({
     transformers = [],
     remainder = 'drop'
@@ -43,6 +71,11 @@ export default class ColumnTransformer {
     return X.iloc({ columns: [selectedColumns] }).tensor as Tensor2D
   }
 
+  /**
+   * Call fit to actually build the ColumnTransformer Model
+   * @param X 2D Matrix that is passed in
+   * @param y Response variable that is *ignored* because we are simply transforming the data here.
+   */
   fit(X: Scikit2D, y?: Scikit1D) {
     const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
 

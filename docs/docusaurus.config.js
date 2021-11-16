@@ -99,18 +99,7 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme
       }
-    }),
-  plugins: [
-    [
-      'docusaurus-plugin-typedoc',
-
-      // Plugin / TypeDoc options
-      {
-        entryPoints: ['../scikitjs-node/src/shared/index.ts'],
-        tsconfig: '../scikitjs-node/tsconfig.json'
-      }
-    ]
-  ]
+    })
 }
 
 module.exports = config

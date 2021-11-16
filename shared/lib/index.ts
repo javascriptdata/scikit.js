@@ -29,7 +29,9 @@ import LabelEncoder from './preprocessing/encoders/label.encoder'
 import OrdinalEncoder from './preprocessing/encoders/ordinal.encoder'
 import Normalizer from './preprocessing/scalers/normalizer'
 import Pipeline from './pipeline/pipeline'
-import ColumnTransformer from './compose/column.transformer'
+import ColumnTransformer, {
+  ColumnTransformerParams
+} from './compose/column.transformer'
 import RobustScaler from './preprocessing/scalers/robust.scaler'
 import KMeans from './cluster/kmeans'
 
@@ -52,6 +54,7 @@ export {
   metrics,
   Pipeline,
   ColumnTransformer,
+  ColumnTransformerParams,
   OrdinalEncoder,
   KMeans
 }

@@ -39,6 +39,18 @@ function assertInputIsWellFormed(labels: Scikit1D, predictions: Scikit1D) {
 // Scoring functions
 //////////////////////////////////////
 
+/**
+ *
+ * ```js
+ *const labels = [1, 2, 3, 1]
+  const predictions = [1, 2, 4, 4]
+  let result = metrics.accuracyScore(labels, predictions)
+  console.log(result) // 0.5  
+ *```
+ * @param labels 1D Array-like that are the true values
+ * @param predictions 1D Array-like that are your model predictions
+ * @returns number
+ */
 export function accuracyScore(
   labels: Scikit1D,
   predictions: Scikit1D

@@ -16,9 +16,10 @@
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=lcov",
     "patch": "npm version patch",
-    "copy:shared": "cp -r ../shared/lib src && mv src/lib src/shared",
+    "copy:shared": "yarn clean:shared && cp -r ../shared/lib src && mv src/lib src/shared",
     "delete:shared": "rm -r src/shared",
     "test:src": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
+    "clean:shared": "rimraf ./src/shared && rimraf ./src/lib",
     "clean": "rimraf ./dist && rimraf ./src/shared"
   },
   "dependencies": {
@@ -55,6 +56,7 @@
     "rollup-plugin-typescript2": "^0.30.0",
     "ts-node": "^10.0.0",
     "tslib": "*",
+    "typedoc": "^0.22.9",
     "typescript": "^4.4.4",
     "yarn": "^1.22.10"
   },
