@@ -1,8 +1,8 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
-# Deployment (Isomorphic ML)
+# Deployment JS backend to frontend
 
 Wouldn't it be nice if you could train a model, and then choose whether you wanted to deploy it to the backend or the frontend? A lot of my last 10 years in ML has shown that we really need to ease the burden that it takes to go from idea to production.
 

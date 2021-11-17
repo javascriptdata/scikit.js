@@ -39,7 +39,7 @@ describe('DummyRegressor', function () {
     assert.deepEqual(reg.predict(predictX), [12, 12, 12])
   })
   it('Use DummyRegressor on simple example (constant)', function () {
-    const reg = new DummyRegressor({ strategy: 'constant', fill: 10 })
+    const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
 
     const X = [
       [-1, 5],

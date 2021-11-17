@@ -51,7 +51,7 @@ const config = {
           { to: '/', label: 'Home', position: 'right', exact: true },
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'tutorial',
             position: 'right',
             label: 'Tutorial'
           },
@@ -70,7 +70,7 @@ const config = {
             items: [
               {
                 label: 'Tutorial',
-                to: '/docs/intro'
+                to: '/docs/tutorial'
               }
             ]
           },

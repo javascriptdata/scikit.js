@@ -85,7 +85,11 @@ function doTheWholeThing(bigObj) {
     .map((el) => writeClass(el))
     .join('\n')
 
-  return `
+  return `---
+sidebar_position: 2
+---
+
+# API
 
 ${result}
 `

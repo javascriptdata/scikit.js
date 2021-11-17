@@ -11,6 +11,14 @@ import {
 } from '@tensorflow/tfjs-core'
 import { tf } from '../../globals'
 
+/*
+Todo
+1. Implement correct tol, maxIter logic
+2. Implement correct nIter logic
+3. Implement transform logic
+4. Make it pass next 5 tests in sklearn test logic
+*/
+
 // Modified Fisher-Yates algorithm which takes
 // a seed and selects n random numbers from a
 // set of integers going from 0 to size-1
@@ -39,6 +47,8 @@ function sampleWithoutReplacement(size: number, n: number, seed?: number) {
 
 export interface KMeansParams {
   nClusters?: number
+  init?: 'kmeans++' | 'random'
+  nInit?: number
   maxIter?: number
   tol?: number
   randomState?: number
@@ -48,33 +58,45 @@ export interface KMeansParams {
  * KMeans aims to cluster the input
  */
 export default class KMeans {
+  /* Constructor Args */
   nClusters: number
+  init: string
+  nInit?: number
   maxIter: number
   tol: number
-  clusterCenters: Tensor2D
   randomState?: number
+
+  // Attributes
+  clusterCenters: Tensor2D
 
   constructor({
     nClusters = 8,
-    maxIter = 2,
+    init = 'random',
+    maxIter = 300,
     tol = 0.0001,
+    nInit = 10,
     randomState
   }: KMeansParams = {}) {
     this.nClusters = nClusters
+    this.init = init
     this.maxIter = maxIter
     this.tol = tol
-    this.clusterCenters = tensor2d([[]])
     this.randomState = randomState
+    this.nInit = nInit
+    this.clusterCenters = tensor2d([[]])
   }
 
-  initCentroids(X: Tensor2D, strategy = 'random') {
-    // random strategy
-    let indices = sampleWithoutReplacement(
-      X.shape[0],
-      this.nClusters,
-      this.randomState
-    )
-    this.clusterCenters = tf.gather(X, indices)
+  initCentroids(X: Tensor2D) {
+    if (this.init === 'random') {
+      let indices = sampleWithoutReplacement(
+        X.shape[0],
+        this.nClusters,
+        this.randomState
+      )
+      this.clusterCenters = tf.gather(X, indices)
+      return
+    }
+    throw new Error(`init ${this.init} not implemented currently`)
   }
 
   closestCentroid(X: Tensor2D, strategy = 'euclidean'): Tensor1D {

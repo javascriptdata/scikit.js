@@ -2,6 +2,12 @@ import { concat, Tensor2D } from '@tensorflow/tfjs-core'
 import { dfd } from '../../globals'
 import { Scikit1D, Scikit2D, Transformer } from '../types'
 
+/* 
+TODO
+1. Support 'passthrough' and 'drop' and estimator for remainder (also in transformer list)
+2. Pass next 5 tests in scikit-learn
+*/
+
 // When you pass a single string or int, it "pulls" a 1D column
 type Selection = string | string[] | number[] | number
 type TransformerOrString = Transformer | 'drop' | 'passthrough'
@@ -14,7 +20,7 @@ function isStringArray(arr: any): arr is string[] {
 }
 
 /**
- * The parameters for the Column Transormer which is a reallly cool thing HELLLLO
+ * The parameters for the Column Transormer
  */
 export interface ColumnTransformerParams {
   /**
@@ -37,7 +43,27 @@ export interface ColumnTransformerParams {
  *
  * @example
  * ```js
- * let mine = console.log(1+2)
+ *  const X = [
+      [2, 2], 
+      [2, 3], 
+      [0, NaN], 
+      [2, 0] 
+    ]
+
+    const transformer = new ColumnTransformer({
+      transformers: [
+        ['minmax', new MinMaxScaler(), [0]],
+        ['simpleImpute', new SimpleImputer({ strategy: 'median' }), [1]]
+      ]
+    })
+
+    let result = transformer.fitTransform(X)
+    const expected = [
+      [1, 2],
+      [1, 3],
+      [0, 2],
+      [1, 0]
+    ]
  * ```
  */
 export default class ColumnTransformer {
@@ -60,15 +86,15 @@ export default class ColumnTransformer {
 
   getColumns(X: dfd.DataFrame, selectedColumns: Selection): Tensor2D {
     if (isStringArray(selectedColumns)) {
-      return X.loc({ columns: selectedColumns }).tensor as Tensor2D
+      return X.loc({ columns: selectedColumns }).tensor as unknown as Tensor2D
     }
     if (Array.isArray(selectedColumns)) {
-      return X.iloc({ columns: selectedColumns }).tensor as Tensor2D
+      return X.iloc({ columns: selectedColumns }).tensor as unknown as Tensor2D
     }
     if (typeof selectedColumns === 'string') {
       return X[selectedColumns].tensor
     }
-    return X.iloc({ columns: [selectedColumns] }).tensor as Tensor2D
+    return X.iloc({ columns: [selectedColumns] }).tensor as unknown as Tensor2D
   }
 
   /**

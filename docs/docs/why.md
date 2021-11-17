@@ -1,8 +1,8 @@
 ---
-sidebar_position: 2
+sidebar_position: 6
 ---
 
-## Why?
+# Why?
 
 ### Why create a Typescript clone of scikit-learn? Shouldn't you just use the python scikit-learn?
 
