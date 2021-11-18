@@ -69,7 +69,7 @@ from sklearn.linear_model import LinearRegression
 X, y = [[1],[2]], [10, 20]
 lr = LinearRegression(fit_intercept = False)
 lr.fit(X, y)
-print(lr.coef_)
+print(lr.coef)
 ```
 
 Turns into
@@ -86,7 +86,7 @@ lr.fit(X, y)
 console.log(lr.coef)
 ```
 
-In the code sample above, we see that `fit_intercept` turns into `fitIntercept` (and it's an object). And `coef_` turns into `coef`.
+In the code sample above, we see that `fit_intercept` turns into `fitIntercept` (and it's an object). And `coef` turns into `coef`.
 
 **3. The `fit` function for some estimators will be asynchronous, and so it will be called `fitAsync`**
 
@@ -105,7 +105,7 @@ from sklearn.linear_model import LogisticRegression
 X, y = [[1],[-1]], [1, 0]
 lr = LogisticRegression(fit_intercept = False)
 lr.fit(X, y)
-print(lr.coef_)
+print(lr.coef)
 ```
 
 Turns into

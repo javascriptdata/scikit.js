@@ -18,6 +18,13 @@ import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
 
 import { tf } from '../../../globals'
+
+/*
+Todo:
+1. Change $labels to categories
+2. Pass the next 5 scikit-learn tests
+*/
+
 /**
  * Fits a OneHotEncoder to the data.
  * @example

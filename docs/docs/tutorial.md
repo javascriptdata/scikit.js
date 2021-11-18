@@ -36,5 +36,5 @@ let y = [10, 14, 20]
 
 let lr = new LinearRegression()
 await lr.fit(X, y)
-console.log(lr.coef_)
+console.log(lr.coef)
 ```

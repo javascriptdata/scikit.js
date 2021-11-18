@@ -20,6 +20,13 @@ import { tensorMin, tensorMax, turnZerosToOnes } from '../../math'
 import { TransformerMixin } from '../../mixins'
 
 import { tf } from '../../../globals'
+
+/*
+Todo:
+1. Implement constructor arg "featureRange"
+2. Pass next 5 scikit-learn tests
+*/
+
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
@@ -30,13 +37,13 @@ export default class MinMaxScaler
   extends TransformerMixin
   implements Transformer
 {
-  $scale: tf.Tensor1D
-  $min: tf.Tensor1D
+  scale: tf.Tensor1D
+  min: tf.Tensor1D
 
   constructor() {
     super()
-    this.$scale = tf.tensor1d([])
-    this.$min = tf.tensor1d([])
+    this.scale = tf.tensor1d([])
+    this.min = tf.tensor1d([])
   }
 
   /**
@@ -48,7 +55,7 @@ export default class MinMaxScaler
    * scaler.fit([1, 2, 3, 4, 5])
    * // MinMaxScaler {
    * //   $max: [5],
-   * //   $min: [1]
+   * //   min: [1]
    * // }
    *
    */
@@ -57,14 +64,14 @@ export default class MinMaxScaler
 
     const tensorArray = convertToNumericTensor2D(X)
     const max = tensorMax(tensorArray, 0, true) as tf.Tensor1D
-    this.$min = tensorMin(tensorArray, 0, true) as tf.Tensor1D
-    let scale = max.sub(this.$min)
+    this.min = tensorMin(tensorArray, 0, true) as tf.Tensor1D
+    let scale = max.sub(this.min)
 
     // But what happens if max = min, ie.. we are dealing with a constant vector?
     // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
     // The common practice in cases where the vector is constant is to change the 0 elements
     // in scale to 1, so that the division doesn't fail. We do that below
-    this.$scale = turnZerosToOnes(scale) as tf.Tensor1D
+    this.scale = turnZerosToOnes(scale) as tf.Tensor1D
 
     return this
   }
@@ -82,7 +89,7 @@ export default class MinMaxScaler
   transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.sub(this.$min).div<tf.Tensor2D>(this.$scale)
+    const outputData = tensorArray.sub(this.min).div<tf.Tensor2D>(this.scale)
     return outputData
   }
 
@@ -99,7 +106,7 @@ export default class MinMaxScaler
   inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul(this.$scale).add<tf.Tensor2D>(this.$min)
+    const outputData = tensorArray.mul(this.scale).add<tf.Tensor2D>(this.min)
     return outputData
   }
 }

@@ -22,7 +22,7 @@ describe('DummyClassifier', function () {
     assert.deepEqual(clf.predict(predictX), [20, 20, 20])
   })
   it('Use DummyClassifier on simple example (constant)', function () {
-    const clf = new DummyClassifier({ strategy: 'constant', fill: 10 })
+    const clf = new DummyClassifier({ strategy: 'constant', constant: 10 })
 
     const X = [
       [-1, 5],
@@ -50,6 +50,6 @@ describe('DummyClassifier', function () {
     const y = [1, 2, 3]
     scaler.fit(X, y)
 
-    assert.deepEqual(scaler.$uniques, [1, 2, 3])
+    assert.deepEqual(scaler.classes, [1, 2, 3])
   })
 })

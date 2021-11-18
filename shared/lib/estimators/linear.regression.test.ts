@@ -1,4 +1,3 @@
-import '@tensorflow/tfjs-backend-webgl'
 import * as tf from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
 import LinearRegression from './linear.regression'
@@ -15,8 +14,8 @@ describe('LinearRegression', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new LinearRegression()
     await lr.fit([[1], [2]], [2, 4])
-    assert.isTrue(tensorEqual(lr.coef_, tf.tensor1d([2]), 0.1))
-    assert.isTrue(roughlyEqual(lr.intercept_ as number, 0))
+    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1))
+    assert.isTrue(roughlyEqual(lr.intercept as number, 0))
   })
 
   it('Works on small multi-output example (small example)', async function () {
@@ -29,21 +28,21 @@ describe('LinearRegression', function () {
       ]
     )
 
-    assert.isTrue(tensorEqual(lr.coef_, tf.tensor2d([[2, 1]]), 0.1))
+    assert.isTrue(tensorEqual(lr.coef, tf.tensor2d([[2, 1]]), 0.1))
   })
 
   it('Works on arrays with no intercept (small example)', async function () {
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit([[1], [2]], [2, 4])
-    assert.isTrue(tensorEqual(lr.coef_, tf.tensor1d([2]), 0.1))
-    assert.isTrue(roughlyEqual(lr.intercept_ as number, 0))
+    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1))
+    assert.isTrue(roughlyEqual(lr.intercept as number, 0))
   })
 
   it('Works on arrays with none zero intercept (small example)', async function () {
     const lr = new LinearRegression({ fitIntercept: true })
     await lr.fit([[1], [2]], [3, 5])
-    assert.isTrue(tensorEqual(lr.coef_, tf.tensor1d([2]), 0.1))
-    assert.isTrue(roughlyEqual(lr.intercept_ as number, 1))
+    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1))
+    assert.isTrue(roughlyEqual(lr.intercept as number, 1))
   })
 
   // Medium sized example
@@ -68,8 +67,8 @@ describe('LinearRegression', function () {
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit(mediumX, yPlusJitter)
 
-    assert.isTrue(tensorEqual(lr.coef_, tf.tensor1d([2.5, 1]), 0.1))
-    assert.isTrue(roughlyEqual(lr.intercept_ as number, 0))
+    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2.5, 1]), 0.1))
+    assert.isTrue(roughlyEqual(lr.intercept as number, 0))
   })
 
   it('Works on arrays with none zero intercept (medium example)', async function () {
@@ -93,7 +92,7 @@ describe('LinearRegression', function () {
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit(mediumX, yPlusJitter)
 
-    assert.isTrue(tensorEqual(lr.coef_, tf.tensor1d([2.5, 1]), 0.1))
-    assert.isTrue(roughlyEqual(lr.intercept_ as number, 0))
+    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2.5, 1]), 0.1))
+    assert.isTrue(roughlyEqual(lr.intercept as number, 0))
   })
 })

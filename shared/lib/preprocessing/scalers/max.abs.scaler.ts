@@ -20,6 +20,12 @@ import { TransformerMixin } from '../../mixins'
 import { Scikit2D } from '../../types'
 
 import { tf } from '../../../globals'
+
+/*
+Todo:
+1. Pass the next 5 scikit-learn tests
+*/
+
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such
@@ -27,11 +33,11 @@ import { tf } from '../../../globals'
  */
 
 export default class MaxAbsScaler extends TransformerMixin {
-  $scale: tf.Tensor1D
+  scale: tf.Tensor1D
 
   constructor() {
     super()
-    this.$scale = tf.tensor1d([])
+    this.scale = tf.tensor1d([])
   }
 
   /**
@@ -53,7 +59,7 @@ export default class MaxAbsScaler extends TransformerMixin {
     const scale = tensorMax(tensorArray.abs(), 0, true) as tf.Tensor1D
 
     // Deal with 0 scale values
-    this.$scale = turnZerosToOnes(scale) as tf.Tensor1D
+    this.scale = turnZerosToOnes(scale) as tf.Tensor1D
 
     return this
   }
@@ -71,7 +77,7 @@ export default class MaxAbsScaler extends TransformerMixin {
   transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.div<tf.Tensor2D>(this.$scale)
+    const outputData = tensorArray.div<tf.Tensor2D>(this.scale)
     return outputData
   }
 
@@ -88,7 +94,7 @@ export default class MaxAbsScaler extends TransformerMixin {
   inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul<tf.Tensor2D>(this.$scale)
+    const outputData = tensorArray.mul<tf.Tensor2D>(this.scale)
     return outputData
   }
 }

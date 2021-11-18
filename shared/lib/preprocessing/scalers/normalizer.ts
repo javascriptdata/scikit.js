@@ -19,6 +19,12 @@ import { isScikit2D, assert } from '../../types.utils'
 import { TransformerMixin } from '../../mixins'
 
 import { tf } from '../../../globals'
+
+/*
+Todo:
+1. Pass the next five scikit-learn tests
+*/
+
 /**
  * Transform features by scaling each feature to a given range.
  * This estimator scales and translates each feature individually such

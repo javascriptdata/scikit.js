@@ -13,15 +13,18 @@
 * ==========================================================================
 */
 
-import {
-  convertToNumericTensor1D,
-  convertToNumericTensor1D_2D,
-  convertToNumericTensor2D
-} from '../utils'
-import { Scikit1D, Scikit2D, ScikitVecOrMatrix } from '../types'
+import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
+import { Scikit1D, Scikit2D } from '../types'
 import { assert, isScikit1D, isScikit2D } from '../types.utils'
 import { median, quantileSeq } from 'mathjs'
 import { PredictorMixin } from '../mixins'
+
+/*
+TODO
+1. Make the y variable in fit method work against 1D or 2D objects
+1. Run against all tests in scikit-learn
+2. Finish docs so they are pretty
+*/
 
 export interface DummyRegressorParams {
   /**

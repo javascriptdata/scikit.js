@@ -50,8 +50,8 @@ const y = [10, 20]
 await lr.fit(X, y)
 
 lr.predict([[3, 4]]) // roughly [30, 40]
-console.log(lr.coef_)
-console.log(lr.intercept_)
+console.log(lr.coef)
+console.log(lr.intercept)
 ```
 
 ## Contributing Guide

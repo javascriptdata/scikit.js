@@ -21,6 +21,15 @@ import { tf } from '../../globals'
 // First pass at a LogisticRegression implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
 
+/*
+Todo:
+1. Support elasticnet penalty
+2. Support tol and maxIter (might need to change sgd.linear)
+3. Implement randomState
+4. Implement attribute "classes"
+5. Pass next 5 scikit-learn tests
+*/
+
 export interface LogisticRegressionParams {
   penalty?: 'l1' | 'l2' | 'none'
   C?: number

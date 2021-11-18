@@ -23,31 +23,38 @@ import { modeFast } from 'simple-statistics'
 import { uniq, sample } from 'lodash'
 import { PredictorMixin } from '../mixins'
 
+/*
+TODO:
+1. Support strategies “stratified”, “prior”
+2. Support randomState in constructor for deterministic tests of 'stratified', and 'uniform'
+3. Pass next 5 tests in scikit-learn
+*/
+
 /**
  * Supported strategies for this classifier.
  */
 
 export interface DummyClassifierParams {
   strategy?: 'mostFrequent' | 'uniform' | 'constant'
-  fill?: number
+  constant?: number
 }
 
 /**
  * Creates an estimator that guesses a class label based on simple rules.
  */
 export default class DummyClassifier extends PredictorMixin {
-  $fill: number
-  $strategy: string
-  $uniques: number[] | string[]
+  constant: number
+  strategy: string
+  classes: number[] | string[]
 
   constructor({
     strategy = 'mostFrequent',
-    fill = 0
+    constant = 0
   }: DummyClassifierParams = {}) {
     super()
-    this.$fill = fill || 0
-    this.$strategy = strategy
-    this.$uniques = []
+    this.constant = constant || 0
+    this.strategy = strategy
+    this.classes = []
   }
 
   /**
@@ -62,18 +69,18 @@ export default class DummyClassifier extends PredictorMixin {
   fit(X: ScikitVecOrMatrix, y: Scikit1D): DummyClassifier {
     assert(isScikit1D(y), 'Data can not be converted to a 1D or 2D matrix.')
     assert(
-      ['mostFrequent', 'uniform', 'constant'].includes(this.$strategy),
-      `Strategy ${this.$strategy} not supported. We support 'mostFrequent', 'uniform', and 'constant'`
+      ['mostFrequent', 'uniform', 'constant'].includes(this.strategy),
+      `Strategy ${this.strategy} not supported. We support 'mostFrequent', 'uniform', and 'constant'`
     )
 
     const newY = convertToNumericTensor1D(y)
 
-    if (this.$strategy === 'mostFrequent') {
-      this.$fill = modeFast(newY.arraySync())
+    if (this.strategy === 'mostFrequent') {
+      this.constant = modeFast(newY.arraySync())
       return this
     }
-    if (this.$strategy === 'uniform') {
-      this.$uniques = uniq(newY.arraySync() as number[])
+    if (this.strategy === 'uniform') {
+      this.classes = uniq(newY.arraySync() as number[])
       return this
     }
     // Handles 'constant' case
@@ -96,19 +103,19 @@ export default class DummyClassifier extends PredictorMixin {
       'Data can not be converted to a 1D or 2D matrix.'
     )
     assert(
-      ['mostFrequent', 'uniform', 'constant'].includes(this.$strategy),
-      `Strategy ${this.$strategy} not supported. We support 'mostFrequent', 'uniform', and 'constant'`
+      ['mostFrequent', 'uniform', 'constant'].includes(this.strategy),
+      `Strategy ${this.strategy} not supported. We support 'mostFrequent', 'uniform', and 'constant'`
     )
     let newData = convertToNumericTensor1D_2D(X)
     let length = newData.shape[0]
-    if (this.$strategy === 'mostFrequent' || this.$strategy === 'constant') {
-      return Array(length).fill(this.$fill)
+    if (this.strategy === 'mostFrequent' || this.strategy === 'constant') {
+      return Array(length).fill(this.constant)
     }
 
     // "Uniform case"
     let returnArr = []
     for (let i = 0; i < length; i++) {
-      returnArr.push(sample(this.$uniques))
+      returnArr.push(sample(this.classes))
     }
     return returnArr
   }

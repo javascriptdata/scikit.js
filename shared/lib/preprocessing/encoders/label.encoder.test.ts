@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import LabelEncoder from './label.encoder'
 import { dfd } from '../../../globals'
+import 'mocha'
 
 describe('LabelEncoder', function () {
   it('LabelEncoder works for Series', function () {
@@ -36,14 +37,7 @@ describe('LabelEncoder', function () {
     const scaler = new LabelEncoder()
     scaler.fit(sf as any)
     const classes = scaler.classes
-    const nClasses = scaler.nClasses
 
-    let obj = Array.from(classes).reduce(
-      (obj, [key, value]) => Object.assign(obj, { [key as any]: value }), // Be careful! Maps can have non-String keys; object literals can't.
-      {}
-    )
-
-    assert.deepEqual(obj, { 1: 0, 2: 1, boy: 2, git: 3 })
-    assert.equal(nClasses, 4)
+    assert.deepEqual(classes, [1, 2, 'boy', 'git'])
   })
 })

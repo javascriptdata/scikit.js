@@ -3,7 +3,11 @@ import { assert } from '../types.utils'
 import { Scikit1D, Scikit2D } from '../types'
 
 export type Bunch = [string, any]
-
+/*
+TODO
+1. Implement attribute classes
+2. Pass next 5 scikit-learn tests
+*/
 export interface PipelineParams {
   steps?: Array<Bunch>
 }

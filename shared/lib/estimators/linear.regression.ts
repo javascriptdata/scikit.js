@@ -40,6 +40,12 @@ export interface LinearRegressionParams {
   fitIntercept?: boolean
 }
 
+/*
+Todo:
+1. Pass next 5 tests scikit-learn
+2. Write closed for solution (save that as linear regression, and move this to sgdregressor)
+*/
+
 export default class LinearRegression extends SGD {
   constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
     super({
