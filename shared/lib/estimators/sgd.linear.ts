@@ -135,7 +135,7 @@ export class SGD extends PredictorMixin {
     } else {
       const yTwoD = y.reshape([-1, 1])
       const yTwoDOneHotEncoded = this.oneHot.fitTransform(yTwoD)
-      if (this.oneHot.$labels[0].size > 2) {
+      if (this.oneHot.categories[0].length > 2) {
         this.modelCompileArgs.loss = losses.softmaxCrossEntropy
       } else {
         this.modelCompileArgs.loss = losses.sigmoidCrossEntropy

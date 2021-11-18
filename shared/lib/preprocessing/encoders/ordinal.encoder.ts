@@ -21,8 +21,7 @@ import { tf } from '../../../globals'
 
 /*
 Todo:
-1. Change $labels to categories
-2. Pass the next 5 tests
+1. Pass the next 5 tests
 */
 
 /**
@@ -34,11 +33,20 @@ Todo:
  * ```
  */
 export default class OrdinalEncoder extends TransformerMixin {
-  $labels: Map<string | number | boolean, number>[]
-
+  categories: (number | string | boolean)[][]
   constructor() {
     super()
-    this.$labels = []
+    this.categories = []
+  }
+
+  classesToMapping(
+    classes: Array<string | number | boolean>
+  ): Map<string | number | boolean, number> {
+    const labels = new Map<string | number | boolean, number>()
+    classes.forEach((value, index) => {
+      labels.set(value, index)
+    })
+    return labels
   }
 
   loopOver2DArrayToSetLabels(array2D: any) {
@@ -48,11 +56,7 @@ export default class OrdinalEncoder extends TransformerMixin {
         curSet.add(array2D[i][j])
       }
       let results = Array.from(curSet)
-      let newMap = new Map<string | number | boolean, number>()
-      results.forEach((el, i) => {
-        newMap.set(el as number, i)
-      })
-      this.$labels.push(newMap)
+      this.categories.push(results as number[])
     }
   }
 
@@ -74,12 +78,13 @@ export default class OrdinalEncoder extends TransformerMixin {
   }
 
   loopOver2DArrayToUseLabels(array2D: any) {
+    let labels = this.categories.map((el) => this.classesToMapping(el))
     let finalArray = []
     for (let i = 0; i < array2D.length; i++) {
       let curArray = []
       for (let j = 0; j < array2D[0].length; j++) {
         let curElem = array2D[i][j]
-        let val = this.$labels[j].get(curElem)
+        let val = labels[j].get(curElem)
         let actualIndex = val === undefined ? -1 : val
         curArray.push(actualIndex)
       }
