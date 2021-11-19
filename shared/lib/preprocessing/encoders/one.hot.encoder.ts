@@ -20,7 +20,7 @@ import { TransformerMixin } from '../../mixins'
 import { tf } from '../../../globals'
 
 /*
-Todo:
+Next steps:
 1. Implement inverseTransform for 2D array
 2. Pass the next 5 scikit-learn tests
 */

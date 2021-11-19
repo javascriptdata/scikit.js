@@ -22,7 +22,7 @@ import { tf } from '../../globals'
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
 
 /*
-Todo:
+Next steps:
 1. Support elasticnet penalty
 2. Support tol and maxIter (might need to change sgd.linear)
 3. Implement randomState

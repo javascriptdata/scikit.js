@@ -189,7 +189,7 @@ export function rocAucScore(labels: Scikit1D, predictions: Scikit1D) {
     labels,
     predictions
   )
-  // Todo: This can prob be done faster with tensor magic
+  // Next steps: This can prob be done faster with tensor magic
   let x = labelsT.arraySync()
   let y = predictionsT.arraySync()
   x.push(1)

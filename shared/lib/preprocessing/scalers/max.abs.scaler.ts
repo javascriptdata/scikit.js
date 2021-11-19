@@ -22,7 +22,7 @@ import { Scikit2D } from '../../types'
 import { tf } from '../../../globals'
 
 /*
-Todo:
+Next steps:
 1. Pass the next 5 scikit-learn tests
 */
 

@@ -29,7 +29,7 @@ import { TransformerMixin } from '../mixins'
 import { assert } from '../types.utils'
 
 /*
-TODO:
+Next steps:
 1. Make SimpleImputer work with strings
 */
 

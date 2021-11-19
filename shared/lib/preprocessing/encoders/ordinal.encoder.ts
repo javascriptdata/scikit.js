@@ -16,11 +16,10 @@
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
-
 import { tf } from '../../../globals'
 
 /*
-Todo:
+Next steps:
 1. Pass the next 5 tests
 */
 

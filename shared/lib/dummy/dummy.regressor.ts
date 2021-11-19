@@ -20,7 +20,7 @@ import { median, quantileSeq } from 'mathjs'
 import { PredictorMixin } from '../mixins'
 
 /*
-TODO
+Next steps:
 1. Make the y variable in fit method work against 1D or 2D objects
 1. Run against all tests in scikit-learn
 2. Finish docs so they are pretty

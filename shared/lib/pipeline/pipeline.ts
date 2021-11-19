@@ -4,7 +4,7 @@ import { Scikit1D, Scikit2D } from '../types'
 
 export type Bunch = [string, any]
 /*
-TODO
+Next steps:
 1. Implement attribute classes
 2. Pass next 5 scikit-learn tests
 */

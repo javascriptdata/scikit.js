@@ -22,7 +22,7 @@ import { TransformerMixin } from '../../mixins'
 import { tf } from '../../../globals'
 
 /*
-Todo:
+Next steps:
 1. Implement withMean, and withStd
 2. Test on the scikit-learn tests
 */

@@ -12,7 +12,7 @@ import {
 import { tf } from '../../globals'
 
 /*
-Todo
+Next steps
 1. Implement correct tol, maxIter logic
 2. Implement correct nIter logic
 3. Implement transform logic

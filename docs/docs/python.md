@@ -8,7 +8,7 @@ This library aims to be a drop-in replacement for scikit-learn but for JS enviro
 differences in deploy environment and underlying libraries that make for a slightly different experience.
 Here are the 3 main differences.
 
-**1. Class constructors take in objects. Every other function takes in positional arguments.**
+### 1. Class constructors take in objects. Every other function takes in positional arguments.
 
 While I would have liked to make every function identical to the python equivalent, it wasn't possible. In python,
 one has named arguments, meaning that all of these are valid function calls.
@@ -57,7 +57,7 @@ await lr.fit(X, y)
 
 You'll also notice in the code above, these are actual classes in JS, so you'll need to `new` them.
 
-**2. underscore_case turns into camelCase**
+### 2. underscore_case turns into camelCase
 
 Not a huge change, but every function call and variable name that is `underscore_case` in python will simply be `camelCase` in JS. In cases where there is an underscore but no word after, it is removed.
 
@@ -88,7 +88,7 @@ console.log(lr.coef)
 
 In the code sample above, we see that `fit_intercept` turns into `fitIntercept` (and it's an object). And `coef` turns into `coef`.
 
-**3. Always await calls to .fit or .fitPredict**
+### 3. Always await calls to .fit or .fitPredict
 
 It's common practice in Javascript to not tie up the main thread. Many libraries, including tensorflow.js only give an async "fit" function.
 

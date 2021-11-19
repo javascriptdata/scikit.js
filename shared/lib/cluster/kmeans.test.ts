@@ -3,7 +3,7 @@ import KMeans from './kmeans'
 import { assert } from 'chai'
 import { tensor2d } from '@tensorflow/tfjs-core'
 
-// TODO: Improve on kmeans cluster testing
+// Next steps: Improve on kmeans cluster testing
 describe('clusters:k_means', () => {
   const X = tensor2d([
     [1, 2],
@@ -131,7 +131,7 @@ describe('clusters:k_means', () => {
   //   } catch (err) {
   //     expect(err).toBeInstanceOf(ValidationError)
   //   }
-  //   // TODO: implement datatype check to the validation method
+  //   // Next steps: implement datatype check to the validation method
   //   // expect(() => kmean.fit([["aa", "bb"]])).toThrow('The matrix is not 2D shaped: [1,2] of [2]');
   // })
 })

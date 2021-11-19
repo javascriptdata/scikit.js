@@ -24,7 +24,7 @@ import { uniq, sample } from 'lodash'
 import { PredictorMixin } from '../mixins'
 
 /*
-TODO:
+Next steps:
 1. Support strategies “stratified”, “prior”
 2. Support randomState in constructor for deterministic tests of 'stratified', and 'uniform'
 3. Pass next 5 tests in scikit-learn

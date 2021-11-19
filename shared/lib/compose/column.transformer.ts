@@ -2,15 +2,14 @@ import { concat, Tensor2D } from '@tensorflow/tfjs-core'
 import { dfd } from '../../globals'
 import { Scikit1D, Scikit2D, Transformer } from '../types'
 
-/* 
-TODO
+/*
+Next steps:
 1. Support 'passthrough' and 'drop' and estimator for remainder (also in transformer list)
 2. Pass next 5 tests in scikit-learn
 */
 
 // When you pass a single string or int, it "pulls" a 1D column
 type Selection = string | string[] | number[] | number
-type TransformerOrString = Transformer | 'drop' | 'passthrough'
 type SingleTransformation = [string, Transformer, Selection]
 type TransformerTriple = Array<SingleTransformation>
 
@@ -32,7 +31,7 @@ export interface ColumnTransformerParams {
    * will be applied to all remaining columns. It can also be 'passthrough' which simply passes the columns
    * untouched through this, or 'drop', which drops all untransformed columns
    */
-  remainder?: TransformerOrString
+  remainder?: Transformer | 'drop' | 'passthrough'
 }
 
 /**
@@ -42,12 +41,12 @@ export interface ColumnTransformerParams {
  * and any other preprocessing steps that are deemed necessary (standard scaling, etc).
  *
  * @example
- * ```js
- *  const X = [
-      [2, 2], 
-      [2, 3], 
-      [0, NaN], 
-      [2, 0] 
+ * ```typescript
+    const X = [
+      [2, 2],
+      [2, 3],
+      [0, NaN],
+      [2, 0]
     ]
 
     const transformer = new ColumnTransformer({
@@ -66,11 +65,11 @@ export interface ColumnTransformerParams {
     ]
  * ```
  */
-export default class ColumnTransformer {
+export class ColumnTransformer {
   /** A list of transformations and column numbers to apply that transformation */
   transformers: TransformerTriple
   /** The remainder option which can be a Transformer, 'drop', or 'passthrough' */
-  remainder: TransformerOrString
+  remainder: Transformer | 'drop' | 'passthrough'
 
   /**
    * Constructs the ColumnTransformer class

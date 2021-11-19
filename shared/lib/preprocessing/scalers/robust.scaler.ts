@@ -23,7 +23,7 @@ import { quantileSeq } from 'mathjs'
 import { tf } from '../../../globals'
 
 /*
-Todo:
+Next steps:
 1. Implement constructor args (withCentering, withScaling, quantileRange)
 2. Test on the next 5 scikit-learn tests
 */

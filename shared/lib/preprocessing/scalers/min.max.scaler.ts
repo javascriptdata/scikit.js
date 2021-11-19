@@ -22,7 +22,7 @@ import { TransformerMixin } from '../../mixins'
 import { tf } from '../../../globals'
 
 /*
-Todo:
+Next steps:
 1. Implement constructor arg "featureRange"
 2. Pass next 5 scikit-learn tests
 */

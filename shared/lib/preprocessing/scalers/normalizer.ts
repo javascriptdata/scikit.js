@@ -21,7 +21,7 @@ import { TransformerMixin } from '../../mixins'
 import { tf } from '../../../globals'
 
 /*
-Todo:
+Next steps:
 1. Pass the next five scikit-learn tests
 */
 

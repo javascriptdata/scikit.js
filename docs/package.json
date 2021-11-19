@@ -6,7 +6,7 @@
     "build:node": "cd ../scikitjs-node && yarn build:only && cd ../docs",
     "clean:node": "cd ../scikitjs-node && yarn delete:shared",
     "generate:json": "cd ../scikitjs-node && yarn typedoc --tsconfig ./tsconfig.json src/shared/index.ts --json ../docs/out.json",
-    "generate:markdown": "node convert.js > docs/Api.md",
+    "generate:markdown": "node convert.js > docs/api.md && yarn prettier --config ../.prettierrc -w docs/api.md",
     "generate:api": "yarn generate:json && yarn generate:markdown",
     "docusaurus": "docusaurus",
     "start": "yarn build:node && yarn generate:api && docusaurus start && yarn clean:node",
@@ -31,6 +31,7 @@
   "devDependencies": {
     "@docusaurus/module-type-aliases": "2.0.0-beta.8",
     "@tsconfig/docusaurus": "^1.0.4",
+    "prettier": "^2.4.1",
     "typedoc": "^0.22.9",
     "typedoc-plugin-markdown": "^3.11.3",
     "typescript": "^4.3.5"

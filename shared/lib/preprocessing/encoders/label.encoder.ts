@@ -16,8 +16,13 @@
 import { is1DArray } from '../../utils'
 import { TransformerMixin } from '../../mixins'
 import { Scikit1D } from '../../types'
-
 import { tf, dfd } from '../../../globals'
+
+/*
+Next steps:
+1. Pass the next 5 tests
+*/
+
 /**
  * Encode target labels with value between 0 and n_classes-1.
  */

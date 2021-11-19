@@ -11,7 +11,10 @@ function getText(obj) {
 }
 
 function toTableParameter(obj) {
-  return `${obj.name} | ${obj.type.name}`
+  if (obj?.comment?.shortText) {
+    return `${obj.name} | ${getTypeName(obj.type)} | ${obj.comment.shortText}`
+  }
+  return `${obj.name} | ${getTypeName(obj.type)}`
 }
 
 function generateTable(parameters) {
@@ -37,7 +40,7 @@ function generateMarkdownFromMethod(obj, className) {
 **${obj.name}(${parameters
     ?.map((el) => `${el.name}${el?.flags?.isOptional ? '?' : ''}`)
     ?.join(',')})**: ${
-    signature.type.name === 'default' ? className : signature.type.name
+    signature.type.name === 'default' ? className : getTypeName(signature.type)
   }\n\n${signature?.comment?.shortText || ''}\n${generateTable(parameters)}
   `
   return md
@@ -53,11 +56,46 @@ ${jsonClass.children
 `
 }
 
+function readableStringsForCommonTypes(name) {
+  if (name === 'Scikit1D') {
+    return 'number[] \\| string[] \\| boolean[] \\| TypedArray \\| Tensor1D \\| Series'
+  }
+  if (name === 'Scikit2D') {
+    return '(number \\| string \\| boolean)[][] \\| TypedArray[] \\| Tensor2D \\| Dataframe'
+  }
+  return name
+}
+
+function getTypeName({ type, name, value, elementType, types }) {
+  if (type === 'reference' || type === 'intrinsic') {
+    return readableStringsForCommonTypes(name)
+  }
+  if (type === 'literal') {
+    if (typeof value === 'string') {
+      return `"${value}"`
+    }
+    return value
+  }
+
+  if (type === 'array') {
+    let typeName = getTypeName(elementType)
+    if (typeName.includes('|')) {
+      return `(${typeName})[]`
+    }
+    return `${typeName}[]`
+  }
+  if (type === 'union') {
+    return types.map((el) => getTypeName(el)).join(' | ')
+  }
+
+  return ''
+}
+
 function generateProperties(jsonClass) {
   let properties = jsonClass.children
     .filter((el) => el.kindString === 'Property')
     .map((el) => {
-      return `**${el.name}**: ${el.type.name}\n\n${
+      return `**${el.name}**: ${getTypeName(el.type)}\n\n${
         el?.comment?.shortText || ''
       }`
     })

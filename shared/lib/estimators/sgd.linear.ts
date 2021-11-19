@@ -117,7 +117,7 @@ export class SGD extends PredictorMixin {
     this.modelCompileArgs = modelCompileArgs
     this.denseLayerArgs = denseLayerArgs
     this.isClassification = Boolean(isClassification)
-    // TODO: Implement "drop" mechanics for OneHotEncoder
+    // Next steps: Implement "drop" mechanics for OneHotEncoder
     // There is a possibility to do a drop => if_binary which would
     // squash down on the number of variables that we'd have to learn
     this.oneHot = new OneHotEncoder()
@@ -233,7 +233,7 @@ export class SGD extends PredictorMixin {
    */
 
   importModel(params: { coef: number[]; intercept: number }): SGD {
-    // TODO: Need to update for possible 2D coef case, and 1D intercept case
+    // Next steps: Need to update for possible 2D coef case, and 1D intercept case
     let myCoef = tensor2d(params.coef, [params.coef.length, 1], 'float32')
     let myIntercept = tensor1d([params.intercept], 'float32')
     this.initializeModel(myCoef, myIntercept, [myCoef, myIntercept])

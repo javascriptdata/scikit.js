@@ -29,11 +29,13 @@ import LabelEncoder from './preprocessing/encoders/label.encoder'
 import OrdinalEncoder from './preprocessing/encoders/ordinal.encoder'
 import Normalizer from './preprocessing/scalers/normalizer'
 import Pipeline from './pipeline/pipeline'
-import ColumnTransformer, {
+import {
+  ColumnTransformer,
   ColumnTransformerParams
 } from './compose/column.transformer'
 import RobustScaler from './preprocessing/scalers/robust.scaler'
 import KMeans from './cluster/kmeans'
+import { Scikit1D, Scikit2D, ScikitVecOrMatrix, ScikitLike1D } from './types'
 
 export {
   MinMaxScaler,
@@ -56,5 +58,9 @@ export {
   ColumnTransformer,
   ColumnTransformerParams,
   OrdinalEncoder,
-  KMeans
+  KMeans,
+  Scikit1D,
+  Scikit2D,
+  ScikitVecOrMatrix,
+  ScikitLike1D
 }
