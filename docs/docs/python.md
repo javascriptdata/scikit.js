@@ -52,7 +52,7 @@ import { LinearRegression } from 'scikitjs'
 let X = [[1], [2]]
 let y = [10, 20]
 let lr = new LinearRegression({ fitIntercept: false })
-lr.fit(X, y)
+await lr.fit(X, y)
 ```
 
 You'll also notice in the code above, these are actual classes in JS, so you'll need to `new` them.
@@ -82,20 +82,19 @@ import { LinearRegression } from 'scikitjs'
 let X = [[1], [2]]
 let y = [10, 20]
 let lr = new LinearRegression({ fitIntercept: false })
-lr.fit(X, y)
+await lr.fit(X, y)
 console.log(lr.coef)
 ```
 
 In the code sample above, we see that `fit_intercept` turns into `fitIntercept` (and it's an object). And `coef` turns into `coef`.
 
-**3. The `fit` function for some estimators will be asynchronous, and so it will be called `fitAsync`**
+**3. Always await calls to .fit or .fitPredict**
 
-In Javascript there are many cases where you can't tie up the main thread. In those cases it's best to use async functions.
+It's common practice in Javascript to not tie up the main thread. Many libraries, including tensorflow.js only give an async "fit" function.
 
-Moreover some underlying libraries (tensorflow.js) only provide a `fit` function that is asynchronous. So if you wish to use those libraries, your `fit` function will also be async. But I didn't want to ship a library where users didn't easily know whether a function was asynchronous or not, so I opted to with the following convention:
+So if we build on top of them our fit functions will be asynchronous. But what happens if we make our own estimator that has a synchronous fit function? Should we burden the user with finding out if their fit function is async or not, and then "awaiting" the proper one? I think not.
 
-- If your `fit` is synchronous, it is called `fit`.
-- If it is async, then it is called `fitAsync`.
+I think we should simply await all calls to fit. If you await a synchronous function, it resolves immediately and you are on your merry way. So I literally await all calls to .fit and you should too.
 
 #### python
 
@@ -118,10 +117,6 @@ import { LogisticRegression } from 'scikitjs'
 let X = [[1], [-1]]
 let y = [1, 0]
 let lr = new LogisticRegression({ fitIntercept: false })
-await lr.fitAsync(X, y)
+await lr.fit(X, y)
 console.log(lr.coef)
 ```
-
-Why exactly is a `LinearRegression` synchronous, while a `LogisticRegression` is not? Well in the case of a `LinearRegression`, there exist [closed form](https://eli.thegreenplace.net/2014/derivation-of-the-normal-equation-for-linear-regression/) solutions that compute the proper coefficients. That is not the case in a `LogisticRegression`.
-
-In the case of a `LogisticRegression` I opt for a SGD solution using the underlying `tensorflow.js` library for speed. The `fit` function that `tensorflow.js` gives me is async, and so therefore, mine is as well.
