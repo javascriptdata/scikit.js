@@ -71,29 +71,12 @@ export class ColumnTransformer {
   /** The remainder option which can be a Transformer, 'drop', or 'passthrough' */
   remainder: Transformer | 'drop' | 'passthrough'
 
-  /**
-   * Constructs the ColumnTransformer class
-   * @param {Object} options - An object which contains the transformers list and the remainder text
-   */
   constructor({
     transformers = [],
     remainder = 'drop'
   }: ColumnTransformerParams = {}) {
     this.transformers = transformers
     this.remainder = remainder
-  }
-
-  getColumns(X: dfd.DataFrame, selectedColumns: Selection): Tensor2D {
-    if (isStringArray(selectedColumns)) {
-      return X.loc({ columns: selectedColumns }).tensor as unknown as Tensor2D
-    }
-    if (Array.isArray(selectedColumns)) {
-      return X.iloc({ columns: selectedColumns }).tensor as unknown as Tensor2D
-    }
-    if (typeof selectedColumns === 'string') {
-      return X[selectedColumns].tensor
-    }
-    return X.iloc({ columns: [selectedColumns] }).tensor as unknown as Tensor2D
   }
 
   /**
@@ -139,5 +122,18 @@ export class ColumnTransformer {
       output.push(curTransform.fitTransform(subsetX, y))
     }
     return concat(output, 1)
+  }
+
+  getColumns(X: dfd.DataFrame, selectedColumns: Selection): Tensor2D {
+    if (isStringArray(selectedColumns)) {
+      return X.loc({ columns: selectedColumns }).tensor as unknown as Tensor2D
+    }
+    if (Array.isArray(selectedColumns)) {
+      return X.iloc({ columns: selectedColumns }).tensor as unknown as Tensor2D
+    }
+    if (typeof selectedColumns === 'string') {
+      return X[selectedColumns].tensor
+    }
+    return X.iloc({ columns: [selectedColumns] }).tensor as unknown as Tensor2D
   }
 }

@@ -5,7 +5,7 @@
   "scripts": {
     "build:node": "cd ../scikitjs-node && yarn build:only && cd ../docs",
     "clean:node": "cd ../scikitjs-node && yarn delete:shared",
-    "generate:json": "cd ../scikitjs-node && yarn typedoc --tsconfig ./tsconfig.json src/shared/index.ts --json ../docs/out.json",
+    "generate:json": "cd ../scikitjs-node && yarn typedoc --sort source-order --tsconfig ./tsconfig.json src/shared/index.ts --json ../docs/out.json",
     "generate:markdown": "node convert.js > docs/api.md && yarn prettier --config ../.prettierrc -w docs/api.md",
     "generate:api": "yarn generate:json && yarn generate:markdown",
     "docusaurus": "docusaurus",
