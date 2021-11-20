@@ -34,8 +34,8 @@ import {
   ColumnTransformerParams
 } from './compose/column.transformer'
 import RobustScaler from './preprocessing/scalers/robust.scaler'
-import KMeans from './cluster/kmeans'
-import { Scikit1D, Scikit2D, ScikitVecOrMatrix, ScikitLike1D } from './types'
+import { KMeans, KMeansParams } from './cluster/kmeans'
+import { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
 
 export {
   MinMaxScaler,
@@ -59,8 +59,8 @@ export {
   ColumnTransformerParams,
   OrdinalEncoder,
   KMeans,
+  KMeansParams,
   Scikit1D,
   Scikit2D,
-  ScikitVecOrMatrix,
-  ScikitLike1D
+  ScikitVecOrMatrix
 }

@@ -1,18 +1,18 @@
 import * as _ from 'lodash'
-import KMeans from './kmeans'
+import { KMeans } from './kmeans'
 import { assert } from 'chai'
 import { tensor2d } from '@tensorflow/tfjs-core'
 
 // Next steps: Improve on kmeans cluster testing
 describe('clusters:k_means', () => {
-  const X = tensor2d([
+  const X = [
     [1, 2],
     [1, 4],
     [1, 0],
     [4, 2],
     [4, 4],
     [4, 0]
-  ])
+  ]
 
   const predVector1 = [
     [0, 0],

@@ -23,13 +23,13 @@ function isStringArray(arr: any): arr is string[] {
  */
 export interface ColumnTransformerParams {
   /**
-   * A list of transformations. Every element is itself a list [name, Transformer, Selection].
+   * A list of transformations. Every element is itself a list [name, Transformer, Selection]. **default = []**
    */
   transformers?: TransformerTriple
   /**
    * What should we do with the remainder columns? Possible values for remainder are a Transformer that
    * will be applied to all remaining columns. It can also be 'passthrough' which simply passes the columns
-   * untouched through this, or 'drop', which drops all untransformed columns
+   * untouched through this, or 'drop', which drops all untransformed columns. **default = "drop"**
    */
   remainder?: Transformer | 'drop' | 'passthrough'
 }
@@ -66,9 +66,7 @@ export interface ColumnTransformerParams {
  * ```
  */
 export class ColumnTransformer {
-  /** A list of transformations and column numbers to apply that transformation */
   transformers: TransformerTriple
-  /** The remainder option which can be a Transformer, 'drop', or 'passthrough' */
   remainder: Transformer | 'drop' | 'passthrough'
 
   constructor({

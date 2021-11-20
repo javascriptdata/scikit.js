@@ -64,7 +64,7 @@ function generateMarkdownFromMethod(obj, className, bigObj) {
   return md
 }
 
-function generateConstructor(jsonClass, bigObj) {
+function getInterfaceForClass(jsonClass, bigObj) {
   let constructor = jsonClass.children.filter(
     (el) => el.kindString === 'Constructor'
   )[0]
@@ -75,8 +75,6 @@ function generateConstructor(jsonClass, bigObj) {
   const sig = signatures && signatures[0]
   const parameters = sig?.parameters
 
-  let constructorInvocation = `\`\`\`js\nnew ${jsonClass.name}({ object })\n\`\`\``
-
   const param = parameters && parameters[0]
   const type = param?.type
   if (type) {
@@ -84,18 +82,32 @@ function generateConstructor(jsonClass, bigObj) {
       (el) => el.id === type.id && el.kindString === 'Interface'
     )[0]
 
-    if (interface && interface.children) {
-      constructorInvocation = `\`\`\`js\nnew ${
-        jsonClass.name
-      }({ ${interface.children
-        ?.map((el) => `${el.name}${el?.flags?.isOptional ? '?' : ''}`)
-        ?.join(', ')}})\n\`\`\``
+    return interface
+  }
+  return undefined
+}
 
-      return `### Constructor
+function generateConstructor(jsonClass, bigObj) {
+  let constructor = jsonClass.children.filter(
+    (el) => el.kindString === 'Constructor'
+  )[0]
+
+  let interface = getInterfaceForClass(jsonClass, bigObj)
+
+  let constructorInvocation = `\`\`\`js\nnew ${jsonClass.name}({ object })\n\`\`\``
+
+  if (interface && interface.children) {
+    constructorInvocation = `\`\`\`js\nnew ${
+      jsonClass.name
+    }({ ${interface.children
+      ?.map((el) => `${el.name}${el?.flags?.isOptional ? '?' : ''}`)
+      ?.join(', ')}})\n\`\`\``
+
+    return `### Constructor
 ${constructorInvocation}
 ${generateTable(interface.children, {}, true)}`
-    }
   }
+
   return `### Constructor
 ${constructorInvocation}
 ${generateMarkdownFromMethod(constructor, jsonClass.name, bigObj)}
@@ -106,7 +118,7 @@ function generateAllMethods(jsonClass) {
   return `
 ### Methods
 ${jsonClass.children
-  .filter((el) => el.kindString === 'Method')
+  .filter((el) => el.kindString === 'Method' && el?.flags?.isPublic)
   .map((el) => generateMarkdownFromMethod(el, jsonClass.name))
   .join('\n---\n')}
 `
@@ -159,17 +171,33 @@ function getTypeName({ id, type, name, value, elementType, types }, bigObj) {
 }
 
 function generateProperties(jsonClass, bigObj) {
-  let properties = jsonClass.children
-    .filter((el) => el.kindString === 'Property')
+  // console.log(jsonClass.children)
+  let interface = getInterfaceForClass(jsonClass, bigObj)
+  let allConstructorArgs = []
+  if (interface && interface.children) {
+    allConstructorArgs = interface.children.map((el) => el.name)
+  }
+  let properties = jsonClass.children.filter(
+    (el) =>
+      el.kindString === 'Property' && !allConstructorArgs.includes(el.name)
+  )
+  let propertiesText = properties
     .map((el) => {
-      return `**${el.name}**: ${getTypeName(el.type, bigObj)}\n\n${
+      return `**\`${el.name}\`**: ${getTypeName(el.type, bigObj)}\n\n${
         el?.comment?.shortText || ''
       }`
     })
     .join('\n\n')
   return `
 ### Properties
-${properties}
+
+${
+  properties.length === 0
+    ? `The only properties are the arguments defined above.\n`
+    : `All of the constructor arguments above are class properties as well as \n`
+}
+
+${propertiesText}
   `
 }
 
@@ -179,7 +207,7 @@ function writeClass(jsonClass, bigObj) {
 
 ${getText(jsonClass.comment)}
 ${generateConstructor(jsonClass, bigObj)}
-${generateProperties(jsonClass)}
+${generateProperties(jsonClass, bigObj)}
 ${generateAllMethods(jsonClass)}
 
 `
