@@ -35,7 +35,7 @@ import {
 } from '../utils'
 import { Scikit2D, ScikitVecOrMatrix } from '../types'
 import { PredictorMixin } from '../mixins'
-import OneHotEncoder from '../preprocessing/encoders/one.hot.encoder'
+import { OneHotEncoder } from '../preprocessing/encoders/one.hot.encoder'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -195,7 +195,7 @@ export class SGD extends PredictorMixin {
    * // lr model weights have been updated
    */
 
-  async fit(X: Scikit2D, y: ScikitVecOrMatrix): Promise<SGD> {
+  public async fit(X: Scikit2D, y: ScikitVecOrMatrix): Promise<SGD> {
     let XTwoD = convertToNumericTensor2D(X)
     let yOneD = convertToNumericTensor1D_2D(y)
 
@@ -328,7 +328,7 @@ export class SGD extends PredictorMixin {
    * // => tensor2d([[ 4.5, 10.3, 19.1, 0.22 ]])
    */
 
-  predict(X: Scikit2D): Tensor1D | Tensor2D {
+  public predict(X: Scikit2D): Tensor1D | Tensor2D {
     let XTwoD = convertToNumericTensor2D(X)
     if (this.model.layers.length === 0) {
       throw new RangeError('Need to call "fit" before "predict"')

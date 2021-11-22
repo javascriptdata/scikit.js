@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import StandardScaler from './standard.scaler'
+import { StandardScaler } from './standard.scaler'
 import { dfd } from '../../../globals'
 
 describe('StandardScaler', function () {

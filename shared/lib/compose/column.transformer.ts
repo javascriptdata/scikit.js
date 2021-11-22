@@ -77,12 +77,7 @@ export class ColumnTransformer {
     this.remainder = remainder
   }
 
-  /**
-   * Call fit to actually build the ColumnTransformer Model
-   * @param X 2D Matrix that is passed in
-   * @param y Response variable that is *ignored* because we are simply transforming the data here.
-   */
-  fit(X: Scikit2D, y?: Scikit1D) {
+  public fit(X: Scikit2D, y?: Scikit1D) {
     const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
 
     for (let i = 0; i < this.transformers.length; i++) {
@@ -94,7 +89,7 @@ export class ColumnTransformer {
     return this
   }
 
-  transform(X: Scikit2D, y?: Scikit1D) {
+  public transform(X: Scikit2D, y?: Scikit1D) {
     const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
 
     let output = []
@@ -108,7 +103,7 @@ export class ColumnTransformer {
     return concat(output, 1)
   }
 
-  fitTransform(X: Scikit2D, y?: Scikit1D) {
+  public fitTransform(X: Scikit2D, y?: Scikit1D) {
     const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
 
     let output = []

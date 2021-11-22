@@ -29,11 +29,35 @@ Next steps:
 
 /**
  * Standardize features by removing the mean and scaling to unit variance.
- * The standard score of a sample x is calculated as: `z = (x - u) / s`,
- * where `u` is the mean of the training samples, and `s` is the standard deviation of the training samples.
+ * The standard score of a sample x is calculated as: $z = (x - u) / s$,
+ * where $u$ is the mean of the training samples, and $s$ is the standard deviation of the training samples.
+ *
+ * @example
+ * ```js
+ * import { StandardScaler } from 'scikitjs'
+ *
+ * const data = [
+      [0, 0],
+      [0, 0],
+      [1, 1],
+      [1, 1]
+    ]
+
+    const scaler = new StandardScaler()
+    const expected = scaler.fitTransform(data)
+    // const expected = [
+    //  [-1, -1],
+    //  [-1, -1],
+    //  [1, 1],
+    //  [1, 1]
+    // ]
+ * ```
  */
-export default class StandardScaler extends TransformerMixin {
+export class StandardScaler extends TransformerMixin {
+  /** The per-feature scale that we see in the dataset. We divide by this number. */
   scale: tf.Tensor
+
+  /** The per-feature mean that we see in the dataset. We subtract by this number. */
   mean: tf.Tensor
 
   constructor() {
@@ -44,13 +68,8 @@ export default class StandardScaler extends TransformerMixin {
 
   /**
    * Fit a StandardScaler to the data.
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns StandardScaler
-   * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
    */
-  fit(X: Scikit2D): StandardScaler {
+  public fit(X: Scikit2D): StandardScaler {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const std = tensorStd(tensorArray, 0, true)
@@ -63,15 +82,8 @@ export default class StandardScaler extends TransformerMixin {
 
   /**
    * Transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
-   * */
-  transform(X: Scikit2D): tf.Tensor2D {
+   */
+  public transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.sub(this.mean).div<tf.Tensor2D>(this.scale)
@@ -80,17 +92,8 @@ export default class StandardScaler extends TransformerMixin {
 
   /**
    * Inverse transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new StandardScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0.0, 0.0, 0.0, 0.0, 0.0]
-   * scaler.inverseTransform([0.0, 0.0, 0.0, 0.0, 0.0])
-   * // [1, 2, 3, 4, 5]
-   * */
-  inverseTransform(X: Scikit2D): tf.Tensor2D {
+   */
+  public inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.mul(this.scale).add<tf.Tensor2D>(this.mean)

@@ -32,7 +32,33 @@ Next steps:
  * that it is in the given range on the training set, e.g. between the maximum and minimum value.
  */
 
-export default class MaxAbsScaler extends TransformerMixin {
+/** MaxAbsScaler scales the data by dividing by the max absolute value that it finds per feature.
+ * It's a useful scaling if you wish to keep sparsity in your dataset.
+ *
+ * @example
+ * ```js
+ * import {MaxAbsScaler} from 'scikitjs'
+ *
+ * const scaler = new MaxAbsScaler()
+   const data = [
+     [-1, 5],
+     [-0.5, 5],
+     [0, 10],
+     [1, 10]
+   ]
+
+   const expected = scaler.fitTransform(data)
+   //  const expected = [
+   //   [-1, 0.5],
+   //   [-0.5, 0.5],
+   //   [0, 1],
+   //   [1, 1]
+   // ]
+ *
+ * ```
+*/
+export class MaxAbsScaler extends TransformerMixin {
+  /** The per-feature scale that we see in the dataset. We divide by this number. */
   scale: tf.Tensor1D
 
   constructor() {
@@ -42,18 +68,8 @@ export default class MaxAbsScaler extends TransformerMixin {
 
   /**
    * Fits a MinMaxScaler to the data
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns MinMaxScaler
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * // MinMaxScaler {
-   * //   $max: [5],
-   * //   $min: [1]
-   * // }
-   *
    */
-  fit(X: Scikit2D): MaxAbsScaler {
+  public fit(X: Scikit2D): MaxAbsScaler {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const scale = tensorMax(tensorArray.abs(), 0, true) as tf.Tensor1D
@@ -66,15 +82,8 @@ export default class MaxAbsScaler extends TransformerMixin {
 
   /**
    * Transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0, 0.25, 0.5, 0.75, 1]
-   * */
-  transform(X: Scikit2D): tf.Tensor2D {
+   */
+  public transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.div<tf.Tensor2D>(this.scale)
@@ -83,15 +92,8 @@ export default class MaxAbsScaler extends TransformerMixin {
 
   /**
    * Inverse transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
-   * // [1, 2, 3, 4, 5]
-   * */
-  inverseTransform(X: Scikit2D): tf.Tensor2D {
+   */
+  public inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.mul<tf.Tensor2D>(this.scale)

@@ -27,13 +27,28 @@ Next steps:
 
 /**
  * Fits a OneHotEncoder to the data.
+ *
  * @example
  * ```js
- * const encoder = new OneHotEncoder()
- * encoder.fit(["a", "b", "c"])
+ * import { OneHotEncoder } from 'scikitjs'
+ *
+ *
+ * const X = [
+    ['Male', 1],
+    ['Female', 2],
+    ['Male', 4]
+   ]
+   const encode = new OneHotEncoder()
+   encode.fitTransform(X) // returns the object below
+   const expected = [
+    [1, 0, 1, 0, 0],
+    [0, 1, 0, 1, 0],
+    [1, 0, 0, 0, 1]
+   ]
  * ```
  */
-export default class OneHotEncoder extends TransformerMixin {
+export class OneHotEncoder extends TransformerMixin {
+  /** categories is a list of unique labels per feature */
   categories: (number | string | boolean)[][]
   constructor() {
     super()
@@ -76,7 +91,7 @@ export default class OneHotEncoder extends TransformerMixin {
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  fit(X: Scikit2D, y?: Scikit1D): OneHotEncoder {
+  public fit(X: Scikit2D, y?: Scikit1D): OneHotEncoder {
     const array2D = convertTo2DArray(X)
     this.loopOver2DArrayToSetLabels(array2D)
     return this
@@ -108,7 +123,7 @@ export default class OneHotEncoder extends TransformerMixin {
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
+  public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
     const newTensor = tf.tensor2d(result2D, undefined, 'int32')
@@ -120,7 +135,7 @@ export default class OneHotEncoder extends TransformerMixin {
     ) as tf.Tensor2D
   }
   // Only works for single column OneHotEncoding
-  inverseTransform(X: tf.Tensor2D): any[] {
+  public inverseTransform(X: tf.Tensor2D): any[] {
     let labels = this.classesToMapping(this.categories[0])
     const tensorLabels = X.argMax(1) as tf.Tensor1D
     const invMap = new Map(Array.from(labels, (a) => a.reverse()) as any)

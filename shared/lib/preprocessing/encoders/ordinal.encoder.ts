@@ -24,14 +24,28 @@ Next steps:
 */
 
 /**
- * Fits a OrdinalEncoder to the data.
- * @example
+ * Encode categorical features as an integer array.
+ * The input to this transformer should be an array-like of integers or strings,
+ * which represent categorical (discrete) features. The features are then converted to ordinal integers.
+
+* @example
  * ```js
- * const encoder = new OrdinalEncoder()
- * encoder.fit(["a", "b", "c"])
+ *  const X = [
+      ['Male', 1],
+      ['Female', 2],
+      ['Male', 4]
+    ]
+    const encode = new OrdinalEncoder()
+    encode.fitTransform(X) // returns the expected object below
+    const expected = [
+      [0, 0],
+      [1, 1],
+      [0, 2]
+    ]
  * ```
  */
-export default class OrdinalEncoder extends TransformerMixin {
+export class OrdinalEncoder extends TransformerMixin {
+  /** List of all unique class labels that we've seen per feature */
   categories: (number | string | boolean)[][]
   constructor() {
     super()
@@ -61,16 +75,9 @@ export default class OrdinalEncoder extends TransformerMixin {
 
   /**
    * Fits a OrdinalEncoder to the data.
-   * @param data 1d array of labels, Tensor, or  Series to be encoded.
-   * @returns OrdinalEncoder
-   * @example
-   * ```js
-   * const encoder = new OrdinalEncoder()
-   * encoder.fit(["a", "b", "c"])
-   * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  fit(X: Scikit2D, y?: Scikit1D): OrdinalEncoder {
+  public fit(X: Scikit2D, y?: Scikit1D): OrdinalEncoder {
     const array2D = convertTo2DArray(X)
     this.loopOver2DArrayToSetLabels(array2D)
     return this
@@ -92,17 +99,10 @@ export default class OrdinalEncoder extends TransformerMixin {
     return finalArray
   }
   /**
-   * Encodes the data using the fitted OneHotEncoder.
-   * @param data 1d array of labels, Tensor, or  Series to be encoded.
-   * @example
-   * ```js
-   * const encoder = new OneHotEncoder()
-   * encoder.fit(["a", "b", "c"])
-   * encoder.transform(["a", "b", "c"])
-   * ```
+   * Encodes the data using the fitted OrdinalEncoder.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
+  public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
     return tf.tensor2d(result2D, undefined, 'int32')

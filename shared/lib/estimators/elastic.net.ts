@@ -22,13 +22,24 @@ import { tf } from '../../globals'
 // Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html#sklearn.linear_model.ElasticNet
 
 export interface ElasticNetParams {
-  alpha: number
-  l1Ratio: number
-  fitIntercept: number
+  /**Constant that multiplies the penalty terms. **default = .01**  */
+  alpha?: number
+
+  /**The ElasticNet mixing parameter. **default = .5** */
+  l1Ratio?: number
+  /** Whether or not the intercept should be estimator not. **default = true** */
+  fitIntercept?: boolean
 }
 
-export default class ElasticNet extends SGD {
-  constructor({ alpha, l1Ratio, fitIntercept }: ElasticNetParams) {
+/**
+ * Linear regression with combined L1 and L2 priors as regularizer.
+ */
+export class ElasticNet extends SGD {
+  constructor({
+    alpha = 1,
+    l1Ratio = 0.5,
+    fitIntercept = true
+  }: ElasticNetParams = {}) {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),

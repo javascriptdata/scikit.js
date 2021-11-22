@@ -1,10 +1,10 @@
 import { assert } from 'chai'
-import Pipeline from './pipeline'
+import { Pipeline } from './pipeline'
 import { tensor1d } from '@tensorflow/tfjs-core'
 import { tensorEqual } from '../utils'
-import LinearRegression from '../estimators/linear.regression'
-import SimpleImputer from '../impute/simple.imputer'
-import MinMaxScaler from '../preprocessing/scalers/min.max.scaler'
+import { LinearRegression } from '../estimators/linear.regression'
+import { SimpleImputer } from '../impute/simple.imputer'
+import { MinMaxScaler } from '../preprocessing/scalers/min.max.scaler'
 
 describe('Pipeline', function () {
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {

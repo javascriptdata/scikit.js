@@ -50,8 +50,37 @@ function removeMissingValuesFromArray(arr: any[]) {
   return values
 }
 
-export default class RobustScaler extends TransformerMixin {
+/**
+ * Scales the data but is robust to outliers. While StandardScaler will subtract the mean, and
+ * divide by the variance, both of those measures are not robust to outliers. So instead of the mean
+ * we use the median, and instead of the variance we use the Interquartile Range (which is the distance
+ * between the quantile .25, and quantile .75).
+ *
+ * @example
+ * ```js
+ * import { RobustScaler } from 'scikitjs'
+ *
+    const X = [
+      [1, -2, 2],
+      [-2, 1, 3],
+      [4, 1, -2]
+    ]
+
+    const scaler = new RobustScaler()
+    scaler.fitTransform(X)
+
+    const result = [
+      [0, -2, 0],
+      [-1, 0, 0.4],
+      [1, 0, -1.6]
+    ]
+ * ```
+ */
+export class RobustScaler extends TransformerMixin {
+  /** The per-feature scale that we see in the dataset. We divide by this number. */
   scale: tf.Tensor1D
+
+  /** The per-feature median that we see in the dataset. We subtrace this number. */
   center: tf.Tensor1D
 
   constructor() {
@@ -60,20 +89,7 @@ export default class RobustScaler extends TransformerMixin {
     this.center = tf.tensor1d([])
   }
 
-  /**
-   * Fits a RobustScaler to the data
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns RobustScaler
-   * @example
-   * const scaler = new RobustScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * // RobustScaler {
-   * //   $max: [5],
-   * //   $min: [1]
-   * // }
-   *
-   */
-  fit(X: Scikit2D): RobustScaler {
+  public fit(X: Scikit2D): RobustScaler {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
 
     const tensorArray = convertToNumericTensor2D(X)
@@ -95,17 +111,7 @@ export default class RobustScaler extends TransformerMixin {
     return this
   }
 
-  /**
-   * Transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new RobustScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0, 0.25, 0.5, 0.75, 1]
-   * */
-  transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray
@@ -114,17 +120,7 @@ export default class RobustScaler extends TransformerMixin {
     return outputData
   }
 
-  /**
-   * Inverse transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new RobustScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.inverseTransform([0, 0.25, 0.5, 0.75, 1])
-   * // [1, 2, 3, 4, 5]
-   * */
-  inverseTransform(X: Scikit2D): tf.Tensor2D {
+  public inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     const outputData = tensorArray.mul(this.scale).add<tf.Tensor2D>(this.$min)

@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import DummyClassifier from './dummy.classifier'
+import { DummyClassifier } from './dummy.classifier'
 
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {

@@ -53,7 +53,7 @@ export interface KMeansParams {
 
   /** Initialization strategy for KMeans. Currently it only supports 'random' which selects
    * random points from the input to to be the initial centers. We will soon support 'kmeans++'
-   * which is an alternative initialization strategy that speeds up convergences, **default = "random"**
+   * which is an alternative initialization strategy that speeds up convergences. **default = "random"**
    */
   init?: 'random'
 
@@ -77,6 +77,11 @@ export interface KMeansParams {
 /**
  * The KMeans algorithm clusters data by trying to separate samples into `k` groups
  * of equal variance, minimizing a criterion known as the inertia or within-cluster sum-of-squares.
+ *
+ * <!-- prettier-ignore-start -->
+ * $$
+ * \sum_{i=0}^{n}\min_{\mu_j \in C}(||x_i - \mu_j||^2)
+ * $$
  *
  * @example
  * ```js

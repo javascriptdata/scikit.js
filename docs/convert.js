@@ -93,8 +93,13 @@ function generateConstructor(jsonClass, bigObj) {
   )[0]
 
   let interface = getInterfaceForClass(jsonClass, bigObj)
-
-  let constructorInvocation = `\`\`\`js\nnew ${jsonClass.name}({ object })\n\`\`\``
+  const signatures = constructor?.signatures
+  const sig = signatures && signatures[0]
+  const parameters = sig?.parameters
+  const noArgs = !parameters
+  let constructorInvocation = `\`\`\`js\nnew ${jsonClass.name}(${
+    noArgs ? '' : '{ object }'
+  })\n\`\`\``
 
   if (interface && interface.children) {
     constructorInvocation = `\`\`\`js\nnew ${
@@ -105,12 +110,14 @@ function generateConstructor(jsonClass, bigObj) {
 
     return `### Constructor
 ${constructorInvocation}
-${generateTable(interface.children, {}, true)}`
+${noArgs ? '' : generateTable(interface.children, {}, true)}`
   }
 
   return `### Constructor
 ${constructorInvocation}
-${generateMarkdownFromMethod(constructor, jsonClass.name, bigObj)}
+${
+  noArgs ? '' : generateMarkdownFromMethod(constructor, jsonClass.name, bigObj)
+}
     `
 }
 

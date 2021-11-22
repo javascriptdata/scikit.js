@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-import { is1DArray } from '../../utils'
 import { TransformerMixin } from '../../mixins'
 import { Scikit1D } from '../../types'
 import { tf, dfd } from '../../../globals'
@@ -25,8 +24,19 @@ Next steps:
 
 /**
  * Encode target labels with value between 0 and n_classes-1.
+ * @example
+ * ```js
+ *  import { LabelEncoder } from 'scikitjs'
+ *
+ *  const sf = [1, 2, 2, 'boy', 'git', 'git']
+    const scaler = new LabelEncoder()
+    scaler.fit(sf)
+    console.log(scaler.classes) // [1, 2, "boy", "git"]
+    scaler.transform([2, 2, "boy"]) // [1, 1, 2]
+ * ```
  */
-export default class LabelEncoder extends TransformerMixin {
+export class LabelEncoder extends TransformerMixin {
+  /** Unique classes that we see in this single array of data */
   classes: Array<string | number | boolean>
 
   constructor() {
@@ -55,14 +65,13 @@ export default class LabelEncoder extends TransformerMixin {
   }
   /**
    * Maps values to unique integer labels between 0 and n_classes-1.
-   * @param data 1d array of labels, Tensor, or  Series to fit.
    * @example
-   * ```
+   * ```js
    * const encoder = new LabelEncoder()
    * encoder.fit(["a", "b", "c", "d"])
    * ```
    */
-  fit(X: Scikit1D): LabelEncoder {
+  public fit(X: Scikit1D): LabelEncoder {
     const arr = this.convertTo1DArray(X)
     const dataSet = Array.from(new Set(arr))
     this.classes = dataSet
@@ -72,16 +81,15 @@ export default class LabelEncoder extends TransformerMixin {
 
   /**
    * Encode labels with value between 0 and n_classes-1.
-   * @param data 1d array of labels, Tensor, or  Series to be encoded.
    * @example
-   * ```
+   * ```js
    * const encoder = new LabelEncoder()
    * encoder.fit(["a", "b", "c", "d"])
    * console.log(encoder.transform(["a", "b", "c", "d"]))
    * // [0, 1, 2, 3]
    * ```
    */
-  transform(X: Scikit1D): tf.Tensor1D {
+  public transform(X: Scikit1D): tf.Tensor1D {
     const arr = this.convertTo1DArray(X)
 
     const labels = this.classesToMapping(this.classes)
@@ -94,16 +102,15 @@ export default class LabelEncoder extends TransformerMixin {
 
   /**
    * Inverse transform values back to original values.
-   * @param data 1d array of labels, Tensor, or  Series to be decoded.
    * @example
-   * ```
+   * ```js
    * const encoder = new LabelEncoder()
    * encoder.fit(["a", "b", "c", "d"])
    * console.log(encoder.inverseTransform([0, 1, 2, 3]))
    * // ["a", "b", "c", "d"]
    * ```
    */
-  inverseTransform(X: Scikit1D): any[] {
+  public inverseTransform(X: Scikit1D): any[] {
     const arr = this.convertTo1DArray(X)
     const labels = this.classesToMapping(this.classes)
     const invMap = new Map(Array.from(labels, (a) => a.reverse()) as any)

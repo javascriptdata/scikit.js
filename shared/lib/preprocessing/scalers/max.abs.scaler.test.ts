@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import MaxAbsScaler from './max.abs.scaler'
+import { MaxAbsScaler } from './max.abs.scaler'
 import { dfd } from '../../../globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 

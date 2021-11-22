@@ -35,7 +35,9 @@ import { SGD } from './sgd.linear'
 
 export interface LinearRegressionParams {
   /**
-   * Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations
+   * Whether to calculate the intercept for this model.
+   * If set to False, no intercept will be used in calculations.
+   * **default = true**
    */
   fitIntercept?: boolean
 }
@@ -46,7 +48,25 @@ Next steps:
 2. Write closed for solution (save that as linear regression, and move this to sgdregressor)
 */
 
-export default class LinearRegression extends SGD {
+/** Linear Least Squares
+ * @example
+ * ```js
+ * import {LinearRegression} from 'scikitjs'
+ *
+ * let X = [
+ *  [1, 2],
+ *  [1, 4],
+ *  [2, 6],
+ *  [3, 5],
+ *  [10, 20]
+ * ]
+ * let y = [3, 5, 8, 8, 30]
+ * const lr = new LinearRegression({fitIntercept: false})
+  await lr.fit(X, y)
+  lr.coef.print() // probably around [1, 1]
+ * ```
+ */
+export class LinearRegression extends SGD {
   constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
     super({
       modelCompileArgs: {

@@ -29,16 +29,28 @@ Next steps:
 export interface DummyRegressorParams {
   /**
    * The strategy that this DummyRegressor will use to make a prediction.
-   * Accepted values are 'mean', 'median', and 'constant'
+   * Accepted values are 'mean', 'median', 'constant', and 'quantile'
    *
-   * If 'mean' is chosen then the DummyRegressor will just "guess" the 'mean'
+   * If 'mean' is chosen then the DummyRegressor will just return the 'mean'
    * of the target variable as it's prediction.
+   *
+   * Likewise with 'median'.
+   *
+   * If "constant" is chosen, you will have to supply the constant number, and this regressor will always
+   * return that value.
+   *
+   * If "quantile" is chosen, you'll have to chosen the quantile value between 0 < `quantile` < 1.
+   * And that value will be returned always. **default = mean**
    */
   strategy?: 'mean' | 'median' | 'constant' | 'quantile'
 
   /**
-   * In the case where you chose 'constant' as your strategy, the fill number
+   * In the case where you chose 'constant' as your strategy, this number
    * will be the number that is predicted for any input.
+   *
+   * Every constructor parameter is used as a class variable as well.
+   * If "mean", "median", or "quantile" are chosen the class variable "constant" will be
+   * set with the "mean", "median", or "quantile" after fit.
    */
   constant?: number
 
@@ -49,10 +61,26 @@ export interface DummyRegressorParams {
   quantile?: number
 }
 
-export default class DummyRegressor extends PredictorMixin {
+/** Builds a regressor with simple rules.
+ *
+ * @example
+ * ```js
+ * import { DummyRegressor } from 'scikitjs'
+ * const reg = new DummyRegressor({ strategy: 'mean' })
+
+    const X = [
+      [-1, 5],
+      [-0.5, 5],
+      [0, 10]
+    ]
+    const y = [10, 20, 30] // The mean is 20
+    reg.fit(X, y) // This regressor will return 20 for any input
+ * ```
+ */
+export class DummyRegressor extends PredictorMixin {
   strategy: string
-  constant: number | undefined
-  quantile: number | undefined
+  constant?: number
+  quantile?: number
 
   constructor({
     strategy = 'mean',
@@ -65,16 +93,7 @@ export default class DummyRegressor extends PredictorMixin {
     this.quantile = quantile
   }
 
-  /**
-   * Fit a DummyClassifier to the data.
-   * @param X Array, Tensor, DataFrame or Series object
-   * @param y Array, Series object
-   * @returns DummyClassifier
-   * @example
-   * const dummy = new DummyClassifier()
-   * dummy.fit([[1,1], [2,2], [3,3]],[1, 2, 3])
-   */
-  fit(X: Scikit2D, y: Scikit1D): DummyRegressor {
+  public fit(X: Scikit2D, y: Scikit1D): DummyRegressor {
     assert(isScikit1D(y), 'y variable can not be converted to a 1D Tensor.')
     assert(
       ['mean', 'median', 'constant', 'quantile'].includes(this.strategy),
@@ -112,17 +131,7 @@ export default class DummyRegressor extends PredictorMixin {
     return this
   }
 
-  /**
-   * Predicts response on given example data
-   * @param X Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const dummy = new DummyRegressor('median')
-   * dummy.fit([1, 3, 3, 10, 20])
-   * dummy.predict([1, 2, 3, 4, 5])
-   * // [3, 3, 3, 3, 3]
-   * */
-  predict(X: Scikit2D) {
+  public predict(X: Scikit2D) {
     assert(isScikit2D(X), 'Data can not be converted to a 1D or 2D matrix.')
     let newData = convertToNumericTensor2D(X)
     let length = newData.shape[0]
