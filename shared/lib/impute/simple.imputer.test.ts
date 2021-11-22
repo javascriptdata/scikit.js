@@ -1,10 +1,10 @@
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
-import SimpleImputer from './simple.imputer'
+import { SimpleImputer } from './simple.imputer'
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
-    const imputer = new SimpleImputer({ strategy: 'constant', fillValue: [3] })
+    const imputer = new SimpleImputer({ strategy: 'constant', fillValue: 3 })
 
     const data = tensor2d([1, 2, NaN, 4, 4], [5, 1])
 
@@ -23,7 +23,7 @@ describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({
       strategy: 'constant',
-      fillValue: [3, 4]
+      fillValue: 4
     })
 
     const data = tensor2d([
@@ -35,7 +35,7 @@ describe('SimpleImputer', function () {
     const expected = [
       [1, 4],
       [4, 4],
-      [3, 3]
+      [4, 3]
     ]
 
     const returned = imputer.fitTransform(data)
@@ -45,7 +45,7 @@ describe('SimpleImputer', function () {
         .transform([[NaN, NaN]])
         .arraySync()
         .flat(),
-      [3, 4]
+      [4, 4]
     )
   })
   it('Imputes with "mean" strategy. In this strategy, we give the fill value', function () {

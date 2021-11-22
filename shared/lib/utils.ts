@@ -73,8 +73,8 @@ export function convertToTensor1D(
   if (data instanceof dfd.Series) {
     // Do type inference if no dtype is passed, otherwise try to parse as that dtype
     return dtype
-      ? (data.tensor.asType(dtype) as tf.Tensor1D)
-      : (data.tensor as tf.Tensor1D)
+      ? (data.tensor.asType(dtype) as unknown as tf.Tensor1D)
+      : (data.tensor as unknown as tf.Tensor1D)
   }
   if (data instanceof tf.Tensor) {
     if (data.shape.length === 1) {
@@ -107,8 +107,8 @@ export function convertToTensor2D(
 ): tf.Tensor2D {
   if (data instanceof dfd.DataFrame) {
     return dtype
-      ? (data.tensor.asType(dtype) as tf.Tensor2D)
-      : (data.tensor as tf.Tensor2D)
+      ? (data.tensor.asType(dtype) as unknown as tf.Tensor2D)
+      : (data.tensor as unknown as tf.Tensor2D)
   }
   if (data instanceof tf.Tensor) {
     if (data.shape.length === 2) {
@@ -181,10 +181,10 @@ export function convertToTensor(
   dtype?: keyof tf.DataTypeMap
 ): tf.Tensor {
   if (data instanceof dfd.DataFrame) {
-    return data.tensor
+    return data.tensor as unknown as tf.Tensor2D
   }
   if (data instanceof dfd.Series) {
-    return data.tensor
+    return data.tensor as unknown as tf.Tensor2D
   }
   if (data instanceof tf.Tensor) {
     let newData = data

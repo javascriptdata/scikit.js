@@ -1,7 +1,6 @@
 import { assert } from 'chai'
-import Normalizer from './normalizer'
+import { Normalizer } from './normalizer'
 import { dfd } from '../../../globals'
-import { tensor2d } from '@tensorflow/tfjs-core'
 import { arrayEqual } from '../../utils'
 
 describe('Normalizer', function () {

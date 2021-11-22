@@ -17,7 +17,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Easy to Use',
-    image: '/img/machine-learning9.png',
+    image: '/img/MLBulbCircuit.svg',
     description: (
       <>
         Scikit.js was designed to be a Typescript port of the popular
@@ -39,7 +39,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Powered by Typescript',
-    image: '/img/machine-learning4.png',
+    image: '/img/MLBulbGear.svg',
     description: (
       <>
         Use the languages and tools you are familiar with to ship production

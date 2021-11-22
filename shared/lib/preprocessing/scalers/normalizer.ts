@@ -19,17 +19,45 @@ import { isScikit2D, assert } from '../../types.utils'
 import { TransformerMixin } from '../../mixins'
 
 import { tf } from '../../../globals'
-/**
- * Transform features by scaling each feature to a given range.
- * This estimator scales and translates each feature individually such
- * that it is in the given range on the training set, e.g. between the maximum and minimum value.
- */
+
+/*
+Next steps:
+1. Pass the next five scikit-learn tests
+*/
 
 export interface NormalizerParams {
+  /** What kind of norm we wish to scale by. **default norm = l2** */
   norm?: 'l2' | 'l1' | 'max'
 }
 
-export default class Normalizer extends TransformerMixin {
+/**
+ * A Normalizer scales each *sample* by the $l_1$, $l_2$ or $max$ value in that sample.
+ * If you imagine the input matrix as a 2D grid, then this is effectively a "horizontal" scaling (per-sample scaling)
+ * as opposed to a StandardScaler which is a "vertical" scaling (per-feature scaling).
+ *
+ * The only input is what kind of norm you wish to scale by.
+ *
+ * @example
+ * ```js
+ * import { Normalizer } from 'scikitjs'
+ *
+ * const data = [
+      [-1, 1],
+      [-6, 6],
+      [0, 10],
+      [10, 20]
+    ]
+    const scaler = new Normalizer({ norm: 'l1' })
+    const expected = scaler.fitTransform(scaler)
+    // const expected = [
+    //   [-0.5, 0.5],
+    //   [-0.5, 0.5],
+    //   [0, 1],
+    //   [0.33, 0.66]
+    // ]
+ * ```
+ */
+export class Normalizer extends TransformerMixin {
   norm: string
   constructor({ norm = 'l2' }: NormalizerParams = {}) {
     super()
@@ -37,34 +65,17 @@ export default class Normalizer extends TransformerMixin {
   }
 
   /**
-   * Fits a MinMaxScaler to the data
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns MinMaxScaler
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * // MinMaxScaler {
-   * //   $max: [5],
-   * //   $min: [1]
-   * // }
-   *
+   * Fits a Normalizer to the data
    */
-  fit(X: Scikit2D): Normalizer {
+  public fit(X: Scikit2D): Normalizer {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     return this
   }
 
   /**
-   * Transform the data using the fitted scaler
-   * @param data Array, Tensor, DataFrame or Series object
-   * @returns Array, Tensor, DataFrame or Series object
-   * @example
-   * const scaler = new MinMaxScaler()
-   * scaler.fit([1, 2, 3, 4, 5])
-   * scaler.transform([1, 2, 3, 4, 5])
-   * // [0, 0.25, 0.5, 0.75, 1]
+   * Transform the data using the Normalizer
    * */
-  transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     if (this.norm === 'l1') {

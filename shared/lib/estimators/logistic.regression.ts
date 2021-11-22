@@ -21,13 +21,47 @@ import { tf } from '../../globals'
 // First pass at a LogisticRegression implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
 
+/*
+Next steps:
+1. Support elasticnet penalty
+2. Support tol and maxIter (might need to change sgd.linear)
+3. Implement randomState
+4. Implement attribute "classes"
+5. Pass next 5 scikit-learn tests
+*/
+
 export interface LogisticRegressionParams {
+  /** Specify the norm of the penalty. **default = l2** */
   penalty?: 'l1' | 'l2' | 'none'
+  /** Inverse of the regularization strength. **default = 1** */
   C?: number
+  /** Whether or not the intercept should be estimator not. **default = true** */
   fitIntercept?: boolean
 }
 
-export default class LogisticRegression extends SGD {
+/** Builds a linear classification model with associated penalty and regularization
+ *
+ * @example
+ * ```js
+ * let X = [
+      [1, -1],
+      [2, 0],
+      [2, 1],
+      [2, -1],
+      [3, 2],
+      [0, 4],
+      [1, 3],
+      [1, 4],
+      [1, 5],
+      [2, 3],
+    ]
+    let y = [ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+
+    let logreg = new LogisticRegression({ penalty: 'none' })
+    await logreg.fit(X, y)
+ * ```
+*/
+export class LogisticRegression extends SGD {
   constructor({
     penalty = 'l2',
     C = 1,

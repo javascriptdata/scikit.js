@@ -35,7 +35,7 @@ import {
 } from '../utils'
 import { Scikit2D, ScikitVecOrMatrix } from '../types'
 import { PredictorMixin } from '../mixins'
-import OneHotEncoder from '../preprocessing/encoders/one.hot.encoder'
+import { OneHotEncoder } from '../preprocessing/encoders/one.hot.encoder'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -117,7 +117,7 @@ export class SGD extends PredictorMixin {
     this.modelCompileArgs = modelCompileArgs
     this.denseLayerArgs = denseLayerArgs
     this.isClassification = Boolean(isClassification)
-    // TODO: Implement "drop" mechanics for OneHotEncoder
+    // Next steps: Implement "drop" mechanics for OneHotEncoder
     // There is a possibility to do a drop => if_binary which would
     // squash down on the number of variables that we'd have to learn
     this.oneHot = new OneHotEncoder()
@@ -135,7 +135,7 @@ export class SGD extends PredictorMixin {
     } else {
       const yTwoD = y.reshape([-1, 1])
       const yTwoDOneHotEncoded = this.oneHot.fitTransform(yTwoD)
-      if (this.oneHot.$labels[0].size > 2) {
+      if (this.oneHot.categories[0].length > 2) {
         this.modelCompileArgs.loss = losses.softmaxCrossEntropy
       } else {
         this.modelCompileArgs.loss = losses.sigmoidCrossEntropy
@@ -195,7 +195,7 @@ export class SGD extends PredictorMixin {
    * // lr model weights have been updated
    */
 
-  async fit(X: Scikit2D, y: ScikitVecOrMatrix): Promise<SGD> {
+  public async fit(X: Scikit2D, y: ScikitVecOrMatrix): Promise<SGD> {
     let XTwoD = convertToNumericTensor2D(X)
     let yOneD = convertToNumericTensor1D_2D(y)
 
@@ -217,8 +217,8 @@ export class SGD extends PredictorMixin {
    * Estimator on the Scikit.js side. This can be useful if the python version is faster
    * to train, but we still need a JS version because we wish to ship to mobile or browsers.
    *
-   * @param {{ coef_: number[]; intercept_: number }} params The object that contains the model parameters,
-   * coef_, and intercept_ that we need for our model.
+   * @param {{ coef: number[]; intercept: number }} params The object that contains the model parameters,
+   * coef, and intercept that we need for our model.
    *
    * @returns {SGD} Returns the predictions.
    *
@@ -228,14 +228,14 @@ export class SGD extends PredictorMixin {
    * @example
    *
    * lr = new LinearRegression()
-   * lr.importModel({coef_ : [1.2, 2.3], intercept_: 10.0});
+   * lr.importModel({coef : [1.2, 2.3], intercept: 10.0});
    * // lr model weights have been updated
    */
 
-  importModel(params: { coef_: number[]; intercept_: number }): SGD {
-    // TODO: Need to update for possible 2D coef case, and 1D intercept case
-    let myCoef = tensor2d(params.coef_, [params.coef_.length, 1], 'float32')
-    let myIntercept = tensor1d([params.intercept_], 'float32')
+  importModel(params: { coef: number[]; intercept: number }): SGD {
+    // Next steps: Need to update for possible 2D coef case, and 1D intercept case
+    let myCoef = tensor2d(params.coef, [params.coef.length, 1], 'float32')
+    let myIntercept = tensor1d([params.intercept], 'float32')
     this.initializeModel(myCoef, myIntercept, [myCoef, myIntercept])
     return this
   }
@@ -328,7 +328,7 @@ export class SGD extends PredictorMixin {
    * // => tensor2d([[ 4.5, 10.3, 19.1, 0.22 ]])
    */
 
-  predict(X: Scikit2D): Tensor1D | Tensor2D {
+  public predict(X: Scikit2D): Tensor1D | Tensor2D {
     let XTwoD = convertToNumericTensor2D(X)
     if (this.model.layers.length === 0) {
       throw new RangeError('Need to call "fit" before "predict"')
@@ -354,16 +354,16 @@ export class SGD extends PredictorMixin {
    *
    * lr = new LinearRegression()
    * await lr.fit(X, [1,2,3]);
-   * lr.coef_
+   * lr.coef
    * // => tensor1d([[ 1.2, 3.3, 1.1, 0.2 ]])
    *
    * await lr.fit(X, [ [1,2], [3,4], [5,6] ]);
-   * lr.coef_
+   * lr.coef
    * // => tensor2d([ [1.2, 3.3], [3.4, 5.6], [4.5, 6.7] ])
 
    */
 
-  get coef_(): Tensor1D | Tensor2D {
+  get coef(): Tensor1D | Tensor2D {
     const modelWeights = this.model.getWeights()
     if (modelWeights.length === 0) {
       return tensor2d([])
@@ -390,16 +390,16 @@ export class SGD extends PredictorMixin {
    *
    * lr = new LinearRegression()
    * await lr.fit(X, [1,2,3]);
-   * lr.intercept_
+   * lr.intercept
    * // => 4.5
    *
    *
    * lr = new LinearRegression()
    * await lr.fit(X, [ [1,2,3], [4,5,6] ]);
-   * lr.intercept_
+   * lr.intercept
    * // => tensor1d([1.2, 2.3])
    */
-  get intercept_(): number | Tensor1D {
+  get intercept(): number | Tensor1D {
     const modelWeights = this.model.getWeights()
     if (modelWeights.length < 2) {
       return 0.0

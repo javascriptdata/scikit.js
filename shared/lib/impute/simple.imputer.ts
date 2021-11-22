@@ -13,8 +13,8 @@
 * ==========================================================================
 */
 
-import { convertToNumericTensor2D } from '../utils'
-import { Scikit2D, Strategy } from '../types'
+import { convertToNumericTensor2D, convertToTensor2D } from '../utils'
+import { Scikit2D } from '../types'
 import { tensorMean } from '../math'
 import { median } from 'mathjs'
 import { modeFast } from 'simple-statistics'
@@ -26,7 +26,11 @@ import {
   where
 } from '@tensorflow/tfjs-core'
 import { TransformerMixin } from '../mixins'
-import { assert } from '../types.utils'
+
+/*
+Next steps:
+1. Make SimpleImputer work with strings
+*/
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isEmpty(value: any) {
@@ -45,46 +49,48 @@ function removeMissingValuesFromArray(arr: any[]) {
 }
 
 export interface SimpleImputerParams {
-  strategy?: Strategy
-  fillValue?: number[] | string[]
+  /** The strategy you'd use to impute missing values. "mean" means
+   * fill missing values with the mean. Likewise for "median" and "mostFrequent".
+   * Use "constant" if you'd like to pass in a "fillValue" and use that to fill
+   * missing values. **default = "mean"**
+   */
+  strategy?: 'mean' | 'median' | 'mostFrequent' | 'constant'
+
+  /** If you choose "constant" pick a value that you'd
+   * like to use to fill the missing values. **default = undefined**
+   */
+  fillValue?: string | number | undefined
+  /** This value is the actual missing value. **default = NaN** */
   missingValues?: number | string | null | undefined
 }
 
-export default class SimpleImputer extends TransformerMixin {
-  // TODO: Make SimpleImputer work on strings
+export class SimpleImputer extends TransformerMixin {
   missingValues: number | string | null | undefined
-  fillValue: Tensor1D
-  strategy: Strategy
+  fillValue: string | number | undefined
+  strategy: 'mean' | 'median' | 'mostFrequent' | 'constant'
 
+  statistics: Tensor1D
   constructor({
     strategy = 'mean',
-    fillValue = [],
+    fillValue = undefined,
     missingValues = NaN
   }: SimpleImputerParams = {}) {
     super()
     this.missingValues = missingValues
     this.strategy = strategy
-    this.fillValue = tensor1d(fillValue || [])
+    this.fillValue = fillValue
+    this.statistics = tensor1d([])
   }
 
-  fit(X: Scikit2D): SimpleImputer {
+  public fit(X: Scikit2D): SimpleImputer {
     // Fill with value passed into fillValue argument
     if (this.strategy === 'constant') {
-      const newTensor = convertToNumericTensor2D(X)
-      assert(
-        this.fillValue.size === newTensor.shape[1],
-        "Fill value length doesn't match Tensor shape"
-      )
-      assert(
-        this.fillValue.dtype === newTensor.dtype,
-        "Data types don't match between fillValue array, and input matrix to fit"
-      )
       return this
     }
     if (this.strategy === 'mean') {
       const newTensor = convertToNumericTensor2D(X)
       const mean = tensorMean(newTensor, 0, true)
-      this.fillValue = mean as Tensor1D
+      this.statistics = mean as Tensor1D
       return this
     }
     if (this.strategy === 'mostFrequent') {
@@ -95,7 +101,7 @@ export default class SimpleImputer extends TransformerMixin {
         .map((arr: number[] | string[]) =>
           modeFast(removeMissingValuesFromArray(arr))
         )
-      this.fillValue = tensor1d(mostFrequents)
+      this.statistics = tensor1d(mostFrequents)
       return this
     }
     if (this.strategy === 'median') {
@@ -106,7 +112,7 @@ export default class SimpleImputer extends TransformerMixin {
         .map((arr: number[] | string[]) =>
           median(removeMissingValuesFromArray(arr))
         )
-      this.fillValue = tensor1d(medians)
+      this.statistics = tensor1d(medians)
       return this
     }
     throw new Error(
@@ -114,13 +120,37 @@ export default class SimpleImputer extends TransformerMixin {
     )
   }
 
-  transform(X: Scikit2D): Tensor2D {
+  public transform(X: Scikit2D): Tensor2D {
+    if (this.strategy === 'constant') {
+      const newTensor = convertToTensor2D(X)
+      if (this.fillValue === undefined) {
+        if (newTensor.dtype !== 'string') {
+          return where(
+            newTensor.isNaN(),
+            0,
+            newTensor as unknown as TensorLike
+          ) as Tensor2D
+        } else {
+          return where(
+            newTensor.isNaN(),
+            'missing_value',
+            newTensor as unknown as TensorLike
+          ) as Tensor2D
+        }
+      }
+      return where(
+        newTensor.isNaN(),
+        this.fillValue,
+        newTensor as unknown as TensorLike
+      ) as Tensor2D
+    }
+
+    // Not strategy constant
     const newTensor = convertToNumericTensor2D(X)
-    const filledTensor = where(
+    return where<Tensor2D>(
       newTensor.isNaN(),
-      this.fillValue,
-      newTensor as unknown as TensorLike
-    )
-    return filledTensor as unknown as Tensor2D
+      this.statistics.dataSync(),
+      newTensor
+    ) as Tensor2D
   }
 }

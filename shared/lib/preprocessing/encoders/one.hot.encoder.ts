@@ -18,20 +18,51 @@ import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
 
 import { tf } from '../../../globals'
+
+/*
+Next steps:
+1. Implement inverseTransform for 2D array
+2. Pass the next 5 scikit-learn tests
+*/
+
 /**
  * Fits a OneHotEncoder to the data.
+ *
  * @example
  * ```js
- * const encoder = new OneHotEncoder()
- * encoder.fit(["a", "b", "c"])
+ * import { OneHotEncoder } from 'scikitjs'
+ *
+ *
+ * const X = [
+    ['Male', 1],
+    ['Female', 2],
+    ['Male', 4]
+   ]
+   const encode = new OneHotEncoder()
+   encode.fitTransform(X) // returns the object below
+   const expected = [
+    [1, 0, 1, 0, 0],
+    [0, 1, 0, 1, 0],
+    [1, 0, 0, 0, 1]
+   ]
  * ```
  */
-export default class OneHotEncoder extends TransformerMixin {
-  $labels: Map<string | number | boolean, number>[]
-
+export class OneHotEncoder extends TransformerMixin {
+  /** categories is a list of unique labels per feature */
+  categories: (number | string | boolean)[][]
   constructor() {
     super()
-    this.$labels = []
+    this.categories = []
+  }
+
+  classesToMapping(
+    classes: Array<string | number | boolean>
+  ): Map<string | number | boolean, number> {
+    const labels = new Map<string | number | boolean, number>()
+    classes.forEach((value, index) => {
+      labels.set(value, index)
+    })
+    return labels
   }
 
   loopOver2DArrayToSetLabels(array2D: any) {
@@ -41,11 +72,11 @@ export default class OneHotEncoder extends TransformerMixin {
         curSet.add(array2D[i][j])
       }
       let results = Array.from(curSet)
-      let newMap = new Map<string | number | boolean, number>()
-      results.forEach((el, i) => {
-        newMap.set(el as number, i)
-      })
-      this.$labels.push(newMap)
+      // let newMap = new Map<string | number | boolean, number>()
+      // results.forEach((el, i) => {
+      //   newMap.set(el as number, i)
+      // })
+      this.categories.push(results as number[])
     }
   }
 
@@ -60,19 +91,20 @@ export default class OneHotEncoder extends TransformerMixin {
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  fit(X: Scikit2D, y?: Scikit1D): OneHotEncoder {
+  public fit(X: Scikit2D, y?: Scikit1D): OneHotEncoder {
     const array2D = convertTo2DArray(X)
     this.loopOver2DArrayToSetLabels(array2D)
     return this
   }
 
   loopOver2DArrayToUseLabels(array2D: any) {
+    let labels = this.categories.map((el) => this.classesToMapping(el))
     let finalArray = []
     for (let i = 0; i < array2D.length; i++) {
       let curArray = []
       for (let j = 0; j < array2D[0].length; j++) {
         let curElem = array2D[i][j]
-        let val = this.$labels[j].get(curElem)
+        let val = labels[j].get(curElem)
         let actualIndex = val === undefined ? -1 : val
         curArray.push(actualIndex)
       }
@@ -91,21 +123,22 @@ export default class OneHotEncoder extends TransformerMixin {
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
+  public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
     const newTensor = tf.tensor2d(result2D, undefined, 'int32')
     return tf.concat(
-      newTensor.unstack(1).map((el, i) => tf.oneHot(el, this.$labels[i].size)),
+      newTensor
+        .unstack(1)
+        .map((el, i) => tf.oneHot(el, this.categories[i].length)),
       1
     ) as tf.Tensor2D
   }
   // Only works for single column OneHotEncoding
-  inverseTransform(X: tf.Tensor2D): any[] {
+  public inverseTransform(X: tf.Tensor2D): any[] {
+    let labels = this.classesToMapping(this.categories[0])
     const tensorLabels = X.argMax(1) as tf.Tensor1D
-    const invMap = new Map(
-      Array.from(this.$labels[0], (a) => a.reverse()) as any
-    )
+    const invMap = new Map(Array.from(labels, (a) => a.reverse()) as any)
 
     const tempData = tensorLabels.arraySync().map((value) => {
       return invMap.get(value) === undefined ? null : invMap.get(value)

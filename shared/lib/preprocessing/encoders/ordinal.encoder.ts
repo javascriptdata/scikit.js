@@ -16,22 +16,50 @@
 import { convertTo2DArray } from '../../utils'
 import { Scikit1D, Scikit2D } from '../../types'
 import { TransformerMixin } from '../../mixins'
-
 import { tf } from '../../../globals'
+
+/*
+Next steps:
+1. Pass the next 5 tests
+*/
+
 /**
- * Fits a OrdinalEncoder to the data.
- * @example
+ * Encode categorical features as an integer array.
+ * The input to this transformer should be an array-like of integers or strings,
+ * which represent categorical (discrete) features. The features are then converted to ordinal integers.
+
+* @example
  * ```js
- * const encoder = new OrdinalEncoder()
- * encoder.fit(["a", "b", "c"])
+ *  const X = [
+      ['Male', 1],
+      ['Female', 2],
+      ['Male', 4]
+    ]
+    const encode = new OrdinalEncoder()
+    encode.fitTransform(X) // returns the expected object below
+    const expected = [
+      [0, 0],
+      [1, 1],
+      [0, 2]
+    ]
  * ```
  */
-export default class OrdinalEncoder extends TransformerMixin {
-  $labels: Map<string | number | boolean, number>[]
-
+export class OrdinalEncoder extends TransformerMixin {
+  /** List of all unique class labels that we've seen per feature */
+  categories: (number | string | boolean)[][]
   constructor() {
     super()
-    this.$labels = []
+    this.categories = []
+  }
+
+  classesToMapping(
+    classes: Array<string | number | boolean>
+  ): Map<string | number | boolean, number> {
+    const labels = new Map<string | number | boolean, number>()
+    classes.forEach((value, index) => {
+      labels.set(value, index)
+    })
+    return labels
   }
 
   loopOver2DArrayToSetLabels(array2D: any) {
@@ -41,38 +69,28 @@ export default class OrdinalEncoder extends TransformerMixin {
         curSet.add(array2D[i][j])
       }
       let results = Array.from(curSet)
-      let newMap = new Map<string | number | boolean, number>()
-      results.forEach((el, i) => {
-        newMap.set(el as number, i)
-      })
-      this.$labels.push(newMap)
+      this.categories.push(results as number[])
     }
   }
 
   /**
    * Fits a OrdinalEncoder to the data.
-   * @param data 1d array of labels, Tensor, or  Series to be encoded.
-   * @returns OrdinalEncoder
-   * @example
-   * ```js
-   * const encoder = new OrdinalEncoder()
-   * encoder.fit(["a", "b", "c"])
-   * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  fit(X: Scikit2D, y?: Scikit1D): OrdinalEncoder {
+  public fit(X: Scikit2D, y?: Scikit1D): OrdinalEncoder {
     const array2D = convertTo2DArray(X)
     this.loopOver2DArrayToSetLabels(array2D)
     return this
   }
 
   loopOver2DArrayToUseLabels(array2D: any) {
+    let labels = this.categories.map((el) => this.classesToMapping(el))
     let finalArray = []
     for (let i = 0; i < array2D.length; i++) {
       let curArray = []
       for (let j = 0; j < array2D[0].length; j++) {
         let curElem = array2D[i][j]
-        let val = this.$labels[j].get(curElem)
+        let val = labels[j].get(curElem)
         let actualIndex = val === undefined ? -1 : val
         curArray.push(actualIndex)
       }
@@ -81,17 +99,10 @@ export default class OrdinalEncoder extends TransformerMixin {
     return finalArray
   }
   /**
-   * Encodes the data using the fitted OneHotEncoder.
-   * @param data 1d array of labels, Tensor, or  Series to be encoded.
-   * @example
-   * ```js
-   * const encoder = new OneHotEncoder()
-   * encoder.fit(["a", "b", "c"])
-   * encoder.transform(["a", "b", "c"])
-   * ```
+   * Encodes the data using the fitted OrdinalEncoder.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
+  public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
     return tf.tensor2d(result2D, undefined, 'int32')

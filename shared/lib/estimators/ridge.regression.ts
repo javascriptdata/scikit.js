@@ -23,11 +23,15 @@ import { tf } from '../../globals'
 // https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html
 
 export interface RidgeRegressionParams {
+  /** Whether or not the intercept should be estimator not. **default = true** */
   fitIntercept?: boolean
+
+  /**Constant that multiplies the penalty terms. **default = .01**  */
   alpha?: number
 }
 
-export default class RidgeRegression extends SGD {
+/** Linear least squares with l2 regularization. */
+export class RidgeRegression extends SGD {
   constructor({
     fitIntercept = true,
     alpha = 0.01

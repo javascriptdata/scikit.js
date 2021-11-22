@@ -22,12 +22,15 @@ import { tf } from '../../globals'
 // Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html#sklearn.linear_model.Lasso
 
 export interface LassoParams {
-  fitIntercept: boolean
-  alpha: number
+  /** Whether or not the intercept should be estimator not. **default = true** */
+  fitIntercept?: boolean
+  /** Constant that multiplies the L1 term. **defaults = 1.0** */
+  alpha?: number
 }
 
-export default class LassoRegression extends SGD {
-  constructor({ fitIntercept, alpha }: LassoParams) {
+/** Linear Model trained with L1 prior as regularizer (aka the Lasso). */
+export class LassoRegression extends SGD {
+  constructor({ fitIntercept = true, alpha = 1.0 }: LassoParams = {}) {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
