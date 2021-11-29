@@ -238,4 +238,4 @@ So our new DummyRegressor will live in the `shared/lib` directory. Moreover, we 
 
 ## There ya have it
 
-So that's the basic idea. There are things I skipped over (testing, using mixins, asserting on bad input), but this will get ya started.
+So that's the basic idea. There are things I skipped over (testing, using mixins, asserting on bad input), but this will get the gravy train rolling.
