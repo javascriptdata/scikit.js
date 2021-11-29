@@ -18,7 +18,7 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    assert.deepEqual(reg.predict(predictX), [20, 20, 20])
+    assert.deepEqual(reg.predict(predictX).arraySync(), [20, 20, 20])
   })
   it('Use DummyRegressor on simple example (median)', function () {
     const reg = new DummyRegressor({ strategy: 'median' })
@@ -36,7 +36,7 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    assert.deepEqual(reg.predict(predictX), [12, 12, 12])
+    assert.deepEqual(reg.predict(predictX).arraySync(), [12, 12, 12])
   })
   it('Use DummyRegressor on simple example (constant)', function () {
     const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
@@ -54,6 +54,6 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    assert.deepEqual(reg.predict(predictX), [10, 10, 10])
+    assert.deepEqual(reg.predict(predictX).arraySync(), [10, 10, 10])
   })
 })

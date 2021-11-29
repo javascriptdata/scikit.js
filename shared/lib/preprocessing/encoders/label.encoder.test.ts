@@ -21,7 +21,7 @@ describe('LabelEncoder', function () {
   it('fitTransform works for 1D array', function () {
     const sf = [1, 2, 2, 'boy', 'git', 'git']
     const scaler = new LabelEncoder()
-    const result = scaler.fitTransform(sf)
+    const result = scaler.fitTransform(sf as any)
     const expected = [0, 1, 1, 2, 3, 3]
     assert.deepEqual(result.arraySync(), expected)
   })

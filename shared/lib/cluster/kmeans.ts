@@ -17,8 +17,7 @@ import { tf } from '../../globals'
 Next steps
 1. Implement correct tol, maxIter logic
 2. Implement correct nIter logic
-3. Implement transform logic
-4. Make it pass next 5 tests in sklearn test logic
+3. Make it pass next 5 tests in sklearn test logic
 */
 
 // Modified Fisher-Yates algorithm which takes
@@ -184,5 +183,37 @@ export class KMeans {
   public predict(X: Scikit2D): Tensor1D {
     let XTensor2D = convertToNumericTensor2D(X)
     return this.closestCentroid(XTensor2D)
+  }
+
+  public transform(X: Scikit2D): Tensor2D {
+    return tidy(() => {
+      const XTensor2D = convertToNumericTensor2D(X)
+      const expandedX = tf.expandDims(XTensor2D, 1)
+      const expandedClusters = tf.expandDims(this.clusterCenters, 0)
+      return squaredDifference(expandedX, expandedClusters)
+        .sum(2)
+        .sqrt() as Tensor2D
+    })
+  }
+
+  public fitPredict(X: Scikit2D) {
+    return this.fit(X).predict(X)
+  }
+
+  public fitTransform(X: Scikit2D) {
+    return this.fit(X).transform(X)
+  }
+
+  public score(X: Scikit2D): Tensor1D {
+    return tidy(() => {
+      const XTensor2D = convertToNumericTensor2D(X)
+      const expandedX = tf.expandDims(XTensor2D, 1)
+      const expandedClusters = tf.expandDims(this.clusterCenters, 0)
+      return squaredDifference(expandedX, expandedClusters)
+        .sum(2)
+        .min(1)
+        .sqrt()
+        .sum()
+    })
   }
 }
