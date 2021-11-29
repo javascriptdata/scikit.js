@@ -34,7 +34,6 @@ import {
   convertToNumericTensor2D
 } from '../utils'
 import { Scikit2D, ScikitVecOrMatrix } from '../types'
-import { PredictorMixin } from '../mixins'
 import { OneHotEncoder } from '../preprocessing/encoders/one.hot.encoder'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
@@ -95,7 +94,7 @@ export interface SGDParams {
   isClassification?: boolean
 }
 
-export class SGD extends PredictorMixin {
+export class SGD {
   model: Sequential
   modelFitArgs: ModelFitArgs
   modelCompileArgs: ModelCompileArgs
@@ -111,7 +110,6 @@ export class SGD extends PredictorMixin {
     denseLayerArgs,
     isClassification
   }: SGDParams) {
-    super()
     this.model = sequential()
     this.modelFitArgs = modelFitArgs
     this.modelCompileArgs = modelCompileArgs
@@ -133,7 +131,7 @@ export class SGD extends PredictorMixin {
       this.modelCompileArgs.loss = losses.softmaxCrossEntropy
       return yToInt as Tensor2D
     } else {
-      const yTwoD = y.reshape([-1, 1])
+      const yTwoD = y.reshape([-1, 1]) as Tensor2D
       const yTwoDOneHotEncoded = this.oneHot.fitTransform(yTwoD)
       if (this.oneHot.categories[0].length > 2) {
         this.modelCompileArgs.loss = losses.softmaxCrossEntropy

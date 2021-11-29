@@ -51,6 +51,6 @@ describe('OneHotEncoder', function () {
       [0, 1, 0, 1, 0],
       [1, 0, 0, 0, 1]
     ]
-    assert.deepEqual(encode.fitTransform(X).arraySync(), expected)
+    assert.deepEqual(encode.fitTransform(X as any).arraySync(), expected)
   })
 })

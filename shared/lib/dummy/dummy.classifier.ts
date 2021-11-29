@@ -18,7 +18,7 @@ import { Scikit1D, Scikit2D } from '../types'
 import { isScikit2D, assert, isScikit1D } from '../types.utils'
 import { modeFast } from 'simple-statistics'
 import { uniq, sample } from 'lodash'
-import { PredictorMixin } from '../mixins'
+import { ClassifierMixin } from '../mixins'
 
 /*
 Next steps:
@@ -38,11 +38,11 @@ export interface DummyClassifierParams {
    * If strategy is "mostFrequent" than the most frequent class label is chosen no matter the input.
    * If "uniform" is chosen than a uniformly random class label is chosen for a given input.
    * If "constant" is chosen than you must supply a constant number and this classifier returns that number
-   * a given input. **default = "mostFrequent"
+   * a given input. **default = "mostFrequent"**
    */
   strategy?: 'mostFrequent' | 'uniform' | 'constant'
   /**
-   * If strategy is "constant" than this number is returned for every input
+   * If strategy is "constant" than this number is returned for every input. **default = undefined**
    */
   constant?: number
 }
@@ -75,7 +75,8 @@ export interface DummyClassifierParams {
  * ```
  *
  */
-export class DummyClassifier extends PredictorMixin {
+
+export class DummyClassifier extends ClassifierMixin {
   constant: number
   strategy: string
 

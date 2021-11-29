@@ -58,15 +58,22 @@ const config = {
         title: '',
         logo: {
           alt: 'Scikit.js Logo',
-          src: 'img/sciKitLogo.svg'
+          src: 'img/scikitLogo.svg',
+          srcDark: 'img/favicon.ico'
         },
         items: [
           { to: '/', label: 'Home', position: 'right', exact: true },
           {
-            type: 'doc',
-            docId: 'tutorial',
+            to: '/docs/tutorial',
             position: 'right',
-            label: 'Tutorial'
+            label: 'Tutorial',
+            exact: true
+          },
+          {
+            to: '/docs/api',
+            position: 'right',
+            label: 'API',
+            exact: true
           },
           {
             href: 'https://github.com/opensource9ja/scikit.js',

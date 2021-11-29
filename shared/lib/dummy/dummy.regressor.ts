@@ -17,19 +17,20 @@ import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { assert, isScikit1D, isScikit2D } from '../types.utils'
 import { median, quantileSeq } from 'mathjs'
-import { PredictorMixin } from '../mixins'
+import { tensor1d, Tensor1D } from '@tensorflow/tfjs-core'
+import { RegressorMixin } from '../mixins'
 
 /*
 Next steps:
+0. Implement score method
 1. Make the y variable in fit method work against 1D or 2D objects
-1. Run against all tests in scikit-learn
-2. Finish docs so they are pretty
+2. Run against all tests in scikit-learn
 */
 
 export interface DummyRegressorParams {
   /**
    * The strategy that this DummyRegressor will use to make a prediction.
-   * Accepted values are 'mean', 'median', 'constant', and 'quantile'
+   * Accepted values are 'mean', 'median', 'constant', and 'quantile'.
    *
    * If 'mean' is chosen then the DummyRegressor will just return the 'mean'
    * of the target variable as it's prediction.
@@ -77,7 +78,7 @@ export interface DummyRegressorParams {
     reg.fit(X, y) // This regressor will return 20 for any input
  * ```
  */
-export class DummyRegressor extends PredictorMixin {
+export class DummyRegressor extends RegressorMixin {
   strategy: string
   constant?: number
   quantile?: number
@@ -131,10 +132,10 @@ export class DummyRegressor extends PredictorMixin {
     return this
   }
 
-  public predict(X: Scikit2D) {
-    assert(isScikit2D(X), 'Data can not be converted to a 1D or 2D matrix.')
+  public predict(X: Scikit2D): Tensor1D {
+    assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     let newData = convertToNumericTensor2D(X)
     let length = newData.shape[0]
-    return Array(length).fill(this.constant)
+    return tensor1d(Array(length).fill(this.constant))
   }
 }

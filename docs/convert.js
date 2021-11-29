@@ -12,10 +12,10 @@ function getText(obj) {
 
 function toTableParameter(obj, bigObj) {
   if (obj?.comment?.shortText) {
-    return `${obj.name} | ${getTypeName(
-      obj.type,
-      bigObj
-    )} | ${obj.comment.shortText.replace(/\n/g, ' ')}`
+    return `${obj.name} | ${getTypeName(obj.type, bigObj)} | ${
+      obj.comment.shortText.replace(/\n/g, ' ') +
+      (obj?.comment?.text?.replace(/\n/g, '<br />') || '')
+    }`
   }
   return `${obj.name} | ${getTypeName(obj.type, bigObj)}`
 }
@@ -191,7 +191,7 @@ function generateProperties(jsonClass, bigObj) {
   let propertiesText = properties
     .map((el) => {
       return `**\`${el.name}\`**: ${getTypeName(el.type, bigObj)}\n\n${
-        el?.comment?.shortText || ''
+        (el?.comment?.shortText || '') + (el?.comment?.text || '')
       }`
     })
     .join('\n\n')

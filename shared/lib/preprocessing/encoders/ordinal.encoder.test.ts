@@ -29,6 +29,6 @@ describe('OrdinalEncoder', function () {
       [1, 1],
       [0, 2]
     ]
-    assert.deepEqual(encode.fitTransform(X).arraySync(), expected)
+    assert.deepEqual(encode.fitTransform(X as any).arraySync(), expected)
   })
 })
