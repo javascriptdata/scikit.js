@@ -13,11 +13,10 @@
 * ==========================================================================
 */
 
-import { convertTo2DArray } from '../../utils'
-import { Scikit1D, Scikit2D } from '../../types'
-import { TransformerMixin } from '../../mixins'
-
-import { tf } from '../../../globals'
+import { convertTo2DArray } from '../utils'
+import { Scikit1D, Scikit2D } from '../types'
+import { TransformerMixin } from '../mixins'
+import { tf } from '../../globals'
 
 /*
 Next steps:

@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { StandardScaler } from './standard.scaler'
-import { dfd } from '../../../globals'
+import { dfd } from '../../globals'
 
 describe('StandardScaler', function () {
   it('StandardScaler works for DataFrame', function () {

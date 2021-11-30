@@ -1,8 +1,8 @@
 import { assert } from 'chai'
 import { MinMaxScaler } from './min.max.scaler'
-import { dfd } from '../../../globals'
+import { dfd } from '../../globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
-import { convertTensorToInputType } from '../../utils'
+import { convertTensorToInputType } from '../utils'
 
 describe('MinMaxscaler', function () {
   it('Standardize values in a DataFrame using a MinMaxScaler', function () {

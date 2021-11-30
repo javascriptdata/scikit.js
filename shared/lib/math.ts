@@ -35,7 +35,7 @@ export function simpleMin<T extends Iterable<number | string | boolean>>(
   let min = arr[0]
   for (let i = 0; i < arr.length; i++) {
     let current = arr[i]
-    if (ignoreNaN && current === NaN) {
+    if (ignoreNaN && isNaN(current as number)) {
       continue
     }
     if (current < min) {
@@ -71,7 +71,7 @@ export function simpleMax<T extends Iterable<number | string | boolean>>(
   let max = arr[0]
   for (let i = 0; i < arr.length; i++) {
     let current = arr[i]
-    if (ignoreNaN && current === NaN) {
+    if (ignoreNaN && isNaN(current as number)) {
       continue
     }
     if (current > max) {
@@ -103,7 +103,7 @@ export function simpleSum<T extends Iterable<number | boolean>>(
   let total = 0
   for (let i = 0; i < arr.length; i++) {
     const current = arr[i]
-    if (ignoreNaN && current === NaN) {
+    if (ignoreNaN && isNaN(current as number)) {
       continue
     }
     total += Number(current)
@@ -133,7 +133,7 @@ export function simpleCount<T extends Iterable<number | string | boolean>>(
   let count = 0
   for (let i = 0; i < arr.length; i++) {
     const current = arr[i]
-    if (current === NaN) {
+    if (isNaN(current as number)) {
       continue
     }
     count += 1
