@@ -101,4 +101,40 @@ describe('StandardScaler', function () {
     scaler.fit([[1], ['NaN'], [1]] as any)
     assert.deepEqual(scaler.transform([[1, 1, 1]]).arraySync(), [[0, 0, 0]])
   })
+  it('keeps track of variables', function () {
+    let myDf = new dfd.DataFrame({ a: [1, 2, 3, 4], b: [5, 6, 7, 8] })
+    let scaler = new StandardScaler()
+    scaler.fit(myDf)
+    assert.deepEqual(scaler.nSamplesSeen, 4)
+    assert.deepEqual(scaler.nFeaturesIn, 2)
+    assert.deepEqual(scaler.featureNamesIn, ['a', 'b'])
+  })
+  it('StandardScaler works with constant column, no centering', function () {
+    const data = [[1, 1, 1, 1, 1, 1, 1, 1]]
+
+    const scaler = new StandardScaler({ withMean: false })
+    scaler.fit(data)
+    const expected = [[1, 1, 1, 1, 1, 1, 1, 1]]
+
+    assert.deepEqual(scaler.transform(data).arraySync(), expected)
+  })
+  it('StandardScaler works for Array no std', function () {
+    const data = [
+      [0, 0],
+      [0, 0],
+      [1, 1],
+      [1, 1]
+    ]
+
+    const scaler = new StandardScaler({ withStd: false })
+    scaler.fit(data)
+    const expected = [
+      [-0.5, -0.5],
+      [-0.5, -0.5],
+      [0.5, 0.5],
+      [0.5, 0.5]
+    ]
+
+    assert.deepEqual(scaler.transform(data).arraySync(), expected)
+  })
 })
