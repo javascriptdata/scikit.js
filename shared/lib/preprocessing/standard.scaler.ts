@@ -18,13 +18,21 @@ import { Scikit2D } from '../types'
 import { isScikit2D, assert } from '../types.utils'
 import { tensorMean, tensorStd, turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../../globals'
+import { tf, dfd } from '../../globals'
 
 /*
 Next steps:
-1. Implement withMean, and withStd
-2. Test on the scikit-learn tests
+0. Implement partialFit for online learning
+1. Test on the scikit-learn tests
 */
+
+export interface StandardScalerParams {
+  /** Whether or not we should subtract the mean. */
+  withMean?: boolean
+
+  /** Whether or not we should divide by the standard deviation. */
+  withStd?: boolean
+}
 
 /**
  * Standardize features by removing the mean and scaling to unit variance.
@@ -59,10 +67,30 @@ export class StandardScaler extends TransformerMixin {
   /** The per-feature mean that we see in the dataset. We subtract by this number. */
   mean: tf.Tensor
 
-  constructor() {
+  /** Whether or not we should subtract the mean */
+  withMean: boolean
+
+  /** Whether or not we should divide by the standard deviation */
+  withStd: boolean
+
+  /** The number of features seen during fit */
+  nFeaturesIn: number
+
+  /** The number of samples processed by the Estimator. Will be reset on new calls to fit */
+  nSamplesSeen: number
+
+  /** Names of features seen during fit. Only stores feature names if input is a DataFrame */
+  featureNamesIn: Array<string>
+
+  constructor({ withMean = true, withStd = true }: StandardScalerParams = {}) {
     super()
+    this.withMean = withMean
+    this.withStd = withStd
     this.scale = tf.tensor1d([])
     this.mean = tf.tensor1d([])
+    this.nFeaturesIn = 0
+    this.nSamplesSeen = 0
+    this.featureNamesIn = []
   }
 
   /**
@@ -71,11 +99,20 @@ export class StandardScaler extends TransformerMixin {
   public fit(X: Scikit2D): StandardScaler {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const std = tensorStd(tensorArray, 0, true)
-    this.mean = tensorMean(tensorArray, 0, true)
+    if (this.withMean) {
+      this.mean = tensorMean(tensorArray, 0, true)
+    }
+    if (this.withStd) {
+      const std = tensorStd(tensorArray, 0, true)
+      // Deal with zero variance issues
+      this.scale = turnZerosToOnes(std) as tf.Tensor1D
+    }
 
-    // Deal with zero variance issues
-    this.scale = turnZerosToOnes(std) as tf.Tensor1D
+    this.nSamplesSeen = tensorArray.shape[0]
+    this.nFeaturesIn = tensorArray.shape[1]
+    if (X instanceof dfd.DataFrame) {
+      this.featureNamesIn = [...X.columns]
+    }
     return this
   }
 
@@ -84,9 +121,14 @@ export class StandardScaler extends TransformerMixin {
    */
   public transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.sub(this.mean).div<tf.Tensor2D>(this.scale)
-    return outputData
+    let tensorArray = convertToNumericTensor2D(X)
+    if (this.withMean) {
+      tensorArray = tensorArray.sub(this.mean)
+    }
+    if (this.withStd) {
+      tensorArray = tensorArray.div(this.scale)
+    }
+    return tensorArray
   }
 
   /**
@@ -94,8 +136,14 @@ export class StandardScaler extends TransformerMixin {
    */
   public inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul(this.scale).add<tf.Tensor2D>(this.mean)
-    return outputData
+    let tensorArray = convertToNumericTensor2D(X)
+    if (this.withStd) {
+      tensorArray = tensorArray.mul(this.scale)
+    }
+    if (this.withMean) {
+      tensorArray = tensorArray.add(this.mean)
+    }
+
+    return tensorArray
   }
 }
