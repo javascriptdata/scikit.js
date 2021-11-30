@@ -69,7 +69,7 @@ from sklearn.linear_model import LinearRegression
 X, y = [[1],[2]], [10, 20]
 lr = LinearRegression(fit_intercept = False)
 lr.fit(X, y)
-print(lr.coef)
+print(lr.coef_)
 ```
 
 Turns into
@@ -86,7 +86,7 @@ await lr.fit(X, y)
 console.log(lr.coef)
 ```
 
-In the code sample above, we see that `fit_intercept` turns into `fitIntercept` (and it's an object). And `coef` turns into `coef`.
+In the code sample above, we see that `fit_intercept` turns into `fitIntercept` (and it's an object). And `coef_` turns into `coef`.
 
 ### 3. Always await calls to .fit or .fitPredict
 
@@ -104,7 +104,7 @@ from sklearn.linear_model import LogisticRegression
 X, y = [[1],[-1]], [1, 0]
 lr = LogisticRegression(fit_intercept = False)
 lr.fit(X, y)
-print(lr.coef)
+print(lr.coef_)
 ```
 
 Turns into
