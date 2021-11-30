@@ -32,23 +32,20 @@ import {
   DummyClassifier,
   DummyClassifierParams
 } from './dummy/dummy.classifier'
-import { MinMaxScaler } from './preprocessing/scalers/min.max.scaler'
-import { StandardScaler } from './preprocessing/scalers/standard.scaler'
-import { MaxAbsScaler } from './preprocessing/scalers/max.abs.scaler'
+import { MinMaxScaler } from './preprocessing/min.max.scaler'
+import { StandardScaler } from './preprocessing/standard.scaler'
+import { MaxAbsScaler } from './preprocessing/max.abs.scaler'
 import { SimpleImputer, SimpleImputerParams } from './impute/simple.imputer'
-import { OneHotEncoder } from './preprocessing/encoders/one.hot.encoder'
-import { LabelEncoder } from './preprocessing/encoders/label.encoder'
-import { OrdinalEncoder } from './preprocessing/encoders/ordinal.encoder'
-import {
-  Normalizer,
-  NormalizerParams
-} from './preprocessing/scalers/normalizer'
+import { OneHotEncoder } from './preprocessing/one.hot.encoder'
+import { LabelEncoder } from './preprocessing/label.encoder'
+import { OrdinalEncoder } from './preprocessing/ordinal.encoder'
+import { Normalizer, NormalizerParams } from './preprocessing/normalizer'
 import { Pipeline, PipelineParams } from './pipeline/pipeline'
 import {
   ColumnTransformer,
   ColumnTransformerParams
 } from './compose/column.transformer'
-import { RobustScaler } from './preprocessing/scalers/robust.scaler'
+import { RobustScaler } from './preprocessing/robust.scaler'
 import { KMeans, KMeansParams } from './cluster/kmeans'
 import { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
 

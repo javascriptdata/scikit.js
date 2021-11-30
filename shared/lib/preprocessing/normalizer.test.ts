@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { Normalizer } from './normalizer'
-import { dfd } from '../../../globals'
-import { arrayEqual } from '../../utils'
+import { dfd } from '../../globals'
+import { arrayEqual } from '../utils'
 
 describe('Normalizer', function () {
   it('Standardize values in a DataFrame using a Normalizer (l1 case)', function () {

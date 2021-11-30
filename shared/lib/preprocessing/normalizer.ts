@@ -13,12 +13,11 @@
 * ==========================================================================
 */
 
-import { convertToNumericTensor2D } from '../../utils'
-import { Scikit2D } from '../../types'
-import { isScikit2D, assert } from '../../types.utils'
-import { TransformerMixin } from '../../mixins'
-
-import { tf } from '../../../globals'
+import { convertToNumericTensor2D } from '../utils'
+import { Scikit2D } from '../types'
+import { isScikit2D, assert } from '../types.utils'
+import { TransformerMixin } from '../mixins'
+import { tf } from '../../globals'
 
 /*
 Next steps:

@@ -13,9 +13,9 @@
 * ==========================================================================
 */
 
-import { TransformerMixin } from '../../mixins'
-import { Scikit1D } from '../../types'
-import { tf, dfd } from '../../../globals'
+import { TransformerMixin } from '../mixins'
+import { Scikit1D } from '../types'
+import { tf, dfd } from '../../globals'
 
 /*
 Next steps:

@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { LabelEncoder } from './label.encoder'
-import { dfd } from '../../../globals'
+import { dfd } from '../../globals'
 import 'mocha'
 
 describe('LabelEncoder', function () {

@@ -13,31 +13,26 @@
 * ==========================================================================
 */
 
-import { convertToNumericTensor2D } from '../../utils'
-import { assert, isScikit2D } from '../../types.utils'
-import { tensorMax, turnZerosToOnes } from '../../math'
-import { TransformerMixin } from '../../mixins'
-import { Scikit2D } from '../../types'
-
-import { tf } from '../../../globals'
+import { convertToNumericTensor2D } from '../utils'
+import { assert, isScikit2D } from '../types.utils'
+import { tensorMax, turnZerosToOnes } from '../math'
+import { TransformerMixin } from '../mixins'
+import { Scikit2D } from '../types'
+import { tf, dfd } from '../../globals'
 
 /*
 Next steps:
-1. Pass the next 5 scikit-learn tests
+0. Write the maxabsScale function (takes in 1D and 2D arrays)
+1. Support maxAbs property on object
+2. Support streaming with partialFit
 */
-
-/**
- * Transform features by scaling each feature to a given range.
- * This estimator scales and translates each feature individually such
- * that it is in the given range on the training set, e.g. between the maximum and minimum value.
- */
 
 /** MaxAbsScaler scales the data by dividing by the max absolute value that it finds per feature.
  * It's a useful scaling if you wish to keep sparsity in your dataset.
  *
  * @example
  * ```js
- * import {MaxAbsScaler} from 'scikitjs'
+ * import { MaxAbsScaler } from 'scikitjs'
  *
  * const scaler = new MaxAbsScaler()
    const data = [
@@ -48,12 +43,12 @@ Next steps:
    ]
 
    const expected = scaler.fitTransform(data)
-   //  const expected = [
-   //   [-1, 0.5],
-   //   [-0.5, 0.5],
-   //   [0, 1],
-   //   [1, 1]
-   // ]
+   const above = [
+    [-1, 0.5],
+    [-0.5, 0.5],
+    [0, 1],
+    [1, 1]
+   ]
  *
  * ```
 */
@@ -61,9 +56,20 @@ export class MaxAbsScaler extends TransformerMixin {
   /** The per-feature scale that we see in the dataset. We divide by this number. */
   scale: tf.Tensor1D
 
+  /** The number of features seen during fit */
+  nFeaturesIn: number
+
+  /** The number of samples processed by the Estimator. Will be reset on new calls to fit */
+  nSamplesSeen: number
+
+  /** Names of features seen during fit. Only stores feature names if input is a DataFrame */
+  featureNamesIn: Array<string>
   constructor() {
     super()
     this.scale = tf.tensor1d([])
+    this.nFeaturesIn = 0
+    this.nSamplesSeen = 0
+    this.featureNamesIn = []
   }
 
   /**
@@ -77,6 +83,11 @@ export class MaxAbsScaler extends TransformerMixin {
     // Deal with 0 scale values
     this.scale = turnZerosToOnes(scale) as tf.Tensor1D
 
+    this.nSamplesSeen = tensorArray.shape[0]
+    this.nFeaturesIn = tensorArray.shape[1]
+    if (X instanceof dfd.DataFrame) {
+      this.featureNamesIn = [...X.columns]
+    }
     return this
   }
 

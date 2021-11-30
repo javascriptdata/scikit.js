@@ -13,13 +13,12 @@
 * ==========================================================================
 */
 
-import { convertToNumericTensor2D } from '../../utils'
-import { Scikit2D, Transformer } from '../../types'
-import { isScikit2D, assert } from '../../types.utils'
-import { tensorMin, tensorMax, turnZerosToOnes } from '../../math'
-import { TransformerMixin } from '../../mixins'
-
-import { tf } from '../../../globals'
+import { convertToNumericTensor2D } from '../utils'
+import { Scikit2D, Transformer } from '../types'
+import { isScikit2D, assert } from '../types.utils'
+import { tensorMin, tensorMax, turnZerosToOnes } from '../math'
+import { TransformerMixin } from '../mixins'
+import { tf } from '../../globals'
 
 /*
 Next steps:
