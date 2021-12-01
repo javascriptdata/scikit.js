@@ -19,13 +19,26 @@ import { isScikit2D, assert } from '../types.utils'
 import { turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
 import { quantileSeq } from 'mathjs'
-import { tf } from '../../globals'
+import { tf, dfd } from '../../globals'
 
 /*
 Next steps:
 1. Implement constructor args (withCentering, withScaling, quantileRange)
 2. Test on the next 5 scikit-learn tests
 */
+
+export interface RobustScalerParams {
+  /**Quantile range used to calculate scale_. By default this is equal to the IQR, i.e.,
+   * q_min is the first quantile and q_max is the third quantile.
+   * Numbers must be between 0, and 100. **default [25.0, 75.0]** */
+  quantileRange?: [number, number]
+
+  /** Whether or not we should scale the data. **default = true** */
+  withScaling?: boolean
+
+  /** Whether or not we should center the data. **default = true** */
+  withCentering?: boolean
+}
 
 /**
  * Transform features by scaling each feature to a given range.
@@ -82,47 +95,107 @@ export class RobustScaler extends TransformerMixin {
   /** The per-feature median that we see in the dataset. We subtrace this number. */
   center: tf.Tensor1D
 
-  constructor() {
+  /** The number of features seen during fit */
+  nFeaturesIn: number
+
+  /** Names of features seen during fit. Only stores feature names if input is a DataFrame */
+  featureNamesIn: Array<string>
+
+  quantileRange: [number, number]
+  withScaling: boolean
+  withCentering: boolean
+
+  constructor({
+    quantileRange = [25.0, 75.0],
+    withCentering = true,
+    withScaling = true
+  }: RobustScalerParams = {}) {
     super()
     this.scale = tf.tensor1d([])
     this.center = tf.tensor1d([])
+    this.quantileRange = quantileRange
+    this.withScaling = withScaling
+    this.withCentering = withCentering
+    this.nFeaturesIn = 0
+    this.featureNamesIn = []
   }
 
+  isNumber(value: any) {
+    return typeof value === 'number' && isFinite(value)
+  }
   public fit(X: Scikit2D): RobustScaler {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    assert(
+      this.isNumber(this.quantileRange[0]) &&
+        this.isNumber(this.quantileRange[1]),
+      'quantileRange values must be numbers'
+    )
+    let lowPercentile = this.quantileRange[0]
+    let highPercentile = this.quantileRange[1]
+    assert(
+      lowPercentile < highPercentile &&
+        0 <= lowPercentile &&
+        lowPercentile <= 100 &&
+        0 <= highPercentile &&
+        highPercentile <= 100,
+      'quantileRange numbers must be between 0 and 100'
+    )
 
     const tensorArray = convertToNumericTensor2D(X)
-    const quantiles = tensorArray
-      .transpose<tf.Tensor2D>()
-      .arraySync()
-      .map((arr: number[] | string[]) =>
-        quantileSeq(removeMissingValuesFromArray(arr), [0.25, 0.5, 0.75])
+    const rowOrientedArray = tensorArray.transpose<tf.Tensor2D>().arraySync()
+
+    if (this.withCentering) {
+      const quantiles = rowOrientedArray.map((arr: number[] | string[]) =>
+        quantileSeq(removeMissingValuesFromArray(arr), 0.5)
       )
+      this.center = tf.tensor1d(quantiles as number[])
+    }
+    if (this.withScaling) {
+      const quantiles = rowOrientedArray.map((arr: number[] | string[]) =>
+        quantileSeq(removeMissingValuesFromArray(arr), [
+          lowPercentile / 100,
+          highPercentile / 100
+        ])
+      )
+      const scale = tf.tensor1d(quantiles.map((el: any) => el[1] - el[0]))
 
-    this.center = tf.tensor1d(quantiles.map((el: any) => el[1]))
-    const scale = tf.tensor1d(quantiles.map((el: any) => el[2] - el[0]))
+      // But what happens if max = min, ie.. we are dealing with a constant vector?
+      // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
+      // The common practice in cases where the vector is constant is to change the 0 elements
+      // in scale to 1, so that the division doesn't fail. We do that below
+      this.scale = turnZerosToOnes(scale) as tf.Tensor1D
+    }
 
-    // But what happens if max = min, ie.. we are dealing with a constant vector?
-    // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
-    // The common practice in cases where the vector is constant is to change the 0 elements
-    // in scale to 1, so that the division doesn't fail. We do that below
-    this.scale = turnZerosToOnes(scale) as tf.Tensor1D
+    this.nFeaturesIn = tensorArray.shape[1]
+    if (X instanceof dfd.DataFrame) {
+      this.featureNamesIn = [...X.columns]
+    }
     return this
   }
 
   public transform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray
-      .sub(this.center)
-      .div<tf.Tensor2D>(this.scale)
-    return outputData
+    let tensorArray = convertToNumericTensor2D(X)
+
+    if (this.withCentering) {
+      tensorArray = tensorArray.sub(this.center)
+    }
+    if (this.withScaling) {
+      tensorArray = tensorArray.div<tf.Tensor2D>(this.scale)
+    }
+    return tensorArray
   }
 
   public inverseTransform(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
-    const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul(this.scale).add<tf.Tensor2D>(this.$min)
-    return outputData
+    let tensorArray = convertToNumericTensor2D(X)
+
+    if (this.withScaling) {
+      tensorArray = tensorArray.mul<tf.Tensor2D>(this.scale)
+    }
+    if (this.withCentering) {
+      tensorArray = tensorArray.add(this.center)
+    }
+    return tensorArray
   }
 }

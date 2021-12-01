@@ -32,8 +32,14 @@ import {
   DummyClassifier,
   DummyClassifierParams
 } from './dummy/dummy.classifier'
-import { MinMaxScaler } from './preprocessing/min.max.scaler'
-import { StandardScaler } from './preprocessing/standard.scaler'
+import {
+  MinMaxScaler,
+  MinMaxScalerParams
+} from './preprocessing/min.max.scaler'
+import {
+  StandardScaler,
+  StandardScalerParams
+} from './preprocessing/standard.scaler'
 import { MaxAbsScaler } from './preprocessing/max.abs.scaler'
 import { SimpleImputer, SimpleImputerParams } from './impute/simple.imputer'
 import { OneHotEncoder } from './preprocessing/one.hot.encoder'
@@ -45,15 +51,21 @@ import {
   ColumnTransformer,
   ColumnTransformerParams
 } from './compose/column.transformer'
-import { RobustScaler } from './preprocessing/robust.scaler'
+import {
+  RobustScaler,
+  RobustScalerParams
+} from './preprocessing/robust.scaler'
 import { KMeans, KMeansParams } from './cluster/kmeans'
 import { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
 
 export {
   MinMaxScaler,
+  MinMaxScalerParams,
   StandardScaler,
+  StandardScalerParams,
   MaxAbsScaler,
   RobustScaler,
+  RobustScalerParams,
   Normalizer,
   NormalizerParams,
   OneHotEncoder,
