@@ -98,6 +98,34 @@ describe('MinMaxscaler', function () {
       [-3, -2, 7, 7]
     )
   })
+  it('featureRange', function () {
+    const data = [
+      [-1, 2],
+      [-0.5, 6],
+      [0, 10],
+      [1, 18]
+    ]
+    let scaler = new MinMaxScaler({ featureRange: [1, 2] })
+    const result = scaler.fitTransform(data)
+    const expected = [
+      [1, 1],
+      [1.25, 1.25],
+      [1.5, 1.5],
+      [2, 2]
+    ]
+    assert.deepEqual(result.arraySync(), expected)
+  })
+  it('keeps track of variables', function () {
+    let myDf = new dfd.DataFrame({ a: [1, 2, 3, 4], b: [5, 6, 7, 8] })
+    let scaler = new MinMaxScaler()
+    scaler.fit(myDf)
+    assert.deepEqual(scaler.nSamplesSeen, 4)
+    assert.deepEqual(scaler.nFeaturesIn, 2)
+    assert.deepEqual(scaler.featureNamesIn, ['a', 'b'])
+    assert.deepEqual(scaler.dataMin.arraySync(), [1, 5])
+    assert.deepEqual(scaler.dataMax.arraySync(), [4, 8])
+    assert.deepEqual(scaler.dataRange.arraySync(), [3, 3])
+  })
   it('Errors when you pass garbage input into a MinMaxScaler', function () {
     const data = 4
     const scaler = new MinMaxScaler()

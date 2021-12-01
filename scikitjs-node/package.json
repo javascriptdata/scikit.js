@@ -1,6 +1,6 @@
 {
   "name": "scikitjs-node",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "JavaScript package for predictive data analysis and machine learning.",
   "main": "dist/shared/index.js",
   "types": "dist/shared/index.d.ts",
@@ -68,7 +68,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/opensource9ja/scikitjs.git"
+    "url": "git+https://github.com/opensource9ja/scikit.js.git"
   },
   "keywords": [
     "pandas",
@@ -79,9 +79,9 @@
   "author": "Rising Odegua <risingodegua@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/opensource9ja/scikitjs/issues"
+    "url": "https://github.com/opensource9ja/scikit.js/issues"
   },
-  "homepage": "https://github.com/opensource9ja/scikitjs#readme",
+  "homepage": "https://github.com/opensource9ja/scikit.js#readme",
   "nyc": {
     "reporter": [
       "lcov",

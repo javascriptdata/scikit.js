@@ -27,10 +27,10 @@ Next steps:
 */
 
 export interface StandardScalerParams {
-  /** Whether or not we should subtract the mean. */
+  /** Whether or not we should subtract the mean. **default = true** */
   withMean?: boolean
 
-  /** Whether or not we should divide by the standard deviation. */
+  /** Whether or not we should divide by the standard deviation. **default = true** */
   withStd?: boolean
 }
 
