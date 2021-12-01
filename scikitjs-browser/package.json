@@ -1,6 +1,6 @@
 {
   "name": "scikitjs",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "JavaScript package for predictive data analysis and machine learning.",
   "main": "dist/index.js",
   "types": "dist/shared/index.d.ts",
