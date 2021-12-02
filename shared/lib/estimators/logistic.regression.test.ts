@@ -1,8 +1,8 @@
 import '@tensorflow/tfjs-backend-webgl'
 import { assert } from 'chai'
 import { LogisticRegression } from './logistic.regression'
-import 'mocha'
 import { arrayTo2DColumn } from '../utils'
+import { describe, it } from 'mocha'
 
 describe('LogisticRegression', function () {
   this.timeout(30000)

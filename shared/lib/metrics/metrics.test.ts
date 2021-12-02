@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 import * as metrics from './metrics'
+import { describe, it } from 'mocha'
 
 describe('Metrics', function () {
   it('accuracyScore', function () {

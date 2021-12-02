@@ -3,7 +3,7 @@ import { MaxAbsScaler } from './max.abs.scaler'
 import { dfd } from '../../globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { arrayEqual } from '../utils'
-import 'mocha'
+import { describe, it } from 'mocha'
 
 describe('MaxAbsScaler', function () {
   it('Standardize values in a DataFrame using a MaxAbsScaler', function () {

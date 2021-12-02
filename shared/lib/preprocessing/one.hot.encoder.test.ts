@@ -2,6 +2,7 @@ import { tensor2d } from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
 import { OneHotEncoder } from './one.hot.encoder'
 import { arrayTo2DColumn } from '../utils'
+import { describe, it } from 'mocha'
 
 describe('OneHotEncoder', function () {
   it('OneHotEncoder works on array', function () {

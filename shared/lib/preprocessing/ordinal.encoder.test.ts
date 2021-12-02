@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import { OrdinalEncoder } from './ordinal.encoder'
 import { arrayTo2DColumn } from '../utils'
+import { describe, it } from 'mocha'
 
 describe('OrdinalEncoder', function () {
   it('OrdinalEncoder works on array', function () {

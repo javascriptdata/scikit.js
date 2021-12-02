@@ -1,9 +1,9 @@
 import * as tf from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
 import { LinearRegression } from './linear.regression'
-import 'mocha'
 import { tensorEqual } from '../utils'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
+import { describe, it } from 'mocha'
 
 function roughlyEqual(a: number, b: number, tol = 0.1) {
   return Math.abs(a - b) < tol

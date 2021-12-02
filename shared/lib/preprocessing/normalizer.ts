@@ -17,7 +17,7 @@ import { convertToNumericTensor2D } from '../utils'
 import { Scikit2D } from '../types'
 import { isScikit2D, assert } from '../types.utils'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../../globals'
+import { tf, dfd } from '../../globals'
 
 /*
 Next steps:
@@ -25,7 +25,7 @@ Next steps:
 */
 
 export interface NormalizerParams {
-  /** What kind of norm we wish to scale by. **default norm = l2** */
+  /** What kind of norm we wish to scale by. **default = "l2" ** */
   norm?: 'l2' | 'l1' | 'max'
 }
 
@@ -48,19 +48,27 @@ export interface NormalizerParams {
     ]
     const scaler = new Normalizer({ norm: 'l1' })
     const expected = scaler.fitTransform(scaler)
-    // const expected = [
-    //   [-0.5, 0.5],
-    //   [-0.5, 0.5],
-    //   [0, 1],
-    //   [0.33, 0.66]
-    // ]
+    const expectedValueAbove = [
+      [-0.5, 0.5],
+      [-0.5, 0.5],
+      [0, 1],
+      [0.33, 0.66]
+    ]
  * ```
  */
 export class Normalizer extends TransformerMixin {
   norm: string
+  /** The number of features seen during fit */
+  nFeaturesIn: number
+
+  /** Names of features seen during fit. Only stores feature names if input is a DataFrame */
+  featureNamesIn: Array<string>
+
   constructor({ norm = 'l2' }: NormalizerParams = {}) {
     super()
     this.norm = norm
+    this.nFeaturesIn = 0
+    this.featureNamesIn = []
   }
 
   /**
@@ -68,6 +76,11 @@ export class Normalizer extends TransformerMixin {
    */
   public fit(X: Scikit2D): Normalizer {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
+    const tensorArray = convertToNumericTensor2D(X)
+    this.nFeaturesIn = tensorArray.shape[1]
+    if (X instanceof dfd.DataFrame) {
+      this.featureNamesIn = [...X.columns]
+    }
     return this
   }
 

@@ -5,6 +5,7 @@ import { tensorEqual } from '../utils'
 import { LinearRegression } from '../estimators/linear.regression'
 import { SimpleImputer } from '../impute/simple.imputer'
 import { MinMaxScaler } from '../preprocessing/min.max.scaler'
+import { describe, it } from 'mocha'
 
 describe('Pipeline', function () {
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {

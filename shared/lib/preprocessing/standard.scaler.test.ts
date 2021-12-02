@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import { StandardScaler } from './standard.scaler'
 import { dfd } from '../../globals'
+import { describe, it } from 'mocha'
 
 describe('StandardScaler', function () {
   it('StandardScaler works for DataFrame', function () {
