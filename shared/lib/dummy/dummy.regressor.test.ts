@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 import { DummyRegressor } from './dummy.regressor'
+import { describe, it } from 'mocha'
 
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {

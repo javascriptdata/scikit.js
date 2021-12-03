@@ -3,6 +3,7 @@ import { MinMaxScaler } from './min.max.scaler'
 import { dfd } from '../../globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { convertTensorToInputType } from '../utils'
+import { describe, it } from 'mocha'
 
 describe('MinMaxscaler', function () {
   it('Standardize values in a DataFrame using a MinMaxScaler', function () {

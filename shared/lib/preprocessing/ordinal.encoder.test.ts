@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import { OrdinalEncoder } from './ordinal.encoder'
 import { arrayTo2DColumn } from '../utils'
+import { describe, it } from 'mocha'
 
 describe('OrdinalEncoder', function () {
   it('OrdinalEncoder works on array', function () {
@@ -30,5 +31,51 @@ describe('OrdinalEncoder', function () {
       [0, 2]
     ]
     assert.deepEqual(encode.fitTransform(X as any).arraySync(), expected)
+  })
+  it('OrdinalEncoder can be passed categories', function () {
+    const X = [
+      ['Male', 1],
+      ['Female', 2],
+      ['Male', 4]
+    ]
+    const encode = new OrdinalEncoder({
+      categories: [
+        ['Male', 'Female'],
+        [4, 2, 1]
+      ]
+    })
+
+    const expected = [
+      [0, 2],
+      [1, 1],
+      [0, 0]
+    ]
+    assert.deepEqual(encode.fitTransform(X as any).arraySync(), expected)
+  })
+  it('OrdinalEncoder errors on values not seen in training', function () {
+    const X = [
+      ['Male', 1],
+      ['Female', 2],
+      ['Male', 4]
+    ]
+    const encode = new OrdinalEncoder()
+    encode.fit(X as any)
+    // Should throw an error on unknown input
+    assert.throw(() => encode.transform([['Hello', 1]] as any))
+  })
+  it('OrdinalEncoder does not error on unknown values if you pass in defaults', function () {
+    const X = [
+      ['Male', 1],
+      ['Female', 2],
+      ['Male', 4]
+    ]
+    const encode = new OrdinalEncoder({
+      handleUnknown: 'useEncodedValue',
+      unknownValue: -1
+    })
+    encode.fit(X as any)
+    // Should throw an error on unknown input
+    const expected = encode.transform([['Hello', 1]] as any)
+    assert.deepEqual(expected.arraySync(), [[-1, 0]])
   })
 })

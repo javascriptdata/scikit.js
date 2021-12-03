@@ -23,7 +23,10 @@ import { tf, dfd } from '../../globals'
 /*
 Next steps:
 0. Implement partialFit for online learning
-1. Test on the scikit-learn tests
+1. sampleWeight for fit/partialFit calls
+2. class property "var"
+3. getFeatureNamesOut
+4. Test on the scikit-learn tests
 */
 
 export interface StandardScalerParams {

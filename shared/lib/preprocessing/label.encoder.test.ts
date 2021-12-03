@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { LabelEncoder } from './label.encoder'
 import { dfd } from '../../globals'
-import 'mocha'
+import { describe, it } from 'mocha'
 
 describe('LabelEncoder', function () {
   it('LabelEncoder works for Series', function () {

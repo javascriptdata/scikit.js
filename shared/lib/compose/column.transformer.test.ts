@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import { ColumnTransformer } from './column.transformer'
 import { MinMaxScaler } from '../preprocessing/min.max.scaler'
 import { SimpleImputer } from '../impute/simple.imputer'
-import 'mocha'
+import { describe, it } from 'mocha'
 
 describe('ColumnTransformer', function () {
   it('ColumnTransformer simple test', function () {
