@@ -92,14 +92,14 @@ export class Normalizer extends TransformerMixin {
     const tensorArray = convertToNumericTensor2D(X)
     if (this.norm === 'l1') {
       const means = tf.abs(tensorArray).sum(1).reshape([-1, 1])
-      return tensorArray.div(means)
+      return tensorArray.divNoNan(means)
     }
     if (this.norm === 'l2') {
       const means = tensorArray.square().sum(1).sqrt().reshape([-1, 1])
-      return tensorArray.div(means)
+      return tensorArray.divNoNan(means)
     }
     // max case
     const means = tf.abs(tensorArray).max(1).reshape([-1, 1])
-    return tensorArray.div(means)
+    return tensorArray.divNoNan(means)
   }
 }

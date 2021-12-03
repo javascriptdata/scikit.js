@@ -61,4 +61,19 @@ describe('Normalizer', function () {
     ]
     assert.isTrue(arrayEqual(resultDf.arraySync(), expected, 0.1))
   })
+  it('fitTransform using a Normalizer (l1 case)', function () {
+    const data = [
+      [-1, 2],
+      [-3, 4],
+      [0, 0]
+    ]
+    const scaler = new Normalizer({ norm: 'l1' })
+    const resultDf = scaler.fitTransform(data)
+    const expected = [
+      [-1 / 3, 2 / 3],
+      [-3 / 7, 4 / 7],
+      [0, 0]
+    ]
+    assert.isTrue(arrayEqual(resultDf.arraySync(), expected, 0.1))
+  })
 })

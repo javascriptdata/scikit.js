@@ -16,12 +16,41 @@
 import { convertTo2DArray } from '../utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../../globals'
+import { tf, dfd } from '../../globals'
 
 /*
 Next steps:
-1. Pass the next 5 tests
+0. Support inverseTransform
+1. Maybe support dtype constructor arg
+2. Shouldn't OrdinalEncoder support partialFit, seems like that might be useful
+3. Pass the next 5 tests
 */
+
+export interface OrdinalEncoderParams {
+  /**
+   * Categories (unique values) per feature:
+   * ‘auto’ : Determine categories automatically from the training data.
+   * list : categories[i] holds the categories expected in the ith column.
+   * The passed categories should not mix strings and numeric values, and should be sorted in case of numeric values.
+   * **default = "auto"**
+   */
+  categories?: 'auto' | (number | string | boolean)[][]
+
+  /** When set to ‘error’ an error will be raised in case an unknown categorical
+   * feature is present during transform. When set to ‘use_encoded_value’,
+   * the encoded value of unknown categories will be set to the value
+   * given for the parameter unknown_value.
+   * In inverse_transform, an unknown category will be denoted as null.
+   * **default = "error"**
+   */
+  handleUnknown?: 'error' | 'useEncodedValue'
+
+  /**When the parameter handle_unknown is set to ‘use_encoded_value’, this parameter
+   * is required and will set the encoded value of unknown categories.
+   * It has to be distinct from the values used to encode any of the categories in fit.
+   * Great choices for this number are NaN or -1. **default = NaN** */
+  unknownValue?: number
+}
 
 /**
  * Encode categorical features as an integer array.
@@ -45,11 +74,30 @@ Next steps:
  * ```
  */
 export class OrdinalEncoder extends TransformerMixin {
-  /** List of all unique class labels that we've seen per feature */
   categories: (number | string | boolean)[][]
-  constructor() {
+  handleUnknown?: 'error' | 'useEncodedValue'
+  unknownValue?: number
+  /** This holds the categories parameter that is passed in the constructor. `this.categories`
+   * holds the actual learned categories or the ones passed in from the constructor */
+  categoriesParam: 'auto' | (number | string | boolean)[][]
+
+  /** The number of features seen during fit */
+  nFeaturesIn: number
+
+  /** Names of features seen during fit. Only stores feature names if input is a DataFrame */
+  featureNamesIn: Array<string>
+  constructor({
+    categories = 'auto',
+    handleUnknown = 'error',
+    unknownValue = NaN
+  }: OrdinalEncoderParams = {}) {
     super()
+    this.categoriesParam = categories
     this.categories = []
+    this.handleUnknown = handleUnknown
+    this.unknownValue = unknownValue
+    this.nFeaturesIn = 0
+    this.featureNamesIn = []
   }
 
   classesToMapping(
@@ -79,7 +127,16 @@ export class OrdinalEncoder extends TransformerMixin {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public fit(X: Scikit2D, y?: Scikit1D): OrdinalEncoder {
     const array2D = convertTo2DArray(X)
-    this.loopOver2DArrayToSetLabels(array2D)
+
+    if (this.categoriesParam === 'auto') {
+      this.loopOver2DArrayToSetLabels(array2D)
+      return this
+    }
+    this.categories = this.categoriesParam
+    this.nFeaturesIn = array2D.length === 0 ? 0 : array2D[0].length || 0
+    if (X instanceof dfd.DataFrame) {
+      this.featureNamesIn = [...X.columns]
+    }
     return this
   }
 
@@ -91,8 +148,16 @@ export class OrdinalEncoder extends TransformerMixin {
       for (let j = 0; j < array2D[0].length; j++) {
         let curElem = array2D[i][j]
         let val = labels[j].get(curElem)
-        let actualIndex = val === undefined ? -1 : val
-        curArray.push(actualIndex)
+        if (val === undefined) {
+          if (this.handleUnknown === 'error') {
+            throw new Error(
+              `Unknown value ${curElem} encountered while transforming. Not encountered in training data`
+            )
+          } else {
+            val = this.unknownValue
+          }
+        }
+        curArray.push(val)
       }
       finalArray.push(curArray)
     }
@@ -105,6 +170,6 @@ export class OrdinalEncoder extends TransformerMixin {
   public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
     const array2D = convertTo2DArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
-    return tf.tensor2d(result2D, undefined, 'int32')
+    return tf.tensor2d(result2D as number[][], undefined, 'int32')
   }
 }

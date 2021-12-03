@@ -282,7 +282,7 @@ export const arrayEqual = (
   return true
 }
 
-export function convertTo2DArray(data: Scikit2D) {
+export function convertTo2DArray(data: Scikit2D): any[] {
   if (data instanceof dfd.DataFrame) {
     return data.values
   }
