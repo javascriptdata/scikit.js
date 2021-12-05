@@ -54,7 +54,7 @@ console.log(lr.coef)
 console.log(lr.intercept)
 ```
 
-# Coming from python?
+# Coming from Python?
 
 This library aims to be a drop-in replacement for scikit-learn but for JS environments. There are some
 differences in deploy environment and underlying libraries that make for a slightly different experience.
@@ -65,7 +65,7 @@ Here are the 3 main differences.
 While I would have liked to make every function identical to the python equivalent, it wasn't possible. In python,
 one has named arguments, meaning that all of these are valid function calls.
 
-#### python
+#### Python
 
 ```py
 def myAdd(a=0, b=100):
@@ -84,7 +84,7 @@ For many classes in scikit-learn, the [constructors take in a ton of arguments](
 
 After a class is created most function calls really only take in 1 or 2 arguments (think fit, predict, etc). In that case, I'd rather simply pass them positionally. So to recap.
 
-#### python
+#### Python
 
 ```py
 from sklearn.linear_model import LinearRegression
@@ -96,7 +96,7 @@ lr.fit(X, y)
 
 Turns into
 
-#### javascript
+#### JavaScript
 
 ```js
 import { LinearRegression } from 'scikitjs'
@@ -113,7 +113,7 @@ You'll also notice in the code above, these are actual classes in JS, so you'll 
 
 Not a huge change, but every function call and variable name that is `underscore_case` in python will simply be `camelCase` in JS. In cases where there is an underscore but no word after, it is removed.
 
-#### python
+#### Python
 
 ```py
 from sklearn.linear_model import LinearRegression
@@ -126,7 +126,7 @@ print(lr.coef_)
 
 Turns into
 
-#### javascript
+#### JavaScript
 
 ```js
 import { LinearRegression } from 'scikitjs'
@@ -148,7 +148,7 @@ So if we build on top of them our fit functions will be asynchronous. But what h
 
 I think we should simply await all calls to fit. If you await a synchronous function, it resolves immediately and you are on your merry way. So I literally await all calls to .fit and you should too.
 
-#### python
+#### Python
 
 ```py
 from sklearn.linear_model import LogisticRegression
@@ -161,7 +161,7 @@ print(lr.coef_)
 
 Turns into
 
-#### javascript
+#### JavaScript
 
 ```js
 import { LogisticRegression } from 'scikitjs'
