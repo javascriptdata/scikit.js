@@ -23,7 +23,9 @@ import { tf, dfd } from '../../globals'
 /*
 Next steps:
 1. Implement constructor arg "clip"
-2. Pass next 5 scikit-learn tests
+2. partialFit for online scaling
+3. getFeatureNamesOut
+4. Pass next 5 scikit-learn tests
 */
 
 export interface MinMaxScalerParams {

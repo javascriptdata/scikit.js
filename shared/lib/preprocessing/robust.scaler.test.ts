@@ -2,6 +2,7 @@ import { assert } from 'chai'
 import { RobustScaler } from './robust.scaler'
 import { dfd } from '../../globals'
 import { arrayEqual } from '../utils'
+import { describe, it } from 'mocha'
 
 describe('RobustScaler', function () {
   it('Standardize values in a DataFrame using a RobustScaler', function () {

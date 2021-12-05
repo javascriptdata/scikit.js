@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-import { TransformerMixin } from '../mixins'
 import { Scikit1D } from '../types'
 import { tf, dfd } from '../../globals'
 
@@ -35,12 +34,11 @@ Next steps:
     scaler.transform([2, 2, "boy"]) // [1, 1, 2]
  * ```
  */
-export class LabelEncoder extends TransformerMixin {
+export class LabelEncoder {
   /** Unique classes that we see in this single array of data */
   classes: Array<string | number | boolean>
 
   constructor() {
-    super()
     this.classes = []
   }
 
@@ -98,6 +96,10 @@ export class LabelEncoder extends TransformerMixin {
       return val === undefined ? -1 : val
     })
     return tf.tensor1d(encodedData)
+  }
+
+  public fitTransform(X: Scikit1D): tf.Tensor1D {
+    return this.fit(X).transform(X)
   }
 
   /**

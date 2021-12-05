@@ -23,8 +23,9 @@ import { tf, dfd } from '../../globals'
 
 /*
 Next steps:
-1. Implement constructor args (withCentering, withScaling, quantileRange)
-2. Test on the next 5 scikit-learn tests
+1. Implement unitVariance constructor arg
+2. getFeatureNamesOut
+3. Test on the next 5 scikit-learn tests
 */
 
 export interface RobustScalerParams {

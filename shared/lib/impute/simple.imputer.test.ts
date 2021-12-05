@@ -1,6 +1,7 @@
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
 import { SimpleImputer } from './simple.imputer'
+import { describe, it } from 'mocha'
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {

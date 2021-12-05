@@ -42,9 +42,15 @@ import {
 } from './preprocessing/standard.scaler'
 import { MaxAbsScaler } from './preprocessing/max.abs.scaler'
 import { SimpleImputer, SimpleImputerParams } from './impute/simple.imputer'
-import { OneHotEncoder } from './preprocessing/one.hot.encoder'
+import {
+  OneHotEncoder,
+  OneHotEncoderParams
+} from './preprocessing/one.hot.encoder'
 import { LabelEncoder } from './preprocessing/label.encoder'
-import { OrdinalEncoder } from './preprocessing/ordinal.encoder'
+import {
+  OrdinalEncoder,
+  OrdinalEncoderParams
+} from './preprocessing/ordinal.encoder'
 import { Normalizer, NormalizerParams } from './preprocessing/normalizer'
 import { Pipeline, PipelineParams } from './pipeline/pipeline'
 import {
@@ -69,6 +75,7 @@ export {
   Normalizer,
   NormalizerParams,
   OneHotEncoder,
+  OneHotEncoderParams,
   LabelEncoder,
   SimpleImputer,
   SimpleImputerParams,
@@ -92,6 +99,7 @@ export {
   ColumnTransformer,
   ColumnTransformerParams,
   OrdinalEncoder,
+  OrdinalEncoderParams,
   KMeans,
   KMeansParams,
   Scikit1D,

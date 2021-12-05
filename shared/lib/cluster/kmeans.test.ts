@@ -1,7 +1,6 @@
-import * as _ from 'lodash'
 import { KMeans } from './kmeans'
 import { assert } from 'chai'
-import { tensor2d } from '@tensorflow/tfjs-core'
+import { describe, it } from 'mocha'
 
 // Next steps: Improve on kmeans cluster testing
 describe('clusters:k_means', () => {
@@ -12,15 +11,6 @@ describe('clusters:k_means', () => {
     [4, 2],
     [4, 4],
     [4, 0]
-  ]
-
-  const predVector1 = [
-    [0, 0],
-    [4, 4]
-  ]
-  const predVector2 = [
-    [1298392183, 0],
-    [0, 1]
   ]
 
   it('should fit vector1 + k=2 should return centroids of size 2 and clusters of size 2', () => {

@@ -25,6 +25,7 @@ Next steps:
 0. Write the maxabsScale function (takes in 1D and 2D arrays)
 1. Support maxAbs property on object
 2. Support streaming with partialFit
+3. getFeatureNamesOut
 */
 
 /** MaxAbsScaler scales the data by dividing by the max absolute value that it finds per feature.

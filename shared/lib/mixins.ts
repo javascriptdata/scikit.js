@@ -1,4 +1,4 @@
-import { Tensor1D } from '@tensorflow/tfjs-core'
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { Scikit2D, Scikit1D } from './types'
 import { r2Score, accuracyScore } from './metrics/metrics'
 
@@ -6,7 +6,7 @@ export class TransformerMixin {
   // We assume that fit and transform exist
   [x: string]: any
 
-  fitTransform(X: Scikit2D) {
+  public fitTransform(X: Scikit2D): Tensor2D {
     return this.fit(X).transform(X)
   }
 }
