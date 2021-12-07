@@ -63,6 +63,15 @@ import {
 } from './preprocessing/robust.scaler'
 import { KMeans, KMeansParams } from './cluster/kmeans'
 import { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
+import {
+  loadBoston,
+  loadIris,
+  loadWine,
+  loadDiabetes,
+  loadBreastCancer,
+  loadDigits,
+  fetchCaliforniaHousing
+} from './datasets/datasets'
 
 export {
   MinMaxScaler,
@@ -102,6 +111,13 @@ export {
   OrdinalEncoderParams,
   KMeans,
   KMeansParams,
+  loadBoston,
+  loadDiabetes,
+  loadIris,
+  loadWine,
+  loadBreastCancer,
+  loadDigits,
+  fetchCaliforniaHousing,
   Scikit1D,
   Scikit2D,
   ScikitVecOrMatrix
