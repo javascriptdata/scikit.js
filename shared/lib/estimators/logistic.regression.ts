@@ -62,14 +62,14 @@ export interface LogisticRegressionParams {
  * ```
 */
 export class LogisticRegression extends SGD {
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'logisticregression'
+
   constructor({
     penalty = 'l2',
     C = 1,
     fitIntercept = true
   }: LogisticRegressionParams = {}) {
-    if (C === undefined) {
-      C = 1
-    }
     // Assume Binary classification
     // If we call fit, and it isn't binary then update args
     super({

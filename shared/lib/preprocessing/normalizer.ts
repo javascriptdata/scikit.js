@@ -64,6 +64,9 @@ export class Normalizer extends TransformerMixin {
   /** Names of features seen during fit. Only stores feature names if input is a DataFrame */
   featureNamesIn: Array<string>
 
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'normalizer'
+
   constructor({ norm = 'l2' }: NormalizerParams = {}) {
     super()
     this.norm = norm

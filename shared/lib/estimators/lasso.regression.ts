@@ -30,6 +30,9 @@ export interface LassoParams {
 
 /** Linear Model trained with L1 prior as regularizer (aka the Lasso). */
 export class LassoRegression extends SGD {
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'lassoregression'
+
   constructor({ fitIntercept = true, alpha = 1.0 }: LassoParams = {}) {
     super({
       modelCompileArgs: {
