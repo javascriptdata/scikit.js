@@ -58,4 +58,39 @@ describe('Pipeline', function () {
       true
     )
   })
+  it('Make sure the pipeline throws on bad input', async function () {
+    assert.throw(
+      () =>
+        new Pipeline({
+          steps: [null] as any
+        })
+    )
+    assert.throw(
+      () =>
+        new Pipeline({
+          steps: null as any
+        })
+    )
+    assert.throw(
+      () =>
+        new Pipeline({
+          steps: [4, 5] as any
+        })
+    )
+    assert.throw(
+      () =>
+        new Pipeline({
+          steps: [new MinMaxScaler()] as any
+        })
+    )
+    assert.throw(
+      () =>
+        new Pipeline({
+          steps: [
+            ['minmaxscaler', new MinMaxScaler()],
+            [new MinMaxScaler()]
+          ] as any
+        })
+    )
+  })
 })
