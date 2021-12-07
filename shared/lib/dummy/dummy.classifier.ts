@@ -83,6 +83,9 @@ export class DummyClassifier extends ClassifierMixin {
   /**These are the unique class labels that are seen during fit. */
   classes: number[] | string[]
 
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'dummyclassifier'
+
   constructor({
     strategy = 'mostFrequent',
     constant = 0

@@ -35,6 +35,9 @@ export interface ElasticNetParams {
  * Linear regression with combined L1 and L2 priors as regularizer.
  */
 export class ElasticNet extends SGD {
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'elasticnet'
+
   constructor({
     alpha = 1,
     l1Ratio = 0.5,

@@ -32,6 +32,9 @@ export interface RidgeRegressionParams {
 
 /** Linear least squares with l2 regularization. */
 export class RidgeRegression extends SGD {
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'ridgeregression'
+
   constructor({
     fitIntercept = true,
     alpha = 0.01

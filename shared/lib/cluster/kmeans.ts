@@ -106,6 +106,9 @@ export class KMeans {
   /** The actual cluster centers found by KMeans */
   clusterCenters: Tensor2D
 
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'kmeans'
+
   constructor({
     nClusters = 8,
     init = 'random',

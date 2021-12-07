@@ -38,6 +38,9 @@ export class LabelEncoder {
   /** Unique classes that we see in this single array of data */
   classes: Array<string | number | boolean>
 
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'labelencoder'
+
   constructor() {
     this.classes = []
   }

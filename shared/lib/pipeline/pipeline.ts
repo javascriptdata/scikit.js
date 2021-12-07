@@ -45,6 +45,9 @@ export interface PipelineParams {
 export class Pipeline {
   steps: Array<[string, any]>
 
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'pipeline'
+
   constructor({ steps = [] }: PipelineParams = {}) {
     this.steps = steps
     this.validateSteps(this.steps)
@@ -200,4 +203,14 @@ export class Pipeline {
     let XT = this.fitTransformExceptLast(X)
     return await lastEstimator.fitPredict(XT, y)
   }
+}
+
+export function makePipeline(...args: any[]) {
+  let pipelineSteps: Array<[string, any]> = []
+  for (let i = 0; i < args.length; i++) {
+    // eslint-disable-next-line prefer-rest-params
+    let cur = args[i]
+    pipelineSteps.push([cur.name, cur])
+  }
+  return new Pipeline({ steps: pipelineSteps })
 }

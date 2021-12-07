@@ -67,6 +67,9 @@ Next steps:
  * ```
  */
 export class LinearRegression extends SGD {
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'linearregression'
+
   constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
     super({
       modelCompileArgs: {

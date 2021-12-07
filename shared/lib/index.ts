@@ -52,7 +52,7 @@ import {
   OrdinalEncoderParams
 } from './preprocessing/ordinal.encoder'
 import { Normalizer, NormalizerParams } from './preprocessing/normalizer'
-import { Pipeline, PipelineParams } from './pipeline/pipeline'
+import { Pipeline, PipelineParams, makePipeline } from './pipeline/pipeline'
 import {
   ColumnTransformer,
   ColumnTransformerParams
@@ -96,6 +96,7 @@ export {
   metrics,
   Pipeline,
   PipelineParams,
+  makePipeline,
   ColumnTransformer,
   ColumnTransformerParams,
   OrdinalEncoder,

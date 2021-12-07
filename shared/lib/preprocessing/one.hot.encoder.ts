@@ -96,6 +96,10 @@ export class OneHotEncoder extends TransformerMixin {
 
   /** Names of features seen during fit. Only stores feature names if input is a DataFrame */
   featureNamesIn: Array<string>
+
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'onehotencoder'
+
   constructor({
     categories = 'auto',
     handleUnknown = 'error',

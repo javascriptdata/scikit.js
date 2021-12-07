@@ -83,6 +83,9 @@ export class DummyRegressor extends RegressorMixin {
   constant?: number
   quantile?: number
 
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'dummyregressor'
+
   constructor({
     strategy = 'mean',
     constant,

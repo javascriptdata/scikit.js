@@ -70,6 +70,10 @@ export class SimpleImputer extends TransformerMixin {
   strategy: 'mean' | 'median' | 'mostFrequent' | 'constant'
 
   statistics: Tensor1D
+
+  /** Useful for pipelines and column transformers to have a default name for transforms */
+  name = 'simpleimputer'
+
   constructor({
     strategy = 'mean',
     fillValue = undefined,
