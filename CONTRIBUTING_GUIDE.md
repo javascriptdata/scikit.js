@@ -5,51 +5,56 @@ description: >-
 
 # Contributing Guide
 
-All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome. 
+All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
 
-For contributors familiar with open-source,  below is a quick guide to setting up scikit.js locally.  
+For contributors familiar with open-source, below is a quick guide to setting up scikit.js locally.
 
 ```text
-git clone https://github.com/opensource9ja/scikit.js.git
+git clone https://github.com/javascriptdata/scikit.js.git
 cd scikit.js
 git checkout -b <your-branch-name>
 
-yarn test:clean 
+yarn test:clean
 ```
 
-The following folders are available:
-* `estimators`: All Machine learning algorithms.
-* `model_selection`: Functions related to model selection.
-* `preprocessing`: All functions for preprocessing data before, during and after training
+The following repo has 4 main directories:
 
-The following files are available in the root directory:
-* `index`: Entry file which exports all features. 
-* `utils`: A collection of reusable utility functions. 
-* `types`: A file for declaring Typescript types.
+- `scikitjs-browser`: Contains build/test commands for the browser version of scikitjs
+- `scikitjs-node`: Contains build/test commands for the node version of scikitjs
+- `docs`: Contains a docusaurus site which builds the `scikitjs.org` site. Has blogs/tutorials/apis documentation
+- `shared`: Contains all the code that is shared between browser and node versions of this library.
 
+For anyone creating Estimators or writing scikit-learn functions, you'll likely be spending your time in the `shared/lib` directory. It contains a directory-like structure that matches the scikit-learn directory structure. So there is a `cluster` directory, and a `model_selection` directory, etc.
+
+The following files are available in the `shared/lib` directory:
+
+- `index`: Entry file which exports all features.
+- `utils`: A collection of reusable utility functions.
+- `types`: A file for declaring Typescript types.
 
 Some important scripts in the package.json file are:
-* `test`: Run all test that satisfy the given pattern. Defaults to `test/**/**/*.test.ts` (All tests will be run)
-* `test:clean` : Build the source to `dist` folder before running all test that satisfy the given pattern. This is useful when testing a new feature. 
-* `build` : Compiles the src to the `dist` folder.
-* `build:clean` : Cleans/Remove old folders before compiling the src to the `dist` folder.
 
+- `test:clean` : Build both browser and node versions, and runs all tests against them
+- `build` : Builds both the browser and node versions of this library
+- `build:docs`: Builds a local version of the site `scikitjs.org`
 
 ## Code Style
+
 ### File names
-File names must be all lowercase and compound names must be seperated by dots (.). E.g `label.encoder.ts`.
+
+File names must be all snakecase names that specify the function or class that is inside (.). E.g `labelEncoder.ts` houses the class `LabelEncoder`. `trainTestSplit.ts` contains the function `trainTestSplit`.
 
 ### Source file structure
 
 Files consist of the following, in order:
 
- - License or copyright information, if present
- - ES import statements
- - The file’s source code 
+- License or copyright information, if present
+- ES import statements
+- The file’s source code
 
- Example:
+Example:
 
- ```javascript
+````typescript
 /**
 *  @license
 * Copyright 2021, JsData. All rights reserved.
@@ -71,56 +76,59 @@ import { cat, dog, eagle } from '../animals'
 
 /**
  * Returns the sum of two numbers
- * @param number num1 
- * @param number num2 
- * @returns number 
+ * * @example
+ * ```js
+ * const result = getSum(2, 3)
+ * console.log(result) // 5
+ * ```
  */
- getSum(num1, num2) {
-   return num1 + num2
-
- ```
+function getSum(num1: number, num2: number): number {
+  return num1 + num2
+}
+````
 
 ### Naming Convention
 
 #### Class names
+
 Class, interface, record, and typedef names are written in UpperCamelCase e.g `ImageProcessor`.
 Type names are typically nouns or noun phrases. For example, Request, ImmutableList, or VisibilityMode.
 
 #### Method names
+
 Method names are written in lowerCamelCase e.g `addNum`. Names for private methods must start with a dollar sign e.g `$startAddition`, and should be declared as private.
 
 Method names are typically verbs or verb phrases. For example, `sendMessage` or `$stopProcess`. Getter and setter methods for properties are never required, but if they are used they should be named `getFoo` (or optionally `isFoo` or `hasFoo` for booleans), or `setFoo(value)` for setters.
 
 #### Constant names
+
 Constant names use `CONSTANT_CASE`: all uppercase letters, with words separated by underscores.
 
 ### JSDOC Guidelines
 
 Documentation helps clarify what a function or a method is doing. It also gives insight to users of the function or methods on what parameters to pass in and know what the function will return.
 
+Whenever you are writing a class or a function, it's best to start with a high-level description and then go directly into an example usage. The @param are not needed because Typedoc picks up the parameters and returns types directly from the type signature.
+
 Sample documentation:
 
-```javascript
- /**
+````javascript
+/**
  * Add two series of the same length
- * @param series1 The first Series. Defaults to []
- * @param series2 The second Series. Defaults to []
- * @returns Series
  * @example
  * ```
  * import { addSeries } from "scikit.js"
- * 
+ *
  * const newSeries = addSeries(Sf1, Sf2)
  * newSeries.shape.print()
  * // [10, 4]
  * ```
  */
 const addSeries = (series1, series2) => {
-    //DO something here
-    return new Series()
+  //DO something here
+  return new Series()
 }
-
-```
+````
 
 ## **Writing tests**
 
@@ -131,18 +139,15 @@ All tests should go into the tests subdirectory and place in the corresponding m
 Below is the general Framework to write a test for each module.
 
 ```javascript
-import { assert } from "chai"
-import { addSeries } from '../../dist' //compiled build
+import { assert } from 'chai'
+import { addSeries } from './addSeries' //compiled build
 
-describe("Name of the class|module", function(){
- 
-  it("name of the methods| expected result",function(){
-    
-       //write your test code here
-       //use assert.{proprty} to test your code
-   })
-
-});
+describe('Name of the class|module', function () {
+  it('name of the methods| expected result', function () {
+    //write your test code here
+    //use assert.{proprty} to test your code
+  })
+})
 ```
 
 For a class with lots of methods.
@@ -152,20 +157,20 @@ import { assert } from "chai"
 import { DataFrame } from '../../src/core/frame'
 
 describe("Name of the class|module", function(){
- 
+
  describe("method name 1", function(){
- 
+
    it("expected result",function(){
-     
+
         //write your test code here
         //use assert.{proprty} to test your code
     })
   })
-  
+
   describe("method name 2", function(){
- 
+
    it("expected result",function(){
-     
+
         //write your test code here
         //use assert.{proprty} to test your code
     })
@@ -174,25 +179,24 @@ describe("Name of the class|module", function(){
 });
 ```
 
-
-
 ### **Running the test case**
 
 To run the test for the module/file you created/edited,
 
-**1\)** Open the package.json 
+**1\)** Change `describe` to `describe.only` at the top of the test file
 
-**2\)** change the name of the test file to the file name you want. and don't forget the file is in the test folder
-
-```python
-"scripts": {
-    "test": "....... tests/[sub_directory_name]/filename.test.ts",
-```
-
-**3\)**  run the test in clean mode
+**2\)** If you are in the shared directory, you can run the test case against the node library by typing
 
 ```python
-yarn test:clean
+yarn test:node
 ```
+
+You can also test your code against the browser version by running
+
+```python
+yarn test:browser
+```
+
+Note that running tests against the browser is usually a bit slower because we build the browser bundle. I usually test against node for quick iterations, and then at the end test against the browser.
 
 Learn more about mocha [here](https://mochajs.org/)

@@ -2,7 +2,7 @@
 import { assert } from '../types.utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { Tensor2D } from '@tensorflow/tfjs-core'
-import { dfd } from '../../globals'
+
 /*
 Next steps:
 0. Implement nFeaturesIn, and featureNamesIn

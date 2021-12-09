@@ -1,6 +1,6 @@
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
-import { OneHotEncoder } from './one.hot.encoder'
+import { OneHotEncoder } from './oneHotEncoder'
 import { arrayTo2DColumn } from '../utils'
 import { describe, it } from 'mocha'
 

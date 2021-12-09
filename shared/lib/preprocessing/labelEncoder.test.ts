@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { LabelEncoder } from './label.encoder'
+import { LabelEncoder } from './labelEncoder'
 import { dfd } from '../../globals'
 import { describe, it } from 'mocha'
 

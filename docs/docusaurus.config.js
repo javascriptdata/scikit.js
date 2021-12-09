@@ -15,7 +15,7 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'opensource9ja', // Usually your GitHub org/user name.
+  organizationName: 'javascriptdata', // Usually your GitHub org/user name.
   projectName: 'scikit.js', // Usually your repo name.
 
   presets: [
@@ -26,14 +26,14 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/opensource9ja/scikit.js/docs',
+          editUrl: 'https://github.com/javascriptdata/scikit.js/docs',
           remarkPlugins: [math],
           rehypePlugins: [katex]
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl: 'https://github.com/opensource9ja/scikit.js/docs/blog/'
+          editUrl: 'https://github.com/javascriptdata/scikit.js/docs/blog/'
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css')
@@ -76,7 +76,7 @@ const config = {
             exact: true
           },
           {
-            href: 'https://github.com/opensource9ja/scikit.js',
+            href: 'https://github.com/javascriptdata/scikit.js',
             label: 'GitHub',
             position: 'right'
           }
@@ -108,7 +108,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/opensource9ja/scikit.js'
+                href: 'https://github.com/javascriptdata/scikit.js'
               }
             ]
           }

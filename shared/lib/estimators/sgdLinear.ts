@@ -34,7 +34,7 @@ import {
   convertToNumericTensor2D
 } from '../utils'
 import { Scikit2D, ScikitVecOrMatrix } from '../types'
-import { OneHotEncoder } from '../preprocessing/one.hot.encoder'
+import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can

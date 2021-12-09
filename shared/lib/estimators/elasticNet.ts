@@ -15,25 +15,34 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGD } from './sgd.linear'
+import { SGD } from './sgdLinear'
 import { tf } from '../../globals'
 
-// First pass at a LassoRegression implementation using gradient descent
-// Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html#sklearn.linear_model.Lasso
+// First pass at a ElasticNet implementation using gradient descent
+// Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html#sklearn.linear_model.ElasticNet
 
-export interface LassoParams {
+export interface ElasticNetParams {
+  /**Constant that multiplies the penalty terms. **default = .01**  */
+  alpha?: number
+
+  /**The ElasticNet mixing parameter. **default = .5** */
+  l1Ratio?: number
   /** Whether or not the intercept should be estimator not. **default = true** */
   fitIntercept?: boolean
-  /** Constant that multiplies the L1 term. **defaults = 1.0** */
-  alpha?: number
 }
 
-/** Linear Model trained with L1 prior as regularizer (aka the Lasso). */
-export class LassoRegression extends SGD {
+/**
+ * Linear regression with combined L1 and L2 priors as regularizer.
+ */
+export class ElasticNet extends SGD {
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'lassoregression'
+  name = 'elasticnet'
 
-  constructor({ fitIntercept = true, alpha = 1.0 }: LassoParams = {}) {
+  constructor({
+    alpha = 1,
+    l1Ratio = 0.5,
+    fitIntercept = true
+  }: ElasticNetParams = {}) {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
@@ -48,7 +57,10 @@ export class LassoRegression extends SGD {
       },
       denseLayerArgs: {
         units: 1,
-        kernelRegularizer: tf.regularizers.l1({ l1: alpha }),
+        kernelRegularizer: tf.regularizers.l1l2({
+          l1: alpha * l1Ratio,
+          l2: 0.5 * alpha * (1 - l1Ratio)
+        }),
         useBias: Boolean(fitIntercept)
       }
     })

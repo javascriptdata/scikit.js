@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { DummyClassifier } from './dummy.classifier'
+import { DummyClassifier } from './dummyClassifier'
 import { describe, it } from 'mocha'
 
 describe('DummyClassifier', function () {
