@@ -15,7 +15,7 @@
 
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { Scikit1D, Scikit2D } from '../types'
-import { assert, isScikit1D, isScikit2D } from '../types.utils'
+import { assert, isScikit1D, isScikit2D } from '../typesUtils'
 import { median, quantileSeq } from 'mathjs'
 import { tensor1d, Tensor1D } from '@tensorflow/tfjs-core'
 import { RegressorMixin } from '../mixins'

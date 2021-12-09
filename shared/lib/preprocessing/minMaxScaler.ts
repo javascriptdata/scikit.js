@@ -15,7 +15,7 @@
 
 import { convertToNumericTensor2D } from '../utils'
 import { Scikit2D, Transformer } from '../types'
-import { isScikit2D, assert } from '../types.utils'
+import { isScikit2D, assert } from '../typesUtils'
 import { tensorMin, tensorMax, turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
 import { tf, dfd } from '../../globals'

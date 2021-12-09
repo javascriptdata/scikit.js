@@ -15,7 +15,7 @@
 
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { Scikit1D, Scikit2D } from '../types'
-import { isScikit2D, assert, isScikit1D } from '../types.utils'
+import { isScikit2D, assert, isScikit1D } from '../typesUtils'
 import { modeFast } from 'simple-statistics'
 import { uniq, sample } from 'lodash'
 import { ClassifierMixin } from '../mixins'

@@ -22,7 +22,7 @@ import {
   ScikitVecOrMatrix,
   TypedArray
 } from './types'
-import { inferShape, isTypedArray } from './types.utils'
+import { inferShape, isTypedArray } from './typesUtils'
 
 import { tf, dfd } from '../globals'
 /**

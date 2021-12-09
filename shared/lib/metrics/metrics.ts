@@ -15,7 +15,7 @@
 
 import { convertToNumericTensor1D } from '../utils'
 import { Scikit1D } from '../types'
-import { assert, isScikit1D } from '../types.utils'
+import { assert, isScikit1D } from '../typesUtils'
 import { uniq } from 'lodash'
 
 import { tf } from '../../globals'
