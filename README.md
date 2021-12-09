@@ -43,7 +43,7 @@ For those that wish to use script src tags, simply
 ```js
 import { LinearRegression } from 'scikitjs'
 
-const lr = LinearRegression({ fitIntercept: false })
+const lr = new LinearRegression({ fitIntercept: false })
 const X = [[1], [2]] // 2D Matrix with a single column vector
 const y = [10, 20]
 
