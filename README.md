@@ -173,7 +173,7 @@ await lr.fit(X, y)
 console.log(lr.coef)
 ```
 
-## Contributing Guide
+## Contribution Guide
 
 See [guide](https://github.com/opensource9ja/scikit.js/blob/main/CONTRIBUTING_GUIDE.md)
 
