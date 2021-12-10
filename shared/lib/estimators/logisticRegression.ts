@@ -15,7 +15,7 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGD } from './sgd.linear'
+import { SGD } from './sgdLinear'
 import { tf } from '../../globals'
 
 // First pass at a LogisticRegression implementation using gradient descent

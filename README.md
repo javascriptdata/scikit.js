@@ -176,3 +176,4 @@ console.log(lr.coef)
 ## Contributing Guide
 
 See [guide](https://github.com/opensource9ja/scikit.js/blob/main/CONTRIBUTING_GUIDE.md)
+

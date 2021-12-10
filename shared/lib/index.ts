@@ -15,52 +15,46 @@
 import {
   LinearRegression,
   LinearRegressionParams
-} from './estimators/linear.regression'
-import { LassoRegression, LassoParams } from './estimators/lasso.regression'
+} from './estimators/linearRegression'
+import { LassoRegression, LassoParams } from './estimators/lassoRegression'
 import {
   RidgeRegression,
   RidgeRegressionParams
-} from './estimators/ridge.regression'
-import { ElasticNet, ElasticNetParams } from './estimators/elastic.net'
+} from './estimators/ridgeRegression'
+import { ElasticNet, ElasticNetParams } from './estimators/elasticNet'
 import {
   LogisticRegression,
   LogisticRegressionParams
-} from './estimators/logistic.regression'
+} from './estimators/logisticRegression'
 import * as metrics from './metrics/metrics'
-import { DummyRegressor, DummyRegressorParams } from './dummy/dummy.regressor'
+import { DummyRegressor, DummyRegressorParams } from './dummy/dummyRegressor'
 import {
   DummyClassifier,
   DummyClassifierParams
-} from './dummy/dummy.classifier'
-import {
-  MinMaxScaler,
-  MinMaxScalerParams
-} from './preprocessing/min.max.scaler'
+} from './dummy/dummyClassifier'
+import { MinMaxScaler, MinMaxScalerParams } from './preprocessing/minMaxScaler'
 import {
   StandardScaler,
   StandardScalerParams
-} from './preprocessing/standard.scaler'
-import { MaxAbsScaler } from './preprocessing/max.abs.scaler'
-import { SimpleImputer, SimpleImputerParams } from './impute/simple.imputer'
+} from './preprocessing/standardScaler'
+import { MaxAbsScaler } from './preprocessing/maxAbsScaler'
+import { SimpleImputer, SimpleImputerParams } from './impute/simpleImputer'
 import {
   OneHotEncoder,
   OneHotEncoderParams
-} from './preprocessing/one.hot.encoder'
-import { LabelEncoder } from './preprocessing/label.encoder'
+} from './preprocessing/oneHotEncoder'
+import { LabelEncoder } from './preprocessing/labelEncoder'
 import {
   OrdinalEncoder,
   OrdinalEncoderParams
-} from './preprocessing/ordinal.encoder'
+} from './preprocessing/ordinalEncoder'
 import { Normalizer, NormalizerParams } from './preprocessing/normalizer'
 import { Pipeline, PipelineParams, makePipeline } from './pipeline/pipeline'
 import {
   ColumnTransformer,
   ColumnTransformerParams
-} from './compose/column.transformer'
-import {
-  RobustScaler,
-  RobustScalerParams
-} from './preprocessing/robust.scaler'
+} from './compose/columnTransformer'
+import { RobustScaler, RobustScalerParams } from './preprocessing/robustScaler'
 import { KMeans, KMeansParams } from './cluster/kmeans'
 import { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
 import {

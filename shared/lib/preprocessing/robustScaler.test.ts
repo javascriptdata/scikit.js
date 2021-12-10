@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { RobustScaler } from './robust.scaler'
+import { RobustScaler } from './robustScaler'
 import { dfd } from '../../globals'
 import { arrayEqual } from '../utils'
 import { describe, it } from 'mocha'

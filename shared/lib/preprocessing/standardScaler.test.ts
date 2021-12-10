@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { StandardScaler } from './standard.scaler'
+import { StandardScaler } from './standardScaler'
 import { dfd } from '../../globals'
 import { describe, it } from 'mocha'
 

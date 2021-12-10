@@ -14,7 +14,7 @@
 */
 
 import { convertToNumericTensor2D } from '../utils'
-import { assert, isScikit2D } from '../types.utils'
+import { assert, isScikit2D } from '../typesUtils'
 import { tensorMax, turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
 import { Scikit2D } from '../types'

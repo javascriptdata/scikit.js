@@ -1,6 +1,6 @@
 import { onesLike, Tensor, tidy, where } from '@tensorflow/tfjs-core'
 import { Iterable } from './types'
-import { assert } from './types.utils'
+import { assert } from './typesUtils'
 
 import { tf } from './../globals'
 /*

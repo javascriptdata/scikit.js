@@ -1,6 +1,6 @@
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
-import { SimpleImputer } from './simple.imputer'
+import { SimpleImputer } from './simpleImputer'
 import { describe, it } from 'mocha'
 
 describe('SimpleImputer', function () {

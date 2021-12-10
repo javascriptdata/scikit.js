@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { OrdinalEncoder } from './ordinal.encoder'
+import { OrdinalEncoder } from './ordinalEncoder'
 import { arrayTo2DColumn } from '../utils'
 import { describe, it } from 'mocha'
 
