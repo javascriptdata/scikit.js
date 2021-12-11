@@ -7,14 +7,14 @@
     "doc": "docs"
   },
   "scripts": {
-    "test:clean": "yarn test:node && yarn test:browser",
-    "test:browser": "cd scikitjs-browser && yarn test",
-    "test:node": "cd scikitjs-node && yarn test",
-    "build:browser": "cd scikitjs-browser && yarn build",
-    "build:node": "cd scikitjs-node && yarn build",
-    "build": "yarn build:node && yarn build:browser",
-    "build:docs": "cd docs && yarn build",
-    "postinstall": "(cd docs && yarn install); (cd scikitjs-browser && yarn install); (cd scikitjs-node && yarn install); (cd shared && yarn install)"
+    "test:clean": "npm run test:node && npm run test:browser",
+    "test:browser": "cd scikitjs-browser && npm run test",
+    "test:node": "cd scikitjs-node && npm run test",
+    "build:browser": "cd scikitjs-browser && npm run build",
+    "build:node": "cd scikitjs-node && npm run build",
+    "build": "npm run build:node && npm run build:browser",
+    "build:docs": "cd docs && npm run build",
+    "postinstall": "(cd docs && npm install); (cd scikitjs-browser && npm install); (cd scikitjs-node && npm install); (cd shared && npm install); (npx husky install);"
   },
   "repository": {
     "type": "git",
@@ -27,12 +27,14 @@
   },
   "homepage": "https://github.com/javascriptdata/scikit.js#readme",
   "devDependencies": {
+    "@commitlint/cli": "^15.0.0",
+    "@commitlint/config-conventional": "^15.0.0",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.0.6",
     "@rollup/plugin-typescript": "^8.3.0",
     "eslint": "^8.2.0",
+    "husky": "^7.0.4",
     "rollup-plugin-terser": "^7.0.2",
-    "typedoc": "^0.22.9",
-    "yarn": "^1.22.17"
+    "typedoc": "^0.22.9"
   }
 }
