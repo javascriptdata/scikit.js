@@ -35,6 +35,6 @@
     "eslint": "^8.2.0",
     "husky": "^7.0.4",
     "rollup-plugin-terser": "^7.0.2",
-    "typedoc": "^0.22.9"
+    "typedoc": "^0.22.10"
   }
 }
