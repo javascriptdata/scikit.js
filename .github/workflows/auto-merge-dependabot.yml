@@ -1,0 +1,79 @@
+# name: Dependabot Auto Merge
+
+# on:
+#   pull_request:
+
+# jobs:
+#   auto-merge:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: ahmadnassri/action-dependabot-auto-merge@v2
+#         with:
+#           target: minor
+#           github-token: ${{ secrets.mytoken }}
+name: Dependabot Auto Merge
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: |
+          npm i jest typescript rollup typedoc  -g
+          npm ci
+      - name: Test coverage
+        run: |
+          npm run test:clean
+        #jest --coverage --runInBand
+      - name: Scikitjs Node Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel: true
+          path-to-lcov: ./scikit-node/coverage/lcov.info # optional (default value)
+
+    - name: Scikitjs Browser Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel: true
+          path-to-lcov: ./scikit-browser/coverage/lcov.info # optional (default value)
+
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
+      - name: build files, docs
+        run: |
+          NODE_OPTIONS=--max-old-space-size=15000 npm run build 
+        # tsc && rollup -c && typedoc && sitedown manual/ -b docs/manual
+  automerge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v2.1.1
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
