@@ -42,7 +42,7 @@ Some important scripts in the package.json file are:
 
 ### File names
 
-File names must be all snakecase names that specify the function or class that is inside (.). E.g `labelEncoder.ts` houses the class `LabelEncoder`. `trainTestSplit.ts` contains the function `trainTestSplit`.
+File names must be all snakecase names that specify the function or class that is inside. E.g `labelEncoder.ts` houses the class `LabelEncoder`. `trainTestSplit.ts` contains the function `trainTestSplit`.
 
 ### Source file structure
 
@@ -112,7 +112,7 @@ Whenever you are writing a class or a function, it's best to start with a high-l
 
 Sample documentation:
 
-````javascript
+````typescript
 /**
  * Add two series of the same length
  * @example
@@ -130,29 +130,31 @@ const addSeries = (series1, series2) => {
 }
 ````
 
+JSDOCs attached to the class or functions are automatically converted into the API documentation hosted at [https://scikitjs.org/docs/api](https://scikitjs.org/docs/api).
+
 ## **Writing tests**
 
-We strongly encourage contributors to write tests for their code. Like many packages, danfojs uses mocha
+We strongly encourage contributors to write tests for their code. Like many packages, [danfojs](https://danfo.jsdata.org/) uses [mocha](https://mochajs.org/).
 
-All tests should go into the tests subdirectory and place in the corresponding module. The tests folder contains some current examples of tests, and we suggest looking to these for inspiration.
+All tests should go into the file suffixed by `.test.ts` and place in the corresponding module. The test files contain some current examples of tests (e.g. `kmeans.test.ts`), and we suggest looking to these for inspiration.
 
-Below is the general Framework to write a test for each module.
+Below is the general framework to write a test for each module.
 
-```javascript
+```typescript
 import { assert } from 'chai'
 import { addSeries } from './addSeries' //compiled build
 
 describe('Name of the class|module', function () {
   it('name of the methods| expected result', function () {
     //write your test code here
-    //use assert.{proprty} to test your code
+    //use assert.{property} to test your code
   })
 })
 ```
 
 For a class with lots of methods.
 
-```python
+```typescript
 import { assert } from "chai"
 import { DataFrame } from '../../src/core/frame'
 
@@ -187,13 +189,13 @@ To run the test for the module/file you created/edited,
 
 **2\)** If you are in the shared directory, you can run the test case against the node library by typing
 
-```python
+```bash
 yarn test:node
 ```
 
 You can also test your code against the browser version by running
 
-```python
+```bash
 yarn test:browser
 ```
 
