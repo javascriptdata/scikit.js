@@ -16,7 +16,7 @@ name: Dependabot Auto Merge
 on: [push, pull_request]
 
 jobs:
-  build:
+  auto-merge:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm i jest typescript rollup typedoc  -g
-          npm ci
+          npm i
       - name: Test coverage
         run: |
           npm run test:clean
