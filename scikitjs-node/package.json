@@ -10,7 +10,7 @@
   "scripts": {
     "test": "npm run clean && npm run build:only && npm run test:src && npm run prettier && npm run delete:shared",
     "build": "npm run clean && npm run build:only && npm run delete:shared",
-    "build:only": "npm run copy:shared && npm run tsc",
+    "build:only": "npm run copy:shared && ./node_modules/.bin/tsc",
     "prettier": "prettier --check './src'",
     "lint": "eslint ./src/**/*.ts",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
