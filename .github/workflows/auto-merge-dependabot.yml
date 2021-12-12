@@ -1,17 +1,23 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+# name: Dependabot Auto Merge
 
-name: Node.js CI
+# on:
+#   pull_request:
 
-on:
-  push:
-    branches: [ main, dev ]
-  pull_request:
-    branches: [ main, dev ]
+# jobs:
+#   auto-merge:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: ahmadnassri/action-dependabot-auto-merge@v2
+#         with:
+#           target: minor
+#           github-token: ${{ secrets.mytoken }}
+name: Dependabot Auto Merge
+on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest  
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -36,7 +42,15 @@ jobs:
       - name: Install dependencies
         run: |
           npm i jest typescript rollup typedoc  -g
-          npm ci
+          npm i
       - name: Test coverage
         run: |
           npm run test:clean
+        #jest --coverage --runInBand
+  automerge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v2.1.1
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}

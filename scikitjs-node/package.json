@@ -8,19 +8,20 @@
     "dist/"
   ],
   "scripts": {
-    "test": "yarn clean && yarn build:only && yarn test:src && yarn prettier && yarn delete:shared",
-    "build": "yarn clean && yarn build:only && yarn delete:shared",
-    "build:only": "yarn copy:shared && yarn tsc",
+    "test": "npm run clean && npm run build:only && npm run test:src && npm run prettier && npm run delete:shared",
+    "build": "npm run clean && npm run build:only && npm run delete:shared",
+    "build:only": "npm run copy:shared && ./node_modules/.bin/tsc",
     "prettier": "prettier --check './src'",
     "lint": "eslint ./src/**/*.ts",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=lcov",
     "patch": "npm version patch",
-    "copy:shared": "yarn clean:shared && cp -r ../shared/lib src && mv src/lib src/shared",
+    "copy:shared": "npm run clean:shared && cp -r ../shared/lib src && mv src/lib src/shared",
     "delete:shared": "rm -r src/shared",
     "test:src": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
     "clean:shared": "rimraf ./src/shared && rimraf ./src/lib",
-    "clean": "rimraf ./dist && rimraf ./src/shared"
+    "clean": "rimraf ./dist && rimraf ./src/shared",
+    "tsc": "./node_modules/.bin/tsc"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "3.6.1",
@@ -57,8 +58,7 @@
     "ts-node": "^10.0.0",
     "tslib": "*",
     "typedoc": "^0.22.9",
-    "typescript": "^4.4.4",
-    "yarn": "^1.22.10"
+    "typescript": "^4.4.4"
   },
   "publishConfig": {
     "access": "public",

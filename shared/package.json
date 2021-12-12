@@ -7,10 +7,10 @@
     "lib": "lib"
   },
   "scripts": {
-    "test:node": "cd .. && yarn test:node",
-    "build:node": "cd .. && yarn build:node",
-    "test:browser": "cd .. && yarn test:browser",
-    "build:browser": "cd .. && yarn build:browser"
+    "test:node": "cd .. && npm run test:node",
+    "build:node": "cd .. && npm run build:node",
+    "test:browser": "cd .. && npm run test:browser",
+    "build:browser": "cd .. && npm run build:browser"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +21,7 @@
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "danfojs": "^0.3.3",
-    "danfojs-node": "^0.3.3",
+    "danfojs-node": "^0.3.4",
     "eslint": "^8.2.0",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
