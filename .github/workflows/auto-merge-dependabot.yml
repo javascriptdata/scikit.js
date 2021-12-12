@@ -16,7 +16,7 @@ name: Dependabot Auto Merge
 on: [push, pull_request]
 
 jobs:
-  auto-merge:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -53,14 +53,12 @@ jobs:
           github-token: ${{ secrets.github_token }}
           parallel: true
           path-to-lcov: ./scikit-node/coverage/lcov.info # optional (default value)
-
-    - name: Scikitjs Browser Coveralls Parallel
+      - name: Scikitjs Browser Coveralls Parallel
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
           parallel: true
           path-to-lcov: ./scikit-browser/coverage/lcov.info # optional (default value)
-
       - name: Coveralls Finished
         uses: coverallsapp/github-action@master
         with:
