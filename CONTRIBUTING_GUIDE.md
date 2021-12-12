@@ -14,7 +14,7 @@ git clone https://github.com/javascriptdata/scikit.js.git
 cd scikit.js
 git checkout -b <your-branch-name>
 
-yarn test:clean
+npm run test:clean
 ```
 
 The following repo has 4 main directories:
@@ -188,13 +188,13 @@ To run the test for the module/file you created/edited,
 **2\)** If you are in the shared directory, you can run the test case against the node library by typing
 
 ```python
-yarn test:node
+npm run test:node
 ```
 
 You can also test your code against the browser version by running
 
 ```python
-yarn test:browser
+npm run test:browser
 ```
 
 Note that running tests against the browser is usually a bit slower because we build the browser bundle. I usually test against node for quick iterations, and then at the end test against the browser.

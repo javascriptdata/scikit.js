@@ -42,34 +42,11 @@ jobs:
       - name: Install dependencies
         run: |
           npm i jest typescript rollup typedoc  -g
-          npm ci
+          npm i
       - name: Test coverage
         run: |
           npm run test:clean
         #jest --coverage --runInBand
-      - name: Scikitjs Node Coveralls Parallel
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel: true
-          path-to-lcov: ./scikit-node/coverage/lcov.info # optional (default value)
-
-    - name: Scikitjs Browser Coveralls Parallel
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel: true
-          path-to-lcov: ./scikit-browser/coverage/lcov.info # optional (default value)
-
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
-      - name: build files, docs
-        run: |
-          NODE_OPTIONS=--max-old-space-size=15000 npm run build 
-        # tsc && rollup -c && typedoc && sitedown manual/ -b docs/manual
   automerge:
     needs: build
     runs-on: ubuntu-latest
