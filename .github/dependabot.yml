@@ -5,7 +5,33 @@
 
 version: 2
 updates:
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "npm"
+    # Files stored in `shared` directory
+    directory: "/shared"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    # Files stored in `docs` directory
+    directory: "/docs"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    # Files stored in `scikitjs-browser` directory
+    directory: "/scikitjs-browser"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    # Files stored in `scikitjs-node` directory
+    directory: "/scikitjs-node"
+    schedule:
+      interval: "daily"
+  
