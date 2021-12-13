@@ -21,7 +21,7 @@
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "danfojs": "^0.3.3",
-    "danfojs-node": "^0.3.4",
+    "danfojs-node": "^0.3.3",
     "eslint": "^8.2.0",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",

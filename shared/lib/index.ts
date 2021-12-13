@@ -66,6 +66,10 @@ import {
   loadDigits,
   fetchCaliforniaHousing
 } from './datasets/datasets'
+import {
+  VotingRegressor,
+  VotingRegressorParams
+} from './ensemble/votingRegressor'
 
 export {
   MinMaxScaler,
@@ -106,6 +110,8 @@ export {
   OrdinalEncoderParams,
   KMeans,
   KMeansParams,
+  VotingRegressor,
+  VotingRegressorParams,
   loadBoston,
   loadDiabetes,
   loadIris,
