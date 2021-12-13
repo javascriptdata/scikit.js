@@ -27,7 +27,7 @@
     "danfojs": "^0.3.3",
     "lodash": "^4.17.21",
     "mathjs": "^9.5.1",
-    "seedrandom": "~2.4.3",
+    "seedrandom": "~3.0.5",
     "simple-statistics": "^7.7.0"
   },
   "devDependencies": {
