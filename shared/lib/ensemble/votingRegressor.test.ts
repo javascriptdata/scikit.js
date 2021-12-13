@@ -5,7 +5,7 @@ import { describe, it } from 'mocha'
 import { LinearRegression } from '../estimators/linearRegression'
 
 describe('VotingRegressor', function () {
-  this.timeout(5000)
+  this.timeout(10000)
   it('Use VotingRegressor on simple example ', async function () {
     const X = [
       [1, 2],
