@@ -19,7 +19,7 @@ Documentation site: [www.scikitjs.org](https://www.scikitjs.org)
 For use with modern bundlers in a frontend application, simply
 
 ```js
-yarn add scikitjs
+npm i scikitjs
 ```
 
 ### Backend Users
@@ -27,7 +27,7 @@ yarn add scikitjs
 For Node.js users who wish to bind to the Tensorflow C++ library, simply
 
 ```js
-yarn add scikitjs-node
+npm i scikitjs-node
 ```
 
 ### Script src
