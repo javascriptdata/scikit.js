@@ -18,8 +18,7 @@ import {
   Tensor1D,
   Tensor2D,
   tensor1d,
-  tensor2d,
-  losses
+  tensor2d
 } from '@tensorflow/tfjs-core'
 import {
   layers,
@@ -33,8 +32,8 @@ import {
   convertToNumericTensor1D_2D,
   convertToNumericTensor2D
 } from '../utils'
-import { Scikit2D, ScikitVecOrMatrix } from '../types'
-import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
+import { Scikit2D, Scikit1D } from '../types'
+import { RegressorMixin } from '../mixins'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -45,7 +44,7 @@ import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
 /**
  * Parameters for SGD
  */
-export interface SGDParams {
+export interface SGDRegressorParams {
   /**
    * The complete list of compile args for the `model.compile` call from tensorflow.js.
    * We aim to provide sensible defaults depending on the regressor / classifier.
@@ -94,52 +93,24 @@ export interface SGDParams {
   isClassification?: boolean
 }
 
-export class SGD {
+export class SGDRegressor extends RegressorMixin {
   model: Sequential
   modelFitArgs: ModelFitArgs
   modelCompileArgs: ModelCompileArgs
   denseLayerArgs: DenseLayerArgs
-
-  /* For Classification */
-  isClassification: boolean
-  oneHot: OneHotEncoder
+  isMultiOutput: boolean
 
   constructor({
     modelFitArgs,
     modelCompileArgs,
-    denseLayerArgs,
-    isClassification
-  }: SGDParams) {
+    denseLayerArgs
+  }: SGDRegressorParams) {
+    super()
     this.model = sequential()
     this.modelFitArgs = modelFitArgs
     this.modelCompileArgs = modelCompileArgs
     this.denseLayerArgs = denseLayerArgs
-    this.isClassification = Boolean(isClassification)
-    // Next steps: Implement "drop" mechanics for OneHotEncoder
-    // There is a possibility to do a drop => if_binary which would
-    // squash down on the number of variables that we'd have to learn
-    this.oneHot = new OneHotEncoder()
-  }
-
-  initializeModelForClassification(y: Tensor1D | Tensor2D): Tensor2D {
-    let yToInt = y.toInt()
-    // This covers the case of a dependent variable that is already one hot encoded.
-    // There are other cases where you do "multi-variable output which isn't one hot encoded"
-    // Like say you were predicting which diseases a person could have (hasCancer, hasMeningitis, etc)
-    // Then you would have to run a sigmoid on each independent variable
-    if (yToInt.shape.length === 2) {
-      this.modelCompileArgs.loss = losses.softmaxCrossEntropy
-      return yToInt as Tensor2D
-    } else {
-      const yTwoD = y.reshape([-1, 1]) as Tensor2D
-      const yTwoDOneHotEncoded = this.oneHot.fitTransform(yTwoD)
-      if (this.oneHot.categories[0].length > 2) {
-        this.modelCompileArgs.loss = losses.softmaxCrossEntropy
-      } else {
-        this.modelCompileArgs.loss = losses.sigmoidCrossEntropy
-      }
-      return yTwoDOneHotEncoded
-    }
+    this.isMultiOutput = false
   }
 
   /**
@@ -193,12 +164,14 @@ export class SGD {
    * // lr model weights have been updated
    */
 
-  public async fit(X: Scikit2D, y: ScikitVecOrMatrix): Promise<SGD> {
+  public async fit(
+    X: Scikit2D,
+    y: Scikit1D | Scikit2D
+  ): Promise<SGDRegressor> {
     let XTwoD = convertToNumericTensor2D(X)
     let yOneD = convertToNumericTensor1D_2D(y)
-
-    if (this.isClassification) {
-      yOneD = this.initializeModelForClassification(yOneD)
+    if (yOneD.shape.length > 1) {
+      this.isMultiOutput = true
     }
 
     if (this.model.layers.length === 0) {
@@ -230,7 +203,7 @@ export class SGD {
    * // lr model weights have been updated
    */
 
-  importModel(params: { coef: number[]; intercept: number }): SGD {
+  importModel(params: { coef: number[]; intercept: number }): SGDRegressor {
     // Next steps: Need to update for possible 2D coef case, and 1D intercept case
     let myCoef = tensor2d(params.coef, [params.coef.length, 1], 'float32')
     let myIntercept = tensor1d([params.intercept], 'float32')
@@ -240,7 +213,7 @@ export class SGD {
 
   /**
    * Similar to scikit-learn, this returns the object of configuration params for SGD
-   * @returns {SGDParams} Returns an object of configuration params.
+   * @returns {SGDRegressorParams} Returns an object of configuration params.
    *
    * We use a LinearRegression in the example below because it provides
    * defaults for the SGD
@@ -269,18 +242,17 @@ export class SGD {
     }
    */
 
-  getParams(): SGDParams {
+  getParams(): SGDRegressorParams {
     return {
       modelFitArgs: this.modelFitArgs,
       modelCompileArgs: this.modelCompileArgs,
-      denseLayerArgs: this.denseLayerArgs,
-      isClassification: Boolean(this.isClassification)
+      denseLayerArgs: this.denseLayerArgs
     }
   }
 
   /**
    * Similar to scikit-learn, this returns the object of configuration params for SGD
-   * @returns {SGDParams} Returns an object of configuration params.
+   * @returns {SGDRegressorParams} Returns an object of configuration params.
    *
    * We use a LinearRegression in the example below because it provides
    * defaults for the SGD
@@ -296,7 +268,7 @@ export class SGD {
       })
    */
 
-  setParams(params: SGDParams): SGD {
+  setParams(params: SGDRegressorParams): SGDRegressor {
     this.modelCompileArgs = params.modelCompileArgs
     this.modelFitArgs = params.modelFitArgs
     this.denseLayerArgs = params.denseLayerArgs
@@ -331,11 +303,11 @@ export class SGD {
     if (this.model.layers.length === 0) {
       throw new RangeError('Need to call "fit" before "predict"')
     }
-    if (this.isClassification) {
-      let yLabels = this.model.predict(XTwoD) as Tensor2D
-      return tensor1d(this.oneHot.inverseTransform(yLabels)).reshape([-1, 1])
+    const predictions = this.model.predict(XTwoD) as Tensor2D
+    if (!this.isMultiOutput) {
+      return predictions.reshape([-1]) as Tensor1D
     }
-    return this.model.predict(XTwoD) as Tensor2D
+    return predictions as Tensor2D
   }
 
   /**

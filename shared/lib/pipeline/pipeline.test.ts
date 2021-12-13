@@ -8,6 +8,7 @@ import { MinMaxScaler } from '../preprocessing/minMaxScaler'
 import { describe, it } from 'mocha'
 
 describe('Pipeline', function () {
+  this.timeout(4000)
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {
     const X = [
       [2, 2], // [1, .5]

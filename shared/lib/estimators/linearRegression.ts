@@ -15,7 +15,7 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGD } from './sgdLinear'
+import { SGDRegressor } from './sgdRegressor'
 
 /**
  * LinearRegression implementation using gradient descent
@@ -66,7 +66,7 @@ Next steps:
   lr.coef.print() // probably around [1, 1]
  * ```
  */
-export class LinearRegression extends SGD {
+export class LinearRegression extends SGDRegressor {
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'linearregression'
 

@@ -69,6 +69,7 @@ describe('LinearRegression', function () {
 
     assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2.5, 1]), 0.1))
     assert.isTrue(roughlyEqual(lr.intercept as number, 0))
+    assert.isTrue(lr.score(mediumX, y) > 0)
   })
 
   it('Works on arrays with none zero intercept (medium example)', async function () {
