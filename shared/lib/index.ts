@@ -70,6 +70,7 @@ import {
   VotingRegressor,
   VotingRegressorParams
 } from './ensemble/votingRegressor'
+import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
 
 export {
   MinMaxScaler,
@@ -98,6 +99,8 @@ export {
   RidgeRegressionParams,
   LogisticRegression,
   LogisticRegressionParams,
+  LinearSVC,
+  LinearSVCParams,
   ElasticNet,
   ElasticNetParams,
   metrics,
