@@ -1,7 +1,7 @@
 import { Scikit1D, Scikit2D } from '../types'
 import { tf } from '../../globals'
 import { Tensor2D } from '@tensorflow/tfjs-core'
-
+import { RegressorMixin } from '../mixins'
 /*
   Next steps:
   1. Add doc strings to interface above
@@ -11,10 +11,12 @@ import { Tensor2D } from '@tensorflow/tfjs-core'
 */
 
 export interface VotingRegressorParams {
-  /**List of name, estimator pairs. Example [['lr', new LinearRegression()], ['dt', new DecisionTree()]]*/
+  /** List of name, estimator pairs. Example
+   * `[['lr', new LinearRegression()], ['dt', new DecisionTree()]]`
+   */
   estimators?: Array<[string, any]>
 
-  /**The weights for the estimators. If not present, then there is a uniform weighting. */
+  /** The weights for the estimators. If not present, then there is a uniform weighting. */
   weights?: number[]
 }
 
@@ -23,8 +25,9 @@ export interface VotingRegressorParams {
  * regressors, each on the whole dataset. Then it averages the individual
  * predictions to form a final prediction.
  *
+ * @example
  * ```js
- * import { VotingRegressor } from 'scikitjs'
+ * import { VotingRegressor, DecisionTreeRegressor, LinearRegression } from 'scikitjs'
  *
  * const X = [
       [2, 2],
@@ -43,7 +46,7 @@ export interface VotingRegressorParams {
     await pipeline.fit(X, y)
  * ```
  */
-export class VotingRegressor {
+export class VotingRegressor extends RegressorMixin {
   estimators: Array<[string, any]>
   weights?: number[]
 
@@ -53,6 +56,7 @@ export class VotingRegressor {
     estimators = [],
     weights = undefined
   }: VotingRegressorParams = {}) {
+    super()
     this.estimators = estimators
     this.weights = weights
   }
