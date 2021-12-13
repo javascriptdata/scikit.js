@@ -15,7 +15,7 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGD } from './sgdLinear'
+import { SGDClassifier } from './sgdClassifier'
 import { tf } from '../../globals'
 
 // First pass at a LogisticRegression implementation using gradient descent
@@ -61,7 +61,7 @@ export interface LogisticRegressionParams {
     await logreg.fit(X, y)
  * ```
 */
-export class LogisticRegression extends SGD {
+export class LogisticRegression extends SGDClassifier {
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'logisticregression'
 

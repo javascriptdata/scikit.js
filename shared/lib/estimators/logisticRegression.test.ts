@@ -1,7 +1,6 @@
 import '@tensorflow/tfjs-backend-webgl'
 import { assert } from 'chai'
 import { LogisticRegression } from './logisticRegression'
-import { arrayTo2DColumn } from '../utils'
 import { describe, it } from 'mocha'
 
 describe('LogisticRegression', function () {
@@ -10,7 +9,7 @@ describe('LogisticRegression', function () {
     const lr = new LogisticRegression()
 
     await lr.fit([[1], [2]], [0, 1])
-    assert.deepEqual(lr.predict([[1], [2]]).arraySync(), [[0], [1]])
+    assert.deepEqual(lr.predict([[1], [2]]).arraySync(), [0, 1])
   })
   it('Test of the function used with 2 classes', async function () {
     let X = [
@@ -45,7 +44,8 @@ describe('LogisticRegression', function () {
     let logreg = new LogisticRegression({ penalty: 'none' })
     await logreg.fit(X, y)
     let results = logreg.predict(Xtest) // compute results of the training set
-    assert.deepEqual(results.arraySync(), arrayTo2DColumn([0, 0, 0, 1, 1, 1]))
+    assert.deepEqual(results.arraySync(), [0, 0, 0, 1, 1, 1])
+    assert.isTrue(logreg.score(X, y) > 0.5)
   })
   it('Test of the prediction with 3 classes', async function () {
     let X = [
@@ -89,9 +89,6 @@ describe('LogisticRegression', function () {
     let logreg = new LogisticRegression({ penalty: 'none' })
     await logreg.fit(X, y)
     let finalResults = logreg.predict(Xtest)
-    assert.deepEqual(
-      finalResults.arraySync(),
-      arrayTo2DColumn([0, 0, 0, 1, 1, 1, 2, 2, 2])
-    )
+    assert.deepEqual(finalResults.arraySync(), [0, 0, 0, 1, 1, 1, 2, 2, 2])
   })
 })

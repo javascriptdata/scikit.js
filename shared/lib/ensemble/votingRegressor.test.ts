@@ -2,24 +2,26 @@ import { assert } from 'chai'
 import { VotingRegressor } from './votingRegressor'
 import { DummyRegressor } from '../dummy/dummyRegressor'
 import { describe, it } from 'mocha'
+import { LinearRegression } from '../estimators/linearRegression'
 
 describe('VotingRegressor', function () {
+  this.timeout(5000)
   it('Use VotingRegressor on simple example ', async function () {
     const X = [
+      [1, 2],
+      [2, 1],
       [2, 2],
-      [2, 3],
-      [5, 4],
-      [1, 0]
+      [3, 1]
     ]
     const y = [3, 3, 4, 4]
     const voter = new VotingRegressor({
       estimators: [
         ['dt', new DummyRegressor()],
-        ['lr', new DummyRegressor({ strategy: 'median' })]
+        ['lr', new LinearRegression({ fitIntercept: true })]
       ]
     })
 
     await voter.fit(X, y)
-    assert.isTrue(voter.score(X, y) >= 0)
+    assert.isTrue(voter.score(X, y) > 0)
   })
 })

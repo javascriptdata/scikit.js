@@ -15,7 +15,7 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGD } from './sgdLinear'
+import { SGDRegressor } from './sgdRegressor'
 import { tf } from '../../globals'
 
 // RidgeRegression implementation using gradient descent
@@ -31,7 +31,7 @@ export interface RidgeRegressionParams {
 }
 
 /** Linear least squares with l2 regularization. */
-export class RidgeRegression extends SGD {
+export class RidgeRegression extends SGDRegressor {
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'ridgeregression'
 

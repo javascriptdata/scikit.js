@@ -15,7 +15,7 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGD } from './sgdLinear'
+import { SGDRegressor } from './sgdRegressor'
 import { tf } from '../../globals'
 
 // First pass at a ElasticNet implementation using gradient descent
@@ -34,7 +34,7 @@ export interface ElasticNetParams {
 /**
  * Linear regression with combined L1 and L2 priors as regularizer.
  */
-export class ElasticNet extends SGD {
+export class ElasticNet extends SGDRegressor {
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'elasticnet'
 
