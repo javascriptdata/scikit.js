@@ -6,32 +6,35 @@
 version: 2
 updates:
   # Maintain dependencies for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+      interval: 'daily'
+  - package-ecosystem: 'npm' # See documentation for possible values
+    directory: '/' # Location of package manifests
     schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
-    # Files stored in `shared` directory
-    directory: "/shared"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
+      interval: 'daily'
+  - package-ecosystem: 'npm'
     # Files stored in `docs` directory
-    directory: "/docs"
+    directory: '/docs'
+    ignore:
+      # Needs to be exactly version 3
+      - dependency-name: 'remark-math'
     schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
+      interval: 'weekly'
+  - package-ecosystem: 'npm'
     # Files stored in `scikitjs-browser` directory
-    directory: "/scikitjs-browser"
+    directory: '/scikitjs-browser'
+    ignore:
+      # Needs to be exactly version 0.3.3
+      - dependency-name: 'danfojs'
     schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
+      interval: 'daily'
+  - package-ecosystem: 'npm'
     # Files stored in `scikitjs-node` directory
-    directory: "/scikitjs-node"
+    directory: '/scikitjs-node'
     schedule:
-      interval: "daily"
-  
+      interval: 'daily'
+      ignore:
+        # Needs to be exactly version 0.3.3
+        - dependency-name: 'danfojs-node'
