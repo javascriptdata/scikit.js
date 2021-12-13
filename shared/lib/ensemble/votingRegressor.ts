@@ -61,10 +61,6 @@ export class VotingRegressor extends RegressorMixin {
     this.weights = weights
   }
 
-  validateInput() {
-    // do validation
-  }
-
   public async fit(X: Scikit2D, y: Scikit1D) {
     for (let i = 0; i < this.estimators?.length; i++) {
       let [_, curEstimator] = this.estimators[i]
