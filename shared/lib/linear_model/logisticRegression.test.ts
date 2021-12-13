@@ -2,6 +2,7 @@ import '@tensorflow/tfjs-backend-webgl'
 import { assert } from 'chai'
 import { LogisticRegression } from './logisticRegression'
 import { describe, it } from 'mocha'
+import { Tensor } from '@tensorflow/tfjs'
 
 describe('LogisticRegression', function () {
   this.timeout(30000)
@@ -43,6 +44,8 @@ describe('LogisticRegression', function () {
 
     let logreg = new LogisticRegression({ penalty: 'none' })
     await logreg.fit(X, y)
+    let probabilities = logreg.predictProba(X)
+    assert.isTrue(probabilities instanceof Tensor)
     let results = logreg.predict(Xtest) // compute results of the training set
     assert.deepEqual(results.arraySync(), [0, 0, 0, 1, 1, 1])
     assert.isTrue(logreg.score(X, y) > 0.5)

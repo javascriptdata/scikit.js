@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import { VotingRegressor } from './votingRegressor'
 import { DummyRegressor } from '../dummy/dummyRegressor'
 import { describe, it } from 'mocha'
-import { LinearRegression } from '../estimators/linearRegression'
+import { LinearRegression } from '../linear_model/linearRegression'
 
 describe('VotingRegressor', function () {
   this.timeout(10000)
