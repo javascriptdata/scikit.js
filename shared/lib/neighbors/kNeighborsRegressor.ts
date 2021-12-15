@@ -15,6 +15,10 @@ export interface KNeighborsRegressorParams {
   algorithm?: 'brute'
 }
 
+/**
+ * KNeighborsRegressor stores the entire input data (X, y) and finds the k closest
+ * points to a query point. It then averages those to find the best guess as to its value.
+ */
 export class KNeighborsRegressor {
   nNeighbors: number
   weights: string
