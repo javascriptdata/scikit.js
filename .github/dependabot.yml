@@ -27,7 +27,9 @@ updates:
     directory: '/scikitjs-browser'
     ignore:
       # Needs to be exactly version 0.3.3
-      - dependency-name: 'danfojs'
+      - dependency-name: 'danfojs*'
+      # Needs to be exactly version 3.11.0
+      - dependency-name: '@tensorflow/tfjs*'
     schedule:
       interval: 'daily'
   - package-ecosystem: 'npm'
@@ -37,4 +39,6 @@ updates:
       interval: 'daily'
       ignore:
         # Needs to be exactly version 0.3.3
-        - dependency-name: 'danfojs-node'
+        - dependency-name: 'danfojs-node*'
+        # Needs to be exactly version 3.11.0
+        - dependency-name: '@tensorflow/tfjs-node*'
