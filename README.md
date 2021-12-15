@@ -1,6 +1,6 @@
 # scikit.js
 
-TypeScript package for predictive data analysis and machine learning.
+TypeScript package for predictive data analysis, data preparation and machine learning.
 
 Aims to be a Typescript port of the [scikit-learn](https://scikit-learn.org) python library.
 
