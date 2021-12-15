@@ -26,7 +26,7 @@
     "@tensorflow/tfjs": "^3.11.0",
     "danfojs": "0.3.3",
     "lodash": "^4.17.21",
-    "mathjs": "^9.5.1",
+    "mathjs": "^10.0.0",
     "seedrandom": "~3.0.5",
     "simple-statistics": "^7.7.0"
   },
