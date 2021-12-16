@@ -4,10 +4,9 @@ import { Tensor2D } from '@tensorflow/tfjs-core'
 import { RegressorMixin } from '../mixins'
 /*
   Next steps:
-  1. Add doc strings to interface above
-  2. Add example above the VotingRegressor yourself
-  3. nFeaturesIn, featureNamesIn
-  3. Copy most of the code for the VotingClassifier
+  0. Write validation code to check Estimator inputs
+  1. nFeaturesIn, featureNamesIn
+  2. Copy most of the code for the VotingClassifier
 */
 
 export interface VotingRegressorParams {
@@ -88,4 +87,14 @@ export class VotingRegressor extends RegressorMixin {
   public async fitPredict(X: Scikit2D, y: Scikit1D) {
     return (await this.fit(X, y)).predict(X)
   }
+}
+
+export function makeVotingRegressor(...args: any[]) {
+  let estimators: Array<[string, any]> = []
+  for (let i = 0; i < args.length; i++) {
+    // eslint-disable-next-line prefer-rest-params
+    let cur = args[i]
+    estimators.push([cur.name, cur])
+  }
+  return new VotingRegressor({ estimators })
 }

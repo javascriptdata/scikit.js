@@ -15,17 +15,17 @@
 import {
   LinearRegression,
   LinearRegressionParams
-} from './estimators/linearRegression'
-import { LassoRegression, LassoParams } from './estimators/lassoRegression'
+} from './linear_model/linearRegression'
+import { LassoRegression, LassoParams } from './linear_model/lassoRegression'
 import {
   RidgeRegression,
   RidgeRegressionParams
-} from './estimators/ridgeRegression'
-import { ElasticNet, ElasticNetParams } from './estimators/elasticNet'
+} from './linear_model/ridgeRegression'
+import { ElasticNet, ElasticNetParams } from './linear_model/elasticNet'
 import {
   LogisticRegression,
   LogisticRegressionParams
-} from './estimators/logisticRegression'
+} from './linear_model/logisticRegression'
 import * as metrics from './metrics/metrics'
 import { DummyRegressor, DummyRegressorParams } from './dummy/dummyRegressor'
 import {
@@ -67,6 +67,7 @@ import {
   fetchCaliforniaHousing
 } from './datasets/datasets'
 import {
+  makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams
 } from './ensemble/votingRegressor'
@@ -113,6 +114,7 @@ export {
   OrdinalEncoderParams,
   KMeans,
   KMeansParams,
+  makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams,
   loadBoston,

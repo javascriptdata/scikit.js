@@ -15,7 +15,7 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGDClassifier } from '../estimators/sgdClassifier'
+import { SGDClassifier } from '../linear_model/sgdClassifier'
 import { tf } from '../../globals'
 
 // First pass at a LinearSVC implementation using gradient descent
