@@ -27,7 +27,7 @@
     "@tensorflow/tfjs-node": "3.6.1",
     "danfojs-node": "0.3.3",
     "lodash": "^4.17.21",
-    "mathjs": "^9.5.1",
+    "mathjs": "^10.0.0",
     "seedrandom": "~3.0.5",
     "simple-statistics": "^7.7.0"
   },
@@ -41,7 +41,7 @@
     "@types/chai": "^4.2.19",
     "@types/lodash": "^4.14.176",
     "@types/mocha": "^9.0.0",
-    "@types/node": "^16.9.6",
+    "@types/node": "^17.0.0",
     "@types/table": "^6.3.2",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.1.0",
