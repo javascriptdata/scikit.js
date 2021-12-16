@@ -13,78 +13,31 @@
 * ==========================================================================
 */
 
-export interface Metric<T> {
-  (x: T, y: T): number
-}
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { tf } from '../../globals'
 
 /**
- * Returns the Minkowski distance with the given power `p`.
+ * Abstract type of distance metrics, which compute the
+ * distances between a stack of points `X` and a single point `y`.
+ *
+ * @param X A 2d tensor where each row represents a point.
+ * @param y A 1d tensor representing a single point.
+ *
+ * @returns A 1d tensor `dist` where `dist[i]` is the
+ *          metric distance between `X[i,:]` and `y[:]`.
+ */
+export type Metric = (X: Tensor2D, y: Tensor1D) => Tensor1D
+
+/**
+ * Returns the Minkowski distance metric with the given power `p`.
  * It is equivalent to the p-norm of the absolute difference
- * between two vector.
+ * between two vectors.
  *
  * @param p The power/exponent of the Minkowski distance.
- * @returns `(u,v) => sum[i]( |u[i]-v[i]|**p ) ** (1/p)`
+ * @returns `(X,y) => sum[i]( |X[:,i]-y[i]|**p ) ** (1/p)`
  */
-export const minkowskiDistance = (p: number) => {
-  if (p === Infinity) return chebyshevDistance
-
-  if (!(p >= 1))
-    // <- handles NaN
-    throw new Error('minkowskiDistance(p): p must be >= 1.')
-
-  const metric = (u: ArrayLike<number>, v: ArrayLike<number>) => {
-    if (u.length != v.length)
-      throw new Error(
-        `minkowskiDistance(${p})(u,v): u and v must have same length.`
-      )
-
-    // Implementation
-    // --------------
-    // The implementation is based on Mozilla's polyfill for `Math.hypot`.
-    // The idea is to scale the vector difference during summation, such that
-    // the largest summand is 1. This avoids under- and overflow of exponentiation.
-    // The final distance result is then scaled back up.
-    //
-    // References
-    // ----------
-    //   ..[1] https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot
-    let sum = 0,
-      max = 0
-
-    for (let i = u.length; i-- > 0; ) {
-      let d = Math.abs(u[i] - v[i])
-      if (isNaN(d)) return NaN
-      if (d !== 0) {
-        if (d > max) sum *= (max / (max = d)) ** p
-        sum += (d / max) ** p
-      }
-    }
-
-    return isFinite(max) ? sum ** (1 / p) * max : max
-  }
-
-  Object.defineProperty(metric, 'name', {
-    value: `minkowskiDistance(${p})`,
-    writable: false
-  })
-  return metric
-}
-
-/**
- * The Chebyshev distance metric, equivalent to `minkowskiDistance(Infinity)` or `(u,v) => sum(abs(u-v))`.
- */
-export const chebyshevDistance = (
-  u: ArrayLike<number>,
-  v: ArrayLike<number>
-) => {
-  if (u.length != v.length)
-    throw new Error('chebyshevDistance(x,y): x and y must have same length.')
-
-  // underflow-safe p-norm, inspired by polyfill described in:
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot
-  let max = 0
-
-  for (let i = u.length; i-- > 0; ) max = Math.max(max, Math.abs(u[i] - v[i]))
-
-  return max
+export const minkowskiDistance = (p: number) => (X: Tensor2D, y: Tensor1D) => {
+  // FIXME: tf.norm still underflows and overflows,
+  // see: https://github.com/tensorflow/tfjs/issues/895
+  return tf.tidy(() => tf.norm(tf.sub(X, y), p, -1) as Tensor1D)
 }

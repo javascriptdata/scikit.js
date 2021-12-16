@@ -13,63 +13,37 @@
 * ==========================================================================
 */
 
-import { NAryHeap } from './nAryHeap'
-import {
-  Neighbor,
-  Neighborhood,
-  NeighborhoodEntry,
-  NeighborhoodParams
-} from './neighborhood'
+import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { Metric } from './metrics'
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { tf } from '../../globals'
 
-export class BruteNeighborhood<A, V> implements Neighborhood<A, V> {
-  private _metric: Metric<A>
-  private _entries: NeighborhoodEntry<A, V>[]
+/**
+ * A {@link Neighborhood} implementation that uses a brute force approach
+ * to nearest neighbor search. During a {@link BruteNeighborhood#kNearest}
+ * query, the distance between every entry and the query point is computed.
+ */
+export class BruteNeighborhood implements Neighborhood {
+  private _metric: Metric
+  private _entries: Tensor2D
 
-  constructor({ metric, entries = [] }: NeighborhoodParams<A, V>) {
-    this._metric = metric
-    this._entries = [
-      ...(function* () {
-        for (const { address, value } of entries) yield { address, value }
-      })()
-    ]
-  }
-
-  private *_sortedByDistance(
-    addr: A,
-    compareFn: (distance1: number, distance2: number) => -1 | 0 | 1
-  ) {
-    const { _metric, _entries } = this
-
-    const heap = new NAryHeap<Neighbor<A, V>>(
-      ({ distance: x }, { distance: y }) => compareFn(x, y)
-    )
-
-    for (const { address, value } of _entries) {
-      const distance = _metric(addr, address)
-      if (isNaN(distance) || distance < 0)
-        throw new Error('KNeighborsBase: metric returned invalid distance.')
-      heap.add({ address, value, distance })
+  static async create({ metric, entries }: NeighborhoodParams) {
+    const result = {
+      _metric: metric,
+      _entries: entries
     }
-
-    for (let i = heap.size; i-- > 0; ) yield heap.popMin()
+    Object.setPrototypeOf(result, BruteNeighborhood.prototype)
+    return result as unknown as BruteNeighborhood
   }
 
-  nearest(address: A) {
-    return this._sortedByDistance(
-      address,
-      (x, y) => Math.sign(x - y) as -1 | 0 | 1
-    )
+  private constructor() {
+    throw new Error('Cannot construct directly, use create instead.')
   }
 
-  farthest(address: A) {
-    return this._sortedByDistance(
-      address,
-      (x, y) => Math.sign(y - x) as -1 | 0 | 1
-    )
-  }
-
-  [Symbol.iterator](): IterableIterator<NeighborhoodEntry<A, V>> {
-    return this._entries[Symbol.iterator]()
+  kNearest(k: number, address: Tensor1D): [Tensor1D, Tensor1D] {
+    const { _metric, _entries } = this
+    const distances = _metric(_entries, address).neg()
+    const { values, indices } = tf.topk(distances, k)
+    return [values.neg(), indices]
   }
 }

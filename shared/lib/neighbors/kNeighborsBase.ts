@@ -13,45 +13,86 @@
 * ==========================================================================
 */
 
-import {
-  Neighborhood,
-  NeighborhoodEntry,
-  NeighborhoodParams
-} from './neighborhood'
+import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { BruteNeighborhood } from './bruteNeighborhood'
 import { Metric, minkowskiDistance } from './metrics'
 import { Scikit1D, Scikit2D } from '../types'
 import { Tensor1D } from '@tensorflow/tfjs'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
-import { tf } from '../../globals'
 
-type int = number
-
+/**
+ * Common super-interface for {@ling KNeighborsRegressorParams}
+ * and {@link KNeighborsClassifierParams}.
+ */
 export interface KNeighborsBaseParams {
+  /**
+   * The algorithms used to compute nearest neighbors.
+   */
   algorithm?: 'auto' | 'brute'
+  /**
+   * Power parameter for the Minkowski metric.
+   * `p=1` corresponds to the `manhattan` distance.
+   * `p=2` corresponds to the `euclidean` distance.
+   * `p=Infinity` corresponds to the `chebyshev` distance.
+   * </ul>
+   */
   p?: number
-  metric?:
-    | 'manhattan'
-    | 'euclidean'
-    | 'chebyshev'
-    | 'minkowski'
-    | Metric<ArrayLike<number>>
+  /**
+   * The metric to be used to compute nearest neighbor distances.
+   */
+  metric?: 'manhattan' | 'euclidean' | 'chebyshev' | 'minkowski' | Metric
+  /**
+   * The number of neighbors used during prediction.
+   */
+  nNeighbors?: number
 }
 
+/**
+ * Common superclass for {@link KNeighborsRegressor} and {@link KNeighborsClassifier}.
+ * Handles common constructor parameters and fitting.
+ */
 export class KNeighborsBase {
-  private _metric: Metric<ArrayLike<number>>
-  private _NeighborhoodConstructor: new (
-    params: NeighborhoodParams<ArrayLike<number>, int>
-  ) => Neighborhood<ArrayLike<number>, int>
+  private _metricFn: Metric
+  private _createNeighborhood: (
+    params: NeighborhoodParams
+  ) => Promise<Neighborhood>
 
-  protected _neighborhood: Neighborhood<ArrayLike<number>, int> | undefined
+  protected _neighborhood: Neighborhood | undefined
   protected _y: Tensor1D | undefined
+
+  private _algorithm: KNeighborsBaseParams['algorithm']
+  private _p: KNeighborsBaseParams['p']
+  private _metric: KNeighborsBaseParams['metric']
+
+  nNeighbors: number
+
+  get algorithm() {
+    return this._algorithm
+  }
+  get p() {
+    return this._p
+  }
+  get metric() {
+    return this._metric
+  }
 
   constructor({
     algorithm = 'auto',
     p = 2,
-    metric = 'minkowski'
+    metric = 'minkowski',
+    nNeighbors = 5
   }: KNeighborsBaseParams) {
+    this._algorithm = algorithm
+    this._p = p
+    this._metric = metric
+
+    this.nNeighbors = Math.floor(nNeighbors)
+    if (this.nNeighbors <= 0 || this.nNeighbors != nNeighbors) {
+      throw new Error(
+        `new KNeighborsRegressor({nNeighbors}): nNeighbors must be a positive integer.`
+      )
+    }
+
     switch (algorithm) {
       case 'auto':
         algorithm = 'brute'
@@ -61,58 +102,43 @@ export class KNeighborsBase {
       default:
         throw new Error('new KNeighborsBase({algorithm}): invalid algorithm.')
     }
-    this._NeighborhoodConstructor = BruteNeighborhood
+    this._createNeighborhood = BruteNeighborhood.create
 
     switch (metric) {
       case 'minkowski':
-        this._metric = minkowskiDistance(p)
+        this._metricFn = minkowskiDistance(p)
         break
       case 'manhattan':
-        this._metric = minkowskiDistance(1)
+        this._metricFn = minkowskiDistance(1)
+        this._p = 1
         break
       case 'euclidean':
-        this._metric = minkowskiDistance(2)
+        this._metricFn = minkowskiDistance(2)
+        this._p = 2
         break
       case 'chebyshev':
-        this._metric = minkowskiDistance(Infinity)
+        this._metricFn = minkowskiDistance(Infinity)
+        this._p = Infinity
         break
       default:
         if ('function' !== typeof metric)
-          throw new Error('new KNeighborsBase({algorithm}): invalid metric.')
-        this._metric = metric
+          throw new Error('new KNeighborsBase({metric}): invalid metric.')
+        this._metricFn = metric
     }
   }
 
-  protected async _fit(_X: Scikit2D, _y: Scikit1D) {
-    const { _NeighborhoodConstructor, _metric: metric } = this
-
-    tf.engine().startScope()
-    try {
-      const X = convertToNumericTensor2D(_X),
-        y = convertToNumericTensor1D(_y)
-
-      const l = y.shape[0],
-        [m, n] = X.shape
-
-      if (l !== m)
-        throw new Error(
-          'KNeighborsBase::_fit(X,y): X.shape[0] must equal y.shape[0]'
-        )
-
-      const addr = await X.data()
-
-      const entries: NeighborhoodEntry<ArrayLike<number>, int>[] = []
-
-      for (let i = 0; i < m; )
-        entries.push({
-          value: i,
-          address: addr.slice(i * n, ++i * n)
-        })
-
-      this._neighborhood = new _NeighborhoodConstructor({ metric, entries })
-      this._y = y
-    } finally {
-      tf.engine().endScope(this._y)
-    }
+  /**
+   * Async function. Trains this model using the given features and targets.
+   *
+   * @param X The features of each training sample, where `X[i,j]` is the
+   *          (j+1)-th feature of (i+1)-th sample.
+   * @param y The target of each training sample, where `y[i]` the the
+   *          target of the (i+1)-th sample.
+   */
+  async fit(X: Scikit2D, y: Scikit1D) {
+    const { _createNeighborhood, _metricFn: metric } = this
+    const entries = convertToNumericTensor2D(X)
+    this._neighborhood = await _createNeighborhood({ metric, entries })
+    this._y = convertToNumericTensor1D(y)
   }
 }

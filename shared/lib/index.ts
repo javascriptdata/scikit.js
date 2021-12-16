@@ -12,7 +12,7 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { KNeighborsRegressor } from './estimators/kNeighborsRegressor'
+import { KNeighborsRegressor } from './neighbors/kNeighborsRegressor'
 import {
   LinearRegression,
   LinearRegressionParams

@@ -13,50 +13,41 @@
 * ==========================================================================
 */
 
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { Metric } from './metrics'
+
 /**
- * Container for results of a nearest or farthest neighbor search.
- *
- * @type A The address type.
- * @type V The type of value stored with each address.
+ * Default constructor parameters for {@link Neighborhood} instances.
  */
-export interface Neighbor<A, V> extends NeighborhoodEntry<A, V> {
-  distance: number
+export interface NeighborhoodParams {
+  /**
+   * Distance metric used for neighborhood queries.
+   */
+  metric: Metric
+  /**
+   * A 2d tensor containing the entries of the neighborhood.
+   * The row `entries[i,:]` represents the (i+1)-th point.
+   * The nearest neighbors are searched for in these points.
+   */
+  entries: Tensor2D
 }
 
 /**
- * Used as parameters for the construction of {@link Neighborhood}
- * instances. Also returned as items during iteration over the content
- * of {@link Neighborhood} instances.
- *
- * @type A The address type.
- * @type V The type of value stored with each address.
+ * A collections of float vectors that allows (reasonably) fast
+ * nearest neighbor according to some distance metric.
  */
-export interface NeighborhoodEntry<A, V> {
-  address: A
-  value: V
-}
-
-/**
- * Default constructor parameters for a {@link Neighborhood}.
- *
- * @type A The address type.
- * @type V The type of value stored with each address.
- */
-export interface NeighborhoodParams<A, V> {
-  metric: (x: A, y: A) => number
-  entries?: Iterable<NeighborhoodEntry<A, V>>
-}
-
-/**
- * A collections of address-value-pairs that allows (reasonably) fast
- * search of nearest an farthest neighbors search for a given address.
- * The distance between addresses is computed by some metric. Different
- * implementations may support different types of metrics.
- *
- * @type A The address type.
- * @type V The type of value stored with each address.
- */
-export interface Neighborhood<A, V> extends Iterable<NeighborhoodEntry<A, V>> {
-  nearest(address: A): IterableIterator<Neighbor<A, V>>
-  farthest(address: A): IterableIterator<Neighbor<A, V>>
+export interface Neighborhood {
+  /**
+   * Returns the k nearest neighbors from this {@link Neighborhood}.
+   *
+   * @param k The number of nearest neighbors to be returned.
+   * @param address Query point to which the nearest neighbors are
+   *                to be searched.
+   *
+   * @returns `[dist, indices]` where `dist` are the distances from `address`
+   *          to its `k` nearest neighbors. `indices` are the indices
+   *          of the `k` nearest neighbors in the {@link Neighborhood}'s
+   *          {@link NeighborhoodParams#entries | entries}.
+   */
+  kNearest(k: number, address: Tensor1D): [Tensor1D, Tensor1D]
 }
