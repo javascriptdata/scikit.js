@@ -76,4 +76,9 @@ describe('Metrics', function () {
     const predictions = [0.5, 0.5]
     assert.deepEqual(metrics.rocAucScore(labels, predictions), 0.5)
   })
+  it('empty input', function () {
+    const labels: number[] = []
+    const predictions: number[] = []
+    assert.throws(() => metrics.accuracyScore(labels, predictions), Error)
+  })
 })
