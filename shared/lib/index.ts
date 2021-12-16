@@ -67,6 +67,7 @@ import {
   fetchCaliforniaHousing
 } from './datasets/datasets'
 import {
+  makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams
 } from './ensemble/votingRegressor'
@@ -113,6 +114,7 @@ export {
   OrdinalEncoderParams,
   KMeans,
   KMeansParams,
+  makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams,
   loadBoston,
