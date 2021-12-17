@@ -71,6 +71,11 @@ import {
   VotingRegressor,
   VotingRegressorParams
 } from './ensemble/votingRegressor'
+import {
+  makeVotingClassifier,
+  VotingClassifier,
+  VotingClassifierParams
+} from './ensemble/votingClassifier'
 import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
 
 export {
@@ -117,6 +122,9 @@ export {
   makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams,
+  makeVotingClassifier,
+  VotingClassifier,
+  VotingClassifierParams,
   loadBoston,
   loadDiabetes,
   loadIris,
