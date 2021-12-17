@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { makeVotingClassifier, VotingClassifier } from './VotingClassifier'
+import { makeVotingClassifier, VotingClassifier } from './votingClassifier'
 import { DummyClassifier } from '../dummy/dummyClassifier'
 import { describe, it } from 'mocha'
 import { LogisticRegression } from '../linear_model/logisticRegression'
