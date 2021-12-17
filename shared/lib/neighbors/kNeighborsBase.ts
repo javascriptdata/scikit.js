@@ -118,7 +118,7 @@ export class KNeighborsBase implements KNeighborsParams {
       'KNeighbors({nNeighbors})::predict(X): nNeighbors must be a positive int.'
     )
     assert(
-      Object.prototype.hasOwnProperty.call(WEIGHTS_FUNCTIONS, weights),
+      Object.keys(WEIGHTS_FUNCTIONS).includes(weights),
       'KNeighbors({weights})::predict(X): invalid weights.'
     )
     assert(
@@ -145,14 +145,14 @@ export class KNeighborsBase implements KNeighborsParams {
    * @param y The target of each training sample, where `y[i]` the the
    *          target of the (i+1)-th sample.
    */
-  async fit(X: Scikit2D, y: Scikit1D) {
+  public async fit(X: Scikit2D, y: Scikit1D) {
     const { algorithm = 'auto', metric = 'minkowski', p = 2 } = this
     assert(
-      Object.prototype.hasOwnProperty.call(METRIC_FUNCTIONS, metric),
+      Object.keys(METRIC_FUNCTIONS).includes(metric),
       'KNeighbors({metric}).fit(X,y): invalid metric.'
     )
     assert(
-      Object.prototype.hasOwnProperty.call(ALGORITHMS, algorithm),
+      Object.keys(ALGORITHMS).includes(algorithm),
       'KNeighbors({algorithm}).fit(X,y): invalid algorithm.'
     )
 
@@ -164,5 +164,6 @@ export class KNeighborsBase implements KNeighborsParams {
       metric: metricFn
     })
     this._y = convertToNumericTensor1D(y)
+    return this
   }
 }

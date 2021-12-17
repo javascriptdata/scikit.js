@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { Tensor2D } from '@tensorflow/tfjs'
 import { Metric } from './metrics'
 
 /**

@@ -14,11 +14,9 @@
 */
 
 import { Scikit2D } from '../types'
-import { KNeighborsBase, KNeighborsParams } from '../neighbors/kNeighborsBase'
+import { KNeighborsBase } from '../neighbors/kNeighborsBase'
 import { convertToNumericTensor2D } from '../utils'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
 import { tf } from '../../globals'
-import { isScikit2D, assert, isScikit1D } from '../typesUtils'
 
 /**
  * K-Nearest neighbor regressor.
@@ -47,7 +45,7 @@ export class KNeighborsRegressor extends KNeighborsBase {
    * @param y The predicted targets `y` where `y[i]` is the prediction
    *          for sample `X[i,:]`
    */
-  predict(X: Scikit2D) {
+  public predict(X: Scikit2D) {
     const { neighborhood, y, nNeighbors, weightsFn } = this._getFitParams()
 
     return tf.tidy(() => {
@@ -57,7 +55,13 @@ export class KNeighborsRegressor extends KNeighborsBase {
       const targets = y.gather(indices)
       const weights = weightsFn(distances)
 
-      return tf.mul(targets, weights).sum(1) as Tensor1D
+      // return tf.einsum('ij,ij->i', targets, weights) as Tensor1D
+      return tf
+        .matMul(
+          targets.reshape([-1, 1, nNeighbors]),
+          weights.reshape([-1, nNeighbors, 1])
+        )
+        .as1D()
     })
   }
 }
