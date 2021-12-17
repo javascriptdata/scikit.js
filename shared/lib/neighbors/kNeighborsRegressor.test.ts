@@ -17,10 +17,8 @@ import { describe, it } from 'mocha'
 import { dfd, tf } from '../../globals'
 import { meanSquaredError } from '../metrics/metrics'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
-import {
-  KNeighborsRegressor,
-  KNeighborsRegressorParams
-} from './kNeighborsRegressor'
+import { KNeighborsRegressor } from './kNeighborsRegressor'
+import { KNeighborsParams } from './kNeighborsBase'
 import { assert } from 'chai'
 import { fetchCaliforniaHousing, loadDiabetes } from '../datasets/datasets'
 
@@ -78,7 +76,7 @@ function* kFold(
 
 function testWithDataset(
   loadData: () => Promise<dfd.DataFrame>,
-  params: KNeighborsRegressorParams,
+  params: KNeighborsParams,
   referenceError: number
 ) {
   it(`KNeighborsRegressor(${JSON.stringify(params)}) fits ${

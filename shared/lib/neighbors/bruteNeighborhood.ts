@@ -15,7 +15,7 @@
 
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { Metric } from './metrics'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { Tensor2D } from '@tensorflow/tfjs'
 import { tf } from '../../globals'
 
 /**
@@ -27,23 +27,34 @@ export class BruteNeighborhood implements Neighborhood {
   private _metric: Metric
   private _entries: Tensor2D
 
-  static async create({ metric, entries }: NeighborhoodParams) {
-    const result = {
-      _metric: metric,
-      _entries: entries
-    }
-    Object.setPrototypeOf(result, BruteNeighborhood.prototype)
-    return result as unknown as BruteNeighborhood
+  constructor({ metric, entries }: NeighborhoodParams) {
+    this._metric = metric
+    this._entries = entries
   }
 
-  private constructor() {
-    throw new Error('Cannot construct directly, use create instead.')
-  }
-
-  kNearest(k: number, address: Tensor1D): [Tensor1D, Tensor1D] {
+  kNearest(k: number, queryPoints: Tensor2D) {
     const { _metric, _entries } = this
-    const distances = _metric(_entries, address).neg()
-    const { values, indices } = tf.topk(distances, k)
-    return [values.neg(), indices]
+
+    //  // batched version
+    //  return tf.tidy(() => {
+    //    const negDist = _metric(queryPoints, _entries).neg()
+    //    const { values, indices } = tf.topk(negDist, k)
+    //    return { distances: values.neg(), indices }
+    //  })
+
+    // unbatched version
+    return tf.tidy(() => {
+      const result = tf.unstack(queryPoints).map((queryPoint) => {
+        return tf.tidy(() => {
+          const dist = _metric(queryPoint.reshape([1, -1]), _entries).neg()
+          const { values, indices } = tf.topk(dist, k)
+          return [values, indices]
+        })
+      })
+      return {
+        distances: tf.concat(result.map((x) => x[0])).neg(),
+        indices: tf.concat(result.map((x) => x[1]))
+      }
+    })
   }
 }

@@ -41,13 +41,16 @@ export interface Neighborhood {
    * Returns the k nearest neighbors from this {@link Neighborhood}.
    *
    * @param k The number of nearest neighbors to be returned.
-   * @param address Query point to which the nearest neighbors are
-   *                to be searched.
+   * @param queryPoints Query point to which the nearest neighbors are
+   *                    to be searched.
    *
    * @returns `[dist, indices]` where `dist` are the distances from `address`
    *          to its `k` nearest neighbors. `indices` are the indices
    *          of the `k` nearest neighbors in the {@link Neighborhood}'s
    *          {@link NeighborhoodParams#entries | entries}.
    */
-  kNearest(k: number, address: Tensor1D): [Tensor1D, Tensor1D]
+  kNearest(
+    k: number,
+    queryPoints: Tensor2D
+  ): { distances: Tensor2D; indices: Tensor2D }
 }

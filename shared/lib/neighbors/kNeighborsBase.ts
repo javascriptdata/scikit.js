@@ -15,20 +15,66 @@
 
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { BruteNeighborhood } from './bruteNeighborhood'
-import { Metric, minkowskiDistance } from './metrics'
+import { minkowskiDistance } from './metrics'
 import { Scikit1D, Scikit2D } from '../types'
-import { Tensor1D } from '@tensorflow/tfjs'
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
+import { assert } from '../typesUtils'
+import { tf } from '../../globals'
+
+const WEIGHTS_FUNCTIONS = {
+  uniform(distances: Tensor2D) {
+    const { shape } = distances
+    return tf.fill(shape, 1 / shape[1]) as Tensor2D
+  },
+  distance(distances: Tensor2D) {
+    return tf.tidy(() => {
+      // safeMin is the smallest float32 value whose reciprocal is finite, i.e.:
+      // safeMin = min{ x: float32 | x > 0 && 1 / x < Infinity }
+      const safeMin = 2.938737e-39
+
+      // if there are distances of zero, we have to avoid division by zero
+      let if0 = tf.less(distances, safeMin)
+      const num0 = if0.sum(1, /*keepDims=*/ true)
+      if0 = if0.toFloat().div(num0)
+
+      // otherwise we can use the inverse distance base weighting
+      let non0 = tf.div(1, distances)
+      non0 = non0.div(non0.sum(1, /*keepDims=*/ true))
+
+      return tf.where(num0.greater(0), if0, non0) as Tensor2D
+    })
+  }
+}
+
+const METRIC_FUNCTIONS = {
+  minkowski: (p: number) => minkowskiDistance(p),
+  manhattan: () => minkowskiDistance(1),
+  euclidean: () => minkowskiDistance(2),
+  chebyshev: () => minkowskiDistance(Infinity)
+}
+
+const ALGORITHMS = {
+  auto: async (params: NeighborhoodParams) => new BruteNeighborhood(params),
+  brute: async (params: NeighborhoodParams) => new BruteNeighborhood(params)
+}
 
 /**
- * Common super-interface for {@ling KNeighborsRegressorParams}
+ * Common super-interface for {@link KNeighborsRegressorParams}
  * and {@link KNeighborsClassifierParams}.
  */
-export interface KNeighborsBaseParams {
+export interface KNeighborsParams {
+  /**
+   * Weighting strategy for the neighboring target values during
+   * prediction. `'uniform'` gives all targets the same weight
+   * independent of distance. `'distance'` uses inverse distance
+   * based weighting.
+   */
+  weights?: keyof typeof WEIGHTS_FUNCTIONS
   /**
    * The algorithms used to compute nearest neighbors.
    */
-  algorithm?: 'auto' | 'brute'
+  algorithm?: keyof typeof ALGORITHMS
   /**
    * Power parameter for the Minkowski metric.
    * `p=1` corresponds to the `manhattan` distance.
@@ -40,7 +86,7 @@ export interface KNeighborsBaseParams {
   /**
    * The metric to be used to compute nearest neighbor distances.
    */
-  metric?: 'manhattan' | 'euclidean' | 'chebyshev' | 'minkowski' | Metric
+  metric?: keyof typeof METRIC_FUNCTIONS
   /**
    * The number of neighbors used during prediction.
    */
@@ -51,79 +97,43 @@ export interface KNeighborsBaseParams {
  * Common superclass for {@link KNeighborsRegressor} and {@link KNeighborsClassifier}.
  * Handles common constructor parameters and fitting.
  */
-export class KNeighborsBase {
-  private _metricFn: Metric
-  private _createNeighborhood: (
-    params: NeighborhoodParams
-  ) => Promise<Neighborhood>
+export class KNeighborsBase implements KNeighborsParams {
+  private _neighborhood: Neighborhood | undefined
+  private _y: Tensor1D | undefined
 
-  protected _neighborhood: Neighborhood | undefined
-  protected _y: Tensor1D | undefined
+  weights: KNeighborsParams['weights']
+  algorithm: KNeighborsParams['algorithm']
+  p: KNeighborsParams['p']
+  metric: KNeighborsParams['metric']
+  nNeighbors: KNeighborsParams['nNeighbors']
 
-  private _algorithm: KNeighborsBaseParams['algorithm']
-  private _p: KNeighborsBaseParams['p']
-  private _metric: KNeighborsBaseParams['metric']
-
-  nNeighbors: number
-
-  get algorithm() {
-    return this._algorithm
-  }
-  get p() {
-    return this._p
-  }
-  get metric() {
-    return this._metric
+  constructor(params: KNeighborsParams) {
+    Object.assign(this, params)
   }
 
-  constructor({
-    algorithm = 'auto',
-    p = 2,
-    metric = 'minkowski',
-    nNeighbors = 5
-  }: KNeighborsBaseParams) {
-    this._algorithm = algorithm
-    this._p = p
-    this._metric = metric
+  protected _getFitParams() {
+    const { _neighborhood, _y, nNeighbors = 5, weights = 'uniform' } = this
+    assert(
+      0 <= nNeighbors && nNeighbors % 1 === 0,
+      'KNeighbors({nNeighbors})::predict(X): nNeighbors must be a positive int.'
+    )
+    assert(
+      Object.prototype.hasOwnProperty.call(WEIGHTS_FUNCTIONS, weights),
+      'KNeighbors({weights})::predict(X): invalid weights.'
+    )
+    assert(
+      undefined != _neighborhood && undefined != _y,
+      'KNeighbors::predict(X): model not trained yet.'
+    )
 
-    this.nNeighbors = Math.floor(nNeighbors)
-    if (this.nNeighbors <= 0 || this.nNeighbors != nNeighbors) {
-      throw new Error(
-        `new KNeighborsRegressor({nNeighbors}): nNeighbors must be a positive integer.`
-      )
-    }
+    const weightsFn = WEIGHTS_FUNCTIONS[weights]
 
-    switch (algorithm) {
-      case 'auto':
-        algorithm = 'brute'
-        break
-      case 'brute':
-        break
-      default:
-        throw new Error('new KNeighborsBase({algorithm}): invalid algorithm.')
-    }
-    this._createNeighborhood = BruteNeighborhood.create
-
-    switch (metric) {
-      case 'minkowski':
-        this._metricFn = minkowskiDistance(p)
-        break
-      case 'manhattan':
-        this._metricFn = minkowskiDistance(1)
-        this._p = 1
-        break
-      case 'euclidean':
-        this._metricFn = minkowskiDistance(2)
-        this._p = 2
-        break
-      case 'chebyshev':
-        this._metricFn = minkowskiDistance(Infinity)
-        this._p = Infinity
-        break
-      default:
-        if ('function' !== typeof metric)
-          throw new Error('new KNeighborsBase({metric}): invalid metric.')
-        this._metricFn = metric
+    // make sure TypeScript knows that neighborhood and y are not undefined
+    return {
+      nNeighbors,
+      weightsFn,
+      neighborhood: _neighborhood as Neighborhood,
+      y: _y as Tensor1D
     }
   }
 
@@ -136,9 +146,23 @@ export class KNeighborsBase {
    *          target of the (i+1)-th sample.
    */
   async fit(X: Scikit2D, y: Scikit1D) {
-    const { _createNeighborhood, _metricFn: metric } = this
+    const { algorithm = 'auto', metric = 'minkowski', p = 2 } = this
+    assert(
+      Object.prototype.hasOwnProperty.call(METRIC_FUNCTIONS, metric),
+      'KNeighbors({metric}).fit(X,y): invalid metric.'
+    )
+    assert(
+      Object.prototype.hasOwnProperty.call(ALGORITHMS, algorithm),
+      'KNeighbors({algorithm}).fit(X,y): invalid algorithm.'
+    )
+
+    const metricFn = METRIC_FUNCTIONS[metric](p)
+
     const entries = convertToNumericTensor2D(X)
-    this._neighborhood = await _createNeighborhood({ metric, entries })
+    this._neighborhood = await ALGORITHMS[algorithm]({
+      entries,
+      metric: metricFn
+    })
     this._y = convertToNumericTensor1D(y)
   }
 }
