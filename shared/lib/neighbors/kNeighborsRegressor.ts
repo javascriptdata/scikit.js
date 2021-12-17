@@ -14,11 +14,10 @@
 */
 
 import { Scikit2D } from '../types'
-import { KNeighborsBase, KNeighborsParams } from '../neighbors/kNeighborsBase'
+import { KNeighborsBase } from '../neighbors/kNeighborsBase'
 import { convertToNumericTensor2D } from '../utils'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { Tensor1D } from '@tensorflow/tfjs'
 import { tf } from '../../globals'
-import { isScikit2D, assert, isScikit1D } from '../typesUtils'
 
 /**
  * K-Nearest neighbor regressor.
@@ -30,24 +29,16 @@ import { isScikit2D, assert, isScikit1D } from '../typesUtils'
  * let X = [[0], [1], [2], [3]]
  * let y = [0, 0, 1, 1]
  *
- * let knn = new KNeighborsRegressor(nNeighbor)
- *
+ * let knn = new KNeighborsRegressor({ nNeighbors: 2 })
  * await knn.fit(X, y)
- *
  * knn.predict([[1.5]]).print()
  * ```
  */
 export class KNeighborsRegressor extends KNeighborsBase {
   /**
    * Applies this mdodel to predicts the target of each given sample.
-   *
-   * @param X The samples for which the targets are to be predicted,
-   *          where `X[i,j]` is the (j+1)-th feature of the (i+1)-th
-   *          sample.
-   * @param y The predicted targets `y` where `y[i]` is the prediction
-   *          for sample `X[i,:]`
    */
-  predict(X: Scikit2D) {
+  public predict(X: Scikit2D) {
     const { neighborhood, y, nNeighbors, weightsFn } = this._getFitParams()
 
     return tf.tidy(() => {

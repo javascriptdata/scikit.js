@@ -23,11 +23,11 @@ import { assert } from '../typesUtils'
 import { tf } from '../../globals'
 
 const WEIGHTS_FUNCTIONS = {
-  uniform(distances: Tensor2D) {
+  uniform: (distances: Tensor2D) => {
     const { shape } = distances
     return tf.fill(shape, 1 / shape[1]) as Tensor2D
   },
-  distance(distances: Tensor2D) {
+  distance: (distances: Tensor2D) => {
     return tf.tidy(() => {
       // safeMin is the smallest float32 value whose reciprocal is finite, i.e.:
       // safeMin = min{ x: float32 | x > 0 && 1 / x < Infinity }
@@ -118,8 +118,8 @@ export class KNeighborsBase implements KNeighborsParams {
       'KNeighbors({nNeighbors})::predict(X): nNeighbors must be a positive int.'
     )
     assert(
-      Object.prototype.hasOwnProperty.call(WEIGHTS_FUNCTIONS, weights),
-      'KNeighbors({weights})::predict(X): invalid weights.'
+      typeof WEIGHTS_FUNCTIONS[weights] === 'function',
+      `KNeighbors({weights})::predict(X): invalid weights argument. Received weights ${weights}`
     )
     assert(
       undefined != _neighborhood && undefined != _y,
@@ -139,30 +139,29 @@ export class KNeighborsBase implements KNeighborsParams {
 
   /**
    * Async function. Trains this model using the given features and targets.
-   *
-   * @param X The features of each training sample, where `X[i,j]` is the
-   *          (j+1)-th feature of (i+1)-th sample.
-   * @param y The target of each training sample, where `y[i]` the the
-   *          target of the (i+1)-th sample.
    */
-  async fit(X: Scikit2D, y: Scikit1D) {
+  public async fit(X: Scikit2D, y: Scikit1D): Promise<KNeighborsBase> {
     const { algorithm = 'auto', metric = 'minkowski', p = 2 } = this
+
     assert(
-      Object.prototype.hasOwnProperty.call(METRIC_FUNCTIONS, metric),
-      'KNeighbors({metric}).fit(X,y): invalid metric.'
+      typeof METRIC_FUNCTIONS[metric] === 'function',
+      `KNeighbors({metric}).fit(X,y): invalid metric. Received metric ${metric}`
     )
     assert(
-      Object.prototype.hasOwnProperty.call(ALGORITHMS, algorithm),
-      'KNeighbors({algorithm}).fit(X,y): invalid algorithm.'
+      typeof ALGORITHMS[algorithm] === 'function',
+      `KNeighbors({algorithm}).fit(X,y): invalid algorithm. Received algorithm ${algorithm}`
     )
 
     const metricFn = METRIC_FUNCTIONS[metric](p)
+    const algoFn = ALGORITHMS[algorithm]
 
     const entries = convertToNumericTensor2D(X)
-    this._neighborhood = await ALGORITHMS[algorithm]({
+    this._neighborhood = await algoFn({
       entries,
       metric: metricFn
     })
     this._y = convertToNumericTensor1D(y)
+
+    return this
   }
 }
