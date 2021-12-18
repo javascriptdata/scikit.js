@@ -74,6 +74,8 @@ import {
 } from './ensemble/votingRegressor'
 import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
 
+export { SVR, SVRParams } from './svm/SVR';
+
 export {
   MinMaxScaler,
   MinMaxScalerParams,

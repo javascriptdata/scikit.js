@@ -23,6 +23,7 @@
     "danfojs": "^0.3.3",
     "danfojs-node": "^0.3.3",
     "eslint": "^8.2.0",
+    "libsvm-wasm": "0.0.3",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "seedrandom": "^3.0.5",
