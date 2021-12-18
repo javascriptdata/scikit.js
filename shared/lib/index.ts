@@ -12,6 +12,7 @@
 * limitations under the License.
 * ==========================================================================
 */
+import { KNeighborsRegressor } from './neighbors/kNeighborsRegressor'
 import {
   LinearRegression,
   LinearRegressionParams
@@ -92,6 +93,7 @@ export {
   DummyRegressorParams,
   DummyClassifier,
   DummyClassifierParams,
+  KNeighborsRegressor,
   LinearRegression,
   LinearRegressionParams,
   LassoRegression,

@@ -7,6 +7,7 @@
     ] /* Specify library files to be included in the compilation. */,
     "moduleResolution": "node",
     "allowJs": true /* Allow javascript files to be compiled. */,
+    "downlevelIteration": true /*Allow for-of loops and spread syntax with Iterable inputs*/,
     "outDir": "./dist" /* Redirect output structure to the directory. */,
     "strict": true /* Enable all strict type-checking options. */,
     "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
