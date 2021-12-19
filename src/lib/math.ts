@@ -2,7 +2,7 @@ import { onesLike, Tensor, tidy, where } from '@tensorflow/tfjs-core'
 import { Iterable } from './types'
 import { assert } from './typesUtils'
 
-import { tf } from './../globals'
+import { tf } from '../globals'
 /*
 In creating the preprocessors, I wanted functions that computed the min, max, mean,
 etc... but that also ignored NaN values. The min / max functions that come from
