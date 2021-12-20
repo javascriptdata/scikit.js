@@ -78,6 +78,7 @@ import {
   VotingClassifierParams
 } from './ensemble/votingClassifier'
 import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
+import { LinearSVR, LinearSVRParams } from './svm/linearSVR'
 
 export {
   MinMaxScaler,
@@ -109,6 +110,8 @@ export {
   LogisticRegressionParams,
   LinearSVC,
   LinearSVCParams,
+  LinearSVR,
+  LinearSVRParams,
   ElasticNet,
   ElasticNetParams,
   metrics,
