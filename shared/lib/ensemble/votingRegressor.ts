@@ -1,7 +1,7 @@
 import { Scikit1D, Scikit2D } from '../types'
 import { tf } from '../../globals'
-import { Tensor2D } from '@tensorflow/tfjs-core'
 import { RegressorMixin } from '../mixins'
+import { Tensor1D } from '@tensorflow/tfjs-core'
 /*
   Next steps:
   0. Write validation code to check Estimator inputs
@@ -42,7 +42,7 @@ export interface VotingRegressorParams {
       ]
     })
 
-    await pipeline.fit(X, y)
+    await voter.fit(X, y)
  * ```
  */
 export class VotingRegressor extends RegressorMixin {
@@ -68,24 +68,32 @@ export class VotingRegressor extends RegressorMixin {
     return this
   }
 
-  public predict(X: Scikit2D): Tensor2D {
+  public predict(X: Scikit2D): Tensor1D {
+    let responses = []
+    let numEstimators = this.estimators.length
+    const weights =
+      this.weights || Array(numEstimators).fill(1 / numEstimators)
+    for (let i = 0; i < numEstimators; i++) {
+      let [_, curEstimator] = this.estimators[i]
+      let curWeight = weights[i]
+      responses.push(curEstimator.predict(X).mul(curWeight))
+    }
+
+    return tf.addN(responses)
+  }
+
+  public transform(X: Scikit2D): Array<Tensor1D> {
     let responses = []
     let numEstimators = this.estimators.length
     for (let i = 0; i < numEstimators; i++) {
       let [_, curEstimator] = this.estimators[i]
       responses.push(curEstimator.predict(X))
     }
-    const weights =
-      this.weights || Array(numEstimators).fill(1 / numEstimators)
-    for (let i = 0; i < weights.length; i++) {
-      let curWeight = weights[i]
-      responses[i] = responses[i].mul(curWeight)
-    }
-    return tf.addN(responses)
+    return responses
   }
 
-  public async fitPredict(X: Scikit2D, y: Scikit1D) {
-    return (await this.fit(X, y)).predict(X)
+  public async fitTransform(X: Scikit2D, y: Scikit1D) {
+    return (await this.fit(X, y)).transform(X)
   }
 }
 
