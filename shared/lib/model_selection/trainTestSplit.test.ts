@@ -7,7 +7,7 @@ import {
 import { describe, it } from 'mocha'
 import { dfd, tf } from '../../globals'
 
-describe.only('Testing trainTestSplit', function () {
+describe('Testing trainTestSplit', function () {
   it('Testing train/test validation logic', () => {
     assert.throws(() => validateShuffleSplit(10, 11))
     assert.throws(() => validateShuffleSplit(10, undefined, 100))
