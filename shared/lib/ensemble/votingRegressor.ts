@@ -97,6 +97,28 @@ export class VotingRegressor extends RegressorMixin {
   }
 }
 
+/**
+ *
+ * Helper function for make a VotingRegressor. Just pass your Estimators as function arguments.
+ *
+ * @example
+ * ```typescript
+ * import {makeVotingRegressor, DummyRegressor, LinearRegression} from 'scikitjs'
+ *  const X = [
+      [1, 2],
+      [2, 1],
+      [2, 2],
+      [3, 1]
+    ]
+    const y = [3, 3, 4, 4]
+    const voter = makeVotingRegressor(
+      new DummyRegressor(),
+      new LinearRegression({ fitIntercept: true })
+    )
+
+    await voter.fit(X, y)
+    ```
+ */
 export function makeVotingRegressor(...args: any[]) {
   let estimators: Array<[string, any]> = []
   for (let i = 0; i < args.length; i++) {
