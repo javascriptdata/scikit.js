@@ -75,6 +75,7 @@ import {
 import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
 
 export { SVR, SVRParams } from './svm/SVR';
+export { SVC, SVCParams } from './svm/SVC';
 
 export {
   MinMaxScaler,

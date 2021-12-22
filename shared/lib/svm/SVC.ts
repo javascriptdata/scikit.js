@@ -4,7 +4,7 @@ import { Scikit1D, Scikit2D } from '../index';
 import { SVM, SVMParam, KERNEL_TYPE, ISVMParam, SVM_TYPE } from 'libsvm-wasm';
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils';
 
-export interface SVRParams {
+export interface SVCParams {
     kernel?: 'LINEAR' | 'POLY' | 'RBF' | 'SIGMOID' | 'PRECOMPUTED';
     degree?: number;
     gamma?: number | 'auto' | 'scale';
@@ -15,12 +15,14 @@ export interface SVRParams {
     shrinking?: boolean;
     cacheSize?: number;
     maxIter?: number;
+    classWeight? : {[key: number]: number} | 'balanced';
 }
 
-export class SVR {
+export class SVC {
     private svm?: SVM;
     private svmParam: SVMParam;
     private gammaMode: string = 'scale';
+    private classWeight : {[key: number]: number} | 'balanced' | undefined;
 
     constructor({
         kernel = 'RBF',
@@ -32,11 +34,12 @@ export class SVR {
         epsilon = 0.1,
         shrinking = true,
         cacheSize = 200,
+        classWeight = {},
         maxIter = -1
-    }: SVRParams = {}) {
+    }: SVCParams = {}) {
         const inernalSVMParam: ISVMParam = {
             kernel_type: KERNEL_TYPE[kernel],
-            svm_type: SVM_TYPE.EPSILON_SVR,
+            svm_type: SVM_TYPE.C_SVC,
             degree,
             coef0,
             C,
@@ -45,19 +48,19 @@ export class SVR {
             cache_size: cacheSize,
         }
         if (gamma === 'auto') {
-            inernalSVMParam.gamma = -1;
             this.gammaMode = gamma;
         } else if (gamma === 'scale') {
-            inernalSVMParam.gamma = -2;
             this.gammaMode = gamma;
         } else {
             inernalSVMParam.gamma = gamma;
         }
 
+        this.classWeight = undefined;
+
         this.svmParam = new SVMParam(inernalSVMParam, tol);
     }
 
-    async fit(X: Scikit2D, y: Scikit1D): Promise<SVR> {
+    async fit(X: Scikit2D, y: Scikit1D): Promise<SVC> {
         let XTwoD = convertToNumericTensor2D(X)
         let yOneD = convertToNumericTensor1D(y)
         let nSample = XTwoD.shape[0];
@@ -77,6 +80,34 @@ export class SVR {
             yOneD.array()
         ]);
 
+        const labelSet = new Set(processY);
+        const numLabels = labelSet.size;
+        const weightLabel = new Array(numLabels);
+        const weight = new Array(numLabels);
+        let idx = 0;
+
+        if (this.classWeight) {
+            for (let label of labelSet) {
+                if (this.classWeight[label] === undefined) {
+                    throw new Error('Class weight not found');
+                } else {
+                    weightLabel[idx] = label;
+                    weight[idx] = this.classWeight[label];
+                    idx++;
+                }
+            }
+        } else {
+            for (let label of labelSet) {
+                weightLabel[idx] = label;
+                weight[idx] = 1;
+                idx++;
+            }
+        }
+        
+        this.svmParam.param.weight_label = weightLabel;
+        this.svmParam.param.weight = weight;
+        this.svmParam.param.nr_weight = numLabels;
+    
         this.svm = new SVM(this.svmParam);
         await this.svm.feedSamples(processX, processY);
         await this.svm.train();
