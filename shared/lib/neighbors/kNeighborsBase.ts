@@ -29,20 +29,17 @@ const WEIGHTS_FUNCTIONS = {
   },
   distance(distances: Tensor2D) {
     return tf.tidy(() => {
-      // safeMin is the smallest float32 value whose reciprocal is finite, i.e.:
-      // safeMin = min{ x: float32 | x > 0 && 1 / x < Infinity }
-      const safeMin = 2.938737e-39
+      // scale inverse distances by min. to avoid `1/tinyVal == Infinity`
+      const min = distances.min(1, /*keepDims=*/true)
+      const invDist = tf.divNoNan(min.toFloat(), distances)
 
-      // if there are distances of zero, we have to avoid division by zero
-      let if0 = tf.less(distances, safeMin)
-      const num0 = if0.sum(1, /*keepDims=*/ true)
-      if0 = if0.toFloat().div(num0)
+      const is0 = distances.lessEqual(0).toFloat()
 
-      // otherwise we can use the inverse distance base weighting
-      let non0 = tf.div(1, distances)
-      non0 = non0.div(non0.sum(1, /*keepDims=*/ true))
+      // avoid div by 0 by using `1/0 == 1` and `1/(x!=0) == 0` instead
+      const weights = tf.where(min.lessEqual(0), is0, invDist)
+      const wsum = weights.sum(1, /*keepDims=*/true)
 
-      return tf.where(num0.greater(0), if0, non0) as Tensor2D
+      return weights.div(wsum)
     })
   }
 }
@@ -123,7 +120,7 @@ export class KNeighborsBase implements KNeighborsParams {
     )
     assert(
       undefined != _neighborhood && undefined != _y,
-      'KNeighbors::predict(X): model not trained yet.'
+      'KNeighbors::predict(X): model not trained yet. Call `await fit(x, y)` first.'
     )
 
     const weightsFn = WEIGHTS_FUNCTIONS[weights]
