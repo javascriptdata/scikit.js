@@ -27,11 +27,12 @@ import { assert } from './typesUtils'
  *
  * @param tf The TFJS instance to be polyfilled.
  */
-export function polyfillUnique(tf: typeof _tf)
-{
+export function polyfillUnique(tf: typeof _tf) {
   // TODO: remove this method as soon as tfjs-node supports tf.unique
-  if (tf.engine().backendNames().includes('tensorflow') && ! tf.getKernel('Unique', 'tensorflow'))
-  {
+  if (
+    tf.engine().backendNames().includes('tensorflow') &&
+    !tf.getKernel('Unique', 'tensorflow')
+  ) {
     console.info('[scikit.js] Installing tfjs-node polyfill for tf.unique().')
 
     tf.registerKernel({
@@ -54,20 +55,33 @@ export function polyfillUnique(tf: typeof _tf)
           string: backend.binding.TF_STRING
         } as { [key: string]: number }
 
-        assert(
-          Object.keys(types).includes(x.dtype),
-          'Unexpected dtype.'
-        )
+        assert(Object.keys(types).includes(x.dtype), 'Unexpected dtype.')
 
         try {
           const opAttrs = [
-            { value: types[x.dtype], name: 'T', type: backend.binding.TF_ATTR_TYPE },
-            { value: types.int32, name: 'Taxis', type: backend.binding.TF_ATTR_TYPE },
-            { value: types.int32, name: 'out_idx', type: backend.binding.TF_ATTR_TYPE }
+            {
+              value: types[x.dtype],
+              name: 'T',
+              type: backend.binding.TF_ATTR_TYPE
+            },
+            {
+              value: types.int32,
+              name: 'Taxis',
+              type: backend.binding.TF_ATTR_TYPE
+            },
+            {
+              value: types.int32,
+              name: 'out_idx',
+              type: backend.binding.TF_ATTR_TYPE
+            }
           ]
-          return backend.executeMultipleOutputs('UniqueV2', opAttrs, [x, axs], 2)
-        }
-        finally {
+          return backend.executeMultipleOutputs(
+            'UniqueV2',
+            opAttrs,
+            [x, axs],
+            2
+          )
+        } finally {
           axs.dispose()
         }
       }

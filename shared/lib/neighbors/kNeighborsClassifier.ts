@@ -101,7 +101,7 @@ export class KNeighborsClassifier extends KNeighborsBase {
   }
 
   public async fit(X: Scikit2D, labels: Scikit1D) {
-    const { values, indices } = tf.tidy( () => {
+    const { values, indices } = tf.tidy(() => {
       const _labels = convertToTensor1D(labels)
       polyfillUnique(tf)
       return tf.unique(_labels)

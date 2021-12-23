@@ -30,14 +30,14 @@ const WEIGHTS_FUNCTIONS = {
   distance(distances: Tensor2D) {
     return tf.tidy(() => {
       // scale inverse distances by min. to avoid `1/tinyVal == Infinity`
-      const min = distances.min(1, /*keepDims=*/true)
+      const min = distances.min(1, /*keepDims=*/ true)
       const invDist = tf.divNoNan(min.toFloat(), distances)
 
       const is0 = distances.lessEqual(0).toFloat()
 
       // avoid div by 0 by using `1/0 == 1` and `1/(x!=0) == 0` instead
       const weights = tf.where(min.lessEqual(0), is0, invDist)
-      const wsum = weights.sum(1, /*keepDims=*/true)
+      const wsum = weights.sum(1, /*keepDims=*/ true)
 
       return weights.div(wsum)
     })

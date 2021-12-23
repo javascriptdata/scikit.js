@@ -19,7 +19,6 @@ import { assert } from 'chai'
 import { arrayEqual } from '../utils'
 
 describe('KNeighborsClassifier', async () => {
-
   it('correctly predicts sklearn example', async () => {
     const X_train = [[0], [1], [2], [3]]
     const y_train = [0, 0, 1, 1]
