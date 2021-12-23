@@ -138,6 +138,9 @@ function readableStringsForCommonTypes({ id, name }, bigObj) {
   if (name === 'Scikit2D') {
     return '(number \\| string \\| boolean)[][] \\| TypedArray[] \\| Tensor2D \\| Dataframe'
   }
+  if (name === 'dfd.DataFrame') {
+    return 'DataFrame'
+  }
 
   // if (id && bigObj && bigObj.children) {
   //   let interface = bigObj.children.filter(
@@ -152,7 +155,15 @@ function readableStringsForCommonTypes({ id, name }, bigObj) {
   return name
 }
 
-function getTypeName({ id, type, name, value, elementType, types }, bigObj) {
+function getTypeName(val, bigObj) {
+  if (!val) {
+    return ''
+  }
+
+  const { id, type, name, value, elementType, types, typeArguments } = val
+  if (type === 'reference' && name === 'Promise') {
+    return `Promise<${getTypeName(typeArguments[0], bigObj)}>`
+  }
   if (type === 'reference' || type === 'intrinsic') {
     return readableStringsForCommonTypes({ id, name }, bigObj)
   }
@@ -220,10 +231,33 @@ ${generateAllMethods(jsonClass)}
 `
 }
 
+function writeFunction(jsonClass, bigObj) {
+  let signature = {}
+  if (jsonClass && jsonClass.signatures && jsonClass.signatures[0]) {
+    signature = jsonClass.signatures[0]
+  }
+  return `
+## ${jsonClass.name}
+
+${getText(signature.comment)}
+
+#### Signature
+
+\`\`\`typescript
+${jsonClass.name}(): ${getTypeName(signature.type, bigObj)}
+\`\`\`
+
+`
+}
+
 function doTheWholeThing(bigObj) {
   let result = bigObj.children
-    .filter((el) => el.kindString === 'Class')
-    .map((el) => writeClass(el, bigObj))
+    .filter((el) => el.kindString === 'Class' || el.kindString === 'Function')
+    .map((el) =>
+      el.kindString === 'Class'
+        ? writeClass(el, bigObj)
+        : writeFunction(el, bigObj)
+    )
     .join('\n')
 
   return `---
