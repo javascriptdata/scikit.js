@@ -72,7 +72,13 @@ import {
   VotingRegressor,
   VotingRegressorParams
 } from './ensemble/votingRegressor'
+import {
+  makeVotingClassifier,
+  VotingClassifier,
+  VotingClassifierParams
+} from './ensemble/votingClassifier'
 import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
+import { LinearSVR, LinearSVRParams } from './svm/linearSVR'
 
 export { SVR, SVRParams } from './svm/SVR';
 export { SVC, SVCParams } from './svm/SVC';
@@ -107,6 +113,8 @@ export {
   LogisticRegressionParams,
   LinearSVC,
   LinearSVCParams,
+  LinearSVR,
+  LinearSVRParams,
   ElasticNet,
   ElasticNetParams,
   metrics,
@@ -122,6 +130,9 @@ export {
   makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams,
+  makeVotingClassifier,
+  VotingClassifier,
+  VotingClassifierParams,
   loadBoston,
   loadDiabetes,
   loadIris,
