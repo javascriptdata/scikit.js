@@ -1,8 +1,8 @@
 import { tf } from '../../globals'
 import { Scikit1D, Scikit2D } from '../index';
-//@ts-ignore
 import { SVM, SVMParam, KERNEL_TYPE, ISVMParam, SVM_TYPE } from 'libsvm-wasm';
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils';
+import { assert } from '../typesUtils';
 
 export interface SVRParams {
     kernel?: 'LINEAR' | 'POLY' | 'RBF' | 'SIGMOID' | 'PRECOMPUTED';
@@ -34,7 +34,7 @@ export class SVR {
         cacheSize = 200,
         maxIter = -1
     }: SVRParams = {}) {
-        const inernalSVMParam: ISVMParam = {
+        const internalSVMParam: ISVMParam = {
             kernel_type: KERNEL_TYPE[kernel],
             svm_type: SVM_TYPE.EPSILON_SVR,
             degree,
@@ -45,26 +45,33 @@ export class SVR {
             cache_size: cacheSize,
         }
         if (gamma === 'auto') {
-            inernalSVMParam.gamma = -1;
             this.gammaMode = gamma;
         } else if (gamma === 'scale') {
-            inernalSVMParam.gamma = -2;
             this.gammaMode = gamma;
         } else {
-            inernalSVMParam.gamma = gamma;
+            internalSVMParam.gamma = gamma;
         }
 
-        this.svmParam = new SVMParam(inernalSVMParam, tol);
+        this.svmParam = new SVMParam(internalSVMParam, tol);
     }
 
     async fit(X: Scikit2D, y: Scikit1D): Promise<SVR> {
-        let XTwoD = convertToNumericTensor2D(X)
-        let yOneD = convertToNumericTensor1D(y)
+        
+        let XTwoD = convertToNumericTensor2D(X);
+        let yOneD = convertToNumericTensor1D(y);
         let nSample = XTwoD.shape[0];
         let nFeature = XTwoD.shape[1];
+        assert(
+            yOneD.shape[0] === nSample,
+            'X and y must have the same number of samples'
+          );
+        assert(yOneD.shape[0] >= 1, 'Must have more than 1 sample in X, and y');
         
         // Sum((XTwoD - Mean) ** 2) / nSample
-        const VarianceOfX = tf.sub(XTwoD, tf.mean(XTwoD)).square().sum().div(nSample).dataSync()[0];
+        const VarianceOfX = tf.squaredDifference(XTwoD, XTwoD.mean())
+                                .sum()
+                                .div(nSample)
+                                .dataSync()[0];
         
         if (this.gammaMode === 'scale') {
             this.svmParam.param.gamma = 1 / (nFeature * VarianceOfX);
@@ -86,15 +93,9 @@ export class SVR {
     async predict(X: Scikit2D): Promise<tf.Tensor1D> {
         const XTensor = convertToNumericTensor2D(X);
         const processX = await XTensor.array();
-        if (this.svm) {
-            const results = []
-            for (let i = 0; i < processX.length; i++) {
-                const result = this.svm.predict(processX[i]);
-                results.push(result);
-            }
-            return tf.tensor1d(await Promise.all(results));
-        } else {
-            throw new Error('SVM not trained');
-        }
+        assert(Boolean(this.svm), 'SVM was not trained');
+
+        const results = processX.map((el) => (this.svm as any).predict(el));
+        return tf.tensor1d(await Promise.all(results))
     }
 }
