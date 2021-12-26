@@ -1,46 +1,33 @@
 import { dfd } from '../../globals'
+import * as https from 'https'
 
-export async function loadBoston() {
-  return await dfd.read_csv('http://scikitjs.org/data/boston.csv', {
-    download: true
-  })
+const load = (url: string) => {
+  return dfd.read_csv(url, { download: true })
+
+//  return new Promise<dfd.DataFrame>((resolve, fail) => {
+//    const request = https.get(url, (response) => {
+//      const code = response.statusCode as number
+//      if (!(200 <= code && code < 300)) {
+//        fail( new Error(`datasets.load: Sever responded with ${code}.`) )
+//      }
+//      else {
+//        resolve( dfd.read_csv(response as any, {}) )
+//      }
+//    })
+//    request.on('error', (err) => fail(err))
+//  })
 }
 
-export async function loadIris() {
-  return await dfd.read_csv('http://scikitjs.org/data/iris.csv', {
-    download: true
-  })
-}
+export const loadBoston = () => load('https://scikitjs.org/data/boston.csv')
 
-export async function loadWine() {
-  return await dfd.read_csv('http://scikitjs.org/data/wine.csv', {
-    download: true
-  })
-}
+export const loadIris = () => load('https://scikitjs.org/data/iris.csv')
 
-export async function loadDiabetes() {
-  return await dfd.read_csv('http://scikitjs.org/data/diabetes.csv', {
-    download: true
-  })
-}
+export const loadWine = () => load('https://scikitjs.org/data/wine.csv')
 
-export async function loadBreastCancer() {
-  return await dfd.read_csv('http://scikitjs.org/data/breast_cancer.csv', {
-    download: true
-  })
-}
+export const loadDiabetes = () => load('https://scikitjs.org/data/diabetes.csv')
 
-export async function loadDigits() {
-  return await dfd.read_csv('http://scikitjs.org/data/digits.csv', {
-    download: true
-  })
-}
+export const loadBreastCancer = () => load('https://scikitjs.org/data/breast_cancer.csv')
 
-export async function fetchCaliforniaHousing() {
-  return await dfd.read_csv(
-    'http://scikitjs.org/data/california_housing.csv',
-    {
-      download: true
-    }
-  )
-}
+export const loadDigits = () => load('https://scikitjs.org/data/digits.csv')
+
+export const fetchCaliforniaHousing = () => load('https://scikitjs.org/data/california_housing.csv')
