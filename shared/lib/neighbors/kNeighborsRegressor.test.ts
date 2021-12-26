@@ -118,20 +118,23 @@ function testWithDataset(
 }
 
 describe('KNeighborsRegressor', function () {
-  this.timeout(120_000)
+  this.timeout(1200_000)
 
-  //  testWithDataset(loadDiabetes, { nNeighbors: 5, weights: 'distance' }, 3570)
-  //  testWithDataset(loadDiabetes, { nNeighbors: 3, weights: 'uniform' }, 3833)
-  //  testWithDataset(
-  //    fetchCaliforniaHousing,
-  //    { nNeighbors: 3, weights: 'distance' },
-  //    1.31
-  //  )
-  //  testWithDataset(
-  //    fetchCaliforniaHousing,
-  //    { nNeighbors: 4, weights: 'uniform' },
-  //    1.28
-  //  )
+  for (const algorithm of ['kdTree', undefined/*, 'brute', 'auto'*/] as ( undefined | 'brute' | 'auto' | 'kdTree')[])
+  {
+    testWithDataset(loadDiabetes, { nNeighbors: 5, weights: 'distance', algorithm }, 3570)
+    testWithDataset(loadDiabetes, { nNeighbors: 3, weights: 'uniform', algorithm }, 3833)
+    testWithDataset(
+      fetchCaliforniaHousing,
+      { nNeighbors: 3, weights: 'distance', algorithm },
+      1.31
+    )
+    testWithDataset(
+      fetchCaliforniaHousing,
+      { nNeighbors: 4, weights: 'uniform', algorithm },
+      1.28
+    )
+  }
 
   it('correctly predicts sklearn example', async () => {
     const X = [[0], [1], [2], [3]]

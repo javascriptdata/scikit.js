@@ -21,6 +21,7 @@ import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { tf } from '../../globals'
+import { KdTreeV2 } from './kdTreeV2'
 
 const WEIGHTS_FUNCTIONS = {
   uniform(distances: Tensor2D) {
@@ -52,6 +53,7 @@ const METRIC_FUNCTIONS = {
 }
 
 const ALGORITHMS = {
+  kdTree: KdTreeV2.create,
   auto: async (params: NeighborhoodParams) => new BruteNeighborhood(params),
   brute: async (params: NeighborhoodParams) => new BruteNeighborhood(params)
 }
