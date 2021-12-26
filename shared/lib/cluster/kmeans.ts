@@ -10,7 +10,7 @@ import {
   tidy
 } from '@tensorflow/tfjs-core'
 import { Scikit2D } from '../types'
-import { convertToNumericTensor2D } from '../utils'
+import { convertToNumericTensor2D, sampleWithoutReplacement } from '../utils'
 import { tf } from '../../globals'
 
 /*
@@ -19,32 +19,6 @@ Next steps
 2. Implement correct nIter logic
 3. Make it pass next 5 tests in sklearn test logic
 */
-
-// Modified Fisher-Yates algorithm which takes
-// a seed and selects n random numbers from a
-// set of integers going from 0 to size-1
-function sampleWithoutReplacement(size: number, n: number, seed?: number) {
-  let curMap = new Map<number, number>()
-  let finalNumbs = []
-  let randoms = tf.randomUniform([n], 0, size, 'float32', seed).dataSync()
-  for (let i = 0; i < randoms.length; i++) {
-    randoms[i] = (randoms[i] * (size - i)) / size
-    let randInt = Math.floor(randoms[i])
-    let lastIndex = size - i - 1
-    if (curMap.get(randInt) === undefined) {
-      curMap.set(randInt, randInt)
-    }
-    if (curMap.get(lastIndex) === undefined) {
-      curMap.set(lastIndex, lastIndex)
-    }
-    let holder = curMap.get(lastIndex) as number
-    curMap.set(lastIndex, curMap.get(randInt) as number)
-    curMap.set(randInt, holder)
-    finalNumbs.push(curMap.get(lastIndex) as number)
-  }
-
-  return finalNumbs
-}
 
 export interface KMeansParams {
   /** The number of clusters for the kmeans algorithm. **default = 8** */

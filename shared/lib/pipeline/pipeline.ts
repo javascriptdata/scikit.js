@@ -205,6 +205,30 @@ export class Pipeline {
   }
 }
 
+/**
+ *
+ * Shorthand for making a Pipeline class. Just pass your Estimators as function arguments.
+ *
+ * @example
+ * ```typescript
+ * import {makePipeline, SimpleImputer, MinMaxScaler, LinearRegression} from 'scikitjs'
+ *  const X = [
+      [2, 2],
+      [2, NaN],
+      [NaN, 4],
+      [1, 0]
+    ]
+    const y = [5, 3, 4, 1.5]
+    const pipeline = makePipeline(
+      new SimpleImputer({ strategy: 'constant', fillValue: 0 }),
+      new MinMaxScaler(),
+      new LinearRegression({ fitIntercept: false })
+    )
+
+    await pipeline.fit(X, y)
+    ```
+ */
+
 export function makePipeline(...args: any[]) {
   let pipelineSteps: Array<[string, any]> = []
   for (let i = 0; i < args.length; i++) {
