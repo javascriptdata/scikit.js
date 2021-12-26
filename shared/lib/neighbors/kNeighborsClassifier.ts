@@ -63,15 +63,6 @@ export class KNeighborsClassifier extends KNeighborsBase {
       const weight = weightsFn(distances)
       const oneHot = tf.oneHot(labels, nClasses)
 
-      //  const oneHot = tf.oneHot(labels, nClasses).transpose([0,2,1])
-      //
-      //  return tf
-      //    .matMul(
-      //      oneHot.reshape([nSamples, nClasses, 1, nNeighbors]),
-      //      weight.reshape([nSamples, 1, nNeighbors, 1])
-      //    )
-      //    .reshape([nSamples, nClasses])
-
       return tf
         .mul(
           oneHot.reshape([nSamples, nNeighbors, nClasses]),
@@ -100,7 +91,7 @@ export class KNeighborsClassifier extends KNeighborsBase {
     })
   }
 
-  public async fit(X: Scikit2D, labels: Scikit1D) {
+  public async fit(X: Scikit2D, labels: Scikit1D): Promise<this> {
     const { values, indices } = tf.tidy(() => {
       const _labels = convertToTensor1D(labels)
       polyfillUnique(tf)

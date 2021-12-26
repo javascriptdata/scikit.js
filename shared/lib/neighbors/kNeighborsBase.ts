@@ -142,7 +142,7 @@ export class KNeighborsBase implements KNeighborsParams {
    * @param y The target of each training sample, where `y[i]` the the
    *          target of the (i+1)-th sample.
    */
-  public async fit(X: Scikit2D, y: Scikit1D) {
+  public async fit(X: Scikit2D, y: Scikit1D): Promise<this> {
     const { algorithm = 'auto', metric = 'minkowski', p = 2 } = this
     assert(
       Object.keys(METRIC_FUNCTIONS).includes(metric),
