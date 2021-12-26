@@ -80,6 +80,9 @@ import {
 import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
 import { LinearSVR, LinearSVRParams } from './svm/linearSVR'
 
+export { SVR, SVRParams } from './svm/SVR'
+export { SVC, SVCParams } from './svm/SVC'
+
 export {
   MinMaxScaler,
   MinMaxScalerParams,
