@@ -17,6 +17,7 @@ import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { Metric } from './metrics'
 import { Tensor2D } from '@tensorflow/tfjs'
 import { tf } from '../../globals'
+import { assert } from '../typesUtils'
 
 /**
  * A {@link Neighborhood} implementation that uses a brute force approach
@@ -34,6 +35,11 @@ export class BruteNeighborhood implements Neighborhood {
 
   kNearest(k: number, queryPoints: Tensor2D) {
     const { _metric, _entries } = this
+
+    assert(
+      _entries.shape[1] == queryPoints.shape[1],
+      'X_train.shape[1] must equal X_predict.shape[1]'
+    )
 
     //  // batched version
     //  return tf.tidy(() => {
