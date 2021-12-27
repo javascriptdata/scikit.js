@@ -45,7 +45,7 @@ export interface LinearRegressionParams {
 /*
 Next steps:
 1. Pass next 5 tests scikit-learn
-2. Write closed for solution (save that as linear regression, and move this to sgdregressor)
+2. Write closed form solution (save that as linear regression, and move this to sgdregressor)
 */
 
 /** Linear Least Squares
