@@ -20,7 +20,7 @@
     "build": "npm run compile:esm && npm run compile:node-cjs && npm run compile:web",
     "build:docs": "cd docs && npm run build",
     "coverage": "coveralls",
-    "postinstall": "(npx husky install);"
+    "postinstall": "(cd docs && npm install && cd ..); (npx husky install);"
   },
   "repository": {
     "type": "git",
