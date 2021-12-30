@@ -22,9 +22,16 @@ import {
   ScikitVecOrMatrix,
   TypedArray
 } from './types'
-import { inferShape, isTypedArray } from './typesUtils'
+import {
+  assert,
+  inferShape,
+  // isScikit2D,
+  isScikitVecOrMatrix,
+  isTypedArray
+} from './typesUtils'
 
 import { tf, dfd } from './shared/globals'
+import { Tensor } from '@tensorflow/tfjs-core'
 /**
  * Generates an array of dim (row x column) with inner values set to zero
  * @param row
@@ -298,4 +305,47 @@ export function arrayTo2DColumn(array: any[] | TypedArray) {
     newArray.push([array[i]])
   }
   return newArray
+}
+
+export function getLength(X: Scikit2D | Scikit1D): number {
+  assert(isScikitVecOrMatrix(X), "X isn't a Scikit2D or Scikit1D object")
+  if (X instanceof Tensor) {
+    return X.shape[0]
+  }
+  if (X instanceof dfd.DataFrame || X instanceof dfd.Series) {
+    return X.size
+  }
+  return X.length
+}
+
+/**
+ * Modified Fisher-Yates algorithm which takes
+ * a seed and selects n random numbers from a
+ * set of integers going from 0 to size-1
+ */
+export function sampleWithoutReplacement(
+  size: number,
+  n: number,
+  seed?: number
+) {
+  let curMap = new Map<number, number>()
+  let finalNumbs = []
+  let randoms = tf.randomUniform([n], 0, size, 'float32', seed).dataSync()
+  for (let i = 0; i < randoms.length; i++) {
+    randoms[i] = (randoms[i] * (size - i)) / size
+    let randInt = Math.floor(randoms[i])
+    let lastIndex = size - i - 1
+    if (curMap.get(randInt) === undefined) {
+      curMap.set(randInt, randInt)
+    }
+    if (curMap.get(lastIndex) === undefined) {
+      curMap.set(lastIndex, lastIndex)
+    }
+    let holder = curMap.get(lastIndex) as number
+    curMap.set(lastIndex, curMap.get(randInt) as number)
+    curMap.set(randInt, holder)
+    finalNumbs.push(curMap.get(lastIndex) as number)
+  }
+
+  return finalNumbs
 }

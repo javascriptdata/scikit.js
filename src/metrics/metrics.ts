@@ -29,8 +29,8 @@ function assertInputIsWellFormed(labels: Scikit1D, predictions: Scikit1D) {
 
   let labelsT = convertToNumericTensor1D(labels)
   let predictionsT = convertToNumericTensor1D(predictions)
-  assert(labelsT.size > 0, 'Must be more than 1 label')
-  assert(predictionsT.size > 0, 'Must be more than 1 prediction')
+  assert(labelsT.size > 0, 'Must have 1 label or more')
+  assert(predictionsT.size > 0, 'Must have 1 prediction or more')
   assert(labelsT.size === predictionsT.size, 'Not the same size arrays')
   return { labelsT, predictionsT }
 }

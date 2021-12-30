@@ -34,6 +34,7 @@
   "dependencies": {
     "danfojs": "^0.3.4",
     "danfojs-node": "^0.3.4",
+    "libsvm-wasm": "^0.0.8",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "seedrandom": "^3.0.5",
@@ -83,7 +84,7 @@
     "tsc-alias": "^1.5.0",
     "tslib": "*",
     "typedoc": "^0.22.10",
-    "typescript": "^4.5.3",
+    "typescript": "^4.5.4",
     "typescript-transform-paths": "^3.3.1"
   },
   "publishConfig": {
@@ -102,6 +103,7 @@
     "reporter": [
       "lcov",
       "text"
-    ]
+    ],
+    "typescript": "^4.5.4"
   }
 }
