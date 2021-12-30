@@ -24,6 +24,14 @@ import { CappedMaxHeap } from './cappedMaxHeap'
 const child = (parent: number) => (parent << 1) + 1
 const parent = (child: number) => (child - 1) >> 1
 
+/**
+ * Computes the smallest integral power of two
+ * that is larger than or equal to a given number.
+ * Returns at least one.
+ *
+ * @param int32 A number in the range [0, 2**30].
+ * @returns An integeral power of 2 `x` such that `int32 <= x`.
+ */
 const ceilPow2 = (int32: number) => {
   assert(
     0 <= int32 && int32 <= 0x4000_0000,
@@ -46,16 +54,42 @@ interface KdMetric {
   minDistToBBox(pt: ArrayLike<number>, bBox: ArrayLike<number>): number
 }
 
+/**
+ * A {@link Neighborhood} implementation using a kd-tree as data structure.
+ * Instead of an object-oriented representation, the implementation uses an
+ * inorder array-based representation of the tree, similar to binary heaps.
+ * The tree is always balanced. It is constructed by recursively spliting
+ * up the largest dimension of the axis-aligned bounding box of the remaining
+ * set of points.
+ */
 export class KdTree implements Neighborhood {
   private _nSamples: number
   private _nFeatures: number
 
   private _metric: KdMetric
+
+  /**
+   * Coordinates of the points contained in this kdTree, not in the order
+   * as they were passed to {@link KdTree.build}.
+   */
   private _points: Vec[]
 
-  private _bBoxes: Float32Array[]
-  private _offsets: Int32Array
+  /**
+   * Keeps track of the order, in which the points were originally passed
+   * to {@link KdTree.build}. The `i+1`-th point in `_points` was originally
+   * passed as `_indices[i]+1`-th point to {@link KdTree.build}.
+   */
   private _indices: Int32Array
+
+  /**
+   * The bounding box of each tree node.
+   */
+  private _bBoxes: Float32Array[]
+  /**
+   * The (i+1)-th leaf of this tree contains the points
+   * `_points[_offsets[i]]` to `_points[_offsets[i+1]-1]`.
+   */
+  private _offsets: Int32Array
 
   private constructor(
     nSamples: number,
@@ -78,6 +112,9 @@ export class KdTree implements Neighborhood {
     Object.freeze(this)
   }
 
+  /**
+   * Asynchronously builds a {@link KdTree}.
+   */
   static async build({ metric, entries, leafSize = 16 }: NeighborhoodParams) {
     assert(
       1 < leafSize,
@@ -257,9 +294,11 @@ export class KdTree implements Neighborhood {
       'KNeighbors: X_train.shape[1] must equal X_predict.shape[1].'
     )
 
+    // result data
     const dists = new Float32Array(nQueries * k)
     const indxs = new Int32Array(nQueries * k)
 
+    // index of the left-most child
     const leaf0 = parent(_bBoxes.length - 1) + 1
 
     if (0 < k && 0 < nQueries) {
@@ -270,9 +309,13 @@ export class KdTree implements Neighborhood {
 
       const knn = (node: number, minDist: number) => {
         if (minDist >= heap.maxKey) {
+          // skip if heap contains k points guaranteed to be closer
           return
         }
         if (node < leaf0) {
+          // BRANCH CASE
+          // -----------
+          // Start searching in closer child.
           const c = child(node)
           const dist0 = _metric.minDistToBBox(queryPt, _bBoxes[c])
           const dist1 = _metric.minDistToBBox(queryPt, _bBoxes[c + 1])
@@ -284,6 +327,9 @@ export class KdTree implements Neighborhood {
             knn(c, dist0)
           }
         } else {
+          // LEAF CASE
+          // ---------
+          // Enqueue all nodes in heap.
           node -= leaf0
           const from = _offsets[node]
           const until = _offsets[node + 1]

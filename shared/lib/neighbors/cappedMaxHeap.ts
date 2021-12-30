@@ -15,11 +15,34 @@
 
 import { assert } from '../typesUtils'
 
+/**
+ * A variant of a binary max-heap with a size limit.
+ * If more elements than the size limit are added,
+ * only the smallest encountered elements are retained.
+ * This data structure is used in k-nearest-neighbor
+ * searches to retain the k nearest results during
+ * tree traversal.
+ */
 export class CappedMaxHeap {
   private _keys: Float32Array
   private _vals: Int32Array
+  /**
+   * Index of the currently first entry.
+   * The entries are added from right to
+   * left until `_pos = 0`, at which point
+   * adding further elements results in
+   * replacement.
+   */
   private _pos: number
 
+  /**
+   * Creates a new heap using the given key
+   * and value array as underlying data storage.
+   * The heap will modify these arrays directly.
+   *
+   * @param keys Key array to be used by the heap.
+   * @param vals Value array to be used by the heap.
+   */
   constructor(keys: Float32Array, vals: Int32Array) {
     const len = keys.length
     assert(
@@ -36,44 +59,23 @@ export class CappedMaxHeap {
     this._pos = len
   }
 
+  /**
+   * Returns the currently larges key without removing it.
+   */
   get maxKey() {
     return this._keys[0]
   }
 
-  //  add( key: number, val: number ) {
-  //    let { _keys, _vals, _pos: i } = this
-  //    if (0 < i) {
-  //      this._pos = --i
-  //    }
-  //    else if (key > _keys[0]) {
-  //      return
-  //    }
-  //    const { length } = _keys
-  //
-  //    // sift-down
-  //    for (;;) {
-  //      const p = i
-  //      // fill parent gap with filler
-  //      _keys[i] = key
-  //      _vals[i] = val
-  //      // c: leftmost child of i
-  //      let c = (i << 1) + 1
-  //
-  //      // find largest child that is larger than the filler
-  //      const lastChild = Math.min(length, c + 2)
-  //      for (;lastChild > c; c++)
-  //        if (_keys[c] > _keys[i]) i = c
-  //
-  //      // if parent is already the smallest value, stop
-  //      if (i === p) break
-  //
-  //      // move smallest value to root/parent
-  //      _keys[p] = _keys[i]
-  //      _vals[p] = _vals[i]
-  //    }
-  //  }
-
-  add(key: number, val: number) {
+  /**
+   * Adds an entry to this heap. If, after adding,
+   * the size limit is exceeded, the largest entry
+   * is removed as well, even the entry that was
+   * just added if it has the largest key.
+   *
+   * @param key Key of the added entry.
+   * @param val Value of the added entry.
+   */
+  add(key: number, val: number): void {
     let { _keys, _vals, _pos: p } = this
     if (0 < p) {
       this._pos = --p
@@ -101,48 +103,12 @@ export class CappedMaxHeap {
     _vals[p] = val
   }
 
-  //  add( key: number, val: number ) {
-  //    let { _keys, _vals, _pos } = this
-  //    if (0 < _pos) {
-  //      this._pos = --_pos
-  //    }
-  //    else if (key > _keys[0]) {
-  //      return
-  //    }
-  //    const end = _keys.length - 1
-  //
-  //    let i = _pos
-  //
-  //    // trickle down
-  //    for (;;) {
-  //      // c: left child of i
-  //      let c = (i << 1) + 1
-  //      if (c > end) {
-  //        break
-  //      }
-  //      c += +(c < end && _keys[c] < _keys[c + 1])
-  //      _keys[i] = _keys[c]
-  //      _vals[i] = _vals[c]
-  //      i = c
-  //    }
-  //
-  //    // bubble up
-  //    for (;;) {
-  //      // p: parent of i
-  //      let p = i - 1 >> 1
-  //      if (p < _pos || _keys[p] >= key) {
-  //        break
-  //      }
-  //      _keys[i] = _keys[p]
-  //      _vals[i] = _vals[p]
-  //      i = p
-  //    }
-  //
-  //    _keys[i] = key
-  //    _vals[i] = val
-  //  }
-
-  sort() {
+  /**
+   * Sorts the entries of this heap by their keys in ascending
+   * order. This method destroys the heap property and should
+   * only be called after all elements have been added.
+   */
+  sort(): void {
     const { _keys, _vals, _pos } = this
     assert(0 === _pos, 'CappedMaxHeap().sort(): Heap is not full yet.')
 
