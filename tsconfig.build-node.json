@@ -1,0 +1,24 @@
+{
+  "extends":"./tsconfig.build.json",
+  "compilerOptions": {
+    "declarationDir": "./dist/node",
+    "outDir": "./dist/node",
+    "module": "commonjs",
+    "target": "esnext",
+    "baseUrl": "./src",
+    "paths": {
+      "shared/*": ["shared-node/*"],
+    }
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true,
+    "replacers": {
+      "exampleReplacer": {
+        "enabled": true,
+        "file": "./build/nodeReplacer.js"
+      },
+    }
+  }
+}
+

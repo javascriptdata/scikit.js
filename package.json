@@ -13,16 +13,13 @@
   },
   "scripts": {
     "test": "node_modules/.bin/nyc node_modules/.bin/mocha --require ts-node/register 'src/lib/**/*.test.ts'",
-    "test:legacy": "npm run clean && npm run build:only && npm run test:src && npm run prettier && npm run delete:shared",
-    "test:src": "nyc mocha --require ts-node/register 'src/**/*.test.ts'",
-    "test:clean": "npm run test:node && npm run test:browser",
-    "test:browser": "cd scikitjs-browser && npm run test",
-    "test:node": "cd scikitjs-node && npm run test",
-    "build:browser": "cd scikitjs-browser && npm run build",
-    "build:node": "cd scikitjs-node && npm run build",
-    "build": "npm run build:node && npm run build:browser",
+    "compile:web": "node_modules/.bin/rollup -c",
+    "compile:esm": "node_modules/.bin/tsc -p tsconfig.build.json",
+    "compile:node-cjs": "node_modules/.bin/tsc -p tsconfig.build-node.json && node_modules/.bin/tsc-alias -p tsconfig.build-node.json",
+    "build": "npm run compile:esm && npm run compile:node-cjs && npm run compile:web",
     "build:docs": "cd docs && npm run build",
-    "postinstall": "(cd docs && npm install); (cd scikitjs-browser && npm install); (cd scikitjs-node && npm install); (cd shared && npm install); (npx husky install);"
+    "coverage": "coveralls",
+    "postinstall": "(cd docs && npm install); (npx husky install);"
   },
   "repository": {
     "type": "git",
@@ -37,12 +34,10 @@
   "dependencies": {
     "danfojs": "^0.3.4",
     "danfojs-node": "^0.3.4",
-    "eslint": "^8.2.0",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "seedrandom": "^3.0.5",
-    "simple-statistics": "^7.7.0",
-    "typescript": "^4.5.2"
+    "simple-statistics": "^7.7.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
@@ -85,9 +80,11 @@
     "rollup-plugin-terser-js": "1.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "ts-node": "^10.0.0",
+    "tsc-alias": "^1.5.0",
     "tslib": "*",
     "typedoc": "^0.22.10",
-    "typescript": "^4.5.3"
+    "typescript": "^4.5.3",
+    "typescript-transform-paths": "^3.3.1"
   },
   "publishConfig": {
     "access": "public",

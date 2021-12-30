@@ -10,7 +10,7 @@ import json from '@rollup/plugin-json'
 import pkg from "./package.json"
 import alias from '@rollup/plugin-alias'
 
-const name = 'scikit'
+const name = 'scikitjs'
 const external = [
   // "react-dom",
 ]
@@ -18,6 +18,7 @@ const serverExternal = [
   "@tensorflow/tfjs",
   "@tensorflow/tfjs-node",
   "danfojs",
+  "danfojs-node",
   "lodash",
   "mathjs",
   "seedrandom",
@@ -89,7 +90,8 @@ function getPlugins({
         alias({
           resolve: ['.js', '.ts'],
           entries: {
-            '@tensorflow/tfjs-node': '@tensorflow/tfjs'
+            '@tensorflow/tfjs-node': '@tensorflow/tfjs',
+            'danfojs-node': 'danfojs'
             // 'natural':'./node_modules/@jsonstack/data/src/stub.ts',
             // 'probability-distributions': './src/stubs/prob_stub-temp.js',
             // 'async_hooks': './node_modules/@jsonstack/data/src/async_hook_stub.ts',
@@ -119,7 +121,8 @@ function getPlugins({
       declaration: false,
       declarationDir: null,
       allowJs:true,
-      target: legacy ? "es5" : "esnext"
+      target: legacy ? "es5" : "esnext",
+      tsconfig: './tsconfig.build.json'
     }),
     commonjs({
       extensions: ['.js']
@@ -149,7 +152,7 @@ function getPlugins({
 export default [
   //web
   {
-    input: "src/lib/index.ts",
+    input: "src/index.ts",
     output: getOutput({
       minify: false,
       server: false
@@ -162,7 +165,7 @@ export default [
   },
   //web minified
   {
-    input: "src/lib/index.ts",
+    input: "src/index.ts",
     output: getOutput({
       minify: true,
       server: false
@@ -172,48 +175,48 @@ export default [
       minify: true,
       browser:true
     })
-  },
-  //web - LEGACY
-  {
-    input: "src/lib/index.ts",
-    output: getOutput({
-      minify: false,
-      server: false,
-      legacy: true
-    }),
-    external,
-    plugins: getPlugins({
-      minify: false,
-      browser: true,
-      legacy: true
-    })
-  },
-  //web minified - LEGACY
-  {
-    input: "src/lib/index.ts",
-    output: getOutput({
-      minify: true,
-      server: false,
-      legacy: true
-    }),
-    external,
-    plugins: getPlugins({
-      minify: true,
-      browser: true,
-      legacy: true
-    })
-  },
+  }//,
+  // //web - LEGACY
+  // {
+  //   input: "src/lib/index.ts",
+  //   output: getOutput({
+  //     minify: false,
+  //     server: false,
+  //     legacy: true
+  //   }),
+  //   external,
+  //   plugins: getPlugins({
+  //     minify: false,
+  //     browser: true,
+  //     legacy: true
+  //   })
+  // },
+  // //web minified - LEGACY
+  // {
+  //   input: "src/lib/index.ts",
+  //   output: getOutput({
+  //     minify: true,
+  //     server: false,
+  //     legacy: true
+  //   }),
+  //   external,
+  //   plugins: getPlugins({
+  //     minify: true,
+  //     browser: true,
+  //     legacy: true
+  //   })
+  // },
   //node cjs + esm
-  {
-    input: "src/lib/index.ts",
-    output: getOutput({
-      minify: false,
-      server: true
-    }),
-    external:serverExternal,
-    plugins: getPlugins({
-      minify: false,
-      server: true
-    })
-  }
+  // {
+  //   input: "src/lib/index.ts",
+  //   output: getOutput({
+  //     minify: false,
+  //     server: true
+  //   }),
+  //   external:serverExternal,
+  //   plugins: getPlugins({
+  //     minify: false,
+  //     server: true
+  //   })
+  // }
 ]
