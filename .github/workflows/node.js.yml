@@ -39,4 +39,4 @@ jobs:
           npm ci
       - name: Test coverage
         run: |
-          npm run test:clean
+          npm test
