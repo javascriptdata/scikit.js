@@ -1,5 +1,5 @@
 {
-  "name": "scikit",
+  "name": "scikitjs",
   "version": "1.0.0",
   "description": "Scikit-Learn for JS",
   "output": {
