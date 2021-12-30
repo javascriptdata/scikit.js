@@ -21,7 +21,7 @@ export interface SVCParams {
 export class SVC {
   private svm?: SVM
   private svmParam: SVMParam
-  private gammaMode: string = 'scale'
+  private gammaMode = 'scale'
   private classWeight: { [key: number]: number } | 'balanced' | undefined
 
   constructor({
@@ -72,7 +72,6 @@ export class SVC {
       'X and y must have the same number of samples'
     )
     assert(yOneD.shape[0] >= 1, 'Must have more than 1 sample in X, and y')
-
     // Sum((XTwoD - Mean) ** 2) / nSample
     const VarianceOfX = tf
       .squaredDifference(XTwoD, XTwoD.mean())
@@ -120,17 +119,18 @@ export class SVC {
     this.svmParam.param.nr_weight = numLabels
 
     this.svm = new SVM(this.svmParam)
+    await this.svm.init()
     await this.svm.feedSamples(processX, processY)
     await this.svm.train()
     return this
   }
 
-  async predict(X: Scikit2D): Promise<tf.Tensor1D> {
+  predict(X: Scikit2D): tf.Tensor1D {
     const XTensor = convertToNumericTensor2D(X)
-    const processX = await XTensor.array()
+    const processX = XTensor.arraySync()
     assert(Boolean(this.svm), 'SVM was not trained')
 
     const results = processX.map((el) => (this.svm as any).predict(el))
-    return tf.tensor1d(await Promise.all(results))
+    return tf.tensor1d(results)
   }
 }

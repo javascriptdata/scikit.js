@@ -3,7 +3,7 @@ import { assert } from 'chai'
 import { describe, it } from 'mocha'
 
 // Next steps: Improve on kmeans cluster testing
-describe('clusters:k_means', () => {
+describe('KMeans', () => {
   const X = [
     [1, 2],
     [1, 4],

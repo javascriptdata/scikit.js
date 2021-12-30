@@ -7,7 +7,6 @@ describe('SVC', function () {
   this.timeout(10000)
   it('Works on arrays (small example)', async function () {
     const lr = new SVC()
-
     await lr.fit(
       [
         [1, 2],
