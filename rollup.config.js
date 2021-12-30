@@ -47,7 +47,7 @@ function getOutput({ minify = false, server = false, legacy = false }) {
     ] :
     [ {
       file: pkg.output.web,
-      format: "umd",
+      format: "iife",
       exports: "named",
       name,
       globals:windowGlobals,
@@ -121,7 +121,8 @@ function getPlugins({
       declaration: false,
       declarationDir: null,
       allowJs:true,
-      target: legacy ? "es5" : "esnext",
+      downlevelIteration: true,
+      target: 'es5', //legacy ? "es5" : "esnext",
       tsconfig: './tsconfig.build.json'
     }),
     commonjs({
@@ -152,6 +153,7 @@ function getPlugins({
 export default [
   //web
   {
+    // input: "dist/umd/index.js",
     input: "src/index.ts",
     output: getOutput({
       minify: false,
