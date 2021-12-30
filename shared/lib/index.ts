@@ -16,17 +16,17 @@ import { KNeighborsRegressor } from './neighbors/kNeighborsRegressor'
 import {
   LinearRegression,
   LinearRegressionParams
-} from './estimators/linearRegression'
-import { LassoRegression, LassoParams } from './estimators/lassoRegression'
+} from './linear_model/linearRegression'
+import { LassoRegression, LassoParams } from './linear_model/lassoRegression'
 import {
   RidgeRegression,
   RidgeRegressionParams
-} from './estimators/ridgeRegression'
-import { ElasticNet, ElasticNetParams } from './estimators/elasticNet'
+} from './linear_model/ridgeRegression'
+import { ElasticNet, ElasticNetParams } from './linear_model/elasticNet'
 import {
   LogisticRegression,
   LogisticRegressionParams
-} from './estimators/logisticRegression'
+} from './linear_model/logisticRegression'
 import * as metrics from './metrics/metrics'
 import { DummyRegressor, DummyRegressorParams } from './dummy/dummyRegressor'
 import {
@@ -68,10 +68,17 @@ import {
   fetchCaliforniaHousing
 } from './datasets/datasets'
 import {
+  makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams
 } from './ensemble/votingRegressor'
+import {
+  makeVotingClassifier,
+  VotingClassifier,
+  VotingClassifierParams
+} from './ensemble/votingClassifier'
 import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
+import { LinearSVR, LinearSVRParams } from './svm/linearSVR'
 
 export {
   MinMaxScaler,
@@ -103,6 +110,8 @@ export {
   LogisticRegressionParams,
   LinearSVC,
   LinearSVCParams,
+  LinearSVR,
+  LinearSVRParams,
   ElasticNet,
   ElasticNetParams,
   metrics,
@@ -115,8 +124,12 @@ export {
   OrdinalEncoderParams,
   KMeans,
   KMeansParams,
+  makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams,
+  makeVotingClassifier,
+  VotingClassifier,
+  VotingClassifierParams,
   loadBoston,
   loadDiabetes,
   loadIris,

@@ -15,7 +15,7 @@
 
 import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
-import { SGDClassifier } from '../linear_model/sgdClassifier'
+import { SGDRegressor } from '../linear_model/sgdRegressor'
 import { tf } from '../../globals'
 
 // First pass at a LinearSVC implementation using gradient descent
@@ -30,9 +30,13 @@ Next steps:
 5. Pass next 5 scikit-learn tests
 */
 
-export interface LinearSVCParams {
-  /** Specify the norm of the penalty. **default = l2** */
-  penalty?: 'l1' | 'l2' | 'none'
+export interface LinearSVRParams {
+  /**
+   * Epsilon parameter in the epsilon-insensitive loss function.
+   * Note that the value of this parameter depends on the scale
+   * of the target variable y. If unsure, set epsilon=0.
+   */
+  epsilon?: number
   /** Inverse of the regularization strength. **default = 1** */
   C?: number
   /** Whether or not the intercept should be estimator not. **default = true** */
@@ -61,21 +65,23 @@ export interface LinearSVCParams {
     await svc.fit(X, y)
  * ```
 */
-export class LinearSVC extends SGDClassifier {
+export class LinearSVR extends SGDRegressor {
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'LinearSVC'
+  name = 'LinearSVR'
 
   constructor({
-    penalty = 'l2',
+    epsilon = 0,
     C = 1,
     fitIntercept = true
-  }: LinearSVCParams = {}) {
+  }: LinearSVRParams = {}) {
     // Assume Binary classification
     // If we call fit, and it isn't binary then update args
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
-        loss: losses.hingeLoss,
+        loss: function (yPred, yTrue) {
+          return tf.abs(tf.sub(yPred, yTrue)).sub(epsilon).maximum(0)
+        },
         metrics: ['accuracy']
       },
       modelFitArgs: {
@@ -87,17 +93,8 @@ export class LinearSVC extends SGDClassifier {
       denseLayerArgs: {
         units: 1,
         useBias: Boolean(fitIntercept),
-        activation: 'softmax',
-        kernelInitializer: tf.initializers.zeros(),
-        biasInitializer: tf.initializers.zeros(),
-        kernelRegularizer:
-          penalty === 'l2'
-            ? tf.regularizers.l2({ l2: C })
-            : penalty === 'l1'
-            ? tf.regularizers.l1({ l1: C })
-            : undefined
-      },
-      isClassification: true
+        kernelRegularizer: tf.regularizers.l2({ l2: C })
+      }
     })
   }
 }
