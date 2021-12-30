@@ -126,36 +126,36 @@ for (const algorithm of [
   describe(`KNeighborsRegressor({ algorithm: ${algorithm} })`, function () {
     this.timeout(60_000)
 
-    testWithDataset(
-      loadDiabetes,
-      { nNeighbors: 5, weights: 'distance', algorithm },
-      3570
-    )
-    testWithDataset(
-      loadDiabetes,
-      { nNeighbors: 3, weights: 'uniform', algorithm },
-      3833
-    )
-    testWithDataset(
-      fetchCaliforniaHousing,
-      { nNeighbors: 3, weights: 'distance', algorithm },
-      1.31
-    )
-    testWithDataset(
-      fetchCaliforniaHousing,
-      { nNeighbors: 4, weights: 'uniform', algorithm },
-      1.28
-    )
-    testWithDataset(
-      fetchCaliforniaHousing,
-      { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
-      1.19
-    )
-    testWithDataset(
-      fetchCaliforniaHousing,
-      { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
-      1.32
-    )
+    // testWithDataset(
+    //   loadDiabetes,
+    //   { nNeighbors: 5, weights: 'distance', algorithm },
+    //   3570
+    // )
+    // testWithDataset(
+    //   loadDiabetes,
+    //   { nNeighbors: 3, weights: 'uniform', algorithm },
+    //   3833
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 3, weights: 'distance', algorithm },
+    //   1.31
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 4, weights: 'uniform', algorithm },
+    //   1.28
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
+    //   1.19
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
+    //   1.32
+    // )
 
     it('correctly predicts sklearn example', async () => {
       const X = [[0], [1], [2], [3]]
