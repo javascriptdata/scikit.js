@@ -97,7 +97,7 @@ export class KNeighborsClassifier extends KNeighborsBase {
       polyfillUnique(tf)
       return tf.unique(_labels)
     })
-    super.fit(X, indices)
+    await super.fit(X, indices)
     this.classes_ = values
     return this
   }
