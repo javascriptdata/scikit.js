@@ -12,7 +12,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node_modules/.bin/nyc node_modules/.bin/mocha --require ts-node/register 'src/**/*.test.ts'",
+    "test:clean": "node_modules/.bin/nyc node_modules/.bin/mocha --require ts-node/register 'src/**/*.test.ts'",
     "compile:web": "node_modules/.bin/rollup -c",
     "compile:esm": "node_modules/.bin/tsc -p tsconfig.build.json",
     "compile:node-cjs": "node_modules/.bin/tsc -p tsconfig.build-node.json && node_modules/.bin/tsc-alias -p tsconfig.build-node.json",
