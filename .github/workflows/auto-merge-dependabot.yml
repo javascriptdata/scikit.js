@@ -45,7 +45,7 @@ jobs:
           npm i
       - name: Test coverage
         run: |
-          npm run test:clean
+          npm run test
         #jest --coverage --runInBand
   automerge:
     needs: build
