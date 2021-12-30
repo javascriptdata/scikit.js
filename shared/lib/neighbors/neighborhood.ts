@@ -30,6 +30,13 @@ export interface NeighborhoodParams {
    * The nearest neighbors are searched for in these points.
    */
   entries: Tensor2D
+  /**
+   * For tree-based neighborhood data structures, this is a
+   * hint as to how many points are to be stored in a single
+   * leaf. The optimal value depends on the nature of the problem
+   * and the metric used.
+   */
+  leafSize?: number
 }
 
 /**

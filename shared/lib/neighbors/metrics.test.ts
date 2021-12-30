@@ -16,7 +16,7 @@
 import { assert } from 'chai'
 import * as fc from 'fast-check'
 import { describe, it } from 'mocha'
-import { TreeMetric, minkowskiDistance } from './metrics'
+import { Metric, minkowskiMetric } from './metrics'
 
 const NDIMS = Object.freeze([1, 2, 7])
 
@@ -46,15 +46,15 @@ const anyVec = (ndim: number) => {
 const assertClose = (x: number, y: number) => {
   if (!isFinite(x) || !isFinite(y)) return x === y
 
-  const rtol = 1e-5,
-    atol = 1e-8
+  const rtol = 1e-5
+  const atol = 1e-8
 
   const tol = atol + rtol * Math.max(Math.abs(x), Math.abs(y))
   return assert.closeTo(x, y, tol)
 }
 
 const run_generic_vector_metric_tests = (
-  metric: TreeMetric
+  metric: Metric
 ) => {
   describe(`${metric.name} [generic tests]`, () => {
     // test the metric properties as described in:
@@ -67,49 +67,49 @@ const run_generic_vector_metric_tests = (
         fc.assert(
           fc.property(anyV, (v) => {
             Object.freeze(v)
-            assert.equal(metric(v, v), 0)
+            assert.equal(metric.distance(v, v), 0)
           })
         )
       })
 
     for (const ndim of NDIMS)
       it(`metric(u,v) >= 0 [${ndim}D]`, () => {
-        const anyU = anyVec(ndim),
-          anyV = anyVec(ndim)
+        const anyU = anyVec(ndim)
+        const anyV = anyVec(ndim)
 
         fc.assert(
           fc.property(anyU, anyV, (u, v) => {
             Object.freeze(u)
             Object.freeze(v)
-            assert.isAtLeast(metric(u, v), 0)
+            assert.isAtLeast(metric.distance(u, v), 0)
           })
         )
       })
 
     for (const ndim of NDIMS)
       it(`metric(u,v) == metric(v,u) [${ndim}D]`, () => {
-        const anyU = anyVec(ndim),
-          anyV = anyVec(ndim)
+        const anyU = anyVec(ndim)
+        const anyV = anyVec(ndim)
 
         fc.assert(
           fc.property(anyU, anyV, (u, v) => {
             Object.freeze(u)
             Object.freeze(v)
-            assert.equal(metric(u, v), metric(v, u))
+            assert.equal(metric.distance(u, v), metric.distance(v, u))
           })
         )
       })
 
     for (const ndim of NDIMS)
       it(`metric(u,v)==0 <=> u==v [${ndim}D]`, () => {
-        const anyU = anyVec(ndim),
-          anyV = anyVec(ndim)
+        const anyU = anyVec(ndim)
+        const anyV = anyVec(ndim)
 
         fc.assert(
           fc.property(anyU, anyV, (u, v) => {
             Object.freeze(u)
             Object.freeze(v)
-            if (metric(u, v) === 0) assert.deepEqual(u, v)
+            if (metric.distance(u, v) === 0) assert.deepEqual(u, v)
             else assert.notDeepEqual(u, v)
           })
         )
@@ -117,16 +117,16 @@ const run_generic_vector_metric_tests = (
 
     for (const ndim of NDIMS)
       it(`metric(u,w) <= metric(u,v) + metric(v,w) [${ndim}D]`, () => {
-        const anyU = anyVec(ndim),
-          anyV = anyVec(ndim),
-          anyW = anyVec(ndim)
+        const anyU = anyVec(ndim)
+        const anyV = anyVec(ndim)
+        const anyW = anyVec(ndim)
 
         fc.assert(
           fc.property(anyU, anyV, anyW, (u, v, w) => {
             Object.freeze(u)
             Object.freeze(v)
             Object.freeze(w)
-            assert.isAtMost(metric(u, w), metric(u, v) + metric(u, w))
+            assert.isAtMost(metric.distance(u, w), metric.distance(u, v) + metric.distance(u, w))
           })
         )
       })
@@ -134,15 +134,15 @@ const run_generic_vector_metric_tests = (
 }
 
 for (const p of [1, 1.9, 2.0, 3.0, Infinity])
-  run_generic_vector_metric_tests(minkowskiDistance(p).treeMetric)
+  run_generic_vector_metric_tests(minkowskiMetric(p))
 
 describe('euclideanDistance', () => {
-  const euclid = minkowskiDistance(2).treeMetric
+  const euclid = minkowskiMetric(2)
 
   for (const ndim of NDIMS)
     it(`is close to its trivial implementation [${ndim}D]`, () => {
-      const anyU = anyVec(ndim),
-            anyV = anyVec(ndim)
+      const anyU = anyVec(ndim)
+      const anyV = anyVec(ndim)
 
       fc.assert(
         fc.property(anyU, anyV, (u, v) => {
@@ -151,19 +151,19 @@ describe('euclideanDistance', () => {
           const ref = Math.hypot(
             ...u.map((ui, i) => ui - v[i])
           )
-          assertClose(euclid(u, v), ref)
+          assertClose(euclid.distance(u, v), ref)
         })
       )
     })
 })
 
 describe('manhattanDistance', () => {
-  const manhat = minkowskiDistance(1).treeMetric
+  const manhat = minkowskiMetric(1)
 
   for (const ndim of NDIMS)
     it(`is close to its trivial implementation [${ndim}D]`, () => {
-      const anyU = anyVec(ndim),
-            anyV = anyVec(ndim)
+      const anyU = anyVec(ndim)
+      const anyV = anyVec(ndim)
 
       fc.assert(
         fc.property(anyU, anyV, (u, v) => {
@@ -172,19 +172,19 @@ describe('manhattanDistance', () => {
           const ref = u
             .map((ui, i) => Math.abs(ui - v[i]))
             .reduce((x, y) => x + y)
-          assertClose(manhat(u, v), ref)
+          assertClose(manhat.distance(u, v), ref)
         })
       )
     })
 })
 
 describe('chebyshevDistance', () => {
-  const chevy = minkowskiDistance(Infinity).treeMetric
+  const chevy = minkowskiMetric(Infinity)
 
   for (const ndim of NDIMS)
     it(`is close to its trivial implementation [${ndim}D]`, () => {
-      const anyU = anyVec(ndim),
-        anyV = anyVec(ndim)
+      const anyU = anyVec(ndim)
+      const anyV = anyVec(ndim)
 
       fc.assert(
         fc.property(anyU, anyV, (u, v) => {
@@ -193,7 +193,7 @@ describe('chebyshevDistance', () => {
           const ref = u
             .map((ui, i) => Math.abs(ui - v[i]))
             .reduce((x, y) => Math.max(x, y))
-          assertClose(chevy(u, v), ref)
+          assertClose(chevy.distance(u, v), ref)
         })
       )
     })

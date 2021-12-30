@@ -41,25 +41,29 @@ export class BruteNeighborhood implements Neighborhood {
       'X_train.shape[1] must equal X_predict.shape[1]'
     )
 
-    //  // batched version
-    //  return tf.tidy(() => {
-    //    const negDist = _metric(queryPoints, _entries).neg()
-    //    const { values, indices } = tf.topk(negDist, k)
-    //    return { distances: values.neg(), indices }
-    //  })
+    // // batched version
+    // const [m, n] = queryPoints.shape
+    // return tf.tidy(() => {
+    //   const negDist = _metric.tensorDistance(
+    //     queryPoints.reshape([m, 1, n]),
+    //     _entries
+    //   ).neg() as Tensor2D
+    //   const { values, indices } = tf.topk(negDist, k)
+    //   return { distances: values.neg(), indices }
+    // })
 
     // unbatched version
     return tf.tidy(() => {
       const result = tf.unstack(queryPoints).map((queryPoint) => {
         return tf.tidy(() => {
-          const dist = _metric(queryPoint.reshape([1, -1]), _entries).neg()
+          const dist = _metric.tensorDistance(queryPoint, _entries).neg()
           const { values, indices } = tf.topk(dist, k)
           return [values, indices]
         })
       })
       return {
-        distances: tf.concat(result.map((x) => x[0])).neg(),
-        indices: tf.concat(result.map((x) => x[1]))
+        distances: tf.stack(result.map((x) => x[0])).neg() as Tensor2D,
+        indices: tf.stack(result.map((x) => x[1])) as Tensor2D
       }
     })
   }

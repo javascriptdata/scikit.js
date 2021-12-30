@@ -16,13 +16,10 @@
 import { Tensor2D } from '@tensorflow/tfjs'
 import { assert } from '../typesUtils'
 import { tf } from '../../globals'
-import { TreeMetric } from './metrics'
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import * as randUtils from '../randUtils'
 import { alea } from 'seedrandom'
 import { CappedMaxHeap } from './cappedMaxHeap'
-
-const MAX_LEAF_SIZE = 16
 
 const child = (parent: number) => (parent << 1) + 1
 const parent = (child: number) => child - 1 >> 1
@@ -44,18 +41,23 @@ type Vec = {
   subarray(start?: number, end?: number): Vec
 }
 
-export class KdTreeV5 implements Neighborhood {
+interface KdMetric {
+  distance(u: ArrayLike<number>, v: ArrayLike<number>): number
+  minDistToBBox( pt: ArrayLike<number>, bBox: ArrayLike<number> ): number
+}
+
+export class KdTree implements Neighborhood {
   private _nSamples: number
   private _nFeatures: number
 
-  private _metric: TreeMetric
+  private _metric: KdMetric
   private _points: Vec[]
 
   private _bBoxes: Float32Array[]
   private _offsets: Int32Array
   private _indices: Int32Array
 
-  private constructor(nSamples: number, nFeatures: number, metric: TreeMetric, points: Vec[], bBoxes: Float32Array[], offsets: Int32Array, indices: Int32Array) {
+  private constructor(nSamples: number, nFeatures: number, metric: KdMetric, points: Vec[], bBoxes: Float32Array[], offsets: Int32Array, indices: Int32Array) {
     this._nSamples = nSamples
     this._nFeatures = nFeatures
 
@@ -68,29 +70,37 @@ export class KdTreeV5 implements Neighborhood {
     Object.freeze(this)
   }
 
-  static async create({ metric: { treeMetric }, entries }: NeighborhoodParams)
+  static async build({ metric, entries, leafSize = 16 }: NeighborhoodParams)
   {
+    assert(
+      1 < leafSize,
+      'new KdTree({leafSize=16}): leafSize must be a positive number.'
+    )
+    assert(
+      'function' === typeof metric.minDistToBBox,
+      'new KdTree({metric}): metric must implement `minDistToBBox` function.'
+    )
     const [nSamples, nFeatures] = entries.shape
-
-    const data = await entries.data()
-
-    const points: Vec[] = []
-    for (let i = 0; i < nSamples;) {
-      points.push( data.subarray(nFeatures * i, nFeatures * ++i) )
-    }
 
     const indices = new Int32Array(nSamples)
     for (let i = 0; i < nSamples; i++) {
       indices[i] = i
     }
 
-    const nLeafs = ceilPow2(nSamples / MAX_LEAF_SIZE)
+    const data = await entries.data()
+
+    const points: Vec[] = Array.from(
+      indices, (_, i) => data.subarray(nFeatures * i, nFeatures * ++i)
+    )
+
+    const nLeafs = ceilPow2(nSamples / leafSize)
     const nNodes = nLeafs * 2 - 1
 
     const leaf0 = nNodes - nLeafs
 
     const offsets = new Int32Array(nLeafs + 1)
     const bBoxes = function() {
+      // Make all bounding boxes use one ArrayBuffer to reduce cache misses.
       const n = nFeatures * 2
       const flat = new Float32Array(nNodes * n)
       const bBoxes: Float32Array[] = []
@@ -183,14 +193,12 @@ export class KdTreeV5 implements Neighborhood {
     buildTree(0, 0, nSamples)
 
     const swapData = (i: number, j: number) => {
-      const ni = nFeatures * i
-      const nj = nFeatures * j
-      for (let k = 0; k < nFeatures; k++) {
-        const ik = ni + k
-        const jk = nj + k
-        const di = data[ik]
-        data[ik] = data[jk]
-        data[jk] = di
+      i *= nFeatures
+      j *= nFeatures
+      for (const end = i + nFeatures; i < end; i++, j++) {
+        const d = data[i]
+        data[i] = data[j]
+        data[j] = d
       }
     }
 
@@ -209,8 +217,8 @@ export class KdTreeV5 implements Neighborhood {
       }
     }
 
-    return new KdTreeV5(
-      nSamples, nFeatures, treeMetric, points, bBoxes, offsets, indices
+    return new KdTree(
+      nSamples, nFeatures, metric as KdMetric, points, bBoxes, offsets, indices
     )
   }
 
@@ -246,8 +254,8 @@ export class KdTreeV5 implements Neighborhood {
         }
         if (node < leaf0) {
           const c = child(node)
-          const dist0 = _metric.distToBBox(queryPt, _bBoxes[c])
-          const dist1 = _metric.distToBBox(queryPt, _bBoxes[c + 1])
+          const dist0 = _metric.minDistToBBox(queryPt, _bBoxes[c])
+          const dist1 = _metric.minDistToBBox(queryPt, _bBoxes[c + 1])
           if (dist0 <= dist1) {
             knn(c, dist0)
             knn(c + 1, dist1)
@@ -262,7 +270,7 @@ export class KdTreeV5 implements Neighborhood {
           const from = _offsets[node]
           const until = _offsets[node + 1]
           for (let i = from; i < until; i++) {
-            const dist = _metric(queryPt, _points[i])
+            const dist = _metric.distance(queryPt, _points[i])
             heap.add(dist, _indices[i])
           }
         }
@@ -276,10 +284,16 @@ export class KdTreeV5 implements Neighborhood {
           dists.subarray(off, end),
           indxs.subarray(off, end)
         )
-        knn(0, _metric.distToBBox(queryPt, _bBoxes[0]))
+        knn(0, _metric.minDistToBBox(queryPt, _bBoxes[0]))
       }
     }
 
+    // Current implementation does not support backpropagation
+    // through `dists`. This can easily supported by recomputing
+    // the distances using `metric.tensorDistance` in the end.
+    // TODO: Add `distanceBackprop: true | false` option to
+    // KNeighborsBaseParams and add backpropagation support
+    // to KdTree.
     return {
       distances: tf.tensor(dists, [nQueries, k], 'float32'),
       indices: tf.tensor(indxs, [nQueries, k], 'int32')
