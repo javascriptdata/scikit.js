@@ -72,6 +72,7 @@ export const minkowskiDistance = (p: number) => {
 
 const minkowskiTreeMetric = (p: number) => {
   switch (p) {
+    case 1: return manhattanTreeMetric
     case 2: return euclideanTreeMetric
     case Infinity: return chebyshevTreeMetric
   }
@@ -116,6 +117,48 @@ const minkowskiTreeMetric = (p: number) => {
   return treeMetric as TreeMetric
 }
 
+const manhattanTreeMetric = (u: Vec, v: Vec) => {
+  const len = u.length
+  if (len !== v.length) {
+    throw new Error(
+      `minkowskiDistance(1).treeMetric(u,v): u and v must have same length.`
+    )
+  }
+
+  let norm = 0
+
+  for (let i = 0; i < len; i++ ) {
+    norm += Math.abs(u[i] - v[i])
+  }
+
+  return norm
+}
+manhattanTreeMetric.distToBBox = (pt: Vec, bBox: Vec) => {
+  const len = bBox.length
+  if (len !== (pt.length << 1)) {
+    throw new Error(
+      `minkowskiDistance(1).treeMetric.distToBBox(pt,bBox): pt.length*2 must equal bBox.length.`
+    )
+  }
+
+  let norm = 0
+
+  for (let i = 0; i < len; ) {
+    const pi = pt[i >>> 1]
+
+//    const x = Math.max(0, bBox[i++] - pi, pi - bBox[i++])
+
+    const u = bBox[i++] - pi
+    const v = pi - bBox[i++]
+    const x = 0.5 * ((Math.abs(u) + u) + (Math.abs(v) + v))
+
+    norm += x
+  }
+
+  return norm
+}
+Object.defineProperty(manhattanTreeMetric, 'name', { value: `minkowskiDistance(1).treeMetric`, writable: true })
+
 const euclideanTreeMetric = (u: Vec, v: Vec) => {
   const len = u.length
   if (len !== v.length) {
@@ -127,14 +170,15 @@ const euclideanTreeMetric = (u: Vec, v: Vec) => {
   let norm = 0
 
   for (let i = 0; i < len; i++ ) {
-    const x = Math.abs(u[i] - v[i])
+    const x = u[i] - v[i]
     norm += x * x
   }
 
   return Math.sqrt(norm)
 }
 euclideanTreeMetric.distToBBox = (pt: Vec, bBox: Vec) => {
-  if (pt.length * 2 != bBox.length) {
+  const len = bBox.length
+  if (pt.length * 2 !== bBox.length) {
     throw new Error(
       `minkowskiDistance(2).treeMetric.distToBBox(pt,bBox): pt.length*2 must equal bBox.length.`
     )
@@ -142,8 +186,14 @@ euclideanTreeMetric.distToBBox = (pt: Vec, bBox: Vec) => {
 
   let norm = 0
 
-  for (let j = 0, i = 0; i < pt.length; i++ ) {
-    let x = Math.max(0, bBox[j++] - pt[i], pt[i] - bBox[j++])
+  for (let i = 0; i < len; ) {
+    const pi = pt[i >>> 1]
+
+//    const x = Math.max(0, bBox[i++] - pi, pi - bBox[i++])
+
+    const u = bBox[i++] - pi
+    const v = pi - bBox[i++]
+    const x = 0.5 * ((Math.abs(u) + u) + (Math.abs(v) + v))
     norm += x * x
   }
 
@@ -169,6 +219,7 @@ const chebyshevTreeMetric = (u: Vec, v: Vec) => {
   return norm
 }
 chebyshevTreeMetric.distToBBox = (pt: Vec, bBox: Vec) => {
+  const len = bBox.length
   if (pt.length * 2 != bBox.length) {
     throw new Error(
       `minkowskiDistance(Infinity).treeMetric.distToBBox(pt,bBox): pt.length*2 must equal bBox.length.`
@@ -177,8 +228,14 @@ chebyshevTreeMetric.distToBBox = (pt: Vec, bBox: Vec) => {
 
   let norm = -Infinity
 
-  for (let j = 0, i = 0; i < pt.length; i++ ) {
-    let x = Math.max(0, bBox[j++] - pt[i], pt[i] - bBox[j++])
+  for (let i = 0; i < len;) {
+    const pi = pt[i >>> 1]
+
+//    const x = Math.max(0, bBox[i++] - pi, pi - bBox[i++])
+
+    const u = bBox[i++] - pi
+    const v = pi - bBox[i++]
+    const x = 0.5 * ((Math.abs(u) + u) + (Math.abs(v) + v))
     norm = Math.max(norm, x)
   }
 

@@ -20,7 +20,6 @@ import { TreeMetric } from './metrics'
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import * as randUtils from '../randUtils'
 import { alea } from 'seedrandom'
-import { NAryHeap } from './nAryHeap'
 import { CappedMaxHeap } from './cappedMaxHeap'
 
 const MAX_LEAF_SIZE = 8
@@ -192,48 +191,82 @@ export class KdTreeV2 implements Neighborhood {
 //    }
 //  }
 
+//  private _kNearest( queryPoint: Vec, dists: Vec, indxs: Int32Array )
+//  {
+//    const { _nFeatures, _data, _metric, _root } = this
+//
+//    // min heap of nodes sorted by positive distance to bounding box
+//    const nodes = new NAryHeap<Branch>()
+//    // min heap of leaves sorted by negative distance
+//    const leafs = new CappedMaxHeap(dists, indxs)
+//
+//    const enqueue = (node: Node) => {
+//      if (node instanceof Branch) {
+//        const minDist = _metric.distToBBox(queryPoint, node.bBox)
+//        nodes.add(minDist, node)
+//      }
+//      else {
+//        for (const i of node) {
+//          const dist = _metric(queryPoint, _data.subarray(_nFeatures * i, _nFeatures * (i + 1)))
+//          leafs.add(dist, i)
+//        }
+//      }
+//    }
+//    enqueue(_root)
+//
+//    while ( !(leafs.maxKey <= nodes.minKey) )
+//    {
+//      let node: Node = nodes.popMin()
+//      do {
+//        let { axis, threshold, child0, child1 } = node as Branch
+//        if (threshold < queryPoint[axis]) {
+//          node = child1
+//          child1 = child0
+//        }
+//        else {
+//          node = child0
+//        }
+//        enqueue(child1)
+//      }
+//      while (node instanceof Branch)
+//      enqueue(node)
+//    }
+//
+//    leafs.sort()
+//  }
+
   private _kNearest( queryPoint: Vec, dists: Vec, indxs: Int32Array )
   {
     const { _nFeatures, _data, _metric, _root } = this
 
-    // min heap of nodes sorted by positive distance to bounding box
-    const nodes = new NAryHeap<Branch>()
-    // min heap of leaves sorted by negative distance
-    const leafs = new CappedMaxHeap(dists, indxs)
+    const heap = new CappedMaxHeap(dists, indxs)
 
-    const enqueue = (node: Node) => {
+    const knn = ( node: Node ) =>
+    {
       if (node instanceof Branch) {
-        const minDist = _metric.distToBBox(queryPoint, node.bBox)
-        nodes.add(minDist, node)
+        let { axis, threshold, bBox, child0, child1 } = node
+        let minDist = _metric.distToBBox(queryPoint, bBox)
+        if (minDist >= heap.maxKey) {
+          return
+        }
+        if (threshold < queryPoint[axis]) {
+          let ch = child0
+          child0 = child1
+          child1 = ch
+        }
+        knn(child0)
+        knn(child1)
       }
       else {
         for (const i of node) {
           const dist = _metric(queryPoint, _data.subarray(_nFeatures * i, _nFeatures * (i + 1)))
-          leafs.add(dist, i)
+          heap.add(dist, i)
         }
       }
     }
-    enqueue(_root)
 
-    while ( !(leafs.maxKey <= nodes.minKey) )
-    {
-      let node: Node = nodes.popMin()
-      do {
-        let { axis, threshold, child0, child1 } = node as Branch
-        if (threshold < queryPoint[axis]) {
-          node = child1
-          child1 = child0
-        }
-        else {
-          node = child0
-        }
-        enqueue(child1)
-      }
-      while (node instanceof Branch)
-      enqueue(node)
-    }
-
-    leafs.sort()
+    knn(_root)
+    heap.sort()
   }
 
   kNearest(

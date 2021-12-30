@@ -21,7 +21,7 @@ import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { tf } from '../../globals'
-import { KdTreeV2 } from './kdTreeV2'
+import { KdTreeV5 } from './kdTreeV5'
 
 const WEIGHTS_FUNCTIONS = {
   uniform(distances: Tensor2D) {
@@ -53,7 +53,7 @@ const METRIC_FUNCTIONS = {
 }
 
 const ALGORITHMS = {
-  kdTree: KdTreeV2.create,
+  kdTree: KdTreeV5.create,
   auto: async (params: NeighborhoodParams) => new BruteNeighborhood(params),
   brute: async (params: NeighborhoodParams) => new BruteNeighborhood(params)
 }
@@ -144,7 +144,7 @@ export class KNeighborsBase implements KNeighborsParams {
    * @param y The target of each training sample, where `y[i]` the the
    *          target of the (i+1)-th sample.
    */
-  public async fit(X: Scikit2D, y: Scikit1D) {
+  public async fit(X: Scikit2D, y: Scikit1D): Promise<this> {
     const { algorithm = 'auto', metric = 'minkowski', p = 2 } = this
     assert(
       Object.keys(METRIC_FUNCTIONS).includes(metric),

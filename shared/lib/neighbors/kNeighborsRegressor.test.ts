@@ -22,6 +22,7 @@ import { KNeighborsParams } from './kNeighborsBase'
 import { assert } from 'chai'
 import { fetchCaliforniaHousing, loadDiabetes } from '../datasets/datasets'
 import { arrayEqual } from '../utils'
+import { performance } from 'perf_hooks'
 
 // TODO: replace this with KFold as soon as its implemented
 function* kFoldIndices(
@@ -102,8 +103,17 @@ function testWithDataset(
       try {
         tf.engine().startScope()
         const [train_X, train_y, test_X, test_y] = data
+
+//        let t0 = performance.now()
         await model.fit(train_X, train_y)
+//        const tFit = performance.now() - t0
+//        console.log({ tFit })
+
+//        t0 = performance.now()
         const predict_y = model.predict(test_X)
+//        const tPredict = performance.now() - t0
+//        console.log({ tPredict })
+
         mse += meanSquaredError(test_y, predict_y)
       } finally {
         tf.engine().endScope()
@@ -113,14 +123,14 @@ function testWithDataset(
 
     mse /= k
 
-    assert.closeTo(mse, referenceError, Math.abs(referenceError) * 0.01)
+    assert.closeTo(mse, referenceError, Math.abs(referenceError) * 0.02)
   })
 }
 
 describe('KNeighborsRegressor', function () {
   this.timeout(1200_000)
 
-  for (const algorithm of ['kdTree', undefined/*, 'brute', 'auto'*/] as ( undefined | 'brute' | 'auto' | 'kdTree')[])
+  for (const algorithm of ['kdTree', 'brute'/*, undefined, 'auto'*/] as KNeighborsParams['algorithm'][])
   {
     testWithDataset(loadDiabetes, { nNeighbors: 5, weights: 'distance', algorithm }, 3570)
     testWithDataset(loadDiabetes, { nNeighbors: 3, weights: 'uniform', algorithm }, 3833)
@@ -133,6 +143,16 @@ describe('KNeighborsRegressor', function () {
       fetchCaliforniaHousing,
       { nNeighbors: 4, weights: 'uniform', algorithm },
       1.28
+    )
+    testWithDataset(
+      fetchCaliforniaHousing,
+      { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
+      1.19
+    )
+    testWithDataset(
+      fetchCaliforniaHousing,
+      { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
+      1.32
     )
   }
 

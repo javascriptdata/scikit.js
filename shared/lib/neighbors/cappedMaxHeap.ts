@@ -34,38 +34,108 @@ export class CappedMaxHeap {
     return this._keys[0]
   }
 
+//  add( key: number, val: number ) {
+//    let { _keys, _vals, _pos: i } = this
+//    if (0 < i) {
+//      this._pos = --i
+//    }
+//    else if (key > _keys[0]) {
+//      return
+//    }
+//    const { length } = _keys
+//
+//    // sift-down
+//    for (;;) {
+//      const p = i
+//      // fill parent gap with filler
+//      _keys[i] = key
+//      _vals[i] = val
+//      // c: leftmost child of i
+//      let c = (i << 1) + 1
+//
+//      // find largest child that is larger than the filler
+//      const lastChild = Math.min(length, c + 2)
+//      for (;lastChild > c; c++)
+//        if (_keys[c] > _keys[i]) i = c
+//
+//      // if parent is already the smallest value, stop
+//      if (i === p) break
+//
+//      // move smallest value to root/parent
+//      _keys[p] = _keys[i]
+//      _vals[p] = _vals[i]
+//    }
+//  }
+
   add( key: number, val: number ) {
-    let { _keys, _vals, _pos: i } = this
-    if (0 < i) {
-      this._pos = --i
+    let { _keys, _vals, _pos: p } = this
+    if (0 < p) {
+      this._pos = --p
     }
-    else if (key > _keys[0]) {
+    else if (_keys[0] <= key) {
       return
     }
-    const { length } = _keys
+    const end = _keys.length - 1
 
     // sift-down
     for (;;) {
-      const p = i
-      // fill parent gap with filler
-      _keys[i] = key
-      _vals[i] = val
-      // c: leftmost child of i
-      let c = (i << 1) + 1
-
-      // find largest child that is larger than the filler
-      const lastChild = Math.min(length, c + 2)
-      for (;lastChild > c; c++)
-        if (_keys[c] > _keys[i]) i = c
-
-      // if parent is already the smallest value, stop
-      if (i === p) break
-
-      // move smallest value to root/parent
-      _keys[p] = _keys[i]
-      _vals[p] = _vals[i]
+      let c = (p << 1) + 1
+      if (c > end) {
+        break
+      }
+      c += +(c < end && _keys[c] < _keys[c + 1])
+      if (_keys[c] <= key) {
+        break
+      }
+      _keys[p] = _keys[c]
+      _vals[p] = _vals[c]
+      p = c
     }
+
+    _keys[p] = key
+    _vals[p] = val
   }
+
+//  add( key: number, val: number ) {
+//    let { _keys, _vals, _pos } = this
+//    if (0 < _pos) {
+//      this._pos = --_pos
+//    }
+//    else if (key > _keys[0]) {
+//      return
+//    }
+//    const end = _keys.length - 1
+//
+//    let i = _pos
+//
+//    // trickle down
+//    for (;;) {
+//      // c: left child of i
+//      let c = (i << 1) + 1
+//      if (c > end) {
+//        break
+//      }
+//      c += +(c < end && _keys[c] < _keys[c + 1])
+//      _keys[i] = _keys[c]
+//      _vals[i] = _vals[c]
+//      i = c
+//    }
+//
+//    // bubble up
+//    for (;;) {
+//      // p: parent of i
+//      let p = i - 1 >> 1
+//      if (p < _pos || _keys[p] >= key) {
+//        break
+//      }
+//      _keys[i] = _keys[p]
+//      _vals[i] = _vals[p]
+//      i = p
+//    }
+//
+//    _keys[i] = key
+//    _vals[i] = val
+//  }
 
   sort()
   {

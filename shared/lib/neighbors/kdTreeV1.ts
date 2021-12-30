@@ -14,7 +14,6 @@
 */
 
 import { Tensor2D } from '@tensorflow/tfjs'
-import { Vec } from '../types'
 import { assert } from '../typesUtils'
 import { tf } from '../../globals'
 import { Metric } from './metrics'
@@ -24,6 +23,12 @@ import { alea } from 'seedrandom'
 import { NAryHeap } from './nAryHeap'
 
 const MAX_LEAF_SIZE = 8
+
+type Vec = {
+  readonly length: number
+  [i: number]: number
+  slice(start?: number, end?: number): Vec
+}
 
 type Node = Branch | Leaf
 
