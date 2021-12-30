@@ -22,7 +22,7 @@ import { alea } from 'seedrandom'
 import { CappedMaxHeap } from './cappedMaxHeap'
 
 const child = (parent: number) => (parent << 1) + 1
-const parent = (child: number) => child - 1 >> 1
+const parent = (child: number) => (child - 1) >> 1
 
 const ceilPow2 = (int32: number) => {
   assert(
@@ -43,7 +43,7 @@ type Vec = {
 
 interface KdMetric {
   distance(u: ArrayLike<number>, v: ArrayLike<number>): number
-  minDistToBBox( pt: ArrayLike<number>, bBox: ArrayLike<number> ): number
+  minDistToBBox(pt: ArrayLike<number>, bBox: ArrayLike<number>): number
 }
 
 export class KdTree implements Neighborhood {
@@ -57,7 +57,15 @@ export class KdTree implements Neighborhood {
   private _offsets: Int32Array
   private _indices: Int32Array
 
-  private constructor(nSamples: number, nFeatures: number, metric: KdMetric, points: Vec[], bBoxes: Float32Array[], offsets: Int32Array, indices: Int32Array) {
+  private constructor(
+    nSamples: number,
+    nFeatures: number,
+    metric: KdMetric,
+    points: Vec[],
+    bBoxes: Float32Array[],
+    offsets: Int32Array,
+    indices: Int32Array
+  ) {
     this._nSamples = nSamples
     this._nFeatures = nFeatures
 
@@ -70,8 +78,7 @@ export class KdTree implements Neighborhood {
     Object.freeze(this)
   }
 
-  static async build({ metric, entries, leafSize = 16 }: NeighborhoodParams)
-  {
+  static async build({ metric, entries, leafSize = 16 }: NeighborhoodParams) {
     assert(
       1 < leafSize,
       'new KdTree({leafSize=16}): leafSize must be a positive number.'
@@ -89,8 +96,8 @@ export class KdTree implements Neighborhood {
 
     const data = await entries.data()
 
-    const points: Vec[] = Array.from(
-      indices, (_, i) => data.subarray(nFeatures * i, nFeatures * ++i)
+    const points: Vec[] = Array.from(indices, (_, i) =>
+      data.subarray(nFeatures * i, nFeatures * ++i)
     )
 
     const nLeafs = ceilPow2(nSamples / leafSize)
@@ -99,18 +106,18 @@ export class KdTree implements Neighborhood {
     const leaf0 = nNodes - nLeafs
 
     const offsets = new Int32Array(nLeafs + 1)
-    const bBoxes = function() {
+    const bBoxes = (function () {
       // Make all bounding boxes use one ArrayBuffer to reduce cache misses.
       const n = nFeatures * 2
       const flat = new Float32Array(nNodes * n)
       const bBoxes: Float32Array[] = []
       for (let i = 0; i < nNodes; ) {
-        bBoxes.push( flat.subarray(n * i, n * ++i) )
+        bBoxes.push(flat.subarray(n * i, n * ++i))
       }
       return bBoxes
-    }()
+    })()
 
-    const randInt = randUtils.randInt( alea(`KdTree[${nSamples},${nFeatures}]`) )
+    const randInt = randUtils.randInt(alea(`KdTree[${nSamples},${nFeatures}]`))
 
     const swapIndices = (i: number, j: number) => {
       const t = indices[i]
@@ -118,8 +125,7 @@ export class KdTree implements Neighborhood {
       indices[j] = t
     }
 
-    const buildTree = ( node: number, from: number, until: number ) =>
-    {
+    const buildTree = (node: number, from: number, until: number) => {
       // COMPUTE BOUNDING BOX
       // --------------------
       const bBox = bBoxes[node]
@@ -129,7 +135,7 @@ export class KdTree implements Neighborhood {
 
       for (let i = from; i < until; i++) {
         const j = indices[i]
-        for (let k = 0; k < bBox.length;) {
+        for (let k = 0; k < bBox.length; ) {
           const djk = data[nFeatures * j + (k >>> 1)]
           bBox[k] = Math.min(bBox[k++], djk)
           bBox[k] = Math.max(bBox[k++], djk)
@@ -150,10 +156,10 @@ export class KdTree implements Neighborhood {
 
       // 2.1: Determine Split Axis
       // -------------------------
-      const axis = function(){
+      const axis = (function () {
         let axis = 0
         let dMax = -Infinity
-        for (let i = bBox.length; i >= 0;) {
+        for (let i = bBox.length; i >= 0; ) {
           const di = bBox[--i] - bBox[--i]
           if (di > dMax) {
             dMax = di
@@ -161,24 +167,28 @@ export class KdTree implements Neighborhood {
           }
         }
         return axis
-      }()
+      })()
 
-      const mid = from + until >>> 1
+      const mid = (from + until) >>> 1
 
       // 2.1: Split Along `axis`
       // -----------------------
       // Use quick-select to split `points` along `axis` in half
-      for (let pos = from, end = until;;)
-      {
-        const threshold = data[ nFeatures * indices[randInt(pos, end)] + axis ]
+      for (let pos = from, end = until; ; ) {
+        const threshold = data[nFeatures * indices[randInt(pos, end)] + axis]
         let l = pos,
-            r = pos
-        for (let i = pos; i < end; i++)
-        { let pi = data[ nFeatures * indices[i] + axis ]
-          if (pi <= threshold ) { swapIndices(i, r)
-          if (pi < threshold ) { swapIndices(l++, r) } r++ }
+          r = pos
+        for (let i = pos; i < end; i++) {
+          let pi = data[nFeatures * indices[i] + axis]
+          if (pi <= threshold) {
+            swapIndices(i, r)
+            if (pi < threshold) {
+              swapIndices(l++, r)
+            }
+            r++
+          }
         }
-             if (l > mid) end = l
+        if (l > mid) end = l
         else if (r < mid) pos = r
         else break
       }
@@ -203,31 +213,42 @@ export class KdTree implements Neighborhood {
     }
 
     // apply permutations (given by indices) to data
-    for (let perm = indices.slice(), i = 0; i < nSamples; i++)
-    {
+    for (let perm = indices.slice(), i = 0; i < nSamples; i++) {
       // permutation cycle
-      for (let j = i;;)
-      {
+      for (let j = i; ; ) {
         let k = perm[j]
         perm[j] = j
         if (k === i) {
           break
         }
-        swapData(j, j = k)
+        swapData(j, (j = k))
       }
     }
 
     return new KdTree(
-      nSamples, nFeatures, metric as KdMetric, points, bBoxes, offsets, indices
+      nSamples,
+      nFeatures,
+      metric as KdMetric,
+      points,
+      bBoxes,
+      offsets,
+      indices
     )
   }
 
   kNearest(
     k: number,
     queryPoints: Tensor2D
-  ): { distances: Tensor2D; indices: Tensor2D }
-  {
-    const { _nSamples, _nFeatures, _metric, _points, _bBoxes, _offsets, _indices } = this
+  ): { distances: Tensor2D; indices: Tensor2D } {
+    const {
+      _nSamples,
+      _nFeatures,
+      _metric,
+      _points,
+      _bBoxes,
+      _offsets,
+      _indices
+    } = this
     k = Math.min(k, _nSamples)
 
     const [nQueries, nDim] = queryPoints.shape
@@ -247,8 +268,7 @@ export class KdTree implements Neighborhood {
       let heap: CappedMaxHeap
       let queryPt: Vec
 
-      const knn = ( node: number, minDist: number ) =>
-      {
+      const knn = (node: number, minDist: number) => {
         if (minDist >= heap.maxKey) {
           return
         }
@@ -259,13 +279,11 @@ export class KdTree implements Neighborhood {
           if (dist0 <= dist1) {
             knn(c, dist0)
             knn(c + 1, dist1)
-          }
-          else {
+          } else {
             knn(c + 1, dist1)
             knn(c, dist0)
           }
-        }
-        else {
+        } else {
           node -= leaf0
           const from = _offsets[node]
           const until = _offsets[node + 1]
@@ -277,7 +295,7 @@ export class KdTree implements Neighborhood {
       }
 
       for (let q = 0; q < nQueries; q++) {
-        queryPt = query.subarray( nDim * q, nDim * (q + 1) )
+        queryPt = query.subarray(nDim * q, nDim * (q + 1))
         const off = k * q
         const end = k + off
         heap = new CappedMaxHeap(

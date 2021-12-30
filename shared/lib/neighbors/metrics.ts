@@ -22,18 +22,18 @@ import { assert } from '../typesUtils'
  * Abstract type of neighbohood distance metrics.
  */
 export interface Metric {
- /**
-  * Returns the broadcasted distances between a batch of points `X` and another
-  * batch points `Y`.
-  *
-  * @param X One batch of points, where the last axis represents the point
-  *          coordinates. The leading axes represent the batch dimensions.
-  * @param Y Other batch of points, where the last axis represents the point
-  *          coordinates. The leading axes represent the batch dimensions.
-  *
-  * @returns A broadcasted distance tensor `D`, where `D[..., i, j]` represents
-  *          the distance between point `X[..., i, j, k]` and point `Y[..., i, j, k]`.
-  */
+  /**
+   * Returns the broadcasted distances between a batch of points `X` and another
+   * batch points `Y`.
+   *
+   * @param X One batch of points, where the last axis represents the point
+   *          coordinates. The leading axes represent the batch dimensions.
+   * @param Y Other batch of points, where the last axis represents the point
+   *          coordinates. The leading axes represent the batch dimensions.
+   *
+   * @returns A broadcasted distance tensor `D`, where `D[..., i, j]` represents
+   *          the distance between point `X[..., i, j, k]` and point `Y[..., i, j, k]`.
+   */
   tensorDistance(u: Tensor, v: Tensor): Tensor
 
   /**
@@ -55,7 +55,7 @@ export interface Metric {
    *             bound of coordinate `i` and `bBox[2*i+1]` is the upper
    *             bound of coordinate `i`.
    */
-  minDistToBBox?( pt: ArrayLike<number>, bBox: ArrayLike<number> ): number
+  minDistToBBox?(pt: ArrayLike<number>, bBox: ArrayLike<number>): number
 
   /**
    * Name of the metric.
@@ -92,9 +92,12 @@ const minkowskiTensorDistance = (p: number) => (u: Tensor, v: Tensor) => {
  */
 export const minkowskiMetric = (p: number) => {
   switch (p) {
-    case 1: return manhattanMetric
-    case 2: return euclideanMetric
-    case Infinity: return chebyshevMetric
+    case 1:
+      return manhattanMetric
+    case 2:
+      return euclideanMetric
+    case Infinity:
+      return chebyshevMetric
   }
   assert(1 <= p, 'minkowskiMetric(p): Invalid p.')
 
@@ -111,7 +114,7 @@ export const minkowskiMetric = (p: number) => {
       // implementation is not underflow-/ overflow-safe
       // TODO: if tfjs ever adds float64, make this underflow-safe
       let norm = 0
-      for (let i = 0; i < len; i++ ) {
+      for (let i = 0; i < len; i++) {
         norm += Math.abs(u[i] - v[i]) ** p
       }
       return norm ** (1 / p)
@@ -123,7 +126,7 @@ export const minkowskiMetric = (p: number) => {
         )
       }
       let norm = 0
-      for (let j = 0, i = 0; i < pt.length; i++ ) {
+      for (let j = 0, i = 0; i < pt.length; i++) {
         let x = Math.max(0, bBox[j++] - pt[i], pt[i] - bBox[j++])
         norm += x ** p
       }
@@ -148,14 +151,14 @@ const manhattanMetric: Metric = Object.freeze({
       )
     }
     let norm = 0
-    for (let i = 0; i < len; i++ ) {
+    for (let i = 0; i < len; i++) {
       norm += Math.abs(u[i] - v[i])
     }
     return norm
   },
   minDistToBBox(pt: ArrayLike<number>, bBox: ArrayLike<number>) {
     const len = bBox.length
-    if (len !== (pt.length << 1)) {
+    if (len !== pt.length << 1) {
       throw new Error(
         `minkowskiMetric(1).minDistToBBox(pt,bBox): pt.length*2 must equal bBox.length.`
       )
@@ -166,7 +169,7 @@ const manhattanMetric: Metric = Object.freeze({
       // const x = Math.max(0, bBox[i++] - pi, pi - bBox[i++])
       const u = bBox[i++] - pi
       const v = pi - bBox[i++]
-      const x = 0.5 * ((Math.abs(u) + u) + (Math.abs(v) + v))
+      const x = 0.5 * (Math.abs(u) + u + (Math.abs(v) + v))
       norm += x
     }
     return norm
@@ -187,7 +190,7 @@ const euclideanMetric: Metric = Object.freeze({
       )
     }
     let norm = 0
-    for (let i = 0; i < len; i++ ) {
+    for (let i = 0; i < len; i++) {
       const x = u[i] - v[i]
       norm += x * x
     }
@@ -206,7 +209,7 @@ const euclideanMetric: Metric = Object.freeze({
       // const x = Math.max(0, bBox[i++] - pi, pi - bBox[i++])
       const u = bBox[i++] - pi
       const v = pi - bBox[i++]
-      const x = 0.5 * ((Math.abs(u) + u) + (Math.abs(v) + v))
+      const x = 0.5 * (Math.abs(u) + u + (Math.abs(v) + v))
       norm += x * x
     }
     return Math.sqrt(norm)
@@ -227,7 +230,7 @@ const chebyshevMetric: Metric = Object.freeze({
       )
     }
     let norm = 0
-    for (let i = 0; i < len; i++ ) {
+    for (let i = 0; i < len; i++) {
       const x = Math.abs(u[i] - v[i])
       norm = Math.max(norm, x)
     }
@@ -241,12 +244,12 @@ const chebyshevMetric: Metric = Object.freeze({
       )
     }
     let norm = -Infinity
-    for (let i = 0; i < len;) {
+    for (let i = 0; i < len; ) {
       const pi = pt[i >>> 1]
       // const x = Math.max(0, bBox[i++] - pi, pi - bBox[i++])
       const u = bBox[i++] - pi
       const v = pi - bBox[i++]
-      const x = 0.5 * ((Math.abs(u) + u) + (Math.abs(v) + v))
+      const x = 0.5 * (Math.abs(u) + u + (Math.abs(v) + v))
       norm = Math.max(norm, x)
     }
     return norm

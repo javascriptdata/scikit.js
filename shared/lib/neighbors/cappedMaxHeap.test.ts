@@ -22,9 +22,8 @@ import { assert } from 'chai'
 describe('CappedMaxHeap', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
-  const anyFloat = () => fc
-    .double(-(2 ** 16), +(2 ** 16))
-    .map((x) => Math.fround(x))
+  const anyFloat = () =>
+    fc.double(-(2 ** 16), +(2 ** 16)).map((x) => Math.fround(x))
 
   const anyFloatArray = () =>
     fc.array<number>(anyFloat(), {
@@ -33,8 +32,8 @@ describe('CappedMaxHeap', () => {
     })
 
   const anyInput = () =>
-    anyFloatArray().chain<[number[], number]>( (arr) =>
-      fc.nat(arr.length - 1).map( (k) => [arr, k + 1] )
+    anyFloatArray().chain<[number[], number]>((arr) =>
+      fc.nat(arr.length - 1).map((k) => [arr, k + 1])
     )
 
   it(`CappedMaxHeap() retains and sorts smallest k values`, () => {
@@ -52,7 +51,7 @@ describe('CappedMaxHeap', () => {
         values.forEach((x, i) => heap.add(x, i))
         heap.sort()
 
-        assert.deepEqual( keys, reference )
+        assert.deepEqual(keys, reference)
         for (let i = 0; i < k; i++) {
           assert.equal(keys[i], values[vals[i]])
         }

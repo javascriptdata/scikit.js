@@ -117,13 +117,25 @@ function testWithDataset(
   })
 }
 
-for (const algorithm of ['kdTree', 'brute', undefined, 'auto'] as KNeighborsParams['algorithm'][])
-{
+for (const algorithm of [
+  'kdTree',
+  'brute',
+  undefined,
+  'auto'
+] as KNeighborsParams['algorithm'][]) {
   describe(`KNeighborsRegressor({ algorithm: ${algorithm} })`, function () {
     this.timeout(60_000)
 
-    testWithDataset(loadDiabetes, { nNeighbors: 5, weights: 'distance', algorithm }, 3570)
-    testWithDataset(loadDiabetes, { nNeighbors: 3, weights: 'uniform', algorithm }, 3833)
+    testWithDataset(
+      loadDiabetes,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      3570
+    )
+    testWithDataset(
+      loadDiabetes,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      3833
+    )
     testWithDataset(
       fetchCaliforniaHousing,
       { nNeighbors: 3, weights: 'distance', algorithm },

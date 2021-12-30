@@ -21,23 +21,23 @@ import { Metric, minkowskiMetric } from './metrics'
 const NDIMS = Object.freeze([1, 2, 7])
 
 const anyVec = (ndim: number) => {
-//  // small value to provoke underflow (nextDown(x)**2 === 0)
-//  const small = 1.5717277847026288e-162
+  //  // small value to provoke underflow (nextDown(x)**2 === 0)
+  //  const small = 1.5717277847026288e-162
 
-//  // large value to provoke overflow (x*x === Infinity)
-//  const large = 1.3407807929942597e154
+  //  // large value to provoke overflow (x*x === Infinity)
+  //  const large = 1.3407807929942597e154
 
   const scale = 2 ** 16
 
-//  const anyDouble = fc.oneof(
-//    fc.double(-scale, +scale),
-//    fc.oneof(
-//      fc.double(0, +small * scale), // <- underflow
-//      fc.double(-small * scale, 0), // <- underflow
-//      fc.double(large / scale, +Number.MAX_VALUE), // <- overflow
-//      fc.double(-Number.MAX_VALUE, large / scale) // <- overflow
-//    )
-//  )
+  //  const anyDouble = fc.oneof(
+  //    fc.double(-scale, +scale),
+  //    fc.oneof(
+  //      fc.double(0, +small * scale), // <- underflow
+  //      fc.double(-small * scale, 0), // <- underflow
+  //      fc.double(large / scale, +Number.MAX_VALUE), // <- overflow
+  //      fc.double(-Number.MAX_VALUE, large / scale) // <- overflow
+  //    )
+  //  )
   const anyDouble = fc.double(-scale, +scale)
 
   return fc.array(anyDouble, { minLength: ndim, maxLength: ndim })
@@ -53,9 +53,7 @@ const assertClose = (x: number, y: number) => {
   return assert.closeTo(x, y, tol)
 }
 
-const run_generic_vector_metric_tests = (
-  metric: Metric
-) => {
+const run_generic_vector_metric_tests = (metric: Metric) => {
   describe(`${metric.name} [generic tests]`, () => {
     // test the metric properties as described in:
     // https://en.wikipedia.org/wiki/Metric_(mathematics)
@@ -126,7 +124,10 @@ const run_generic_vector_metric_tests = (
             Object.freeze(u)
             Object.freeze(v)
             Object.freeze(w)
-            assert.isAtMost(metric.distance(u, w), metric.distance(u, v) + metric.distance(u, w))
+            assert.isAtMost(
+              metric.distance(u, w),
+              metric.distance(u, v) + metric.distance(u, w)
+            )
           })
         )
       })
@@ -148,9 +149,7 @@ describe('euclideanDistance', () => {
         fc.property(anyU, anyV, (u, v) => {
           Object.freeze(u)
           Object.freeze(v)
-          const ref = Math.hypot(
-            ...u.map((ui, i) => ui - v[i])
-          )
+          const ref = Math.hypot(...u.map((ui, i) => ui - v[i]))
           assertClose(euclid.distance(u, v), ref)
         })
       )

@@ -24,9 +24,8 @@ type int = number
 describe('NAryHeap', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
-  const anyFloat = () => fc
-    .double(-(2 ** 16), +(2 ** 16))
-    .map((x) => Math.fround(x))
+  const anyFloat = () =>
+    fc.double(-(2 ** 16), +(2 ** 16)).map((x) => Math.fround(x))
 
   const anyFloatArray = () =>
     fc.array<number>(anyFloat(), {
@@ -38,15 +37,13 @@ describe('NAryHeap', () => {
       fc.property(anyFloatArray(), (entries) => {
         const heap = new NAryHeap<int>()
 
-        for (let i = 0; i < entries.length; i++)
-          heap.add(entries[i], i)
+        for (let i = 0; i < entries.length; i++) heap.add(entries[i], i)
 
         const unvisited = entries.map(() => true)
 
         let previous = -Infinity
         // make sure elements are returned in order
-        for (let i = entries.length; i > 0; )
-        {
+        for (let i = entries.length; i > 0; ) {
           assert.equal(heap.size, i)
           const key = heap.minKey
           const val = heap.minVal
@@ -56,10 +53,13 @@ describe('NAryHeap', () => {
           assert.equal(heap.size, i)
           assert.equal(val, heap.popMin())
           assert.equal(heap.size, --i)
-          assert.isAtMost(previous, previous = key)
+          assert.isAtMost(previous, (previous = key))
         }
 
-        assert.deepEqual(unvisited, entries.map(() => false))
+        assert.deepEqual(
+          unvisited,
+          entries.map(() => false)
+        )
       }),
       { numRuns: 512 }
     )

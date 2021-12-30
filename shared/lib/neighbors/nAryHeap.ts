@@ -45,7 +45,7 @@ export class NAryHeap<T> {
    * @param key Key to be enqueueud.
    * @param val Value to be enqueued.
    */
-  add( key: number, val: T ) {
+  add(key: number, val: T) {
     let { _keys, _vals } = this
     let i = _vals.length
     if (i >= _keys.length) {
@@ -86,10 +86,10 @@ export class NAryHeap<T> {
    */
   popMin(): T {
     const { _keys, _vals } = this,
-       ret = _vals[0],
-       val = _vals.pop() as T,
+      ret = _vals[0],
+      val = _vals.pop() as T,
       size = _vals.length,
-       key = _keys[size]
+      key = _keys[size]
 
     if (size > 0) {
       // sift-down the root
@@ -102,8 +102,7 @@ export class NAryHeap<T> {
 
         // find largest child that is larger than the filler
         const lastChild = Math.min(size, c + ARITY)
-        for (;lastChild > c; c++)
-          if (_keys[c] < _keys[i]) i = c
+        for (; lastChild > c; c++) if (_keys[c] < _keys[i]) i = c
 
         // if parent is already the smallest value, stop
         if (i === p) break
@@ -112,8 +111,7 @@ export class NAryHeap<T> {
         _keys[p] = _keys[i]
         _vals[p] = _vals[i]
       }
-    }
-    else {
+    } else {
       _keys[0] = Infinity
     }
 

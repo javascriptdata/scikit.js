@@ -20,10 +20,16 @@ export class CappedMaxHeap {
   private _vals: Int32Array
   private _pos: number
 
-  constructor( keys: Float32Array, vals: Int32Array ) {
+  constructor(keys: Float32Array, vals: Int32Array) {
     const len = keys.length
-    assert(len > 0, 'new CappedMaxHeap(keys,vals): keys.length must be positive.')
-    assert(len === vals.length, 'new CappedMaxHeap(keys,vals): keys.length must equal vals.length.')
+    assert(
+      len > 0,
+      'new CappedMaxHeap(keys,vals): keys.length must be positive.'
+    )
+    assert(
+      len === vals.length,
+      'new CappedMaxHeap(keys,vals): keys.length must equal vals.length.'
+    )
     keys[0] = NaN
     this._keys = keys
     this._vals = vals
@@ -34,45 +40,44 @@ export class CappedMaxHeap {
     return this._keys[0]
   }
 
-//  add( key: number, val: number ) {
-//    let { _keys, _vals, _pos: i } = this
-//    if (0 < i) {
-//      this._pos = --i
-//    }
-//    else if (key > _keys[0]) {
-//      return
-//    }
-//    const { length } = _keys
-//
-//    // sift-down
-//    for (;;) {
-//      const p = i
-//      // fill parent gap with filler
-//      _keys[i] = key
-//      _vals[i] = val
-//      // c: leftmost child of i
-//      let c = (i << 1) + 1
-//
-//      // find largest child that is larger than the filler
-//      const lastChild = Math.min(length, c + 2)
-//      for (;lastChild > c; c++)
-//        if (_keys[c] > _keys[i]) i = c
-//
-//      // if parent is already the smallest value, stop
-//      if (i === p) break
-//
-//      // move smallest value to root/parent
-//      _keys[p] = _keys[i]
-//      _vals[p] = _vals[i]
-//    }
-//  }
+  //  add( key: number, val: number ) {
+  //    let { _keys, _vals, _pos: i } = this
+  //    if (0 < i) {
+  //      this._pos = --i
+  //    }
+  //    else if (key > _keys[0]) {
+  //      return
+  //    }
+  //    const { length } = _keys
+  //
+  //    // sift-down
+  //    for (;;) {
+  //      const p = i
+  //      // fill parent gap with filler
+  //      _keys[i] = key
+  //      _vals[i] = val
+  //      // c: leftmost child of i
+  //      let c = (i << 1) + 1
+  //
+  //      // find largest child that is larger than the filler
+  //      const lastChild = Math.min(length, c + 2)
+  //      for (;lastChild > c; c++)
+  //        if (_keys[c] > _keys[i]) i = c
+  //
+  //      // if parent is already the smallest value, stop
+  //      if (i === p) break
+  //
+  //      // move smallest value to root/parent
+  //      _keys[p] = _keys[i]
+  //      _vals[p] = _vals[i]
+  //    }
+  //  }
 
-  add( key: number, val: number ) {
+  add(key: number, val: number) {
     let { _keys, _vals, _pos: p } = this
     if (0 < p) {
       this._pos = --p
-    }
-    else if (_keys[0] <= key) {
+    } else if (_keys[0] <= key) {
       return
     }
     const end = _keys.length - 1
@@ -96,49 +101,48 @@ export class CappedMaxHeap {
     _vals[p] = val
   }
 
-//  add( key: number, val: number ) {
-//    let { _keys, _vals, _pos } = this
-//    if (0 < _pos) {
-//      this._pos = --_pos
-//    }
-//    else if (key > _keys[0]) {
-//      return
-//    }
-//    const end = _keys.length - 1
-//
-//    let i = _pos
-//
-//    // trickle down
-//    for (;;) {
-//      // c: left child of i
-//      let c = (i << 1) + 1
-//      if (c > end) {
-//        break
-//      }
-//      c += +(c < end && _keys[c] < _keys[c + 1])
-//      _keys[i] = _keys[c]
-//      _vals[i] = _vals[c]
-//      i = c
-//    }
-//
-//    // bubble up
-//    for (;;) {
-//      // p: parent of i
-//      let p = i - 1 >> 1
-//      if (p < _pos || _keys[p] >= key) {
-//        break
-//      }
-//      _keys[i] = _keys[p]
-//      _vals[i] = _vals[p]
-//      i = p
-//    }
-//
-//    _keys[i] = key
-//    _vals[i] = val
-//  }
+  //  add( key: number, val: number ) {
+  //    let { _keys, _vals, _pos } = this
+  //    if (0 < _pos) {
+  //      this._pos = --_pos
+  //    }
+  //    else if (key > _keys[0]) {
+  //      return
+  //    }
+  //    const end = _keys.length - 1
+  //
+  //    let i = _pos
+  //
+  //    // trickle down
+  //    for (;;) {
+  //      // c: left child of i
+  //      let c = (i << 1) + 1
+  //      if (c > end) {
+  //        break
+  //      }
+  //      c += +(c < end && _keys[c] < _keys[c + 1])
+  //      _keys[i] = _keys[c]
+  //      _vals[i] = _vals[c]
+  //      i = c
+  //    }
+  //
+  //    // bubble up
+  //    for (;;) {
+  //      // p: parent of i
+  //      let p = i - 1 >> 1
+  //      if (p < _pos || _keys[p] >= key) {
+  //        break
+  //      }
+  //      _keys[i] = _keys[p]
+  //      _vals[i] = _vals[p]
+  //      i = p
+  //    }
+  //
+  //    _keys[i] = key
+  //    _vals[i] = val
+  //  }
 
-  sort()
-  {
+  sort() {
     const { _keys, _vals, _pos } = this
     assert(0 === _pos, 'CappedMaxHeap().sort(): Heap is not full yet.')
 
@@ -159,7 +163,7 @@ export class CappedMaxHeap {
 
     const sort3 = (from: number) => {
       sort2(from)
-      if ( _keys[from + 1] > _keys[from + 2] ) {
+      if (_keys[from + 1] > _keys[from + 2]) {
         swap(from + 1, from + 2)
         sort2(from)
       }
@@ -168,14 +172,18 @@ export class CappedMaxHeap {
     // Quick sort with median-of-3 pivotization
     const sort = (from: number, until: number) => {
       switch (until - from) {
-        case 0: return
-        case 1: return
-        case 2: return sort2(from)
-        case 3: return sort3(from)
+        case 0:
+          return
+        case 1:
+          return
+        case 2:
+          return sort2(from)
+        case 3:
+          return sort3(from)
       }
 
       // use median of 3 as pivot
-      const mid = from + until >>> 1
+      const mid = (from + until) >>> 1
       sort3(mid - 1)
       const piv = _keys[mid]
       swap(from, mid)
@@ -187,9 +195,15 @@ export class CappedMaxHeap {
       let l = from
       let r = from + 1
       for (let i = r; i < until; i++) {
-        { let ki = _keys[i]
-          if (ki <= piv ) { swap(i, r)
-          if (ki < piv ) { swap(l++, r) } r++ }
+        {
+          let ki = _keys[i]
+          if (ki <= piv) {
+            swap(i, r)
+            if (ki < piv) {
+              swap(l++, r)
+            }
+            r++
+          }
         }
       }
 

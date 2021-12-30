@@ -83,7 +83,7 @@ export interface KNeighborsParams {
    * points are to be stored in a single leaf. The optimal
    * depends on the nature of the problem and the metric used.
    */
-   leafSize?: number
+  leafSize?: number
   /**
    * Power parameter for the Minkowski metric.
    * `p=1` corresponds to the `manhattan` distance.
