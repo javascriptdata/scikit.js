@@ -25,25 +25,3 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 0
-  - package-ecosystem: 'npm'
-    # Files stored in `scikitjs-browser` directory
-    directory: '/scikitjs-browser'
-    ignore:
-      # Needs to be exactly version 0.3.3
-      - dependency-name: 'danfojs'
-      # Needs to be exactly version 3.11.0
-      - dependency-name: '@tensorflow/tfjs'
-    schedule:
-      interval: 'daily'
-    open-pull-requests-limit: 0
-  - package-ecosystem: 'npm'
-    # Files stored in `scikitjs-node` directory
-    directory: '/scikitjs-node'
-    ignore:
-      # Needs to be exactly version 0.3.3
-      - dependency-name: 'danfojs-node'
-      # Needs to be exactly version 3.6.1
-      - dependency-name: '@tensorflow/tfjs-node'
-    schedule:
-      interval: 'daily'
-    open-pull-requests-limit: 0

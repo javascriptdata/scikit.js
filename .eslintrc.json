@@ -34,7 +34,7 @@
     "keyword-spacing": ["error", { "before": true }],
     "space-infix-ops": "error",
     "object-curly-spacing": ["error", "always"],
-    "semi": ["error", "never"],
+    // "semi": ["warn", "never"],
     "eol-last": ["error", "always"],
     "comma-dangle": ["error", "never"],
     "no-multi-spaces": "error",
