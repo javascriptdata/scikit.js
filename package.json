@@ -138,8 +138,6 @@
       {
         "path": "@semantic-release/git",
         "assets": [
-          "dist/**/*.{js,css}", 
-          "docs", 
           "package.json",
           "package-lock.json",
           "CHANGELOG.md"
