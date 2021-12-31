@@ -142,7 +142,7 @@
           "package-lock.json",
           "CHANGELOG.md"
         ],
-        "message": "chore: Release - ${nextRelease.version}\n\n${nextRelease.notes}"
+        "message": "chore: release - ${nextRelease.version}\n\n${nextRelease.notes}"
       }
     ],
     "branches": [
