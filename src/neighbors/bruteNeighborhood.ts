@@ -15,7 +15,7 @@
 
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { Metric } from './metrics'
-import { Tensor2D } from '@tensorflow/tfjs'
+import { Tensor2D } from '@tensorflow/tfjs-core'
 import { tf } from '../shared/globals'
 import { assert } from '../typesUtils'
 

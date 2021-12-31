@@ -14,7 +14,7 @@
 */
 
 import { assert } from '../typesUtils'
-import { Tensor, Tensor2D } from '@tensorflow/tfjs'
+import { Tensor, Tensor2D } from '@tensorflow/tfjs-core'
 import { tf } from '../shared/globals'
 
 /**

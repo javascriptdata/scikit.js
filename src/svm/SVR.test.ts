@@ -1,4 +1,3 @@
-import '@tensorflow/tfjs-backend-webgl'
 import { assert } from 'chai'
 import { SVR } from './SVR'
 import { describe, it } from 'mocha'

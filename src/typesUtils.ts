@@ -24,15 +24,15 @@ import {
 
 import { tf, dfd } from './shared/globals'
 
-export function isString(value: {}): value is string {
+export function isString(value: unknown): value is string {
   return typeof value === 'string' || value instanceof String
 }
 
-export function isBoolean(value: {}): boolean {
+export function isBoolean(value: unknown): boolean {
   return typeof value === 'boolean'
 }
 
-export function isNumber(value: {}): boolean {
+export function isNumber(value: unknown): boolean {
   return typeof value === 'number'
 }
 
@@ -114,7 +114,7 @@ export function inferDtype(values: tf.TensorLike): tf.DataType | null {
   // Failed inference
   return null
 }
-export function isTypedArray(a: {}): a is
+export function isTypedArray(a: unknown): a is
   | Float32Array
   | Int32Array
   | Uint8Array {
@@ -136,7 +136,7 @@ export function isScikitLike2D(arr: any): arr is ScikitLike2D {
   return shape.length === 2 && dtype !== null
 }
 
-export function isScikit1D(arr: any): arr is Scikit1D {
+export function isScikit1D(arr: unknown): arr is Scikit1D {
   if (arr instanceof dfd.Series) {
     return true
   }
@@ -146,7 +146,7 @@ export function isScikit1D(arr: any): arr is Scikit1D {
   return isScikitLike1D(arr)
 }
 
-export function isScikit2D(arr: any): arr is Scikit2D {
+export function isScikit2D(arr: unknown): arr is Scikit2D {
   if (arr instanceof dfd.DataFrame) {
     return true
   }
@@ -156,6 +156,6 @@ export function isScikit2D(arr: any): arr is Scikit2D {
   return isScikitLike2D(arr)
 }
 
-export function isScikitVecOrMatrix(arr: any): arr is ScikitVecOrMatrix {
+export function isScikitVecOrMatrix(arr: unknown): arr is ScikitVecOrMatrix {
   return isScikit1D(arr) || isScikit2D(arr)
 }

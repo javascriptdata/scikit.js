@@ -35,8 +35,10 @@ npm i scikitjs-node
 For those that wish to use script src tags, simply
 
 ```js
-<script src="https://unpkg.com/scikitjs/dist/scikit.min.js"></script>
+<script src="https://unpkg.com/scikitjs/dist/web/index.min.js"></script>
 ```
+
+This will expose a `scikitjs` object on the window which houses all of the libraries Estimators and functions.
 
 ## Simple Example
 
@@ -176,4 +178,3 @@ console.log(lr.coef)
 ## Contribution Guide
 
 See [guide](https://github.com/opensource9ja/scikit.js/blob/main/CONTRIBUTING_GUIDE.md)
-

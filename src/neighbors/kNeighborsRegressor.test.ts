@@ -16,7 +16,7 @@
 import { describe, it } from 'mocha'
 import { dfd, tf } from '../shared/globals'
 import { meanSquaredError } from '../metrics/metrics'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { KNeighborsRegressor } from './kNeighborsRegressor'
 import { KNeighborsParams } from './kNeighborsBase'
 import { assert } from 'chai'
