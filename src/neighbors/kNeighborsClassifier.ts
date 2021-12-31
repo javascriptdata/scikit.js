@@ -17,7 +17,7 @@ import { Scikit1D, Scikit2D } from '../types'
 import { KNeighborsBase } from './kNeighborsBase'
 import { convertToNumericTensor2D, convertToTensor1D } from '../utils'
 import { tf } from '../shared/globals'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs'
+import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { polyfillUnique } from '../tfUtils'
 
 /**

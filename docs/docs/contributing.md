@@ -196,7 +196,7 @@ and have it just work.
 2. It needs to be compatible with script tags. Someone should be able to just
 
 ```js
-<script src="https://unpkg.com/scikitjs/dist/scikit.min.js"></script>
+<script src="https://unpkg.com/scikitjs/dist/web/index.min.js"></script>
 ```
 
 3. It needs to be compatible with backend Node.js environments, and use the C++ Tensorflow.js bindings for speed improvements there.

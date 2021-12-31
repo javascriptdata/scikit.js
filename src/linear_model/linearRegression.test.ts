@@ -1,8 +1,14 @@
-import * as tf from '@tensorflow/tfjs-core'
 import { assert } from 'chai'
 import { LinearRegression } from './linearRegression'
 import { tensorEqual } from '../utils'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
+import {
+  Tensor1D,
+  Tensor2D,
+  tensor1d,
+  tensor2d,
+  randomNormal,
+  randomUniform
+} from '@tensorflow/tfjs-core'
 import { describe, it } from 'mocha'
 
 function roughlyEqual(a: number, b: number, tol = 0.1) {
@@ -14,7 +20,7 @@ describe('LinearRegression', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new LinearRegression()
     await lr.fit([[1], [2]], [2, 4])
-    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1))
+    assert.isTrue(tensorEqual(lr.coef, tensor1d([2]), 0.1))
     assert.isTrue(roughlyEqual(lr.intercept as number, 0))
   })
 
@@ -28,20 +34,20 @@ describe('LinearRegression', function () {
       ]
     )
 
-    assert.isTrue(tensorEqual(lr.coef, tf.tensor2d([[2, 1]]), 0.1))
+    assert.isTrue(tensorEqual(lr.coef, tensor2d([[2, 1]]), 0.1))
   })
 
   it('Works on arrays with no intercept (small example)', async function () {
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit([[1], [2]], [2, 4])
-    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1))
+    assert.isTrue(tensorEqual(lr.coef, tensor1d([2]), 0.1))
     assert.isTrue(roughlyEqual(lr.intercept as number, 0))
   })
 
   it('Works on arrays with none zero intercept (small example)', async function () {
     const lr = new LinearRegression({ fitIntercept: true })
     await lr.fit([[1], [2]], [3, 5])
-    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1))
+    assert.isTrue(tensorEqual(lr.coef, tensor1d([2]), 0.1))
     assert.isTrue(roughlyEqual(lr.intercept as number, 1))
   })
 
@@ -49,7 +55,7 @@ describe('LinearRegression', function () {
   it('Works on arrays with none zero intercept (medium example)', async function () {
     const sizeOfMatrix = 100
     const seed = 42
-    let mediumX = tf.randomUniform(
+    let mediumX = randomUniform(
       [sizeOfMatrix, 2],
       -10,
       10,
@@ -62,12 +68,12 @@ describe('LinearRegression', function () {
       .add(secondCol)
       .reshape([sizeOfMatrix]) as Tensor1D
     const yPlusJitter = y.add(
-      tf.randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
+      randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
     ) as Tensor1D
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit(mediumX, yPlusJitter)
 
-    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2.5, 1]), 0.1))
+    assert.isTrue(tensorEqual(lr.coef, tensor1d([2.5, 1]), 0.1))
     assert.isTrue(roughlyEqual(lr.intercept as number, 0))
     assert.isTrue(lr.score(mediumX, y) > 0)
   })
@@ -75,7 +81,7 @@ describe('LinearRegression', function () {
   it('Works on arrays with none zero intercept (medium example)', async function () {
     const sizeOfMatrix = 1000
     const seed = 42
-    let mediumX = tf.randomUniform(
+    let mediumX = randomUniform(
       [sizeOfMatrix, 2],
       -10,
       10,
@@ -88,12 +94,12 @@ describe('LinearRegression', function () {
       .add(secondCol)
       .reshape([sizeOfMatrix]) as Tensor1D
     const yPlusJitter = y.add(
-      tf.randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
+      randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
     ) as Tensor1D
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit(mediumX, yPlusJitter)
 
-    assert.isTrue(tensorEqual(lr.coef, tf.tensor1d([2.5, 1]), 0.1))
+    assert.isTrue(tensorEqual(lr.coef, tensor1d([2.5, 1]), 0.1))
     assert.isTrue(roughlyEqual(lr.intercept as number, 0))
   })
 })
