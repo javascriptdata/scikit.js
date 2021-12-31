@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/javascriptdata/scikit.js/compare/v1.0.0...v1.0.1) (2021-12-31)
+
+
+### Bug Fixes
+
+* fixing any type to correct usage ([4496805](https://github.com/javascriptdata/scikit.js/commit/449680585706377167180b3e6c1c187958783b66))
+
 # 1.0.0 (2021-12-31)
 
 
