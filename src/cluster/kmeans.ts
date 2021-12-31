@@ -110,7 +110,7 @@ export class KMeans {
       this.clusterCenters = tf.gather(X, indices)
       return
     }
-    throw new Error(`init ${this.init} not currently implemented`)
+    throw new Error(`init ${this.init} is not currently implemented`)
   }
 
   closestCentroid(X: Tensor2D): Tensor1D {
