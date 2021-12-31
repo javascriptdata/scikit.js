@@ -20,8 +20,6 @@ import { describe, it } from 'mocha'
 import { assert } from 'chai'
 
 describe('CappedMaxHeap', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
   const anyFloat = () =>
     fc.double(-(2 ** 16), +(2 ** 16)).map((x) => Math.fround(x))
 
