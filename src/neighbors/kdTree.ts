@@ -302,7 +302,7 @@ export class KdTree implements Neighborhood {
     const leaf0 = parent(_bBoxes.length - 1) + 1
 
     if (0 < k && 0 < nQueries) {
-      const query = queryPoints.dataSync() as Vec
+      const query: Vec = queryPoints.dataSync()
 
       let heap: CappedMaxHeap
       let queryPt: Vec
