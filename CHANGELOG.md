@@ -1,3 +1,24 @@
+# [1.1.0](https://github.com/javascriptdata/scikit.js/compare/v1.0.3...v1.1.0) (2021-12-31)
+
+
+### Bug Fixes
+
+* added fast-check dev dependency ([fe9e693](https://github.com/javascriptdata/scikit.js/commit/fe9e6939a0f0e70f55f1f2667fcbadacc2c1ca7f))
+* change max length on commit message ([f4a8672](https://github.com/javascriptdata/scikit.js/commit/f4a86724f26776e9139dfb3bac8d1aa09a50a08d))
+* commented out tests failing in test:browser ([0fe0fe1](https://github.com/javascriptdata/scikit.js/commit/0fe0fe1dba9ee2a42e7faf3e5a65d25d6a7b600d))
+* k-neighbors-classifier await super.fit() ([01632f4](https://github.com/javascriptdata/scikit.js/commit/01632f45c98b82eb9e4a29d48c15973fd20ea22c))
+
+
+### Features
+
+* k-neighbors kd-tree algorithm ([59d40de](https://github.com/javascriptdata/scikit.js/commit/59d40de6eb9fb9d6105eb674e99a6251bdc2c0a5))
+* kd-tree first draft ([354979a](https://github.com/javascriptdata/scikit.js/commit/354979a0bd5809a4eeab8ce877607cdd09f3660b))
+
+
+### Performance Improvements
+
+* k-neighbors kd-tree performance improvements ([158506c](https://github.com/javascriptdata/scikit.js/commit/158506c094202d4a645bb7b3eb7c45f2ef2c63e9))
+
 ## [1.0.3](https://github.com/javascriptdata/scikit.js/compare/v1.0.2...v1.0.3) (2021-12-31)
 
 
