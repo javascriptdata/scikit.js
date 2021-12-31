@@ -12,11 +12,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node_modules/.bin/nyc node_modules/.bin/mocha --require ts-node/register 'src/**/*.test.ts'",
-    "test:clean": "node_modules/.bin/nyc node_modules/.bin/mocha --require ts-node/register 'src/**/*.test.ts'",
+    "test": "node_modules/.bin/nyc node_modules/.bin/mocha --require ts-node/register 'src/**/*.test.ts' && npm run prettier:check",
+    "test:clean": "node_modules/.bin/nyc node_modules/.bin/mocha --require ts-node/register 'src/**/*.test.ts' && npm run prettier:check",
     "compile:web": "node_modules/.bin/rollup -c",
     "compile:esm": "node_modules/.bin/tsc -p tsconfig.build.json",
     "compile:node-cjs": "node_modules/.bin/tsc -p tsconfig.build-node.json && node_modules/.bin/tsc-alias -p tsconfig.build-node.json",
+    "prettier:check": "node_modules/prettier/bin-prettier.js --check src",
     "build": "npm run compile:esm && npm run compile:node-cjs && npm run compile:web",
     "build:docs": "cd docs && npm run build",
     "coverage": "coveralls",
