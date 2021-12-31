@@ -161,15 +161,13 @@ export class CappedMaxHeap {
       let l = from
       let r = from + 1
       for (let i = r; i < until; i++) {
-        {
-          let ki = _keys[i]
-          if (ki <= piv) {
-            swap(i, r)
-            if (ki < piv) {
-              swap(l++, r)
-            }
-            r++
+        let ki = _keys[i]
+        if (ki <= piv) {
+          swap(i, r)
+          if (ki < piv) {
+            swap(l++, r)
           }
+          r++
         }
       }
 
