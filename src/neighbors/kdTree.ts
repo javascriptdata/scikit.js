@@ -208,13 +208,13 @@ export class KdTree implements Neighborhood {
 
       const mid = (from + until) >>> 1
 
-      // 2.1: Split Along `axis`
+      // 2.2: Split Along `axis`
       // -----------------------
       // Use quick-select to split `points` along `axis` in half
       for (let pos = from, end = until; ; ) {
         const threshold = data[nFeatures * indices[randInt(pos, end)] + axis]
-        let l = pos,
-          r = pos
+        let l = pos
+        let r = pos
         for (let i = pos; i < end; i++) {
           let pi = data[nFeatures * indices[i] + axis]
           if (pi <= threshold) {
@@ -230,7 +230,7 @@ export class KdTree implements Neighborhood {
         else break
       }
 
-      // 2.2: Recursion
+      // 2.3: Recursion
       // --------------
       const c = child(node)
       buildTree(c, from, mid)
@@ -354,7 +354,7 @@ export class KdTree implements Neighborhood {
 
     // Current implementation does not support backpropagation
     // through `dists`. This can easily supported by recomputing
-    // the distances using `metric.tensorDistance` in the end.
+    // the distances using `_metric.tensorDistance` in the end.
     // TODO: Add `distanceBackprop: true | false` option to
     // KNeighborsBaseParams and add backpropagation support
     // to KdTree.
