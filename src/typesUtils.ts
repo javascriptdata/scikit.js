@@ -114,10 +114,9 @@ export function inferDtype(values: tf.TensorLike): tf.DataType | null {
   // Failed inference
   return null
 }
-export function isTypedArray(a: unknown): a is
-  | Float32Array
-  | Int32Array
-  | Uint8Array {
+export function isTypedArray(
+  a: unknown
+): a is Float32Array | Int32Array | Uint8Array {
   return (
     a instanceof Float32Array ||
     a instanceof Int32Array ||
