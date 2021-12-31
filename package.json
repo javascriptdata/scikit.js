@@ -1,6 +1,6 @@
 {
   "name": "scikitjs",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Scikit-Learn for JS",
   "output": {
     "node": "dist/node/index.js",
@@ -142,7 +142,7 @@
           "package-lock.json",
           "CHANGELOG.md"
         ],
-        "message": "Release: ${nextRelease.version}\n\n${nextRelease.notes}"
+        "message": "chore: Release - ${nextRelease.version}\n\n${nextRelease.notes}"
       }
     ],
     "branches": [
