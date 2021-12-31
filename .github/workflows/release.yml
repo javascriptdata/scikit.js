@@ -47,10 +47,9 @@ jobs:
       #   with:
       #     github-token: ${{ secrets.github_token }}
       #     parallel-finished: true
-      # - name: build files, docs
-      #   run: |
-      #     npm run compile
-      #     NODE_OPTIONS=--max-old-space-size=9000 npm run build 
+      - name: build files, docs
+        run: |
+          NODE_OPTIONS=--max-old-space-size=9000 npm run build 
       #   # tsc && rollup -c && typedoc && sitedown manual/ -b docs/manual
       - name: Test coverage
         run: |
