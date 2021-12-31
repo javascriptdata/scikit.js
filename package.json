@@ -135,8 +135,15 @@
         0,
         "always"
       ],
-      "header-max-length": [0, "always", 200],
-      "body-max-line-length": [0, "always"]
+      "header-max-length": [
+        0,
+        "always",
+        200
+      ],
+      "body-max-line-length": [
+        0,
+        "always"
+      ]
     }
   },
   "release": {
