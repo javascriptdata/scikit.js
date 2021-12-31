@@ -15,12 +15,13 @@
 
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { BruteNeighborhood } from './bruteNeighborhood'
-import { minkowskiDistance } from './metrics'
+import { minkowskiMetric } from './metrics'
 import { Scikit1D, Scikit2D } from '../types'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
+import { KdTree } from './kdTree'
 
 const WEIGHTS_FUNCTIONS = {
   uniform(distances: Tensor2D) {
@@ -44,16 +45,21 @@ const WEIGHTS_FUNCTIONS = {
   }
 }
 
-const METRIC_FUNCTIONS = {
-  minkowski: (p: number) => minkowskiDistance(p),
-  manhattan: () => minkowskiDistance(1),
-  euclidean: () => minkowskiDistance(2),
-  chebyshev: () => minkowskiDistance(Infinity)
+const METRICS = {
+  minkowski: (p: number) => minkowskiMetric(p),
+  manhattan: () => minkowskiMetric(1),
+  euclidean: () => minkowskiMetric(2),
+  chebyshev: () => minkowskiMetric(Infinity)
 }
 
 const ALGORITHMS = {
-  auto: async (params: NeighborhoodParams) => new BruteNeighborhood(params),
-  brute: async (params: NeighborhoodParams) => new BruteNeighborhood(params)
+  kdTree: KdTree.build,
+  brute: async (params: NeighborhoodParams) => new BruteNeighborhood(params),
+  auto: (params: NeighborhoodParams) => {
+    return 'function' === typeof params.metric.minDistToBBox
+      ? ALGORITHMS.kdTree(params)
+      : ALGORITHMS.brute(params)
+  }
 }
 
 /**
@@ -73,6 +79,12 @@ export interface KNeighborsParams {
    */
   algorithm?: keyof typeof ALGORITHMS
   /**
+   * For tree-based algorithms, this is a hint as to how many
+   * points are to be stored in a single leaf. The optimal
+   * depends on the nature of the problem and the metric used.
+   */
+  leafSize?: number
+  /**
    * Power parameter for the Minkowski metric.
    * `p=1` corresponds to the `manhattan` distance.
    * `p=2` corresponds to the `euclidean` distance.
@@ -83,7 +95,7 @@ export interface KNeighborsParams {
   /**
    * The metric to be used to compute nearest neighbor distances.
    */
-  metric?: keyof typeof METRIC_FUNCTIONS
+  metric?: keyof typeof METRICS
   /**
    * The number of neighbors used during prediction.
    */
@@ -100,6 +112,7 @@ export class KNeighborsBase implements KNeighborsParams {
 
   weights: KNeighborsParams['weights']
   algorithm: KNeighborsParams['algorithm']
+  leafSize: KNeighborsParams['leafSize']
   p: KNeighborsParams['p']
   metric: KNeighborsParams['metric']
   nNeighbors: KNeighborsParams['nNeighbors']
@@ -143,9 +156,9 @@ export class KNeighborsBase implements KNeighborsParams {
    *          target of the (i+1)-th sample.
    */
   public async fit(X: Scikit2D, y: Scikit1D): Promise<this> {
-    const { algorithm = 'auto', metric = 'minkowski', p = 2 } = this
+    const { algorithm = 'auto', metric = 'minkowski', p = 2, leafSize } = this
     assert(
-      Object.keys(METRIC_FUNCTIONS).includes(metric),
+      Object.keys(METRICS).includes(metric),
       'KNeighbors({metric}).fit(X,y): invalid metric.'
     )
     assert(
@@ -153,12 +166,13 @@ export class KNeighborsBase implements KNeighborsParams {
       'KNeighbors({algorithm}).fit(X,y): invalid algorithm.'
     )
 
-    const metricFn = METRIC_FUNCTIONS[metric](p)
+    const metricFn = METRICS[metric](p)
 
     const entries = convertToNumericTensor2D(X)
     this._neighborhood = await ALGORITHMS[algorithm]({
       entries,
-      metric: metricFn
+      metric: metricFn,
+      leafSize
     })
     this._y = convertToNumericTensor1D(y)
     return this

@@ -113,91 +113,116 @@ function testWithDataset(
 
     mse /= k
 
-    assert.closeTo(mse, referenceError, Math.abs(referenceError) * 0.01)
+    assert.closeTo(mse, referenceError, Math.abs(referenceError) * 0.02)
   })
 }
 
-describe('KNeighborsRegressor', function () {
-  this.timeout(120_000)
+for (const algorithm of [
+  'kdTree',
+  'brute',
+  undefined,
+  'auto'
+] as KNeighborsParams['algorithm'][]) {
+  describe(`KNeighborsRegressor({ algorithm: ${algorithm} })`, function () {
+    this.timeout(60_000)
 
-  //  testWithDataset(loadDiabetes, { nNeighbors: 5, weights: 'distance' }, 3570)
-  //  testWithDataset(loadDiabetes, { nNeighbors: 3, weights: 'uniform' }, 3833)
-  //  testWithDataset(
-  //    fetchCaliforniaHousing,
-  //    { nNeighbors: 3, weights: 'distance' },
-  //    1.31
-  //  )
-  //  testWithDataset(
-  //    fetchCaliforniaHousing,
-  //    { nNeighbors: 4, weights: 'uniform' },
-  //    1.28
-  //  )
+    // testWithDataset(
+    //   loadDiabetes,
+    //   { nNeighbors: 5, weights: 'distance', algorithm },
+    //   3570
+    // )
+    // testWithDataset(
+    //   loadDiabetes,
+    //   { nNeighbors: 3, weights: 'uniform', algorithm },
+    //   3833
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 3, weights: 'distance', algorithm },
+    //   1.31
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 4, weights: 'uniform', algorithm },
+    //   1.28
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
+    //   1.19
+    // )
+    // testWithDataset(
+    //   fetchCaliforniaHousing,
+    //   { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
+    //   1.32
+    // )
 
-  it('correctly predicts sklearn example', async () => {
-    const X = [[0], [1], [2], [3]]
-    const y = [0, 0, 1, 1]
+    it('correctly predicts sklearn example', async () => {
+      const X = [[0], [1], [2], [3]]
+      const y = [0, 0, 1, 1]
 
-    const model = new KNeighborsRegressor({ nNeighbors: 2 })
+      const model = new KNeighborsRegressor({ algorithm, nNeighbors: 2 })
 
-    await model.fit(X, y)
+      await model.fit(X, y)
 
-    assert.equal(model.predict([[1.5]]).dataSync()[0], 0.5)
+      assert.deepEqual(model.predict([[1.5]]).arraySync(), [0.5])
+    })
+    // test cases as suggested by @dcrescim
+    it('Use KNeighborsRegressor on simple example (n=1)', async function () {
+      const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 1 })
+
+      const X = [
+        [-1, 0],
+        [0, 0],
+        [5, 0]
+      ]
+      const y = [10, 20, 30]
+      const predictX = [
+        [1, 0],
+        [4, 0],
+        [-5, 0]
+      ]
+
+      await knn.fit(X, y)
+      assert.deepEqual(knn.predict(predictX).arraySync(), [20, 30, 10])
+    })
+    it('Use KNeighborsRegressor on simple example (n=2)', async function () {
+      const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 2 })
+
+      const X = [
+        [-1, 0],
+        [0, 0],
+        [5, 0]
+      ]
+      const y = [10, 20, 30]
+      const predictX = [
+        [1, 0],
+        [4, 0],
+        [-5, 0]
+      ]
+
+      await knn.fit(X, y)
+      assert.deepEqual(knn.predict(predictX).arraySync(), [15, 25, 15])
+    })
+    it('Use KNeighborsRegressor on simple example (n=3)', async function () {
+      const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 3 })
+
+      const X = [
+        [-1, 0],
+        [0, 0],
+        [5, 0]
+      ]
+      const y = [10, 20, 30]
+      const predictX = [
+        [1, 0],
+        [4, 0],
+        [-5, 0]
+      ]
+
+      await knn.fit(X, y)
+      assert.isTrue(
+        arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)
+      )
+    })
   })
-  // test cases as suggested by @dcrescim
-  it('Use KNeighborsRegressor on simple example (n=1)', async function () {
-    const knn = new KNeighborsRegressor({ nNeighbors: 1 })
-
-    const X = [
-      [-1, 0],
-      [0, 0],
-      [5, 0]
-    ]
-    const y = [10, 20, 30]
-    const predictX = [
-      [1, 0],
-      [4, 0],
-      [-5, 0]
-    ]
-
-    await knn.fit(X, y)
-    assert.deepEqual(knn.predict(predictX).arraySync(), [20, 30, 10])
-  })
-  it('Use KNeighborsRegressor on simple example (n=2)', async function () {
-    const knn = new KNeighborsRegressor({ nNeighbors: 2 })
-
-    const X = [
-      [-1, 0],
-      [0, 0],
-      [5, 0]
-    ]
-    const y = [10, 20, 30]
-    const predictX = [
-      [1, 0],
-      [4, 0],
-      [-5, 0]
-    ]
-
-    await knn.fit(X, y)
-    assert.deepEqual(knn.predict(predictX).arraySync(), [15, 25, 15])
-  })
-  it('Use KNeighborsRegressor on simple example (n=3)', async function () {
-    const knn = new KNeighborsRegressor({ nNeighbors: 3 })
-
-    const X = [
-      [-1, 0],
-      [0, 0],
-      [5, 0]
-    ]
-    const y = [10, 20, 30]
-    const predictX = [
-      [1, 0],
-      [4, 0],
-      [-5, 0]
-    ]
-
-    await knn.fit(X, y)
-    assert.isTrue(
-      arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)
-    )
-  })
-})
+}
