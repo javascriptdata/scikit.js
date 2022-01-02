@@ -53,7 +53,7 @@ jobs:
       #   # tsc && rollup -c && typedoc && sitedown manual/ -b docs/manual
       - name: Test coverage
         run: |
-          npm test
+          npm run test:ci
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
