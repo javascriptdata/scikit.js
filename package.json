@@ -89,9 +89,10 @@
     "rollup-plugin-terser-js": "1.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "semantic-release": "^17.4.7",
+    "ts-jest": "^27.1.2",
     "ts-node": "^10.0.0",
     "tsc-alias": "^1.5.0",
-    "tslib": "*",
+    "tslib": "^2.3.1",
     "typedoc": "^0.22.10",
     "typescript": "^4.5.4",
     "typescript-transform-paths": "^3.3.1"
