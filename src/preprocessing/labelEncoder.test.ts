@@ -1,7 +1,6 @@
-import { assert } from 'chai'
 import { LabelEncoder } from './labelEncoder'
 import { dfd } from '../shared/globals'
-import { describe, it } from 'mocha'
+
 
 describe('LabelEncoder', function () {
   it('LabelEncoder works for Series', function () {
@@ -9,28 +8,28 @@ describe('LabelEncoder', function () {
     const scaler = new LabelEncoder()
     scaler.fit(sf)
     const expected = [0, 1, 1, 2]
-    assert.deepEqual(scaler.transform(sf).arraySync(), expected)
+    expect(scaler.transform(sf).arraySync()).toEqual(expected)
   })
   it('LabelEncoder works for 1D array', function () {
     const sf = [1, 2, 2, 'boy', 'git', 'git']
     const scaler = new LabelEncoder()
     scaler.fit(sf as any)
     const expected = [0, 1, 1, 2, 3, 3]
-    assert.deepEqual(scaler.transform(sf as any).arraySync(), expected)
+    expect(scaler.transform(sf as any).arraySync()).toEqual(expected)
   })
   it('fitTransform works for 1D array', function () {
     const sf = [1, 2, 2, 'boy', 'git', 'git']
     const scaler = new LabelEncoder()
     const result = scaler.fitTransform(sf as any)
     const expected = [0, 1, 1, 2, 3, 3]
-    assert.deepEqual(result.arraySync(), expected)
+    expect(result.arraySync()).toEqual(expected)
   })
   it('inverseTransform works for 1D array', function () {
     const sf = [1, 2, 2, 'boy', 'git', 'git']
     const scaler = new LabelEncoder()
     scaler.fit(sf as any)
     const result = scaler.inverseTransform([0, 1, 1, 2, 3, 3])
-    assert.deepEqual(result, [1, 2, 2, 'boy', 'git', 'git'])
+    expect(result).toEqual([1, 2, 2, 'boy', 'git', 'git'])
   })
   it('Get properties from LabelEncoder', function () {
     const sf = [1, 2, 2, 'boy', 'git', 'git']
@@ -38,6 +37,6 @@ describe('LabelEncoder', function () {
     scaler.fit(sf as any)
     const classes = scaler.classes
 
-    assert.deepEqual(classes, [1, 2, 'boy', 'git'])
+    expect(classes).toEqual([1, 2, 'boy', 'git'])
   })
 })

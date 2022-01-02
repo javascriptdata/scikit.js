@@ -1,50 +1,49 @@
-import { assert } from 'chai'
 import {
   trainTestSplit,
   validateShuffleSplit,
   getIndices
 } from './trainTestSplit'
-import { describe, it } from 'mocha'
+
 import { dfd, tf } from '../shared/globals'
 
 describe('Testing trainTestSplit', function () {
   it('Testing train/test validation logic', () => {
-    assert.throws(() => validateShuffleSplit(10, 11))
-    assert.throws(() => validateShuffleSplit(10, undefined, 100))
-    assert.throws(() => validateShuffleSplit(10, 3.5))
-    assert.throws(() => validateShuffleSplit(10, 0.3, 0.8))
-    assert.throws(() => validateShuffleSplit(10, null as any))
-    assert.throws(() => validateShuffleSplit(10, 0))
-    assert.throws(() => validateShuffleSplit(10, 5, 6))
-    assert.throws(() => validateShuffleSplit(10, {} as any))
-    assert.throws(() => validateShuffleSplit(null as any, 11))
+    expect(() => validateShuffleSplit(10, 11)).toThrow()
+    expect(() => validateShuffleSplit(10, undefined, 100)).toThrow()
+    expect(() => validateShuffleSplit(10, 3.5)).toThrow()
+    expect(() => validateShuffleSplit(10, 0.3, 0.8)).toThrow()
+    expect(() => validateShuffleSplit(10, null as any)).toThrow()
+    expect(() => validateShuffleSplit(10, 0)).toThrow()
+    expect(() => validateShuffleSplit(10, 5, 6)).toThrow()
+    expect(() => validateShuffleSplit(10, {} as any)).toThrow()
+    expect(() => validateShuffleSplit(null as any, 11)).toThrow()
   })
   it('Testing train/test acceptance logic', () => {
     let val1 = validateShuffleSplit(10, 3)
-    assert.deepEqual(val1, [7, 3])
+    expect(val1).toEqual([7, 3])
 
     let val2 = validateShuffleSplit(10, undefined, 3)
-    assert.deepEqual(val2, [3, 7])
+    expect(val2).toEqual([3, 7])
 
     let val3 = validateShuffleSplit(10, 0.1)
-    assert.deepEqual(val3, [9, 1])
+    expect(val3).toEqual([9, 1])
 
     let val4 = validateShuffleSplit(10, 0.26)
-    assert.deepEqual(val4, [7, 3])
+    expect(val4).toEqual([7, 3])
 
     let val5 = validateShuffleSplit(10, undefined, 0.1)
-    assert.deepEqual(val5, [1, 9])
+    expect(val5).toEqual([1, 9])
 
     let val6 = validateShuffleSplit(10, undefined, 0.26)
-    assert.deepEqual(val6, [3, 7])
+    expect(val6).toEqual([3, 7])
 
     let val7 = validateShuffleSplit(12, 0.1)
-    assert.deepEqual(val7, [10, 2])
+    expect(val7).toEqual([10, 2])
   })
 
   it('Testing getIndices logic', () => {
     let val1 = getIndices([1, 2, 3, 4], [1, 2, 3, 0])
-    assert.deepEqual(val1, [2, 3, 4, 1])
+    expect(val1).toEqual([2, 3, 4, 1])
 
     let val2 = getIndices(
       [
@@ -55,7 +54,7 @@ describe('Testing trainTestSplit', function () {
       ],
       [1, 2, 3, 0]
     )
-    assert.deepEqual(val2, [
+    expect(val2).toEqual([
       [2, 3],
       [3, 4],
       [4, 5],
@@ -69,7 +68,7 @@ describe('Testing trainTestSplit', function () {
     ])
 
     let val3 = getIndices(X, [1, 2, 0]) as dfd.DataFrame
-    assert.deepEqual(val3.values, [
+    expect(val3.values).toEqual([
       [1, 2],
       [2, 3],
       [0, 1]
@@ -78,7 +77,7 @@ describe('Testing trainTestSplit', function () {
     let X1 = new dfd.Series([0, 1, 2])
 
     let val4 = getIndices(X1, [1, 2, 0]) as dfd.DataFrame
-    assert.deepEqual(val4.values, [1, 2, 0])
+    expect(val4.values).toEqual([1, 2, 0])
 
     let X2D = tf.tensor2d([
       [1, 2],
@@ -87,7 +86,7 @@ describe('Testing trainTestSplit', function () {
     ])
 
     let val5 = getIndices(X2D, [1, 2, 0]) as dfd.DataFrame
-    assert.deepEqual(val5.arraySync(), [
+    expect(val5.arraySync()).toEqual([
       [2, 3],
       [3, 4],
       [1, 2]
@@ -96,7 +95,7 @@ describe('Testing trainTestSplit', function () {
     let X1D = tf.tensor1d([1, 2, 3, 4, 5])
 
     let val6 = getIndices(X1D, [1, 2, 0, 3, 4]) as dfd.DataFrame
-    assert.deepEqual(val6.arraySync(), [2, 3, 1, 4, 5])
+    expect(val6.arraySync()).toEqual([2, 3, 1, 4, 5])
   })
   it('trainTestSplit indices', () => {
     let X = [
@@ -113,16 +112,16 @@ describe('Testing trainTestSplit', function () {
       undefined,
       0
     )
-    assert.equal((XTrain as any[]).length, 2)
-    assert.equal((XTest as any[]).length, 1)
-    assert.equal((yTrain as any[]).length, 2)
-    assert.equal((yTest as any[]).length, 1)
-    assert.deepEqual(XTrain, [
+    expect((XTrain as any[]).length).toEqual(2)
+    expect((XTest as any[]).length).toEqual(1)
+    expect((yTrain as any[]).length).toEqual(2)
+    expect((yTest as any[]).length).toEqual(1)
+    expect(XTrain).toEqual([
       [2, 3],
       [3, 4]
     ])
-    assert.deepEqual(XTest, [[1, 2]])
-    assert.deepEqual(yTrain, [20, 30])
-    assert.deepEqual(yTest, [10])
+    expect(XTest).toEqual([[1, 2]])
+    expect(yTrain).toEqual([20, 30])
+    expect(yTest).toEqual([10])
   })
 })

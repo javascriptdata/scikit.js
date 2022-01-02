@@ -1,14 +1,12 @@
-import { assert } from 'chai'
 import { Pipeline, makePipeline } from './pipeline'
 import { tensor1d } from '@tensorflow/tfjs-core'
 import { tensorEqual } from '../utils'
 import { LinearRegression } from '../linear_model/linearRegression'
 import { SimpleImputer } from '../impute/simpleImputer'
 import { MinMaxScaler } from '../preprocessing/minMaxScaler'
-import { describe, it } from 'mocha'
+
 
 describe('Pipeline', function () {
-  this.timeout(4000)
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {
     const X = [
       [2, 2], // [1, .5]
@@ -26,12 +24,9 @@ describe('Pipeline', function () {
 
     await pipeline.fit(X, y)
 
-    assert.deepEqual(pipeline.steps[0][1].min.arraySync(), [0, 0])
-    assert.deepEqual(
-      tensorEqual(pipeline.steps[1][1].coef, tensor1d([3, 4]), 0.3),
-      true
-    )
-  })
+    expect(pipeline.steps[0][1].min.arraySync()).toEqual([0, 0])
+    expect(tensorEqual(pipeline.steps[1][1].coef, tensor1d([3, 4]), 0.3)).toEqual(true)
+  }, 4000)
   it('Use a Pipeline (simple-imputer, min-max, linear regression)', async function () {
     const X = [
       [2, 2], // [1, .5]
@@ -48,12 +43,9 @@ describe('Pipeline', function () {
 
     await pipeline.fit(X, y)
 
-    assert.deepEqual(pipeline.steps[1][1].min.arraySync(), [0, 0])
-    assert.deepEqual(
-      tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3),
-      true
-    )
-  })
+    expect(pipeline.steps[1][1].min.arraySync()).toEqual([0, 0])
+    expect(tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)).toEqual(true)
+  }, 4000)
   it('Use makePipeline (simple-imputer, min-max, linear regression)', async function () {
     const X = [
       [2, 2], // [1, .5]
@@ -75,38 +67,35 @@ describe('Pipeline', function () {
 
     await pipeline.fit(X, y)
 
-    assert.deepEqual(pipeline.steps[1][1].min.arraySync(), [0, 0])
-    assert.deepEqual(
-      tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3),
-      true
-    )
-  })
+    expect(pipeline.steps[1][1].min.arraySync()).toEqual([0, 0])
+    expect(tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)).toEqual(true)
+  }, 4000)
   it('Make sure the pipeline throws on bad input', async function () {
-    assert.throw(
+    expect(
       () =>
         new Pipeline({
           steps: [null] as any
         })
-    )
-    assert.throw(
+    ).toThrow()
+    expect(
       () =>
         new Pipeline({
           steps: null as any
         })
-    )
-    assert.throw(
+    ).toThrow()
+    expect(
       () =>
         new Pipeline({
           steps: [4, 5] as any
         })
-    )
-    assert.throw(
+    ).toThrow()
+    expect(
       () =>
         new Pipeline({
           steps: [new MinMaxScaler()] as any
         })
-    )
-    assert.throw(
+    ).toThrow()
+    expect(
       () =>
         new Pipeline({
           steps: [
@@ -114,6 +103,6 @@ describe('Pipeline', function () {
             [new MinMaxScaler()]
           ] as any
         })
-    )
+    ).toThrow()
   })
 })

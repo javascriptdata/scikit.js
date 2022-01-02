@@ -13,13 +13,12 @@
 * ==========================================================================
 */
 
-import { describe, it } from 'mocha'
+
 import { dfd, tf } from '../shared/globals'
 import { meanSquaredError } from '../metrics/metrics'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { KNeighborsRegressor } from './kNeighborsRegressor'
 import { KNeighborsParams } from './kNeighborsBase'
-import { assert } from 'chai'
 import { fetchCaliforniaHousing, loadDiabetes } from '../datasets/datasets'
 import { arrayEqual } from '../utils'
 
@@ -57,7 +56,7 @@ function* kFoldIndices(
     yield [test, range.slice(off, off + chunk)]
   }
 
-  assert.equal(off, len)
+  expect(off).toEqual(len)
 }
 
 function* kFold(
@@ -113,7 +112,7 @@ function testWithDataset(
 
     mse /= k
 
-    assert.closeTo(mse, referenceError, Math.abs(referenceError) * 0.02)
+    expect(Math.abs(mse - referenceError)).toBeLessThanOrEqual(Math.abs(referenceError) * 0.02)
   })
 }
 
@@ -124,8 +123,6 @@ for (const algorithm of [
   'auto'
 ] as KNeighborsParams['algorithm'][]) {
   describe(`KNeighborsRegressor({ algorithm: ${algorithm} })`, function () {
-    this.timeout(60_000)
-
     // testWithDataset(
     //   loadDiabetes,
     //   { nNeighbors: 5, weights: 'distance', algorithm },
@@ -165,8 +162,8 @@ for (const algorithm of [
 
       await model.fit(X, y)
 
-      assert.deepEqual(model.predict([[1.5]]).arraySync(), [0.5])
-    })
+      expect(model.predict([[1.5]]).arraySync()).toEqual([0.5])
+    }, 60_000)
     // test cases as suggested by @dcrescim
     it('Use KNeighborsRegressor on simple example (n=1)', async function () {
       const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 1 })
@@ -184,8 +181,8 @@ for (const algorithm of [
       ]
 
       await knn.fit(X, y)
-      assert.deepEqual(knn.predict(predictX).arraySync(), [20, 30, 10])
-    })
+      expect(knn.predict(predictX).arraySync()).toEqual([20, 30, 10])
+    }, 60_000)
     it('Use KNeighborsRegressor on simple example (n=2)', async function () {
       const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 2 })
 
@@ -202,8 +199,8 @@ for (const algorithm of [
       ]
 
       await knn.fit(X, y)
-      assert.deepEqual(knn.predict(predictX).arraySync(), [15, 25, 15])
-    })
+      expect(knn.predict(predictX).arraySync()).toEqual([15, 25, 15])
+    }, 60_000)
     it('Use KNeighborsRegressor on simple example (n=3)', async function () {
       const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 3 })
 
@@ -220,9 +217,7 @@ for (const algorithm of [
       ]
 
       await knn.fit(X, y)
-      assert.isTrue(
-        arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)
-      )
-    })
+      expect(arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)).toBe(true)
+    }, 60_000)
   })
 }

@@ -1,9 +1,7 @@
-import { assert } from 'chai'
 import { SVR } from './SVR'
-import { describe, it } from 'mocha'
+
 
 describe('SVR', function () {
-  this.timeout(10000)
   it('Works on arrays (small example)', async function () {
     const lr = new SVR()
     await lr.fit(
@@ -21,7 +19,7 @@ describe('SVR', function () {
     ).arraySync()
     const ans = [-1, 1]
     predict.forEach((it, idx) => {
-      assert.closeTo(it, ans[idx], 5e-1)
+      expect(Math.abs(it - ans[idx])).toBeLessThanOrEqual(5e-1)
     })
-  })
+  }, 10000)
 })

@@ -1,6 +1,4 @@
-import { assert } from 'chai'
 import { DummyRegressor } from './dummyRegressor'
-import { describe, it } from 'mocha'
 
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {
@@ -19,7 +17,7 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    assert.deepEqual(reg.predict(predictX).arraySync(), [20, 20, 20])
+    expect(reg.predict(predictX).arraySync()).toEqual([20, 20, 20])
   })
   it('Use DummyRegressor on simple example (median)', function () {
     const reg = new DummyRegressor({ strategy: 'median' })
@@ -37,7 +35,7 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    assert.deepEqual(reg.predict(predictX).arraySync(), [12, 12, 12])
+    expect(reg.predict(predictX).arraySync()).toEqual([12, 12, 12])
   })
   it('Use DummyRegressor on simple example (constant)', function () {
     const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
@@ -55,6 +53,6 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    assert.deepEqual(reg.predict(predictX).arraySync(), [10, 10, 10])
+    expect(reg.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })
 })

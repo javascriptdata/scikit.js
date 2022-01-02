@@ -16,8 +16,7 @@
 import * as fc from 'fast-check'
 
 import { CappedMaxHeap } from './cappedMaxHeap'
-import { describe, it } from 'mocha'
-import { assert } from 'chai'
+
 
 describe('CappedMaxHeap', () => {
   const anyFloat = () =>
@@ -49,11 +48,11 @@ describe('CappedMaxHeap', () => {
         values.forEach((x, i) => heap.add(x, i))
         heap.sort()
 
-        assert.deepEqual(keys, reference)
+        expect(keys).toEqual(reference)
         for (let i = 0; i < k; i++) {
-          assert.equal(keys[i], values[vals[i]])
+          expect(keys[i]).toEqual(values[vals[i]])
         }
-        assert.equal(new Set(vals).size, k)
+        expect(new Set(vals).size).toEqual(k)
       }),
       { numRuns: 256 }
     )

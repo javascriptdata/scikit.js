@@ -1,7 +1,6 @@
-import { assert } from 'chai'
 import { OrdinalEncoder } from './ordinalEncoder'
 import { arrayTo2DColumn } from '../utils'
-import { describe, it } from 'mocha'
+
 
 describe('OrdinalEncoder', function () {
   it('OrdinalEncoder works on array', function () {
@@ -11,11 +10,8 @@ describe('OrdinalEncoder', function () {
     encode.fit(X)
 
     const expected = [[0], [1], [2], [0], [1], [2], [2], [1]]
-    assert.deepEqual(encode.transform(X).arraySync(), expected)
-    assert.deepEqual(
-      encode.transform(arrayTo2DColumn(['man', 'cat'])).arraySync(),
-      [[2], [1]]
-    )
+    expect(encode.transform(X).arraySync()).toEqual(expected)
+    expect(encode.transform(arrayTo2DColumn(['man', 'cat'])).arraySync()).toEqual([[2], [1]])
   })
   it('OrdinalEncoder works on 2DArray', function () {
     const X = [
@@ -30,7 +26,7 @@ describe('OrdinalEncoder', function () {
       [1, 1],
       [0, 2]
     ]
-    assert.deepEqual(encode.fitTransform(X as any).arraySync(), expected)
+    expect(encode.fitTransform(X as any).arraySync()).toEqual(expected)
   })
   it('OrdinalEncoder can be passed categories', function () {
     const X = [
@@ -50,7 +46,7 @@ describe('OrdinalEncoder', function () {
       [1, 1],
       [0, 0]
     ]
-    assert.deepEqual(encode.fitTransform(X as any).arraySync(), expected)
+    expect(encode.fitTransform(X as any).arraySync()).toEqual(expected)
   })
   it('OrdinalEncoder errors on values not seen in training', function () {
     const X = [
@@ -61,7 +57,7 @@ describe('OrdinalEncoder', function () {
     const encode = new OrdinalEncoder()
     encode.fit(X as any)
     // Should throw an error on unknown input
-    assert.throw(() => encode.transform([['Hello', 1]] as any))
+    expect(() => encode.transform([['Hello', 1]] as any)).toThrow()
   })
   it('OrdinalEncoder does not error on unknown values if you pass in defaults', function () {
     const X = [
@@ -76,6 +72,6 @@ describe('OrdinalEncoder', function () {
     encode.fit(X as any)
     // Should throw an error on unknown input
     const expected = encode.transform([['Hello', 1]] as any)
-    assert.deepEqual(expected.arraySync(), [[-1, 0]])
+    expect(expected.arraySync()).toEqual([[-1, 0]])
   })
 })

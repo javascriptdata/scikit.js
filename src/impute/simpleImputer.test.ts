@@ -1,7 +1,6 @@
 import { tensor2d } from '@tensorflow/tfjs-core'
-import { assert } from 'chai'
 import { SimpleImputer } from './simpleImputer'
-import { describe, it } from 'mocha'
+
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
@@ -12,14 +11,11 @@ describe('SimpleImputer', function () {
     const expected = [1, 2, 3, 4, 4]
 
     const returned = imputer.fitTransform(data)
-    assert.deepEqual(returned.arraySync().flat(), expected)
-    assert.deepEqual(
-      imputer
-        .transform([[2], [NaN]])
-        .arraySync()
-        .flat(),
-      [2, 3]
-    )
+    expect(returned.arraySync().flat()).toEqual(expected)
+    expect(imputer
+      .transform([[2], [NaN]])
+      .arraySync()
+      .flat()).toEqual([2, 3])
   })
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({
@@ -40,14 +36,11 @@ describe('SimpleImputer', function () {
     ]
 
     const returned = imputer.fitTransform(data)
-    assert.deepEqual(returned.arraySync(), expected)
-    assert.deepEqual(
-      imputer
-        .transform([[NaN, NaN]])
-        .arraySync()
-        .flat(),
-      [4, 4]
-    )
+    expect(returned.arraySync()).toEqual(expected)
+    expect(imputer
+      .transform([[NaN, NaN]])
+      .arraySync()
+      .flat()).toEqual([4, 4])
   })
   it('Imputes with "mean" strategy. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({ strategy: 'mean' })
@@ -65,19 +58,16 @@ describe('SimpleImputer', function () {
     ]
 
     const returned = imputer.fitTransform(data)
-    assert.deepEqual(returned.arraySync(), expected)
-    assert.deepEqual(
-      imputer
-        .transform([
-          [2, NaN],
-          [NaN, NaN]
-        ])
-        .arraySync(),
-      [
-        [2, 3],
-        [3, 3]
-      ]
-    )
+    expect(returned.arraySync()).toEqual(expected)
+    expect(imputer
+      .transform([
+        [2, NaN],
+        [NaN, NaN]
+      ])
+      .arraySync()).toEqual([
+      [2, 3],
+      [3, 3]
+    ])
   })
   it('Imputes with "median" strategy. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({ strategy: 'median' })
@@ -97,8 +87,8 @@ describe('SimpleImputer', function () {
     ]
 
     const returned = imputer.fitTransform(data)
-    assert.deepEqual(returned.arraySync(), expected)
-    assert.deepEqual(imputer.transform([[2, NaN]]).arraySync(), [[2, 3]])
+    expect(returned.arraySync()).toEqual(expected)
+    expect(imputer.transform([[2, NaN]]).arraySync()).toEqual([[2, 3]])
   })
 
   it('Imputes with "mostFrequent" strategy. In this strategy, we give the fill value', function () {
@@ -121,7 +111,7 @@ describe('SimpleImputer', function () {
     ]
 
     const returned = imputer.fitTransform(data)
-    assert.deepEqual(returned.arraySync(), expected)
-    assert.deepEqual(imputer.transform([[NaN, NaN]]).arraySync(), [[4, 3]])
+    expect(returned.arraySync()).toEqual(expected)
+    expect(imputer.transform([[NaN, NaN]]).arraySync()).toEqual([[4, 3]])
   })
 })

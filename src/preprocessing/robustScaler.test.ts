@@ -1,8 +1,7 @@
-import { assert } from 'chai'
 import { RobustScaler } from './robustScaler'
 import { dfd } from '../shared/globals'
 import { arrayEqual } from '../utils'
-import { describe, it } from 'mocha'
+
 
 describe('RobustScaler', function () {
   it('Standardize values in a DataFrame using a RobustScaler', function () {
@@ -22,7 +21,7 @@ describe('RobustScaler', function () {
 
     scaler.fit(new dfd.DataFrame(X))
     const resultDf = new dfd.DataFrame(scaler.transform(new dfd.DataFrame(X)))
-    assert.isTrue(arrayEqual(resultDf.values, expected, 0.1))
+    expect(arrayEqual(resultDf.values, expected, 0.1)).toBe(true)
   })
   it('Standardize values in a DataFrame using a RobustScaler quantileRange', function () {
     const X = [
@@ -41,7 +40,7 @@ describe('RobustScaler', function () {
 
     scaler.fit(new dfd.DataFrame(X))
     const resultDf = new dfd.DataFrame(scaler.transform(new dfd.DataFrame(X)))
-    assert.isTrue(arrayEqual(resultDf.values, expected, 0.1))
+    expect(arrayEqual(resultDf.values, expected, 0.1)).toBe(true)
   })
   it('Standardize values in a DataFrame using a RobustScaler quantileRange with no scaling', function () {
     const X = [
@@ -63,6 +62,6 @@ describe('RobustScaler', function () {
 
     const resultDf = scaler.fitTransform(X)
 
-    assert.isTrue(arrayEqual(resultDf.arraySync(), expected, 0.1))
+    expect(arrayEqual(resultDf.arraySync(), expected, 0.1)).toBe(true)
   })
 })
