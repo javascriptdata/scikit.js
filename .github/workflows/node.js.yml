@@ -40,3 +40,4 @@ jobs:
       - name: Test coverage
         run: |
           npm run test:ci
+          npm run coverage
