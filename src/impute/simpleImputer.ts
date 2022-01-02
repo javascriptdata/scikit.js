@@ -153,7 +153,7 @@ export class SimpleImputer extends TransformerMixin {
     const newTensor = convertToNumericTensor2D(X)
     return where<Tensor2D>(
       newTensor.isNaN(),
-      this.statistics.dataSync(),
+      this.statistics.reshape([1, -1]) as Tensor2D,
       newTensor
     ) as Tensor2D
   }
