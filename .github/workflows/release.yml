@@ -1,11 +1,11 @@
-name: Release
+name: Build
 on:
   push:
     branches:
       - main
 jobs:
   release:
-    name: Release
+    name: Build & Release
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
@@ -32,6 +32,21 @@ jobs:
         run: |
           npm i jest typescript rollup typedoc  -g
           npm ci
+      # - name: Test coverage
+      #   run: |
+      #     jest --coverage --ci
+      # - name: Coveralls Parallel
+      #   uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ secrets.github_token }}
+      #     parallel: true
+      #     path-to-lcov: ./coverage/lcov.info # optional (default value)
+
+      # - name: Coveralls Finished
+      #   uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ secrets.github_token }}
+      #     parallel-finished: true
       - name: build files, docs
         run: |
           NODE_OPTIONS=--max-old-space-size=9000 npm run build 
@@ -39,7 +54,6 @@ jobs:
       - name: Test coverage
         run: |
           npm run test:ci
-          npm run coverage
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

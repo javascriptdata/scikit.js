@@ -7,6 +7,9 @@
     "node-gpu": "dist/node-gpu/index.js",
     "web": "dist/web/index.js"
   },
+  "exports": {
+    "./node": "./dist/node/index.js"
+  },
   "main": "dist/esm/index.js",
   "directories": {
     "doc": "docs"
@@ -16,7 +19,7 @@
     "test:ci": "node_modules/.bin/jest src/**/*.test.ts --coverage --runInBand --ci",
     "test:clean": "node_modules/.bin/jest src/**/*.test.ts --coverage && npm run prettier:check",
     "compile:web": "node_modules/.bin/rollup -c",
-    "compile:esm": "node_modules/.bin/tsc -p tsconfig.build.json",
+    "compile:esm": "node_modules/.bin/tsc -p tsconfig.build-esm.json && node_modules/.bin/tsc-alias -p tsconfig.build-esm.json",
     "compile:node-cjs": "node_modules/.bin/tsc -p tsconfig.build-node.json && node_modules/.bin/tsc-alias -p tsconfig.build-node.json",
     "prettier:check": "node_modules/prettier/bin-prettier.js --check src",
     "build": "npm run compile:esm && npm run compile:node-cjs && npm run compile:web",

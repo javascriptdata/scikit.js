@@ -1,7 +1,6 @@
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { SimpleImputer } from './simpleImputer'
 
-
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({ strategy: 'constant', fillValue: 3 })
@@ -12,10 +11,12 @@ describe('SimpleImputer', function () {
 
     const returned = imputer.fitTransform(data)
     expect(returned.arraySync().flat()).toEqual(expected)
-    expect(imputer
-      .transform([[2], [NaN]])
-      .arraySync()
-      .flat()).toEqual([2, 3])
+    expect(
+      imputer
+        .transform([[2], [NaN]])
+        .arraySync()
+        .flat()
+    ).toEqual([2, 3])
   })
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({
@@ -37,10 +38,12 @@ describe('SimpleImputer', function () {
 
     const returned = imputer.fitTransform(data)
     expect(returned.arraySync()).toEqual(expected)
-    expect(imputer
-      .transform([[NaN, NaN]])
-      .arraySync()
-      .flat()).toEqual([4, 4])
+    expect(
+      imputer
+        .transform([[NaN, NaN]])
+        .arraySync()
+        .flat()
+    ).toEqual([4, 4])
   })
   it('Imputes with "mean" strategy. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({ strategy: 'mean' })
@@ -59,12 +62,14 @@ describe('SimpleImputer', function () {
 
     const returned = imputer.fitTransform(data)
     expect(returned.arraySync()).toEqual(expected)
-    expect(imputer
-      .transform([
-        [2, NaN],
-        [NaN, NaN]
-      ])
-      .arraySync()).toEqual([
+    expect(
+      imputer
+        .transform([
+          [2, NaN],
+          [NaN, NaN]
+        ])
+        .arraySync()
+    ).toEqual([
       [2, 3],
       [3, 3]
     ])

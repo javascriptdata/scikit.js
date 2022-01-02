@@ -8,14 +8,46 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="" />
+    <style type="text/css">
+      .result{
+        border:1px solid black;
+        padding:1rem;
+      }
+      </style>
+      <script type="application/javascript">
+      const cacheData={};
+      function setLoadingDom(selector){
+        const el = document.querySelector(selector);
+        el.innerHTML = '';
+        return el;
+      }
+      function updateLoadingDom(el,content){
+        const resultPre = document.createElement('pre');
+        resultPre.innerHTML = JSON.stringify(content ,null,2);
+        el.appendChild(resultPre);
+      }
+      </script>
   </head>
   <body>
     <h1>Basic LinearRegression</h1>
+    <div id="modelTest"></div>
     <script src="../../dist/web/index.js"></script>
-    <!-- <script type="module">
+    <script >
+      const csvtest1DOM= setLoadingDom('#modelTest');
+      updateLoadingDom(csvtest1DOM,{ training:'started', });
+
       let lr = new scikitjs.LinearRegression();
-      await lr.fit([[1], [2]], [10, 20]);
-      console.log(lr.intercept_);
-    </script> -->
+      async function main(){
+        console.log('going to fit data')
+        console.log(lr)
+        await lr.fit([[1], [2]], [10, 20]);
+        updateLoadingDom(csvtest1DOM,{ training:'completed', });
+        updateLoadingDom(csvtest1DOM,{ lr });
+
+        console.log('fit model')
+        console.log({lr})
+      }
+      main()
+    </script>
   </body>
 </html>
