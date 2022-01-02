@@ -1,2 +1,2 @@
 service_name: travis-pro
-repo_token: mHsOIzijU2P1zd1oax31JebuZojRBsbKA
+repo_token: ${{ secrets.COVERALL_TOKEN }}
