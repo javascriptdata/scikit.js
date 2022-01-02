@@ -1,5 +1,7 @@
 # scikit.js
 
+[![Coverage Status](https://coveralls.io/repos/github/javascriptdata/scikit.js/badge.svg?branch=main)](https://coveralls.io/github/javascriptdata/scikit.js?branch=main) [![Release](https://github.com/javascriptdata/scikit.js/actions/workflows/release.yml/badge.svg)](https://github.com/javascriptdata/scikit.js/actions/workflows/release.yml)
+
 TypeScript package for predictive data analysis, data preparation and machine learning.
 
 Aims to be a Typescript port of the [scikit-learn](https://scikit-learn.org) python library.

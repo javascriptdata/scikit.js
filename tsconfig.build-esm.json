@@ -1,0 +1,23 @@
+{
+  "extends":"./tsconfig.build.json",
+  "compilerOptions": {
+    "declarationDir": "./dist/esm",
+    "outDir": "./dist/esm",
+    "target": "esnext",
+    "baseUrl": "./src",
+    "paths": {
+      "shared/*": ["shared/*"],
+    }
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true,
+    "replacers": {
+      "exampleReplacer": {
+        "enabled": true,
+        "file": "./build/browserReplacer.js"
+      },
+    }
+  }
+}
+
