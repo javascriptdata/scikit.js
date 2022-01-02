@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/javascriptdata/scikit.js/compare/v1.1.0...v1.2.0) (2022-01-02)
+
+
+### Features
+
+* seeing if this package.json exports does the trick ([4a73f7c](https://github.com/javascriptdata/scikit.js/commit/4a73f7c79281d8304eec9dbb47293f03b14fc383))
+
 # [1.1.0](https://github.com/javascriptdata/scikit.js/compare/v1.0.3...v1.1.0) (2021-12-31)
 
 
