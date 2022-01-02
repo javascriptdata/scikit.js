@@ -1,11 +1,9 @@
-import { assert } from 'chai'
 import { makeVotingClassifier, VotingClassifier } from './votingClassifier'
 import { DummyClassifier } from '../dummy/dummyClassifier'
-import { describe, it } from 'mocha'
+
 import { LogisticRegression } from '../linear_model/logisticRegression'
 
 describe('VotingClassifier', function () {
-  this.timeout(10000)
   it('Use VotingClassifier on simple example (voting = hard)', async function () {
     const X = [
       [1, 2],
@@ -24,8 +22,8 @@ describe('VotingClassifier', function () {
     })
 
     await voter.fit(X, y)
-    assert.deepEqual(voter.predict(X).arraySync(), [1, 1, 1, 1, 1])
-  })
+    expect(voter.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
+  }, 10000)
   it('Use VotingClassifier on simple example label encoder (voting = hard)', async function () {
     const X = [
       [1, 2],
@@ -44,8 +42,8 @@ describe('VotingClassifier', function () {
     })
 
     await voter.fit(X, y)
-    assert.deepEqual(voter.predict(X).arraySync(), [2, 2, 2, 2, 2])
-  })
+    expect(voter.predict(X).arraySync()).toEqual([2, 2, 2, 2, 2])
+  }, 10000)
   it('Use VotingClassifier on simple example label encoder (voting = soft)', async function () {
     const X = [
       [1, 2],
@@ -64,8 +62,8 @@ describe('VotingClassifier', function () {
     })
 
     await voter.fit(X, y)
-    assert.deepEqual(voter.predict(X).arraySync(), [1, 1, 1, 1, 1])
-  })
+    expect(voter.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
+  }, 10000)
   it('Use VotingClassifier on simple example label encoder (voting = soft)', async function () {
     const X = [
       [1, 2],
@@ -85,8 +83,8 @@ describe('VotingClassifier', function () {
     })
 
     await voter.fit(X, y)
-    assert.deepEqual(voter.predict(X).arraySync(), [0, 0, 1, 1, 1])
-  })
+    expect(voter.predict(X).arraySync()).toEqual([0, 0, 1, 1, 1])
+  }, 10000)
   it('Use VotingClassifier on simple example label encoder (voting = soft)', async function () {
     const X = [
       [1, 2],
@@ -102,6 +100,6 @@ describe('VotingClassifier', function () {
     )
 
     await voter.fit(X, y)
-    assert.deepEqual(voter.predict(X).arraySync(), [1, 1, 1, 1, 1])
-  })
+    expect(voter.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
+  }, 10000)
 })

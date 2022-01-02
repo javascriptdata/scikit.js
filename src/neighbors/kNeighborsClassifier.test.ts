@@ -13,12 +13,11 @@
 * ==========================================================================
 */
 
-import { describe, it } from 'mocha'
+
 import { KNeighborsClassifier } from './kNeighborsClassifier'
-import { assert } from 'chai'
 import { arrayEqual } from '../utils'
 
-describe('KNeighborsClassifier', async () => {
+describe('KNeighborsClassifier', () => {
   it('correctly predicts sklearn example', async () => {
     const X_train = [[0], [1], [2], [3]]
     const y_train = [0, 0, 1, 1]
@@ -29,8 +28,8 @@ describe('KNeighborsClassifier', async () => {
     const prob = await model.predictProba([[0.9]]).array()
     const pred = await model.predict([[1.1]]).array()
 
-    assert.isTrue(arrayEqual(prob, [[2 / 3, 1 / 3]], 0.01))
-    assert.deepEqual(pred, [0])
+    expect(arrayEqual(prob, [[2 / 3, 1 / 3]], 0.01)).toBe(true)
+    expect(pred).toEqual([0])
   })
   it('correctly predicts 1d example classes', async () => {
     const X_train = [[2], [0], [1], [7]]
@@ -46,9 +45,9 @@ describe('KNeighborsClassifier', async () => {
     const y_test = [-1.75, 1337, 5.5, 1.25]
 
     for (let i = 0; i < X_test.length; i++) {
-      assert.deepEqual(await model.predict([X_test[i]]).array(), [y_test[i]])
+      expect(await model.predict([X_test[i]]).array()).toEqual([y_test[i]])
     }
-    assert.deepEqual(await model.predict(X_test).array(), y_test)
+    expect(await model.predict(X_test).array()).toEqual(y_test)
   })
   it('correctly predicts 2d example probabilities', async () => {
     const grid = [
@@ -104,10 +103,10 @@ describe('KNeighborsClassifier', async () => {
     ]
 
     for (let i = 0; i < X_test.length; i++) {
-      assert.deepEqual(await model.predictProba([X_test[i]]).array(), [
+      expect(await model.predictProba([X_test[i]]).array()).toEqual([
         p_test[i]
       ])
     }
-    assert.deepEqual(await model.predictProba(X_test).array(), p_test)
+    expect(await model.predictProba(X_test).array()).toEqual(p_test)
   })
 })

@@ -13,9 +13,8 @@
 * ==========================================================================
 */
 
-import { assert } from 'chai'
-import * as fc from 'fast-check'
-import { describe, it } from 'mocha'
+import * as fc from 'fast-check';
+
 import { Metric, minkowskiMetric } from './metrics'
 
 const NDIMS = Object.freeze([1, 2, 7])
@@ -50,7 +49,7 @@ const assertClose = (x: number, y: number) => {
   const atol = 1e-8
 
   const tol = atol + rtol * Math.max(Math.abs(x), Math.abs(y))
-  return assert.closeTo(x, y, tol)
+  return expect(Math.abs(x - y)).toBeLessThanOrEqual(tol);
 }
 
 const run_generic_vector_metric_tests = (metric: Metric) => {
@@ -65,7 +64,7 @@ const run_generic_vector_metric_tests = (metric: Metric) => {
         fc.assert(
           fc.property(anyV, (v) => {
             Object.freeze(v)
-            assert.equal(metric.distance(v, v), 0)
+            expect(metric.distance(v, v)).toEqual(0)
           })
         )
       })
@@ -79,7 +78,7 @@ const run_generic_vector_metric_tests = (metric: Metric) => {
           fc.property(anyU, anyV, (u, v) => {
             Object.freeze(u)
             Object.freeze(v)
-            assert.isAtLeast(metric.distance(u, v), 0)
+            expect(metric.distance(u, v)).toBeGreaterThanOrEqual(0)
           })
         )
       })
@@ -93,7 +92,7 @@ const run_generic_vector_metric_tests = (metric: Metric) => {
           fc.property(anyU, anyV, (u, v) => {
             Object.freeze(u)
             Object.freeze(v)
-            assert.equal(metric.distance(u, v), metric.distance(v, u))
+            expect(metric.distance(u, v)).toEqual(metric.distance(v, u))
           })
         )
       })
@@ -107,8 +106,8 @@ const run_generic_vector_metric_tests = (metric: Metric) => {
           fc.property(anyU, anyV, (u, v) => {
             Object.freeze(u)
             Object.freeze(v)
-            if (metric.distance(u, v) === 0) assert.deepEqual(u, v)
-            else assert.notDeepEqual(u, v)
+            if (metric.distance(u, v) === 0) expect(u).toEqual(v)
+            else expect(u).not.toEqual(v)
           })
         )
       })
@@ -124,10 +123,7 @@ const run_generic_vector_metric_tests = (metric: Metric) => {
             Object.freeze(u)
             Object.freeze(v)
             Object.freeze(w)
-            assert.isAtMost(
-              metric.distance(u, w),
-              metric.distance(u, v) + metric.distance(u, w)
-            )
+            expect(metric.distance(u, w)).toBeLessThanOrEqual(metric.distance(u, v) + metric.distance(u, w))
           })
         )
       })

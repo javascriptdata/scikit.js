@@ -1,6 +1,5 @@
-import { assert } from 'chai'
 import { DummyClassifier } from './dummyClassifier'
-import { describe, it } from 'mocha'
+
 
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {
@@ -20,7 +19,7 @@ describe('DummyClassifier', function () {
     ]
 
     clf.fit(X, y)
-    assert.deepEqual(clf.predict(predictX).arraySync(), [20, 20, 20])
+    expect(clf.predict(predictX).arraySync()).toEqual([20, 20, 20])
   })
   it('Use DummyClassifier on simple example (constant)', function () {
     const clf = new DummyClassifier({ strategy: 'constant', constant: 10 })
@@ -38,7 +37,7 @@ describe('DummyClassifier', function () {
     ]
 
     clf.fit(X, y)
-    assert.deepEqual(clf.predict(predictX).arraySync(), [10, 10, 10])
+    expect(clf.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })
   it('Use DummyClassifier on simple example (uniform)', function () {
     const scaler = new DummyClassifier({ strategy: 'uniform' })
@@ -51,6 +50,6 @@ describe('DummyClassifier', function () {
     const y = [1, 2, 3]
     scaler.fit(X, y)
 
-    assert.deepEqual(scaler.classes, [1, 2, 3])
+    expect(scaler.classes).toEqual([1, 2, 3])
   })
 })

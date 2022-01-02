@@ -1,15 +1,13 @@
-import { assert } from 'chai'
 import { LinearSVC } from './linearSVC'
-import { describe, it } from 'mocha'
+
 
 describe('LinearSVC', function () {
-  this.timeout(30000)
   it('Works on arrays (small example)', async function () {
     const lr = new LinearSVC()
 
     await lr.fit([[1], [2]], [0, 1])
-    assert.deepEqual(lr.predict([[1], [2]]).arraySync(), [0, 1])
-  })
+    expect(lr.predict([[1], [2]]).arraySync()).toEqual([0, 1])
+  }, 30000)
   it('Test of the function used with 2 classes', async function () {
     let X = [
       [0, -1],
@@ -43,9 +41,9 @@ describe('LinearSVC', function () {
     let svc = new LinearSVC({ penalty: 'none' })
     await svc.fit(X, y)
     let results = svc.predict(Xtest) // compute results of the training set
-    assert.deepEqual(results.arraySync(), [0, 0, 0, 1, 1, 1])
-    assert.isTrue(svc.score(X, y) > 0.5)
-  })
+    expect(results.arraySync()).toEqual([0, 0, 0, 1, 1, 1])
+    expect(svc.score(X, y) > 0.5).toBe(true)
+  }, 30000)
   it('Test of the prediction with 3 classes', async function () {
     let X = [
       [0, -1],
@@ -88,6 +86,6 @@ describe('LinearSVC', function () {
     let svc = new LinearSVC({ penalty: 'none' })
     await svc.fit(X, y)
     let finalResults = svc.predict(Xtest)
-    assert.deepEqual(finalResults.arraySync(), [0, 0, 0, 1, 1, 1, 2, 2, 2])
-  })
+    expect(finalResults.arraySync()).toEqual([0, 0, 0, 1, 1, 1, 2, 2, 2])
+  }, 30000)
 })

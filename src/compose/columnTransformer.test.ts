@@ -1,8 +1,6 @@
-import { assert } from 'chai'
 import { ColumnTransformer } from './columnTransformer'
 import { MinMaxScaler } from '../preprocessing/minMaxScaler'
 import { SimpleImputer } from '../impute/simpleImputer'
-import { describe, it } from 'mocha'
 
 describe('ColumnTransformer', function () {
   it('ColumnTransformer simple test', function () {
@@ -28,6 +26,6 @@ describe('ColumnTransformer', function () {
       [1, 0]
     ]
 
-    assert.deepEqual(result.arraySync(), expected)
+    expect(result.arraySync()).toEqual(expected)
   })
 })

@@ -1,9 +1,8 @@
-import { assert } from 'chai'
 import { MaxAbsScaler } from './maxAbsScaler'
 import { dfd } from '../shared/globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { arrayEqual } from '../utils'
-import { describe, it } from 'mocha'
+
 
 describe('MaxAbsScaler', function () {
   it('Standardize values in a DataFrame using a MaxAbsScaler', function () {
@@ -27,8 +26,8 @@ describe('MaxAbsScaler', function () {
     const resultDf = new dfd.DataFrame(
       scaler.transform(new dfd.DataFrame(data))
     )
-    assert.deepEqual(resultDf.values, expected)
-    assert.deepEqual(scaler.transform([[2, 5]]).arraySync(), [[2, 0.5]])
+    expect(resultDf.values).toEqual(expected)
+    expect(scaler.transform([[2, 5]]).arraySync()).toEqual([[2, 0.5]])
   })
   it('fitTransform using a MaxAbsScaler', function () {
     const scaler = new MaxAbsScaler()
@@ -49,7 +48,7 @@ describe('MaxAbsScaler', function () {
       scaler.fitTransform(new dfd.DataFrame(data))
     )
 
-    assert.deepEqual(resultDf.values, expected)
+    expect(resultDf.values).toEqual(expected)
   })
   it('InverseTransform with MaxAbsScaler', function () {
     const scaler = new MaxAbsScaler()
@@ -57,35 +56,35 @@ describe('MaxAbsScaler', function () {
     const resultTransform = scaler.transform(
       tensor2d([10, 5, 50, 100, 50], [5, 1])
     )
-    assert.deepEqual(resultTransform.arraySync().flat(), [1, 0.5, 5, 10, 5])
+    expect(resultTransform.arraySync().flat()).toEqual([1, 0.5, 5, 10, 5])
 
     const resultInverse = scaler.inverseTransform(
       tensor2d([0.1, 0.5, 1, 1, 0.5], [5, 1])
     )
-    assert.deepEqual([1, 5, 10, 10, 5], resultInverse.arraySync().flat())
+    expect([1, 5, 10, 10, 5]).toEqual(resultInverse.arraySync().flat())
   })
   it('Handles pathological examples with constant features with MaxAbsScaler', function () {
     const data = [[0, 0, 0, 0]]
     const scaler = new MaxAbsScaler()
     scaler.fit(data)
-    assert.deepEqual(scaler.transform([[0, 0, 0, 0]]).arraySync(), [
+    expect(scaler.transform([[0, 0, 0, 0]]).arraySync()).toEqual([
       [0, 0, 0, 0]
     ])
 
-    assert.deepEqual(scaler.transform([[10, 10, -10, 10]]).arraySync(), [
+    expect(scaler.transform([[10, 10, -10, 10]]).arraySync()).toEqual([
       [10, 10, -10, 10]
     ])
   })
   it('Errors when you pass garbage input into a MaxAbsScaler', function () {
     const data = 4
     const scaler = new MaxAbsScaler()
-    assert.throws(() => scaler.fit(data as any))
+    expect(() => scaler.fit(data as any)).toThrow()
   })
   it('Gracefully handles Nan as inputs MaxAbsScaler', function () {
     const data = tensor2d([4, 4, 'whoops', 4, -4] as any, [5, 1])
     const scaler = new MaxAbsScaler()
     scaler.fit(data as any)
-    assert.deepEqual(scaler.transform(data as any).arraySync(), [
+    expect(scaler.transform(data as any).arraySync()).toEqual([
       [1],
       [1],
       [NaN],
@@ -97,9 +96,9 @@ describe('MaxAbsScaler', function () {
     let myDf = new dfd.DataFrame({ a: [1, 2, 3, 4], b: [5, 6, 7, 8] })
     let scaler = new MaxAbsScaler()
     scaler.fit(myDf)
-    assert.deepEqual(scaler.nSamplesSeen, 4)
-    assert.deepEqual(scaler.nFeaturesIn, 2)
-    assert.deepEqual(scaler.featureNamesIn, ['a', 'b'])
+    expect(scaler.nSamplesSeen).toEqual(4)
+    expect(scaler.nFeaturesIn).toEqual(2)
+    expect(scaler.featureNamesIn).toEqual(['a', 'b'])
   })
   it('test_maxabs_scaler_zero_variance_features', function () {
     // Check MaxAbsScaler on toy data with zero variance features
@@ -118,9 +117,9 @@ describe('MaxAbsScaler', function () {
       [0.0, 1.0, 1.0],
       [0.0, 0.0, 0.0]
     ]
-    assert.isTrue(arrayEqual(X_trans, X_expected, 0.01))
+    expect(arrayEqual(X_trans, X_expected, 0.01)).toBe(true)
     let X_trans_inv = scaler.inverseTransform(X_trans).arraySync()
-    assert.isTrue(arrayEqual(X, X_trans_inv, 0.01))
+    expect(arrayEqual(X, X_trans_inv, 0.01)).toBe(true)
 
     // make sure new data gets transformed correctly
     let X_new = [
@@ -135,7 +134,7 @@ describe('MaxAbsScaler', function () {
       [+0.0, 1.0, 1.0]
     ]
 
-    assert.isTrue(arrayEqual(X_trans_new, X_expected_new, 0.01))
+    expect(arrayEqual(X_trans_new, X_expected_new, 0.01)).toBe(true)
   })
   /* Streaming test
   def test_maxabs_scaler_partial_fit():

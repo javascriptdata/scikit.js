@@ -1,8 +1,7 @@
-import { assert } from 'chai'
 import { Normalizer } from './normalizer'
 import { dfd } from '../shared/globals'
 import { arrayEqual } from '../utils'
-import { describe, it } from 'mocha'
+
 
 describe('Normalizer', function () {
   it('Standardize values in a DataFrame using a Normalizer (l1 case)', function () {
@@ -26,8 +25,8 @@ describe('Normalizer', function () {
     const resultDf = new dfd.DataFrame(
       scaler.transform(new dfd.DataFrame(data))
     )
-    assert.isTrue(arrayEqual(resultDf.values, expected, 0.1))
-    assert.deepEqual(scaler.transform([[2, 2]]).arraySync(), transformedData)
+    expect(arrayEqual(resultDf.values, expected, 0.1)).toBe(true)
+    expect(scaler.transform([[2, 2]]).arraySync()).toEqual(transformedData)
   })
   it('fitTransform using a Normalizer (l2 case)', function () {
     const data = [
@@ -43,7 +42,7 @@ describe('Normalizer', function () {
       [-0.6, 0.8],
       [0, 1]
     ]
-    assert.isTrue(arrayEqual(resultDf.arraySync(), expected, 0.1))
+    expect(arrayEqual(resultDf.arraySync(), expected, 0.1)).toBe(true)
   })
   it('fitTransform using a Normalizer (max case)', function () {
     const data = [
@@ -59,7 +58,7 @@ describe('Normalizer', function () {
       [-0.75, 1],
       [0, 1]
     ]
-    assert.isTrue(arrayEqual(resultDf.arraySync(), expected, 0.1))
+    expect(arrayEqual(resultDf.arraySync(), expected, 0.1)).toBe(true)
   })
   it('fitTransform using a Normalizer (l1 case)', function () {
     const data = [
@@ -74,6 +73,6 @@ describe('Normalizer', function () {
       [-3 / 7, 4 / 7],
       [0, 0]
     ]
-    assert.isTrue(arrayEqual(resultDf.arraySync(), expected, 0.1))
+    expect(arrayEqual(resultDf.arraySync(), expected, 0.1)).toBe(true)
   })
 })
