@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/javascriptdata/scikit.js#readme",
   "dependencies": {
+    "@types/jest": "^27.4.0",
     "danfojs": "^0.3.4",
     "danfojs-node": "^0.3.4",
     "libsvm-wasm": "^0.0.8",
