@@ -7,6 +7,9 @@
     "node-gpu": "dist/node-gpu/index.js",
     "web": "dist/web/index.js"
   },
+  "exports": {
+    "./node": "./dist/node/index.js"
+  },
   "main": "dist/esm/index.js",
   "directories": {
     "doc": "docs"
