@@ -1,7 +1,6 @@
 import * as tf from '@tensorflow/tfjs'
-import { Scikit1D, Scikit2D } from 'lib'
-import { dfd } from '../../globals'
-import { random } from 'mathjs'
+import { Scikit1D, Scikit2D } from '../'
+import * as math from 'mathjs'
 
 interface MakeRegressionInput {
   nSamples?: number
@@ -21,9 +20,10 @@ export const makeRegression = ({
   nInformative = 10,
   nTargets = 1,
   noise = 1,
+  bias = 0,
   shuffle = false
 }: MakeRegressionInput): MakeRegressionOutput => {
-  // const numberInformative = math.min(nFeatures, nInformative)
+  const numberInformative = math.min(nFeatures, nInformative)
 
   // Randomly generate a well conditioned input set
   let X: Scikit2D = tf.randomNormal([nSamples, nFeatures])
@@ -33,7 +33,19 @@ export const makeRegression = ({
   // Generate a ground truth model with only n_informative features being non
   // zeros (the other features are not correlated to y and should be ignored
   // by a sparsifying regularizers such as L1 or elastic net)
-  let groundTruth = tf.zeros([nFeatures, nTargets])
+  let [groundTruthA, groundTruthB] = tf.split(
+    tf.zeros([nFeatures, nTargets]),
+    [numberInformative, nFeatures - numberInformative],
+    0
+  )
+  const groundTruthRandom = tf.randomNormal([numberInformative, nTargets])
+  groundTruthA = groundTruthA.add(groundTruthRandom)
+
+  let groundTruth = tf.concat([groundTruthA, groundTruthB])
+
+  let Y: Scikit1D = tf.einsum('i,i->', X, groundTruth).as1D()
+
+  Y = Y.add(tf.fill(Y.shape, bias)).as1D()
 
   // Randomly permute samples and features
   if (shuffle) {
