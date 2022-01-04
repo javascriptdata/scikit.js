@@ -10,9 +10,12 @@ interface MakeRegressionInput {
   bias?: number
   noise?: number
   shuffle?: boolean
+  coef?: boolean
 }
 
-type MakeRegressionOutput = [Scikit2D, Scikit1D]
+type MakeRegressionOutput =
+  | [Scikit2D, Scikit1D]
+  | [Scikit2D, Scikit1D, Scikit1D]
 
 export const makeRegression = ({
   nSamples = 100,
@@ -21,14 +24,13 @@ export const makeRegression = ({
   nTargets = 1,
   noise = 1,
   bias = 0,
-  shuffle = false
+  shuffle = false,
+  coef = false
 }: MakeRegressionInput): MakeRegressionOutput => {
   const numberInformative = math.min(nFeatures, nInformative)
 
   // Randomly generate a well conditioned input set
   let X: Scikit2D = tf.randomNormal([nSamples, nFeatures])
-
-  X.print()
 
   // Generate a ground truth model with only n_informative features being non
   // zeros (the other features are not correlated to y and should be ignored
@@ -47,6 +49,11 @@ export const makeRegression = ({
 
   Y = Y.add(tf.fill(Y.shape, bias)).as1D()
 
+  // Add noise
+  if (noise > 0) {
+    Y = Y.add(tf.randomNormal(Y.shape, undefined, noise)).as1D()
+  }
+
   // Randomly permute samples and features
   if (shuffle) {
     const randomTen = tf.util.createShuffledIndices(nSamples)
@@ -58,5 +65,14 @@ export const makeRegression = ({
     X.print()
   }
 
-  return [X, tf.tensor1d([1, 2, 3])]
+  Y = tf.squeeze(Y).as1D()
+
+  X.print()
+  Y.print()
+
+  if (coef) return [X, Y, tf.squeeze(groundTruth).as1D()]
+
+  return [X, Y]
 }
+
+makeRegression({ nSamples: 4, nFeatures: 4, nInformative: 2, nTargets: 1, noise: 0.1 })
