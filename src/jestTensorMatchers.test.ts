@@ -81,5 +81,19 @@ describe('Custom Jest Tensor Matchers', () => {
     )
 
     expect([0.99, 1.99]).toBeAllLessNotClose([1, 2], { rtol: 0, atol: 0.0095 })
+
+    expect([1, 2]).not.toBeAllCloseTo([1.1, 2.1], { rtol: 0.05 })
+
+    expect(() =>
+      expect([1, 2, 3, 4]).toBeAllCloseTo([1, 2.1, 3, 4], { rtol: 0.01 })
+    ).toThrow()
+
+    expect(() => expect([]).toBeAllCloseTo([])).toThrow()
+    expect(() => expect([1]).toBeAllCloseTo([])).toThrow()
+    expect(() => expect([]).toBeAllCloseTo([2])).toThrow()
+
+    expect([]).toBeAllCloseTo([], { allowEmpty: true })
+    expect([1]).toBeAllCloseTo([], { allowEmpty: true })
+    expect([]).toBeAllCloseTo([2], { allowEmpty: true })
   })
 })

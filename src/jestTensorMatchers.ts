@@ -21,7 +21,7 @@ declare global {
   namespace jest {
     interface Matchers<R, T> {
       /**
-       * Tests whether or not each entry of a Tensor(Like) is close
+       * Tests whether or not every entry of a Tensor(Like) is close
        * to the corresponding entry of an expected tensor.
        *
        * @param expected The expected result tensor.
@@ -35,31 +35,79 @@ declare global {
       toBeAllCloseTo: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean }
+            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
           ) => R
         : undefined
+      /**
+       * Tests whether or not every entry of a Tensor(Like) is less than or close
+       * to the corresponding entry of an expected tensor.
+       *
+       * @param expected The expected result tensor.
+       * @param params Tolerance and broadcast settings. `{broadcast: false}` disallows
+       *               broadcasting, i.e. the result tensor must have the same shape as
+       *               the expected tensor. `{rtol, atol}` are the relative and absolute
+       *               tolerance parameter. Two entries `x` and `y` are considered equal
+       *               iff `x-y <= max(|x|, |y|)*rtol + atol`. Set `{rtol: 0, atol: 0}`
+       *               for exact equality.
+       */
       toBeAllLessOrClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean }
+            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
           ) => R
         : undefined
+      /**
+       * Tests whether or not every entry of a Tensor(Like) is greater than or close
+       * to the corresponding entry of an expected tensor.
+       *
+       * @param expected The expected result tensor.
+       * @param params Tolerance and broadcast settings. `{broadcast: false}` disallows
+       *               broadcasting, i.e. the result tensor must have the same shape as
+       *               the expected tensor. `{rtol, atol}` are the relative and absolute
+       *               tolerance parameter. Two entries `x` and `y` are considered equal
+       *               iff `x-y >= -max(|x|, |y|)*rtol - atol`. Set `{rtol: 0, atol: 0}`
+       *               for exact equality.
+       */
       toBeAllGreaterOrClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean }
+            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
           ) => R
         : undefined
+      /**
+       * Tests whether or not every entry of a Tensor(Like) is sufficiently less than
+       * the corresponding entry of an expected tensor.
+       *
+       * @param expected The expected result tensor.
+       * @param params Tolerance and broadcast settings. `{broadcast: false}` disallows
+       *               broadcasting, i.e. the result tensor must have the same shape as
+       *               the expected tensor. `{rtol, atol}` are the relative and absolute
+       *               tolerance parameter. Two entries `x` and `y` are considered equal
+       *               iff `x-y < -max(|x|, |y|)*rtol - atol`. Set `{rtol: 0, atol: 0}`
+       *               for exact equality.
+       */
       toBeAllLessNotClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean }
+            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
           ) => R
         : undefined
+      /**
+       * Tests whether or not every entry of a Tensor(Like) is sufficiently greater than
+       * the corresponding entry of an expected tensor.
+       *
+       * @param expected The expected result tensor.
+       * @param params Tolerance and broadcast settings. `{broadcast: false}` disallows
+       *               broadcasting, i.e. the result tensor must have the same shape as
+       *               the expected tensor. `{rtol, atol}` are the relative and absolute
+       *               tolerance parameter. Two entries `x` and `y` are considered equal
+       *               iff `x-y > max(|x|, |y|)*rtol + atol`. Set `{rtol: 0, atol: 0}`
+       *               for exact equality.
+       */
       toBeAllGreaterNotClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean }
+            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
           ) => R
         : undefined
     }
@@ -116,7 +164,7 @@ export function toBeAll(
   this: { isNot: boolean },
   result: TensorLike | Tensor,
   expect: TensorLike | Tensor,
-  { broadcast = true },
+  { broadcast = true, allowEmpty = false },
   description: string,
   match: (x: number, y: number) => boolean
 ) {
@@ -124,8 +172,10 @@ export function toBeAll(
   const a = result instanceof Tensor ? result : tf.tensor(result)
   const b = expect instanceof Tensor ? expect : tf.tensor(expect)
 
-  const msg = (msg: string) => () =>
-    `\nA: ${a.toString(true)}\nB: ${b.toString(true)}\nExpected A ${
+  const msg = (msg: () => string) => () =>
+    `\nA: ${a.toString(true)}` +
+    `\nB: ${b.toString(true)}` +
+    `\nExpected A ${
       isNot ? 'not ' : ''
     }to be all ${description} B but:\n${msg}`
 
@@ -149,7 +199,7 @@ export function toBeAll(
         const sb = shapeB[j]
         if (sa !== sb && sa !== 1 && sb !== 1) {
           return {
-            message: msg('A.shape not broadcast-compatible to B.shape'),
+            message: msg(() => 'A.shape not broadcast-compatible to B.shape'),
             pass: isNot
           }
         }
@@ -158,14 +208,14 @@ export function toBeAll(
     } else {
       if (i !== j) {
         return {
-          message: msg('A.shape does not match B.shape'),
+          message: msg(() => 'A.shape does not match B.shape'),
           pass: isNot
         }
       }
       while (i-- > 0 && j-- > 0) {
         if (shapeA[i] !== shapeB[j]) {
           return {
-            message: msg('A.shape does not match B.shape'),
+            message: msg(() => 'A.shape does not match B.shape'),
             pass: isNot
           }
         }
@@ -175,30 +225,52 @@ export function toBeAll(
 
   // CHECK DATA
   // ----------
+  // flattened data
   const aFlat = a.dataSync()
   const bFlat = b.dataSync()
 
+  if (aFlat.length === 0 || bFlat.length === 0) {
+    return {
+      pass: allowEmpty !== isNot,
+      message: msg(() => 'Empty shape(s) encountered.')
+    }
+  }
+
+  // indices into flattened data
   let ia = 0
   let ib = 0
+
+  // inside of `visit(axis)`, stride counts amount of
+  // element that had been visited by a call to
+  // `visit(axis+1)`. Used to repeat elements along
+  // axis in case of broadcasting
   let strideA: number
   let strideB: number
 
+  /* Visits broadcasted pairs of entries. Needs
+   * to be recursive to allow for arbitrary ranks.
+   */
   function visit(axis: number) {
     if (axis === rank) {
       if (!match(aFlat[ia], bFlat[ib])) {
         throw msg(
-          `A(${unravelIndex(ia, shapeA)}) = ${aFlat[ia]}\nB(${unravelIndex(
-            ib,
-            shapeB
-          )}) = ${bFlat[ib]}`
+          () =>
+            `A(${unravelIndex(ia, shapeA)}) = ${aFlat[ia]}\n` +
+            `B(${unravelIndex(ib, shapeB)}) = ${bFlat[ib]}`
         )
       }
-      ia += strideA = 1
-      ib += strideB = 1
+      strideA = 1
+      strideB = 1
+      ia++
+      ib++
     } else {
       for (let i = 0; ; ) {
         visit(axis + 1)
-        if (++i >= shape[axis]) break
+        if (++i >= shape[axis]) {
+          break
+        }
+        // Broadcasting cases, repeat entries alond axis.
+        // Utilizes fact that `shape[i < 0] === undefined`.
         if (!(shapeA[axis - rank + rankA] > 1)) ia -= strideA
         if (!(shapeB[axis - rank + rankB] > 1)) ib -= strideB
       }
@@ -209,7 +281,7 @@ export function toBeAll(
 
   try {
     visit(0)
-    return { pass: true, message: msg('It is.') }
+    return { pass: true, message: msg(() => 'It is.') }
   } catch (message) {
     return { pass: false, message: message as () => string }
   }
