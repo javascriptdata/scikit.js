@@ -172,7 +172,7 @@ export function toBeAll(
   const a = result instanceof Tensor ? result : tf.tensor(result)
   const b = expect instanceof Tensor ? expect : tf.tensor(expect)
 
-  const msg = (msg: () => string) => () =>
+  const msg = (msg: string) => () =>
     `\nA: ${a.toString(true)}` +
     `\nB: ${b.toString(true)}` +
     `\nExpected A ${
@@ -199,7 +199,7 @@ export function toBeAll(
         const sb = shapeB[j]
         if (sa !== sb && sa !== 1 && sb !== 1) {
           return {
-            message: msg(() => 'A.shape not broadcast-compatible to B.shape'),
+            message: msg('A.shape not broadcast-compatible to B.shape'),
             pass: isNot
           }
         }
@@ -208,14 +208,14 @@ export function toBeAll(
     } else {
       if (i !== j) {
         return {
-          message: msg(() => 'A.shape does not match B.shape'),
+          message: msg('A.shape does not match B.shape'),
           pass: isNot
         }
       }
       while (i-- > 0 && j-- > 0) {
         if (shapeA[i] !== shapeB[j]) {
           return {
-            message: msg(() => 'A.shape does not match B.shape'),
+            message: msg('A.shape does not match B.shape'),
             pass: isNot
           }
         }
@@ -232,7 +232,7 @@ export function toBeAll(
   if (aFlat.length === 0 || bFlat.length === 0) {
     return {
       pass: allowEmpty !== isNot,
-      message: msg(() => 'Empty shape(s) encountered.')
+      message: msg('Empty shape(s) encountered.')
     }
   }
 
@@ -254,9 +254,8 @@ export function toBeAll(
     if (axis === rank) {
       if (!match(aFlat[ia], bFlat[ib])) {
         throw msg(
-          () =>
-            `A(${unravelIndex(ia, shapeA)}) = ${aFlat[ia]}\n` +
-            `B(${unravelIndex(ib, shapeB)}) = ${bFlat[ib]}`
+          `A[${unravelIndex(ia, shapeA)}] = ${aFlat[ia]}\n` +
+          `B[${unravelIndex(ib, shapeB)}] = ${bFlat[ib]}`
         )
       }
       strideA = 1
@@ -281,7 +280,7 @@ export function toBeAll(
 
   try {
     visit(0)
-    return { pass: true, message: msg(() => 'It is.') }
+    return { pass: true, message: msg('It is.') }
   } catch (message) {
     return { pass: false, message: message as () => string }
   }
