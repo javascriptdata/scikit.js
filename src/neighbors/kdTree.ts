@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { Tensor2D } from '@tensorflow/tfjs'
+import { Tensor2D } from '@tensorflow/tfjs-core'
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
@@ -131,7 +131,7 @@ export class KdTree implements Neighborhood {
       indices[i] = i
     }
 
-    const data = await entries.data()
+    const data = (await entries.data()).slice()
 
     const points: Vec[] = Array.from(indices, (_, i) =>
       data.subarray(nFeatures * i, nFeatures * ++i)
