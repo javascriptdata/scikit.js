@@ -13,100 +13,106 @@
 * ==========================================================================
 */
 
-
 import { KNeighborsClassifier } from './kNeighborsClassifier'
 import { arrayEqual } from '../utils'
 
-describe('KNeighborsClassifier', () => {
-  it('correctly predicts sklearn example', async () => {
-    const X_train = [[0], [1], [2], [3]]
-    const y_train = [0, 0, 1, 1]
+for (const algorithm of [
+  ...KNeighborsClassifier.SUPPORTED_ALGORITHMS,
+  undefined
+]) {
+  describe('KNeighborsClassifier', () => {
+    it('correctly predicts sklearn example', async () => {
+      const X_train = [[0], [1], [2], [3]]
+      const y_train = [0, 0, 1, 1]
 
-    const model = new KNeighborsClassifier({ nNeighbors: 3 })
-    await model.fit(X_train, y_train)
+      const model = new KNeighborsClassifier({ algorithm, nNeighbors: 3 })
+      await model.fit(X_train, y_train)
 
-    const prob = await model.predictProba([[0.9]]).array()
-    const pred = await model.predict([[1.1]]).array()
+      const prob = await model.predictProba([[0.9]]).array()
+      const pred = await model.predict([[1.1]]).array()
 
-    expect(arrayEqual(prob, [[2 / 3, 1 / 3]], 0.01)).toBe(true)
-    expect(pred).toEqual([0])
-  })
-  it('correctly predicts 1d example classes', async () => {
-    const X_train = [[2], [0], [1], [7]]
-    const y_train = [1.25, -1.75, 5.5, 1337]
-
-    const model = new KNeighborsClassifier({
-      nNeighbors: 3,
-      weights: 'distance'
+      expect(arrayEqual(prob, [[2 / 3, 1 / 3]], 0.01)).toBe(true)
+      expect(pred).toEqual([0])
     })
-    await model.fit(X_train, y_train)
+    it('correctly predicts 1d example classes', async () => {
+      const X_train = [[2], [0], [1], [7]]
+      const y_train = [1.25, -1.75, 5.5, 1337]
 
-    const X_test = [[0], [800], [1.1], [1.9]]
-    const y_test = [-1.75, 1337, 5.5, 1.25]
+      const model = new KNeighborsClassifier({
+        algorithm,
+        nNeighbors: 3,
+        weights: 'distance'
+      })
+      await model.fit(X_train, y_train)
 
-    for (let i = 0; i < X_test.length; i++) {
-      expect(await model.predict([X_test[i]]).array()).toEqual([y_test[i]])
-    }
-    expect(await model.predict(X_test).array()).toEqual(y_test)
-  })
-  it('correctly predicts 2d example probabilities', async () => {
-    const grid = [
-      [1, 1, 2, 3, 3],
-      [1, 1, 2, 3, 3],
-      [2, 2, 2, 3, 3],
-      [2, 2, 2, 3, 1]
-    ]
+      const X_test = [[0], [800], [1.1], [1.9]]
+      const y_test = [-1.75, 1337, 5.5, 1.25]
 
-    const X_train: number[][] = []
-    const y_train: number[] = []
-
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[i].length; j++) {
-        X_train.push([i, j])
-        y_train.push(grid[i][j])
+      for (let i = 0; i < X_test.length; i++) {
+        expect(await model.predict([X_test[i]]).array()).toEqual([y_test[i]])
       }
-    }
-
-    const model = new KNeighborsClassifier({
-      nNeighbors: 4,
-      weights: 'uniform'
+      expect(await model.predict(X_test).array()).toEqual(y_test)
     })
-    await model.fit(X_train, y_train)
+    it('correctly predicts 2d example probabilities', async () => {
+      const grid = [
+        [1, 1, 2, 3, 3],
+        [1, 1, 2, 3, 3],
+        [2, 2, 2, 3, 3],
+        [2, 2, 2, 3, 1]
+      ]
 
-    const X_test = [
-      [0.5, 0.5],
-      [0.5, 1.5],
-      [0.5, 2.5],
-      [0.5, 3.5],
-      [1.5, 0.5],
-      [1.5, 1.5],
-      [1.5, 2.5],
-      [1.5, 3.5],
-      [2.5, 0.5],
-      [2.5, 1.5],
-      [2.5, 2.5],
-      [2.5, 3.5]
-    ]
-    const p_test = [
-      [1, 0, 0],
-      [0.5, 0.5, 0],
-      [0, 0.5, 0.5],
-      [0, 0, 1],
-      [0.5, 0.5, 0],
-      [0.25, 0.75, 0],
-      [0, 0.5, 0.5],
-      [0, 0, 1],
-      [0, 1, 0],
-      [0, 1, 0],
-      [0, 0.5, 0.5],
-      [0.25, 0, 0.75]
-    ]
+      const X_train: number[][] = []
+      const y_train: number[] = []
 
-    for (let i = 0; i < X_test.length; i++) {
-      expect(await model.predictProba([X_test[i]]).array()).toEqual([
-        p_test[i]
-      ])
-    }
-    expect(await model.predictProba(X_test).array()).toEqual(p_test)
+      for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid[i].length; j++) {
+          X_train.push([i, j])
+          y_train.push(grid[i][j])
+        }
+      }
+
+      const model = new KNeighborsClassifier({
+        algorithm,
+        nNeighbors: 4,
+        weights: 'uniform'
+      })
+      await model.fit(X_train, y_train)
+
+      const X_test = [
+        [0.5, 0.5],
+        [0.5, 1.5],
+        [0.5, 2.5],
+        [0.5, 3.5],
+        [1.5, 0.5],
+        [1.5, 1.5],
+        [1.5, 2.5],
+        [1.5, 3.5],
+        [2.5, 0.5],
+        [2.5, 1.5],
+        [2.5, 2.5],
+        [2.5, 3.5]
+      ]
+      const p_test = [
+        [1, 0, 0],
+        [0.5, 0.5, 0],
+        [0, 0.5, 0.5],
+        [0, 0, 1],
+        [0.5, 0.5, 0],
+        [0.25, 0.75, 0],
+        [0, 0.5, 0.5],
+        [0, 0, 1],
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 0.5, 0.5],
+        [0.25, 0, 0.75]
+      ]
+
+      for (let i = 0; i < X_test.length; i++) {
+        expect(await model.predictProba([X_test[i]]).array()).toEqual([
+          p_test[i]
+        ])
+      }
+      expect(await model.predictProba(X_test).array()).toEqual(p_test)
+    })
   })
-})
+}

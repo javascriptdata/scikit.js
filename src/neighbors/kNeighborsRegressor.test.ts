@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-
 import { dfd, tf } from '../shared/globals'
 import { meanSquaredError } from '../metrics/metrics'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
@@ -21,6 +20,8 @@ import { KNeighborsRegressor } from './kNeighborsRegressor'
 import { KNeighborsParams } from './kNeighborsBase'
 import { fetchCaliforniaHousing, loadDiabetes } from '../datasets/datasets'
 import { arrayEqual } from '../utils'
+
+const TIMEOUT = 60_000
 
 // TODO: replace this with KFold as soon as its implemented
 function* kFoldIndices(
@@ -79,145 +80,169 @@ function testWithDataset(
   params: KNeighborsParams,
   referenceError: number
 ) {
-  it(`KNeighborsRegressor(${JSON.stringify(params)}) fits ${
-    loadData.name
-  } as well as sklearn`, async () => {
-    const df = await loadData()
+  it(
+    `KNeighborsRegressor(${JSON.stringify(params)}) fits ${
+      loadData.name
+    } as well as sklearn`,
+    async () => {
+      const df = await loadData()
 
-    const Xy = df.tensor as unknown as Tensor2D
-    let [nSamples, nFeatures] = Xy.shape
-    --nFeatures
+      const Xy = df.tensor as unknown as Tensor2D
+      let [nSamples, nFeatures] = Xy.shape
+      --nFeatures
 
-    const X = Xy.slice([0, 0], [nSamples, nFeatures])
-    const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
+      const X = Xy.slice([0, 0], [nSamples, nFeatures])
+      const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
 
-    const k = 3
+      const k = 3
 
-    const model = new KNeighborsRegressor(params)
+      const model = new KNeighborsRegressor(params)
 
-    let mse = 0
+      let mse = 0
 
-    for (const data of kFold(k, X, y)) {
-      try {
-        tf.engine().startScope()
-        const [train_X, train_y, test_X, test_y] = data
-        await model.fit(train_X, train_y)
-        const predict_y = model.predict(test_X)
-        mse += meanSquaredError(test_y, predict_y)
-      } finally {
-        tf.engine().endScope()
-        for (const tensor of data) tensor.dispose()
+      for (const data of kFold(k, X, y)) {
+        try {
+          tf.engine().startScope()
+          const [train_X, train_y, test_X, test_y] = data
+          await model.fit(train_X, train_y)
+          const predict_y = model.predict(test_X)
+          mse += meanSquaredError(test_y, predict_y)
+        } finally {
+          tf.engine().endScope()
+          for (const tensor of data) tensor.dispose()
+        }
       }
-    }
 
-    mse /= k
+      mse /= k
 
-    expect(Math.abs(mse - referenceError)).toBeLessThanOrEqual(Math.abs(referenceError) * 0.02)
-  })
+      expect(Math.abs(mse - referenceError)).toBeLessThanOrEqual(
+        Math.abs(referenceError) * 0.01
+      )
+    },
+    TIMEOUT
+  )
 }
 
 for (const algorithm of [
-  'kdTree',
-  'brute',
-  undefined,
-  'auto'
-] as KNeighborsParams['algorithm'][]) {
+  ...KNeighborsRegressor.SUPPORTED_ALGORITHMS,
+  undefined
+]) {
   describe(`KNeighborsRegressor({ algorithm: ${algorithm} })`, function () {
-    // testWithDataset(
-    //   loadDiabetes,
-    //   { nNeighbors: 5, weights: 'distance', algorithm },
-    //   3570
-    // )
-    // testWithDataset(
-    //   loadDiabetes,
-    //   { nNeighbors: 3, weights: 'uniform', algorithm },
-    //   3833
-    // )
-    // testWithDataset(
-    //   fetchCaliforniaHousing,
-    //   { nNeighbors: 3, weights: 'distance', algorithm },
-    //   1.31
-    // )
-    // testWithDataset(
-    //   fetchCaliforniaHousing,
-    //   { nNeighbors: 4, weights: 'uniform', algorithm },
-    //   1.28
-    // )
-    // testWithDataset(
-    //   fetchCaliforniaHousing,
-    //   { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
-    //   1.19
-    // )
-    // testWithDataset(
-    //   fetchCaliforniaHousing,
-    //   { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
-    //   1.32
-    // )
+    testWithDataset(
+      loadDiabetes,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      3570
+    )
+    testWithDataset(
+      loadDiabetes,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      3833
+    )
+    if ('brute' !== algorithm) {
+      testWithDataset(
+        fetchCaliforniaHousing,
+        { nNeighbors: 3, weights: 'distance', algorithm },
+        1.31
+      )
+      testWithDataset(
+        fetchCaliforniaHousing,
+        { nNeighbors: 4, weights: 'uniform', algorithm },
+        1.28
+      )
+      testWithDataset(
+        fetchCaliforniaHousing,
+        { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
+        1.19
+      )
+      testWithDataset(
+        fetchCaliforniaHousing,
+        { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
+        1.32
+      )
+    }
 
-    it('correctly predicts sklearn example', async () => {
-      const X = [[0], [1], [2], [3]]
-      const y = [0, 0, 1, 1]
+    it(
+      'correctly predicts sklearn example',
+      async () => {
+        const X = [[0], [1], [2], [3]]
+        const y = [0, 0, 1, 1]
 
-      const model = new KNeighborsRegressor({ algorithm, nNeighbors: 2 })
+        const model = new KNeighborsRegressor({ algorithm, nNeighbors: 2 })
 
-      await model.fit(X, y)
+        await model.fit(X, y)
 
-      expect(model.predict([[1.5]]).arraySync()).toEqual([0.5])
-    }, 60_000)
+        expect(model.predict([[1.5]]).arraySync()).toEqual([0.5])
+      },
+      TIMEOUT
+    )
     // test cases as suggested by @dcrescim
-    it('Use KNeighborsRegressor on simple example (n=1)', async function () {
-      const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 1 })
+    it(
+      'Use KNeighborsRegressor on simple example (n=1)',
+      async function () {
+        const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 1 })
 
-      const X = [
-        [-1, 0],
-        [0, 0],
-        [5, 0]
-      ]
-      const y = [10, 20, 30]
-      const predictX = [
-        [1, 0],
-        [4, 0],
-        [-5, 0]
-      ]
+        const X = [
+          [-1, 0],
+          [0, 0],
+          [5, 0]
+        ]
+        const y = [10, 20, 30]
+        const predictX = [
+          [1, 0],
+          [4, 0],
+          [-5, 0]
+        ]
 
-      await knn.fit(X, y)
-      expect(knn.predict(predictX).arraySync()).toEqual([20, 30, 10])
-    }, 60_000)
-    it('Use KNeighborsRegressor on simple example (n=2)', async function () {
-      const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 2 })
+        await knn.fit(X, y)
+        expect(knn.predict(predictX).arraySync()).toEqual([20, 30, 10])
+      },
+      TIMEOUT
+    )
+    it(
+      'Use KNeighborsRegressor on simple example (n=2)',
+      async function () {
+        const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 2 })
 
-      const X = [
-        [-1, 0],
-        [0, 0],
-        [5, 0]
-      ]
-      const y = [10, 20, 30]
-      const predictX = [
-        [1, 0],
-        [4, 0],
-        [-5, 0]
-      ]
+        const X = [
+          [-1, 0],
+          [0, 0],
+          [5, 0]
+        ]
+        const y = [10, 20, 30]
+        const predictX = [
+          [1, 0],
+          [4, 0],
+          [-5, 0]
+        ]
 
-      await knn.fit(X, y)
-      expect(knn.predict(predictX).arraySync()).toEqual([15, 25, 15])
-    }, 60_000)
-    it('Use KNeighborsRegressor on simple example (n=3)', async function () {
-      const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 3 })
+        await knn.fit(X, y)
+        expect(knn.predict(predictX).arraySync()).toEqual([15, 25, 15])
+      },
+      TIMEOUT
+    )
+    it(
+      'Use KNeighborsRegressor on simple example (n=3)',
+      async function () {
+        const knn = new KNeighborsRegressor({ algorithm, nNeighbors: 3 })
 
-      const X = [
-        [-1, 0],
-        [0, 0],
-        [5, 0]
-      ]
-      const y = [10, 20, 30]
-      const predictX = [
-        [1, 0],
-        [4, 0],
-        [-5, 0]
-      ]
+        const X = [
+          [-1, 0],
+          [0, 0],
+          [5, 0]
+        ]
+        const y = [10, 20, 30]
+        const predictX = [
+          [1, 0],
+          [4, 0],
+          [-5, 0]
+        ]
 
-      await knn.fit(X, y)
-      expect(arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)).toBe(true)
-    }, 60_000)
+        await knn.fit(X, y)
+        expect(
+          arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)
+        ).toBe(true)
+      },
+      TIMEOUT
+    )
   })
 }
