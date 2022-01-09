@@ -117,7 +117,7 @@ export class KNeighborsBase implements KNeighborsParams {
   metric: KNeighborsParams['metric']
   nNeighbors: KNeighborsParams['nNeighbors']
 
-  constructor(params: KNeighborsParams) {
+  constructor(params: KNeighborsParams = {}) {
     Object.assign(this, params)
   }
 
