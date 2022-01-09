@@ -107,6 +107,10 @@ export interface KNeighborsParams {
  * Handles common constructor parameters and fitting.
  */
 export class KNeighborsBase implements KNeighborsParams {
+  static readonly SUPPORTED_ALGORITHMS = Object.freeze(
+    Object.keys(ALGORITHMS)
+  ) as (keyof typeof ALGORITHMS)[]
+
   private _neighborhood: Neighborhood | undefined
   private _y: Tensor1D | undefined
 
