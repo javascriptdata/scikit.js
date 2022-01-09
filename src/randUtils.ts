@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-type int = number
+export type int = number
 
 /**
  * Take a uniform [0,1) random number generator (RNG) function and turns it into an
