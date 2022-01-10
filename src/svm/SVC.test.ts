@@ -1,6 +1,5 @@
 import { SVC } from './SVC'
 
-
 describe('SVC', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new SVC()

@@ -15,8 +15,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage",
-    "test:ci": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage --runInBand --ci",
+    "test": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
+    "test:ci": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage --runInBand --ci && npm run prettier:check",
     "test:clean": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
     "compile:web": "node_modules/.bin/rollup -c",
     "compile:esm": "node_modules/.bin/tsc -p tsconfig.build-esm.json && node_modules/.bin/tsc-alias -p tsconfig.build-esm.json",

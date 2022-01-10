@@ -1,7 +1,6 @@
 import { StandardScaler } from './standardScaler'
 import { dfd } from '../shared/globals'
 
-
 describe('StandardScaler', function () {
   it('StandardScaler works for DataFrame', function () {
     const data = [

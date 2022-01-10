@@ -35,7 +35,12 @@ declare global {
       toBeAllCloseTo: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
+            params?: {
+              rtol?: number
+              atol?: number
+              broadcast?: boolean
+              allowEmpty?: boolean
+            }
           ) => R
         : undefined
       /**
@@ -53,7 +58,12 @@ declare global {
       toBeAllLessOrClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
+            params?: {
+              rtol?: number
+              atol?: number
+              broadcast?: boolean
+              allowEmpty?: boolean
+            }
           ) => R
         : undefined
       /**
@@ -71,7 +81,12 @@ declare global {
       toBeAllGreaterOrClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
+            params?: {
+              rtol?: number
+              atol?: number
+              broadcast?: boolean
+              allowEmpty?: boolean
+            }
           ) => R
         : undefined
       /**
@@ -89,7 +104,12 @@ declare global {
       toBeAllLessNotClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
+            params?: {
+              rtol?: number
+              atol?: number
+              broadcast?: boolean
+              allowEmpty?: boolean
+            }
           ) => R
         : undefined
       /**
@@ -107,7 +127,12 @@ declare global {
       toBeAllGreaterNotClose: T extends Tensor | TensorLike
         ? (
             expected: Tensor | TensorLike,
-            params?: { rtol?: number; atol?: number; broadcast?: boolean, allowEmpty?: boolean }
+            params?: {
+              rtol?: number
+              atol?: number
+              broadcast?: boolean
+              allowEmpty?: boolean
+            }
           ) => R
         : undefined
     }
@@ -255,7 +280,7 @@ export function toBeAll(
       if (!match(aFlat[ia], bFlat[ib])) {
         throw msg(
           `A[${unravelIndex(ia, shapeA)}] = ${aFlat[ia]}\n` +
-          `B[${unravelIndex(ib, shapeB)}] = ${bFlat[ib]}`
+            `B[${unravelIndex(ib, shapeB)}] = ${bFlat[ib]}`
         )
       }
       strideA = 1
