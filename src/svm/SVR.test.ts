@@ -1,6 +1,5 @@
 import { SVR } from './SVR'
 
-
 describe('SVR', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new SVR()

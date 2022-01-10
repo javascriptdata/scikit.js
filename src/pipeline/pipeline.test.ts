@@ -5,7 +5,6 @@ import { LinearRegression } from '../linear_model/linearRegression'
 import { SimpleImputer } from '../impute/simpleImputer'
 import { MinMaxScaler } from '../preprocessing/minMaxScaler'
 
-
 describe('Pipeline', function () {
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {
     const X = [
@@ -25,7 +24,9 @@ describe('Pipeline', function () {
     await pipeline.fit(X, y)
 
     expect(pipeline.steps[0][1].min.arraySync()).toEqual([0, 0])
-    expect(tensorEqual(pipeline.steps[1][1].coef, tensor1d([3, 4]), 0.3)).toEqual(true)
+    expect(
+      tensorEqual(pipeline.steps[1][1].coef, tensor1d([3, 4]), 0.3)
+    ).toEqual(true)
   }, 4000)
   it('Use a Pipeline (simple-imputer, min-max, linear regression)', async function () {
     const X = [
@@ -44,7 +45,9 @@ describe('Pipeline', function () {
     await pipeline.fit(X, y)
 
     expect(pipeline.steps[1][1].min.arraySync()).toEqual([0, 0])
-    expect(tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)).toEqual(true)
+    expect(
+      tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)
+    ).toEqual(true)
   }, 4000)
   it('Use makePipeline (simple-imputer, min-max, linear regression)', async function () {
     const X = [
@@ -68,7 +71,9 @@ describe('Pipeline', function () {
     await pipeline.fit(X, y)
 
     expect(pipeline.steps[1][1].min.arraySync()).toEqual([0, 0])
-    expect(tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)).toEqual(true)
+    expect(
+      tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)
+    ).toEqual(true)
   }, 4000)
   it('Make sure the pipeline throws on bad input', async function () {
     expect(

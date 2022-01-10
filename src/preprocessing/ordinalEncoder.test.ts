@@ -1,7 +1,6 @@
 import { OrdinalEncoder } from './ordinalEncoder'
 import { arrayTo2DColumn } from '../utils'
 
-
 describe('OrdinalEncoder', function () {
   it('OrdinalEncoder works on array', function () {
     const data = ['dog', 'cat', 'man', 'dog', 'cat', 'man', 'man', 'cat']
@@ -11,7 +10,9 @@ describe('OrdinalEncoder', function () {
 
     const expected = [[0], [1], [2], [0], [1], [2], [2], [1]]
     expect(encode.transform(X).arraySync()).toEqual(expected)
-    expect(encode.transform(arrayTo2DColumn(['man', 'cat'])).arraySync()).toEqual([[2], [1]])
+    expect(
+      encode.transform(arrayTo2DColumn(['man', 'cat'])).arraySync()
+    ).toEqual([[2], [1]])
   })
   it('OrdinalEncoder works on 2DArray', function () {
     const X = [

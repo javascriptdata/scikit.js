@@ -1,7 +1,6 @@
 import { LabelEncoder } from './labelEncoder'
 import { dfd } from '../shared/globals'
 
-
 describe('LabelEncoder', function () {
   it('LabelEncoder works for Series', function () {
     const sf = new dfd.Series([1, 2, 2, 6])

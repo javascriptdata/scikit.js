@@ -17,7 +17,6 @@ import * as fc from 'fast-check'
 
 import { CappedMaxHeap } from './cappedMaxHeap'
 
-
 describe('CappedMaxHeap', () => {
   const anyFloat = () =>
     fc.double(-(2 ** 16), +(2 ** 16)).map((x) => Math.fround(x))
