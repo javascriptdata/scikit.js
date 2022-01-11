@@ -9,7 +9,6 @@ import {
   randomUniform
 } from '@tensorflow/tfjs-core'
 
-
 function roughlyEqual(a: number, b: number, tol = 0.1) {
   return Math.abs(a - b) < tol
 }

@@ -2,7 +2,6 @@ import { Normalizer } from './normalizer'
 import { dfd } from '../shared/globals'
 import { arrayEqual } from '../utils'
 
-
 describe('Normalizer', function () {
   it('Standardize values in a DataFrame using a Normalizer (l1 case)', function () {
     const data = [

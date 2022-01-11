@@ -2,7 +2,6 @@ import { tensor2d } from '@tensorflow/tfjs-core'
 import { OneHotEncoder } from './oneHotEncoder'
 import { arrayTo2DColumn } from '../utils'
 
-
 describe('OneHotEncoder', function () {
   it('OneHotEncoder works on array', function () {
     const data = ['dog', 'cat', 'man', 'dog', 'cat', 'man', 'man', 'cat']
@@ -21,16 +20,20 @@ describe('OneHotEncoder', function () {
       [0, 1, 0]
     ]
     expect(encode.transform(X).arraySync()).toEqual(expected)
-    expect(encode.transform(arrayTo2DColumn(['man', 'cat'])).arraySync()).toEqual([
+    expect(
+      encode.transform(arrayTo2DColumn(['man', 'cat'])).arraySync()
+    ).toEqual([
       [0, 0, 1],
       [0, 1, 0]
     ])
-    expect(encode.inverseTransform(
-      tensor2d([
-        [0, 0, 1],
-        [0, 1, 0]
-      ])
-    )).toEqual(['man', 'cat'])
+    expect(
+      encode.inverseTransform(
+        tensor2d([
+          [0, 0, 1],
+          [0, 1, 0]
+        ])
+      )
+    ).toEqual(['man', 'cat'])
   })
   it('OneHotEncoder works on 2DArray', function () {
     const X = [
