@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 import { tf } from '../shared/globals'
-import { BaseNaiveBayes } from "./baseNaiveBayes";
+import { BaseNaiveBayes } from './baseNaiveBayes'
 
 /**
  * Gaussian Naive Bayes classifier
@@ -45,14 +45,24 @@ import { BaseNaiveBayes } from "./baseNaiveBayes";
  *
  */
 export class GaussianNB extends BaseNaiveBayes {
-  protected kernel(features: tf.Tensor2D, mean: tf.Tensor1D, variance: tf.Tensor1D): tf.Tensor1D {
+  protected kernel(
+    features: tf.Tensor2D,
+    mean: tf.Tensor1D,
+    variance: tf.Tensor1D
+  ): tf.Tensor1D {
     return tf.tidy(() => {
-        return tf.sub(features, mean.expandDims(0))
-            .pow(2)
-            .div(variance.expandDims(0).mul(-2))
-            .exp()
-            .div(variance.mul(2 * Math.PI).expandDims(0).sqrt())
-            .prod(1) as tf.Tensor1D
+      return tf
+        .sub(features, mean.expandDims(0))
+        .pow(2)
+        .div(variance.expandDims(0).mul(-2))
+        .exp()
+        .div(
+          variance
+            .mul(2 * Math.PI)
+            .expandDims(0)
+            .sqrt()
+        )
+        .prod(1) as tf.Tensor1D
     })
   }
 }

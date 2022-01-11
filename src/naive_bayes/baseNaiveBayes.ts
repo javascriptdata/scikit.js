@@ -59,7 +59,7 @@ export abstract class BaseNaiveBayes {
     const features = convertToNumericTensor2D(X)
     const labels = convertToTensor1D(y)
 
-    const {values, meansByLabel, variancesByLabel} = tf.tidy(() => {
+    const { values, meansByLabel, variancesByLabel } = tf.tidy(() => {
       polyfillUnique(tf)
       const meansByLabel: Tensor1D[] = []
       const variancesByLabel: Tensor1D[] = []
@@ -73,10 +73,12 @@ export abstract class BaseNaiveBayes {
       tf.unstack(values).forEach((c: tf.Tensor) => {
         const mask = tf.equal(labels, c).toFloat()
         const numInstances = tf.sum(mask)
-        const mean = tf.mul(features, mask.expandDims(1))
+        const mean = tf
+          .mul(features, mask.expandDims(1))
           .sum(0)
           .div(numInstances)
-        const variance = tf.sub(features, mean)
+        const variance = tf
+          .sub(features, mean)
           .mul(mask.expandDims(1))
           .pow(2)
           .sum(0)
@@ -87,7 +89,7 @@ export abstract class BaseNaiveBayes {
         variancesByLabel.push(variance as Tensor1D)
       })
 
-      return {values, meansByLabel, variancesByLabel}
+      return { values, meansByLabel, variancesByLabel }
     })
 
     // Unique labels this model have learned
@@ -120,8 +122,7 @@ export abstract class BaseNaiveBayes {
       const withoutPriors = tf.stack(probs, 1) as tf.Tensor2D
       if (this.priors) {
         return withoutPriors.mul(this.priors)
-      }
-      else {
+      } else {
         return withoutPriors
       }
     })
@@ -145,5 +146,9 @@ export abstract class BaseNaiveBayes {
    * @param mean
    * @param variance
    */
-  protected abstract kernel(features: tf.Tensor2D, mean: tf.Tensor1D, variance: tf.Tensor1D): tf.Tensor1D
+  protected abstract kernel(
+    features: tf.Tensor2D,
+    mean: tf.Tensor1D,
+    variance: tf.Tensor1D
+  ): tf.Tensor1D
 }

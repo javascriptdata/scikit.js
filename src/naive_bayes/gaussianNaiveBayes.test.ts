@@ -16,7 +16,13 @@ import { GaussianNB } from './gaussianNaiveBayes'
 
 describe('GaussianNB', function () {
   it('without priors', async () => {
-    const X = [[0.1, 0.9], [0.3, 0.7], [0.9, 0.1], [0.8, 0.2], [0.81, 0.19]]
+    const X = [
+      [0.1, 0.9],
+      [0.3, 0.7],
+      [0.9, 0.1],
+      [0.8, 0.2],
+      [0.81, 0.19]
+    ]
     const y = [0, 0, 1, 1, 1]
 
     const model = new GaussianNB()
@@ -30,7 +36,13 @@ describe('GaussianNB', function () {
     expect(model.variances.length).toEqual(2)
   })
   it('with priors', async () => {
-    const X = [[0.1, 0.9], [0.3, 0.7], [0.9, 0.1], [0.8, 0.2], [0.81, 0.19]]
+    const X = [
+      [0.1, 0.9],
+      [0.3, 0.7],
+      [0.9, 0.1],
+      [0.8, 0.2],
+      [0.81, 0.19]
+    ]
     const y = [0, 0, 1, 1, 1]
 
     const model = new GaussianNB({ priors: [0.5, 0.5] })
@@ -41,7 +53,13 @@ describe('GaussianNB', function () {
     expect(labels.arraySync()).toEqual([0, 0, 1, 1, 1])
   })
   it('with skewed priors', async () => {
-    const X = [[0.1, 0.9], [0.3, 0.7], [0.9, 0.1], [0.8, 0.2], [0.81, 0.19]]
+    const X = [
+      [0.1, 0.9],
+      [0.3, 0.7],
+      [0.9, 0.1],
+      [0.8, 0.2],
+      [0.81, 0.19]
+    ]
     const y = [0, 0, 1, 1, 1]
 
     const model = new GaussianNB({ priors: [0.9, 0.1] })
@@ -52,7 +70,13 @@ describe('GaussianNB', function () {
     expect(labels.arraySync()).toEqual([0, 0, 1, 1, 1])
   })
   it('with varSmoothing', async () => {
-    const X = [[0.1, 0.9], [0.3, 0.7], [0.9, 0.1], [0.8, 0.2], [0.81, 0.19]]
+    const X = [
+      [0.1, 0.9],
+      [0.3, 0.7],
+      [0.9, 0.1],
+      [0.8, 0.2],
+      [0.81, 0.19]
+    ]
     const y = [0, 0, 1, 1, 1]
 
     const model = new GaussianNB({ priors: [0.5, 0.5], varSmoothing: 1.0 })
