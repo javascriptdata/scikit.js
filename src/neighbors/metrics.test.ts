@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import * as fc from 'fast-check';
+import * as fc from 'fast-check'
 
 import { Metric, minkowskiMetric } from './metrics'
 
@@ -49,7 +49,7 @@ const assertClose = (x: number, y: number) => {
   const atol = 1e-8
 
   const tol = atol + rtol * Math.max(Math.abs(x), Math.abs(y))
-  return expect(Math.abs(x - y)).toBeLessThanOrEqual(tol);
+  return expect(Math.abs(x - y)).toBeLessThanOrEqual(tol)
 }
 
 const run_generic_vector_metric_tests = (metric: Metric) => {
@@ -123,7 +123,9 @@ const run_generic_vector_metric_tests = (metric: Metric) => {
             Object.freeze(u)
             Object.freeze(v)
             Object.freeze(w)
-            expect(metric.distance(u, w)).toBeLessThanOrEqual(metric.distance(u, v) + metric.distance(u, w))
+            expect(metric.distance(u, w)).toBeLessThanOrEqual(
+              metric.distance(u, v) + metric.distance(u, w)
+            )
           })
         )
       })

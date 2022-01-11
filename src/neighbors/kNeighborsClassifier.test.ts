@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-
 import { KNeighborsClassifier } from './kNeighborsClassifier'
 import { arrayEqual } from '../utils'
 
