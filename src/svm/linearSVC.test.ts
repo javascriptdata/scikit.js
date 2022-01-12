@@ -1,6 +1,5 @@
 import { LinearSVC } from './linearSVC'
 
-
 describe('LinearSVC', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new LinearSVC()

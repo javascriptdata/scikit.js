@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-
 import { dfd, tf } from '../shared/globals'
 import { meanSquaredError } from '../metrics/metrics'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
@@ -112,7 +111,9 @@ function testWithDataset(
 
     mse /= k
 
-    expect(Math.abs(mse - referenceError)).toBeLessThanOrEqual(Math.abs(referenceError) * 0.02)
+    expect(Math.abs(mse - referenceError)).toBeLessThanOrEqual(
+      Math.abs(referenceError) * 0.02
+    )
   })
 }
 
@@ -217,7 +218,9 @@ for (const algorithm of [
       ]
 
       await knn.fit(X, y)
-      expect(arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)).toBe(true)
+      expect(
+        arrayEqual(knn.predict(predictX).arraySync(), [20, 20, 20], 0.01)
+      ).toBe(true)
     }, 60_000)
   })
 }
