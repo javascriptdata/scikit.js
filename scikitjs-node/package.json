@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "3.6.1",
-    "danfojs-node": "0.3.1",
+    "danfojs-node": "1.0.0",
     "lodash": "^4.17.21",
     "mathjs": "^9.5.1",
     "seedrandom": "~2.4.3",
