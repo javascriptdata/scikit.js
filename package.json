@@ -7,14 +7,18 @@
     "doc": "docs"
   },
   "scripts": {
-    "test:clean": "cd scikitjs-node && yarn test && cd ../scikitjs-browser && yarn test",
-    "build": "cd scikitjs-node && yarn build && cd ../scikitjs-browser && yarn build",
+    "test:clean": "yarn test:node && yarn test:browser",
+    "test:browser": "cd scikitjs-browser && yarn test",
+    "test:node": "cd scikitjs-node && yarn test",
+    "build:browser": "cd scikitjs-browser && yarn build",
+    "build:node": "cd scikitjs-node && yarn build",
+    "build": "yarn build:node && yarn build:browser",
     "build:docs": "cd docs && yarn build",
-    "postinstall": "(cd docs && yarn install); (cd scikitjs-browser && yarn install); (cd scikitjs-node && yarn install)"
+    "postinstall": "(cd docs && yarn install); (cd scikitjs-browser && yarn install); (cd scikitjs-node && yarn install); (cd shared && yarn install)"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dcrescim/scikit.js.git"
+    "url": "git+https://github.com/opensource9ja/scikit.js.git"
   },
   "keywords": [
     "pandas",
@@ -33,6 +37,7 @@
     "@rollup/plugin-typescript": "^8.3.0",
     "eslint": "^8.2.0",
     "rollup-plugin-terser": "^7.0.2",
+    "typedoc": "^0.22.9",
     "yarn": "^1.22.17"
   }
 }

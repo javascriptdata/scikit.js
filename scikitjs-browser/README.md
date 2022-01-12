@@ -22,14 +22,6 @@ For use with modern bundlers in a frontend application, simply
 yarn add scikitjs
 ```
 
-### Backend Users
-
-For Node.js users who wish to bind to the Tensorflow C++ library, simply
-
-```js
-yarn add scikitjs-node
-```
-
 ### Script src
 
 For those that wish to use script src tags, simply

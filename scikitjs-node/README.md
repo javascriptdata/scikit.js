@@ -14,14 +14,6 @@ Documentation site: [www.scikitjs.org](https://www.scikitjs.org)
 
 # Installation
 
-### Frontend Users
-
-For use with modern bundlers in a frontend application, simply
-
-```js
-yarn add scikitjs
-```
-
 ### Backend Users
 
 For Node.js users who wish to bind to the Tensorflow C++ library, simply
@@ -30,18 +22,10 @@ For Node.js users who wish to bind to the Tensorflow C++ library, simply
 yarn add scikitjs-node
 ```
 
-### Script src
-
-For those that wish to use script src tags, simply
-
-```js
-<script src="https://unpkg.com/scikitjs/dist/scikit.min.js"></script>
-```
-
 ## Simple Example
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import { LinearRegression } from 'scikitjs-node'
 
 const lr = LinearRegression({ fitIntercept: false })
 const X = [[1], [2]] // 2D Matrix with a single column vector
@@ -99,7 +83,7 @@ Turns into
 #### javascript
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import { LinearRegression } from 'scikitjs-node'
 
 let X = [[1], [2]]
 let y = [10, 20]
@@ -129,7 +113,7 @@ Turns into
 #### javascript
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import { LinearRegression } from 'scikitjs-node'
 
 let X = [[1], [2]]
 let y = [10, 20]
@@ -164,7 +148,7 @@ Turns into
 #### javascript
 
 ```js
-import { LogisticRegression } from 'scikitjs'
+import { LogisticRegression } from 'scikitjs-node'
 
 let X = [[1], [-1]]
 let y = [1, 0]

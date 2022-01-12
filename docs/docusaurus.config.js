@@ -3,6 +3,8 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github')
 const darkCodeTheme = require('prism-react-renderer/themes/dracula')
+const math = require('remark-math')
+const katex = require('rehype-katex')
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -24,7 +26,9 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/opensource9ja/scikit.js/docs'
+          editUrl: 'https://github.com/opensource9ja/scikit.js/docs',
+          remarkPlugins: [math],
+          rehypePlugins: [katex]
         },
         blog: {
           showReadingTime: true,
@@ -38,6 +42,15 @@ const config = {
     ]
   ],
 
+  stylesheets: [
+    {
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css',
+      integrity:
+        'sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc',
+      crossorigin: 'anonymous'
+    }
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -45,15 +58,22 @@ const config = {
         title: '',
         logo: {
           alt: 'Scikit.js Logo',
-          src: 'img/sciKitLogo.svg'
+          src: 'img/scikitLogo.svg',
+          srcDark: 'img/favicon.ico'
         },
         items: [
           { to: '/', label: 'Home', position: 'right', exact: true },
           {
-            type: 'doc',
-            docId: 'intro',
+            to: '/docs/tutorial',
             position: 'right',
-            label: 'Tutorial'
+            label: 'Tutorial',
+            exact: true
+          },
+          {
+            to: '/docs/api',
+            position: 'right',
+            label: 'API',
+            exact: true
           },
           {
             href: 'https://github.com/opensource9ja/scikit.js',
@@ -70,7 +90,7 @@ const config = {
             items: [
               {
                 label: 'Tutorial',
-                to: '/docs/intro'
+                to: '/docs/tutorial'
               }
             ]
           },
@@ -99,18 +119,7 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme
       }
-    }),
-  plugins: [
-    [
-      'docusaurus-plugin-typedoc',
-
-      // Plugin / TypeDoc options
-      {
-        entryPoints: ['../scikitjs-node/src/shared/index.ts'],
-        tsconfig: '../scikitjs-node/tsconfig.json'
-      }
-    ]
-  ]
+    })
 }
 
 module.exports = config
