@@ -19,6 +19,7 @@ import { convertToNumericTensor2D, convertToTensor1D } from '../utils'
 import { tf } from '../shared/globals'
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { polyfillUnique } from '../tfUtils'
+import { accuracy } from '../model_selection/scorers'
 
 /**
  * K-Nearest neighbor regressor.
@@ -39,6 +40,8 @@ import { polyfillUnique } from '../tfUtils'
  */
 export class KNeighborsClassifier extends KNeighborsBase {
   classes_?: Tensor1D
+
+  score = accuracy
 
   /**
    * Applies this mdodel to predict the class probabilities of each given sample.
