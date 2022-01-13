@@ -23,8 +23,6 @@ import '../jestTensorMatchers'
 describe('KFold', () => {
   const numRuns = 128
 
-  console.log({})
-
   const anyInput = () =>
     fc
       .tuple(fc.nat(512), fc.nat(8), fc.nat(8), fc.string())
