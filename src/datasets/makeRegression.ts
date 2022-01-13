@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs'
-import { Scikit1D, Scikit2D } from '../'
+import { Scikit1D, Scikit2D } from 'src'
 import * as math from 'mathjs'
+import { makeLowRankMatrix } from './makeLowRankMatrix'
 
 interface MakeRegressionInput {
   nSamples?: number
@@ -8,6 +9,8 @@ interface MakeRegressionInput {
   nInformative?: number
   nTargets?: number
   bias?: number
+  effectiveRank?: number | null
+  tailStrength?: number
   noise?: number
   shuffle?: boolean
   coef?: boolean
@@ -24,13 +27,20 @@ export const makeRegression = ({
   nTargets = 1,
   noise = 1,
   bias = 0,
+  effectiveRank = null,
+  tailStrength = 0.5,
   shuffle = false,
   coef = false
 }: MakeRegressionInput): MakeRegressionOutput => {
   const numberInformative = math.min(nFeatures, nInformative)
 
-  // Randomly generate a well conditioned input set
-  let X: Scikit2D = tf.randomNormal([nSamples, nFeatures])
+  let X: Scikit2D
+  if (effectiveRank === null) {
+    // Randomly generate a well conditioned input set
+    X = tf.randomNormal([nSamples, nFeatures])
+  } else {
+    X = makeLowRankMatrix({ nSamples, nFeatures, effectiveRank, tailStrength })
+  }
 
   // Generate a ground truth model with only n_informative features being non
   // zeros (the other features are not correlated to y and should be ignored
@@ -40,7 +50,10 @@ export const makeRegression = ({
     [numberInformative, nFeatures - numberInformative],
     0
   )
-  const groundTruthRandom = tf.randomNormal([numberInformative, nTargets])
+  let groundTruthRandom = tf.randomNormal([numberInformative, nTargets])
+  groundTruthRandom = groundTruthRandom.mul(
+    tf.fill(groundTruthRandom.shape, 100)
+  )
   groundTruthA = groundTruthA.add(groundTruthRandom)
 
   let groundTruth = tf.concat([groundTruthA, groundTruthB])
@@ -58,8 +71,6 @@ export const makeRegression = ({
   if (shuffle) {
     const randomTen = tf.util.createShuffledIndices(nSamples)
 
-    console.log(Array(randomTen))
-
     X.gather(Array.from(randomTen))
 
     X.print()
@@ -74,5 +85,3 @@ export const makeRegression = ({
 
   return [X, Y]
 }
-
-makeRegression({ nSamples: 4, nFeatures: 4, nInformative: 2, nTargets: 1, noise: 0.1 })
