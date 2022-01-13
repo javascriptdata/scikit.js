@@ -33,7 +33,9 @@ describe('KMeans', () => {
     }
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
-    expect(expecterdCluster.centroids).toEqual(kmean.clusterCenters.arraySync())
+    expect(expecterdCluster.centroids).toEqual(
+      kmean.clusterCenters.arraySync()
+    )
   })
 
   // it('should fit vector1 + k=3 size 3 and clusters of size 2', () => {

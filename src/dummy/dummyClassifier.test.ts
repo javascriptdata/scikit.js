@@ -1,6 +1,5 @@
 import { DummyClassifier } from './dummyClassifier'
 
-
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {
     const clf = new DummyClassifier()
