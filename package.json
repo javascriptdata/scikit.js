@@ -18,7 +18,7 @@
     "test": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
     "test:ci": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage --runInBand --ci && npm run prettier:check",
     "test:clean": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
-    "compile:web": "node_modules/.bin/rollup -c",
+    "compile:web": "node --max_old_space_size=8192 node_modules/.bin/rollup -c",
     "compile:esm": "node_modules/.bin/tsc -p tsconfig.build-esm.json && node_modules/.bin/tsc-alias -p tsconfig.build-esm.json",
     "compile:node-cjs": "node_modules/.bin/tsc -p tsconfig.build-node.json && node_modules/.bin/tsc-alias -p tsconfig.build-node.json",
     "prettier:check": "node_modules/prettier/bin-prettier.js --check src",
@@ -38,13 +38,15 @@
   },
   "homepage": "https://github.com/javascriptdata/scikit.js#readme",
   "dependencies": {
-    "danfojs": "^0.3.4",
-    "danfojs-node": "^0.3.4",
+    "danfojs": "^1.0.0",
+    "danfojs-node": "^1.0.0",
     "libsvm-wasm": "^0.0.8",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "seedrandom": "^3.0.5",
-    "simple-statistics": "^7.7.0"
+    "simple-statistics": "^7.7.0",
+    "@tensorflow/tfjs": "3.6.1",
+    "@tensorflow/tfjs-node": "3.6.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
@@ -66,8 +68,6 @@
     "@semantic-release/git": "9.0.0",
     "@semantic-release/npm": "^7.1.0",
     "@semantic-release/release-notes-generator": "9.0.3",
-    "@tensorflow/tfjs": "3.11.0",
-    "@tensorflow/tfjs-node": "3.11.0",
     "@types/chai": "^4.2.22",
     "@types/jest": "^27.4.0",
     "@types/lodash": "^4.14.177",
