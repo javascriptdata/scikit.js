@@ -1,4 +1,9 @@
-import { Criterion, ImpurityMeasure, SampleData } from './criterion'
+import {
+  ClassificationCriterion,
+  RegressionCriterion,
+  ImpurityMeasure,
+  SampleData
+} from './criterion'
 import { shuffle } from 'lodash'
 import { quickSort, deepCopy } from './utils'
 import { int } from '../randUtils'
@@ -18,7 +23,7 @@ export class Splitter {
   kMinSplitDiff_: number
   feature_data_: number[][]
   label_data_: int[]
-  criterion_: Criterion
+  criterion_: ClassificationCriterion | RegressionCriterion
   start_: int
   end_: int
   min_samples_leaf_: int
@@ -61,7 +66,14 @@ export class Splitter {
         })
       }
     }
-    this.criterion_ = new Criterion(impurity_measure, label_data)
+    if (impurity_measure === 'mse') {
+      this.criterion_ = new RegressionCriterion(impurity_measure, label_data)
+    } else {
+      this.criterion_ = new ClassificationCriterion(
+        impurity_measure,
+        label_data
+      )
+    }
     this.feature_order_ = []
     for (let i = 0; i < this.n_features_; i++) {
       this.feature_order_.push(i)
@@ -151,10 +163,19 @@ export class Splitter {
               2.0
             // Todo get rid of these Deepcopies or find a better way to do this
             best_split = deepCopy(current_split)
-            best_split.left_value = deepCopy(this.criterion_.label_freqs_left_)
-            best_split.right_value = deepCopy(
-              this.criterion_.label_freqs_right_
-            )
+            if (this.criterion_ instanceof ClassificationCriterion) {
+              best_split.left_value = deepCopy(
+                this.criterion_.label_freqs_left_
+              )
+              best_split.right_value = deepCopy(
+                this.criterion_.label_freqs_right_
+              )
+            } else {
+              best_split.left_value = deepCopy(this.criterion_.sum_total_left)
+              best_split.right_value = deepCopy(
+                this.criterion_.sum_total_right
+              )
+            }
           }
         }
 

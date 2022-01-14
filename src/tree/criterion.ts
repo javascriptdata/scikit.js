@@ -1,7 +1,7 @@
 import { assert } from '../typesUtils'
 import { int } from '../randUtils'
 
-export type ImpurityMeasure = 'gini' | 'entropy'
+export type ImpurityMeasure = 'gini' | 'entropy' | 'mse'
 export interface SampleData {
   sample_number: int
   current_feature_value: number
@@ -27,7 +27,12 @@ export function Entropy(label_freqs: int[], n_samples: int) {
   return entropy
 }
 
-export class Criterion {
+export function MSE(y_squared_sum: number, y_sum: number, n_samples: int) {
+  let y_bar = y_sum / n_samples
+  return y_squared_sum / n_samples - y_bar * y_bar
+}
+
+export class ClassificationCriterion {
   label_data_: int[]
   impurity_measure_: ImpurityMeasure
   impurity_fn_: (label_freqs: int[], n_samples: int) => number
@@ -124,5 +129,106 @@ export class Criterion {
 
   nodeImpurity() {
     return this.impurity_fn_(this.label_freqs_total_, this.n_samples_)
+  }
+}
+
+export class RegressionCriterion {
+  label_data_: number[]
+  impurity_measure_: 'mse'
+  impurity_fn_: (
+    y_squared_sum: number,
+    y_sum: number,
+    n_samples: int
+  ) => number
+  start_: int = 0
+  end_: int = 0
+  pos_: int = 0
+  squared_sum = 0
+  squared_sum_left = 0
+  squared_sum_right = 0
+  sum_total = 0
+  sum_total_left = 0
+  sum_total_right = 0
+  n_samples_: int = 0
+  n_samples_left_: int = 0
+  n_samples_right_: int = 0
+
+  constructor(impurity_measure: 'mse', label_data: number[]) {
+    assert(
+      ['mse'].includes(impurity_measure),
+      'Unkown impurity measure. Only supports mse'
+    )
+
+    // Support MAE one day
+    this.impurity_measure_ = impurity_measure
+    this.impurity_fn_ = MSE
+    this.label_data_ = label_data
+  }
+
+  init(start: int, end: int, sample_map: SampleData[]) {
+    this.start_ = start
+    this.end_ = end
+    this.n_samples_ = end - start
+
+    for (let i = start; i < end; i++) {
+      let sampleNumber = sample_map[i].sample_number
+      let y_value = this.label_data_[sampleNumber]
+      this.sum_total += y_value
+      this.squared_sum += y_value * y_value
+    }
+  }
+
+  reset() {
+    this.pos_ = this.start_
+    this.squared_sum_left = 0
+    this.sum_total_left = 0
+    this.squared_sum_right = 0
+    this.sum_total_right = 0
+  }
+
+  update(new_pos: int, sample_map: SampleData[]) {
+    for (let i = this.pos_; i < new_pos; i++) {
+      // This assumes that the labels take values 0,..., n_labels - 1
+      let sampleNumber = sample_map[i].sample_number
+      let y_value = this.label_data_[sampleNumber]
+      this.sum_total_left += y_value
+      this.squared_sum_left += y_value * y_value
+    }
+
+    // calculate label_freqs_right_
+    this.sum_total_right = this.sum_total - this.sum_total_left
+    this.squared_sum_right = this.squared_sum - this.squared_sum_left
+
+    this.pos_ = new_pos
+    this.n_samples_left_ = this.pos_ - this.start_
+    this.n_samples_right_ = this.end_ - this.pos_
+  }
+
+  childrenImpurities() {
+    return {
+      impurity_left: this.impurity_fn_(
+        this.squared_sum_left,
+        this.sum_total_left,
+        this.n_samples_left_
+      ),
+      impurity_right: this.impurity_fn_(
+        this.squared_sum_right,
+        this.sum_total_right,
+        this.n_samples_right_
+      )
+    }
+  }
+
+  impurityImprovement() {
+    let { impurity_left, impurity_right } = this.childrenImpurities()
+
+    return (
+      -this.n_samples_left_ * impurity_left -
+      this.n_samples_right_ * impurity_right
+    )
+  }
+
+  nodeImpurity() {
+    return this.impurity_fn_(this.squared_sum, this.sum_total, this.n_samples_)
   }
 }
