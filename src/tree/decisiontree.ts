@@ -1,6 +1,5 @@
 import { ImpurityMeasure, RegressionCriterion } from './criterion'
 import { Splitter } from './splitter'
-import { deepCopy } from './utils'
 import { int } from '../randUtils'
 import { ClassifierMixin, RegressorMixin } from '../mixins'
 
@@ -236,9 +235,10 @@ export class DecisionTreeClassifier extends ClassifierMixin {
         )
         current_split = this.splitter_.splitNode()
         current_record.impurity = this.splitter_.criterion_.nodeImpurity()
-        current_record.value = deepCopy(
-          (this.splitter_.criterion_ as any).label_freqs_total_
-        )
+        current_record.value = (
+          this.splitter_.criterion_ as any
+        ).label_freqs_total_.slice()
+
         is_root_node = false
       }
 
@@ -401,9 +401,10 @@ export class DecisionTreeRegressor extends RegressorMixin {
         )
         current_split = this.splitter_.splitNode()
         current_record.impurity = this.splitter_.criterion_.nodeImpurity()
-        current_record.value = deepCopy(
-          (this.splitter_.criterion_ as RegressionCriterion).sum_total
-        )
+        current_record.value = (
+          this.splitter_.criterion_ as RegressionCriterion
+        ).sum_total as any
+
         is_root_node = false
       }
 

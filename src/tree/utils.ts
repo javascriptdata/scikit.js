@@ -1,6 +1,3 @@
-export function deepCopy(data: any) {
-  return JSON.parse(JSON.stringify(data))
-}
 export function quickSort(
   items: any[],
   left: number,

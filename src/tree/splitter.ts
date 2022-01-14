@@ -5,7 +5,7 @@ import {
   SampleData
 } from './criterion'
 import { shuffle } from 'lodash'
-import { quickSort, deepCopy } from './utils'
+import { quickSort } from './utils'
 import { int } from '../randUtils'
 
 export class Split {
@@ -161,20 +161,16 @@ export class Splitter {
               (this.sample_map_[pos - 1].current_feature_value +
                 this.sample_map_[pos].current_feature_value) /
               2.0
-            // Todo get rid of these Deepcopies or find a better way to do this
-            best_split = deepCopy(current_split)
+
+            best_split = Object.assign({}, current_split)
             if (this.criterion_ instanceof ClassificationCriterion) {
-              best_split.left_value = deepCopy(
-                this.criterion_.label_freqs_left_
-              )
-              best_split.right_value = deepCopy(
-                this.criterion_.label_freqs_right_
-              )
+              best_split.left_value = this.criterion_.label_freqs_left_.slice()
+
+              best_split.right_value =
+                this.criterion_.label_freqs_right_.slice()
             } else {
-              best_split.left_value = deepCopy(this.criterion_.sum_total_left)
-              best_split.right_value = deepCopy(
-                this.criterion_.sum_total_right
-              )
+              best_split.left_value = this.criterion_.sum_total_left as any
+              best_split.right_value = this.criterion_.sum_total_right as any
             }
           }
         }
