@@ -1,5 +1,4 @@
 import { DecisionTreeClassifier, DecisionTreeRegressor } from './decisiontree'
-import { dfd } from '../shared/globals'
 
 describe('DecisionTree', function () {
   it('Use the DecisionTree (toy)', async function () {
