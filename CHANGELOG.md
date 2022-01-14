@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/javascriptdata/scikit.js/compare/v1.2.0...v1.3.0) (2022-01-14)
+
+
+### Features
+
+* gaussian naive bayes classifier ([8174ae1](https://github.com/javascriptdata/scikit.js/commit/8174ae17806b18d5d4488fa2d26086463dc240dc))
+* gaussian naive bayes classifier ([d520b1a](https://github.com/javascriptdata/scikit.js/commit/d520b1a9720ad613bcf08915c03233ce6958ebe2))
+
 # [1.2.0](https://github.com/javascriptdata/scikit.js/compare/v1.1.0...v1.2.0) (2022-01-02)
 
 
