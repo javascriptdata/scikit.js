@@ -1,6 +1,5 @@
-import * as tf from '@tensorflow/tfjs'
-import { Tensor2D } from '@tensorflow/tfjs'
-import * as math from 'mathjs'
+import { tf } from '../shared/globals'
+import { min } from 'mathjs'
 
 interface MakeLowRankMatrixInput {
   nSamples?: number
@@ -14,8 +13,8 @@ export const makeLowRankMatrix = ({
   nFeatures = 100,
   effectiveRank = 10,
   tailStrength = 0.5
-}: MakeLowRankMatrixInput): Tensor2D => {
-  let n = math.min(nSamples, nFeatures)
+}: MakeLowRankMatrixInput = {}): tf.Tensor2D => {
+  let n = min(nSamples, nFeatures)
 
   // Random (ortho normal) vectors
   let [u] = tf.linalg.qr(tf.randomNormal([nSamples, n]))
@@ -41,5 +40,5 @@ export const makeLowRankMatrix = ({
   // FIX: Breaking here "Error: Operands could not be broadcast together with shapes x and y"
   let s = identity.mul(lowRank.add(tail))
 
-  return tf.dot(tf.dot(u, s), tf.einsum('ij>ji', v)) as Tensor2D
+  return tf.dot(tf.dot(u, s), tf.einsum('ij>ji', v)) as tf.Tensor2D
 }

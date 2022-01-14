@@ -1,7 +1,6 @@
-import * as tf from '@tensorflow/tfjs'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
-import { Scikit1D, Scikit2D } from 'src'
-import * as math from 'mathjs'
+import { Scikit1D, Scikit2D } from '../types'
+import { min } from 'mathjs'
+import { tf } from '../shared/globals'
 import { makeLowRankMatrix } from './makeLowRankMatrix'
 
 interface MakeRegressionInput {
@@ -32,10 +31,10 @@ export const makeRegression = ({
   tailStrength = 0.5,
   shuffle = false,
   coef = false
-}: MakeRegressionInput): MakeRegressionOutput => {
-  const numberInformative = math.min(nFeatures, nInformative)
+}: MakeRegressionInput = {}): MakeRegressionOutput => {
+  const numberInformative = min(nFeatures, nInformative)
 
-  let X: Tensor2D
+  let X: tf.Tensor2D
   if (effectiveRank === null) {
     // Randomly generate a well conditioned input set
     X = tf.randomNormal([nSamples, nFeatures])
@@ -59,7 +58,7 @@ export const makeRegression = ({
 
   let groundTruth = tf.concat([groundTruthA, groundTruthB])
 
-  let Y: Tensor1D = tf.einsum('i,i->', X, groundTruth).as1D()
+  let Y: tf.Tensor1D = tf.einsum('i,i->', X, groundTruth).as1D()
 
   Y = Y.add(tf.fill(Y.shape, bias)).as1D()
 
@@ -73,16 +72,12 @@ export const makeRegression = ({
     const randomTen = tf.util.createShuffledIndices(nSamples)
 
     X.gather(Array.from(randomTen))
-
-    X.print()
   }
 
   Y = tf.squeeze(Y).as1D()
 
-  X.print()
-  Y.print()
-
-  if (coef) return [X, Y, tf.squeeze(groundTruth).as1D()]
-
+  if (coef) {
+    return [X, Y, tf.squeeze(groundTruth).as1D()]
+  }
   return [X, Y]
 }
