@@ -32,6 +32,16 @@ export function MSE(y_squared_sum: number, y_sum: number, n_samples: int) {
   return y_squared_sum / n_samples - y_bar * y_bar
 }
 
+function arrayMax(labels: int[]) {
+  let max = Number.NEGATIVE_INFINITY
+  for (let i = 0; i < labels.length; i++) {
+    if (labels[i] > max) {
+      max = labels[i]
+    }
+  }
+  return max
+}
+
 export class ClassificationCriterion {
   label_data_: int[]
   impurity_measure_: ImpurityMeasure
@@ -60,7 +70,7 @@ export class ClassificationCriterion {
       this.impurity_fn_ = Entropy
     }
     // This assumes that the labels are 0,1,2,...,(n-1)
-    this.n_labels_ = Math.max(...label_data) + 1
+    this.n_labels_ = arrayMax(label_data) + 1
     this.label_data_ = label_data
     this.label_freqs_total_ = new Array(this.n_labels_).fill(0)
     this.label_freqs_left_ = new Array(this.n_labels_).fill(0)
