@@ -183,20 +183,28 @@ export async function crossValScore(
   const scores: Scalar[] = []
   scoring = scoring.bind(estimator)
 
-  for (const { trainIndex, testIndex } of cv.split(X, y, groups)) {
-    let score: Scalar | undefined
+  let result: Tensor1D | undefined = undefined
 
-    tf.engine().startScope()
-    try {
-      await estimator.fit(X.gather(trainIndex), y?.gather(trainIndex))
+  tf.engine().startScope()
+  try {
+    for (const { trainIndex, testIndex } of cv.split(X, y, groups)) {
+      let score: Scalar | undefined
 
-      scores.push((score = scoring(X.gather(testIndex), y?.gather(testIndex))))
-    } finally {
-      tf.engine().endScope(score)
-      trainIndex.dispose()
-      testIndex.dispose()
+      tf.engine().startScope()
+      try {
+        await estimator.fit(X.gather(trainIndex), y?.gather(trainIndex))
+
+        score = scoring(X.gather(testIndex), y?.gather(testIndex)) as Scalar
+        scores.push(score)
+      } finally {
+        tf.engine().endScope(score)
+        trainIndex.dispose()
+        testIndex.dispose()
+      }
     }
-  }
 
-  return tf.stack(scores) as Tensor1D
+    return (result = tf.stack(scores) as Tensor1D)
+  } finally {
+    tf.engine().endScope(result)
+  }
 }
