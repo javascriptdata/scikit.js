@@ -1,5 +1,9 @@
-import { Criterion, GiniCoefficient, Entropy, SampleData } from './criterion'
-import { dfd } from '../shared/globals'
+import {
+  ClassificationCriterion,
+  GiniCoefficient,
+  Entropy,
+  SampleData
+} from './criterion'
 
 describe('Criterion', function () {
   let X = [
@@ -16,7 +20,7 @@ describe('Criterion', function () {
     sample_map.push({ current_feature_value: 0, sample_number: i })
   }
   it('Use the criterion (init)', async function () {
-    let criterion = new Criterion('gini', y)
+    let criterion = new ClassificationCriterion('gini', y)
 
     criterion.init(0, 6, sample_map)
     expect(criterion.start_).toEqual(0)
@@ -30,7 +34,7 @@ describe('Criterion', function () {
     expect(criterion.label_freqs_right_[1]).toEqual(0)
   }, 1000)
   it('Use the criterion (update)', async function () {
-    let criterion = new Criterion('gini', y)
+    let criterion = new ClassificationCriterion('gini', y)
     criterion.init(0, 6, sample_map)
     criterion.update(3, sample_map)
 
@@ -41,20 +45,20 @@ describe('Criterion', function () {
     expect(criterion.label_freqs_right_[1]).toEqual(3)
   }, 1000)
   it('Use the criterion (gini)', async function () {
-    let criterion = new Criterion('gini', y)
+    let criterion = new ClassificationCriterion('gini', y)
 
     criterion.init(0, 6, sample_map)
 
     expect(criterion.nodeImpurity()).toEqual(0.5)
   }, 1000)
   it('Use the criterion (entropy)', async function () {
-    let criterion = new Criterion('entropy', y)
+    let criterion = new ClassificationCriterion('entropy', y)
     criterion.init(0, 6, sample_map)
 
     expect(criterion.nodeImpurity()).toEqual(1)
   }, 1000)
   it('Use the criterion (gini update)', async function () {
-    let criterion = new Criterion('gini', y)
+    let criterion = new ClassificationCriterion('gini', y)
 
     criterion.init(0, 6, sample_map)
     criterion.update(4, sample_map)
