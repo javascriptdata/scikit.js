@@ -11,7 +11,6 @@ interface NodeRecord {
   parent_id: int
   is_left: boolean
   impurity: number
-  value: int[]
 }
 
 interface Node {
@@ -112,7 +111,7 @@ class DecisionTree {
     }
     return class_probabilities
   }
-  predict(samples: number[][]): int[] {
+  predictClassification(samples: number[][]): int[] {
     if (!this.is_built) {
       throw new Error(
         'Decision tree must be built with BuildTree method before predictions can be made.'
@@ -124,7 +123,21 @@ class DecisionTree {
     for (let n_sample = 0; n_sample < leaf_node_ids.length; n_sample++) {
       let current_node_id = leaf_node_ids[n_sample]
       class_predictions.push(argMax(this.nodes[current_node_id].value))
-      this.nodes[current_node_id].value
+    }
+    return class_predictions
+  }
+  predictRegression(samples: number[][]): int[] {
+    if (!this.is_built) {
+      throw new Error(
+        'Decision tree must be built with BuildTree method before predictions can be made.'
+      )
+    }
+    let leaf_node_ids = this.GetLeafNodes(samples)
+    let class_predictions = []
+
+    for (let n_sample = 0; n_sample < leaf_node_ids.length; n_sample++) {
+      let current_node_id = leaf_node_ids[n_sample]
+      class_predictions.push(this.nodes[current_node_id].value[0])
     }
     return class_predictions
   }
@@ -166,7 +179,7 @@ export class DecisionTreeClassifier extends ClassifierMixin {
   }
 
   predict(feature_data: number[][]) {
-    return this.tree_.predict(feature_data)
+    return this.tree_.predictClassification(feature_data)
   }
 
   predictProba(feature_data: number[][]) {
@@ -202,8 +215,7 @@ export class DecisionTreeClassifier extends ClassifierMixin {
       impurity: 0,
       n_samples: this.splitter_.sample_map_.length,
       parent_id: -1,
-      is_left: false,
-      value: []
+      is_left: false
     }
     this.stack_.push(root_node)
 
@@ -235,10 +247,6 @@ export class DecisionTreeClassifier extends ClassifierMixin {
         )
         current_split = this.splitter_.splitNode()
         current_record.impurity = this.splitter_.criterion_.nodeImpurity()
-        current_record.value = (
-          this.splitter_.criterion_ as any
-        ).label_freqs_total_.slice()
-
         is_root_node = false
       }
 
@@ -255,7 +263,7 @@ export class DecisionTreeClassifier extends ClassifierMixin {
         n_samples: current_record.n_samples,
         split_feature: current_split?.feature as number,
         threshold: current_split?.threshold as number,
-        value: current_record.value,
+        value: this.splitter_.criterion_.nodeValue().slice(),
         left_child_id: -1,
         right_child_id: -1
       }
@@ -270,8 +278,7 @@ export class DecisionTreeClassifier extends ClassifierMixin {
           depth: current_record.depth + 1,
           parent_id: node_id,
           is_left: false,
-          impurity: current_split?.impurity_right as number,
-          value: current_split?.right_value as int[]
+          impurity: current_split?.impurity_right as number
         }
 
         this.stack_.push(right_record)
@@ -283,8 +290,7 @@ export class DecisionTreeClassifier extends ClassifierMixin {
           depth: current_record.depth + 1,
           parent_id: node_id,
           is_left: true,
-          impurity: current_split?.impurity_left as number,
-          value: current_split?.left_value as int[]
+          impurity: current_split?.impurity_left as number
         }
 
         this.stack_.push(left_record)
@@ -331,7 +337,7 @@ export class DecisionTreeRegressor extends RegressorMixin {
   }
 
   public predict(feature_data: number[][]) {
-    return this.tree_.predict(feature_data)
+    return this.tree_.predictRegression(feature_data)
   }
 
   public fit(
@@ -368,8 +374,7 @@ export class DecisionTreeRegressor extends RegressorMixin {
       impurity: 0,
       n_samples: this.splitter_.sample_map_.length,
       parent_id: -1,
-      is_left: false,
-      value: []
+      is_left: false
     }
     this.stack_.push(root_node)
 
@@ -401,13 +406,8 @@ export class DecisionTreeRegressor extends RegressorMixin {
         )
         current_split = this.splitter_.splitNode()
         current_record.impurity = this.splitter_.criterion_.nodeImpurity()
-        current_record.value = (
-          this.splitter_.criterion_ as RegressionCriterion
-        ).sum_total as any
-
         is_root_node = false
       }
-
       is_leaf =
         is_leaf ||
         !current_split?.found_split ||
@@ -421,7 +421,7 @@ export class DecisionTreeRegressor extends RegressorMixin {
         n_samples: current_record.n_samples,
         split_feature: current_split?.feature as number,
         threshold: current_split?.threshold as number,
-        value: current_record.value,
+        value: this.splitter_.criterion_.nodeValue().slice(),
         left_child_id: -1,
         right_child_id: -1
       }
@@ -436,8 +436,7 @@ export class DecisionTreeRegressor extends RegressorMixin {
           depth: current_record.depth + 1,
           parent_id: node_id,
           is_left: false,
-          impurity: current_split?.impurity_right as number,
-          value: current_split?.right_value as int[]
+          impurity: current_split?.impurity_right as number
         }
 
         this.stack_.push(right_record)
@@ -449,8 +448,7 @@ export class DecisionTreeRegressor extends RegressorMixin {
           depth: current_record.depth + 1,
           parent_id: node_id,
           is_left: true,
-          impurity: current_split?.impurity_left as number,
-          value: current_split?.left_value as int[]
+          impurity: current_split?.impurity_left as number
         }
 
         this.stack_.push(left_record)

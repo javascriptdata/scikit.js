@@ -29,7 +29,8 @@ export function Entropy(label_freqs: int[], n_samples: int) {
 
 export function MSE(y_squared_sum: number, y_sum: number, n_samples: int) {
   let y_bar = y_sum / n_samples
-  return y_squared_sum / n_samples - y_bar * y_bar
+  let val = y_squared_sum / n_samples - y_bar * y_bar
+  return val
 }
 
 function arrayMax(labels: int[]) {
@@ -140,6 +141,10 @@ export class ClassificationCriterion {
   nodeImpurity() {
     return this.impurity_fn_(this.label_freqs_total_, this.n_samples_)
   }
+
+  nodeValue() {
+    return this.label_freqs_total_
+  }
 }
 
 export class RegressionCriterion {
@@ -176,6 +181,8 @@ export class RegressionCriterion {
   }
 
   init(start: int, end: int, sample_map: SampleData[]) {
+    this.sum_total = 0
+    this.squared_sum = 0
     this.start_ = start
     this.end_ = end
     this.n_samples_ = end - start
@@ -240,5 +247,9 @@ export class RegressionCriterion {
 
   nodeImpurity() {
     return this.impurity_fn_(this.squared_sum, this.sum_total, this.n_samples_)
+  }
+
+  nodeValue() {
+    return [this.sum_total / this.n_samples_]
   }
 }

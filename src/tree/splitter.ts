@@ -14,8 +14,6 @@ export class Split {
   pos = -1
   impurity_left: number = Number.POSITIVE_INFINITY
   impurity_right: number = Number.POSITIVE_INFINITY
-  left_value: int[] = []
-  right_value: int[] = []
   found_split = false
 }
 
@@ -98,7 +96,6 @@ export class Splitter {
     if (this.shuffle_features_) {
       this.feature_order_ = shuffle(this.feature_order_)
     }
-
     while (current_feature_num < this.max_features_) {
       current_feature = this.feature_order_[current_feature_num]
 
@@ -110,7 +107,6 @@ export class Splitter {
           ]
       }
       this.criterion_.reset()
-
       this.sample_map_ = quickSort(
         this.sample_map_,
         this.start_,
@@ -163,15 +159,6 @@ export class Splitter {
               2.0
 
             best_split = Object.assign({}, current_split)
-            if (this.criterion_ instanceof ClassificationCriterion) {
-              best_split.left_value = this.criterion_.label_freqs_left_.slice()
-
-              best_split.right_value =
-                this.criterion_.label_freqs_right_.slice()
-            } else {
-              best_split.left_value = this.criterion_.sum_total_left as any
-              best_split.right_value = this.criterion_.sum_total_right as any
-            }
           }
         }
 
