@@ -13,16 +13,20 @@
 * ==========================================================================
 */
 
-import { Scalar, Tensor1D, Tensor2D } from '@tensorflow/tfjs-node'
-import { assert } from 'console'
-import { tf } from '../shared/globals'
+import { assert } from '../typesUtils'
 import { CrossValidator } from './crossValidator'
 import { KFold } from './kFold'
+import { Scikit1D, Scikit2D } from '../types'
+import { convertToTensor1D, convertToTensor2D } from '../utils'
+import { tf } from '../shared/globals'
+type Scalar = tf.Scalar
+type Tensor1D = tf.Tensor1D
+type Tensor2D = tf.Tensor2D
 
 /**
  * Evaluates a score by cross-validation. This particular overload
  * of the function uses the given scorer function to cross validate
- * a superwised estimator.
+ * a supervised estimator.
  *
  * @param estimator A supervised estimator that has an async `fit(X,y)` function.
  *
@@ -48,10 +52,10 @@ export async function crossValScore<
   }
 >(
   estimator: T,
-  Xy: [Tensor2D, Tensor1D],
+  Xy: [Scikit2D, Scikit1D],
   params: {
     cv?: CrossValidator
-    groups?: Tensor1D
+    groups?: Scikit1D
     scoring: (this: T, X: Tensor2D, y: Tensor1D) => Scalar
   }
 ): Promise<Tensor1D>
@@ -59,7 +63,7 @@ export async function crossValScore<
 /**
  * Evaluates a score by cross-validation. This particular overload
  * of the function uses the given scorer to cross validate an
- * unsuperwised estimator.
+ * unsupervised estimator.
  *
  * @param estimator A supervised estimator that has an async `fit(X)` function.
  *
@@ -85,17 +89,17 @@ export async function crossValScore<
   }
 >(
   estimator: T,
-  X: [Tensor2D],
+  X: [Scikit2D],
   params: {
     cv?: CrossValidator
-    groups?: Tensor1D
+    groups?: Scikit1D
     scoring: (this: T, X: Tensor2D) => Scalar
   }
 ): Promise<Tensor1D>
 
 /**
  * Evaluates a score by cross-validation. This particular overload
- * of the function uses the default score of a superwised estimator
+ * of the function uses the default score of a supervised estimator
  * for scoring.
  *
  * @param estimator A supervised estimator that has an async `fit(X,y)`
@@ -119,16 +123,16 @@ export async function crossValScore(
     fit(X: Tensor2D, y: Tensor1D): Promise<unknown>
     score(X: Tensor2D, y: Tensor1D): Scalar
   },
-  Xy: [Tensor2D, Tensor1D],
+  Xy: [Scikit2D, Scikit1D],
   params: {
     cv?: CrossValidator
-    groups?: Tensor1D
+    groups?: Scikit1D
   }
 ): Promise<Tensor1D>
 
 /**
  * Evaluates a score by cross-validation. This particular overload
- * of the function uses the default score of an unsuperwised estimator
+ * of the function uses the default score of an unsupervised estimator
  * for scoring.
  *
  * @param estimator A supervised estimator that has an async `fit(X)`
@@ -152,23 +156,23 @@ export async function crossValScore(
     fit(X: Tensor2D): Promise<unknown>
     score(X: Tensor2D): Scalar
   },
-  X: [Tensor2D, Tensor1D],
+  X: [Scikit2D],
   params: {
     cv?: CrossValidator
-    groups?: Tensor1D
+    groups?: Scikit1D
   }
 ): Promise<Tensor1D>
 
 export async function crossValScore(
   estimator: any,
-  [X, y]: [Tensor2D, Tensor1D?],
+  [X, y]: [Scikit2D, Scikit1D?],
   {
     cv = new KFold(),
     groups,
     scoring
   }: {
     cv?: CrossValidator
-    groups?: Tensor1D
+    groups?: Scikit1D
     scoring?: any
   } = {}
 ): Promise<Tensor1D> {
@@ -187,6 +191,11 @@ export async function crossValScore(
 
   tf.engine().startScope()
   try {
+    X = convertToTensor2D(X)
+    if (null != y) {
+      y = convertToTensor1D(y)
+    }
+
     for (const { trainIndex, testIndex } of cv.split(X, y, groups)) {
       let score: Scalar | undefined
 

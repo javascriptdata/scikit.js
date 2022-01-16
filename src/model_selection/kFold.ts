@@ -13,12 +13,14 @@
 * ==========================================================================
 */
 
-import { tf } from '../shared/globals'
-import { Tensor2D, Tensor1D } from '@tensorflow/tfjs-node'
 import { assert } from '../typesUtils'
 import { CrossValidator } from './crossValidator'
 import { alea } from 'seedrandom'
 import * as randUtils from '../randUtils'
+import { Scikit1D, Scikit2D } from '../types'
+import { convertToTensor1D, convertToTensor2D } from '../utils'
+import { tf } from '../shared/globals'
+type Tensor1D = tf.Tensor1D
 
 export interface KFoldParams {
   /**
@@ -96,37 +98,48 @@ export class KFold implements CrossValidator {
     this.randomState = randomState
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public getNumSplits(X?: Tensor2D, y?: Tensor1D, groups?: Tensor1D): number {
+  public getNumSplits(): number {
     return this.nSplits
   }
 
   public *split(
-    X: Tensor2D,
-    y?: Tensor1D,
-    groups?: Tensor1D
+    X: Scikit2D,
+    y?: Scikit1D,
+    groups?: Scikit1D
   ): IterableIterator<{ trainIndex: Tensor1D; testIndex: Tensor1D }> {
     const { nSplits, shuffle, randomState } = this
 
-    const nSamples = X.shape[0]
+    let nSamples: number
 
-    assert(
-      nSplits <= nSamples,
-      'KFold({nSplits})::split(X): nSplits must not be greater than X.shape[0].'
-    )
+    tf.engine().startScope()
+    try {
+      X = convertToTensor2D(X)
 
-    if (null != y) {
+      nSamples = X.shape[0]
+
       assert(
-        nSamples === y.shape[0],
-        'KFold::split(X,y): X.shape[0] must equal y.shape[0].'
+        nSplits <= nSamples,
+        'KFold({nSplits})::split(X): nSplits must not be greater than X.shape[0].'
       )
+
+      if (null != y) {
+        y = convertToTensor1D(y)
+        assert(
+          nSamples === y.shape[0],
+          'KFold::split(X,y): X.shape[0] must equal y.shape[0].'
+        )
+      }
+
+      if (null != groups) {
+        groups = convertToTensor1D(groups)
+        assert(
+          nSamples === groups.shape[0],
+          'KFold::split(X,y,groups): X.shape[0] must equal groups.shape[0].'
+        )
+      }
     }
-
-    if (null != groups) {
-      assert(
-        nSamples === groups.shape[0],
-        'KFold::split(X,y,groups): X.shape[0] must equal groups.shape[0].'
-      )
+    finally {
+      tf.engine().endScope()
     }
 
     const range = new Int32Array(nSamples)

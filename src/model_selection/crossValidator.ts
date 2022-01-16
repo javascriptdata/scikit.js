@@ -13,7 +13,9 @@
 * ==========================================================================
 */
 
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-node'
+import { Scikit1D, Scikit2D } from '../types'
+import { tf } from '../shared/globals'
+type Tensor1D = tf.Tensor1D
 
 /**
  * Interface for cross validation splitting strategies.
@@ -31,7 +33,7 @@ export interface CrossValidator {
    *               both in the test and training dataset, e.g.
    *               multiple blood samples from a single individual.
    */
-  getNumSplits(X: Tensor2D, y?: Tensor1D, groups?: Tensor1D): number
+  getNumSplits(X: Scikit2D, y?: Scikit1D, groups?: Scikit1D): number
   /**
    * Yields the different splits into training and test data.
    *
@@ -47,8 +49,8 @@ export interface CrossValidator {
    *         the ones belonging to the test data.
    */
   split(
-    X: Tensor2D,
-    y?: Tensor1D,
-    groups?: Tensor1D
+    X: Scikit2D,
+    y?: Scikit1D,
+    groups?: Scikit1D
   ): IterableIterator<{ trainIndex: Tensor1D; testIndex: Tensor1D }>
 }

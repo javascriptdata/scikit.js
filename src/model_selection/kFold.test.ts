@@ -13,12 +13,12 @@
 * ==========================================================================
 */
 
-import { tf } from '../shared/globals'
 import * as fc from 'fast-check'
 import { KFold } from './kFold'
 import { alea } from 'seedrandom'
-import { Tensor2D } from '@tensorflow/tfjs'
 import '../jestTensorMatchers'
+import { tf } from '../shared/globals'
+type Tensor2D = tf.Tensor2D
 
 describe('KFold', () => {
   const numRuns = 128

@@ -13,16 +13,22 @@
 * ==========================================================================
 */
 
+import { Scikit1D, Scikit2D } from '../types'
+import { convertToTensor1D, convertToTensor2D } from '../utils'
 import { tf } from '../shared/globals'
-import { Scalar, Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
+type Scalar = tf.Scalar
+type Tensor1D = tf.Tensor1D
+type Tensor2D = tf.Tensor2D
 
 export function negMeanAbsoluteError(
   this: {
     predict(X: Tensor2D): Tensor1D
   },
-  X: Tensor2D,
-  y: Tensor1D
+  X: Scikit2D,
+  y: Scikit1D
 ) {
+  X = convertToTensor2D(X)
+  y = convertToTensor1D(y)
   const yPred = this.predict(X)
   return tf.metrics.meanAbsoluteError(y, yPred).neg() as Scalar
 }
@@ -31,9 +37,11 @@ export function negMeanSquaredError(
   this: {
     predict(X: Tensor2D): Tensor1D
   },
-  X: Tensor2D,
-  y: Tensor1D
+  X: Scikit2D,
+  y: Scikit1D
 ) {
+  X = convertToTensor2D(X)
+  y = convertToTensor1D(y)
   const yPred = this.predict(X)
   return tf.metrics.meanSquaredError(y, yPred).neg() as Scalar
 }
@@ -42,9 +50,11 @@ export function accuracy(
   this: {
     predict(X: Tensor2D): Tensor1D
   },
-  X: Tensor2D,
-  y: Tensor1D
+  X: Scikit2D,
+  y: Scikit1D
 ) {
+  X = convertToTensor2D(X)
+  y = convertToTensor1D(y)
   const yPred = this.predict(X)
   return tf.equal(y, yPred).sum().div(y.shape[0]) as Scalar
 }

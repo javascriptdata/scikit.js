@@ -13,8 +13,6 @@
 * ==========================================================================
 */
 
-import { dfd } from '../shared/globals'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { KNeighborsRegressor } from './kNeighborsRegressor'
 import { KNeighborsParams } from './kNeighborsBase'
 import { fetchCaliforniaHousing, loadDiabetes } from '../datasets/datasets'
@@ -23,6 +21,9 @@ import { crossValScore } from '../model_selection/crossValScore'
 import { KFold } from '../model_selection/kFold'
 import { negMeanSquaredError } from '../model_selection/scorers'
 import '../jestTensorMatchers'
+import { dfd, tf } from '../shared/globals'
+type Tensor1D = tf.Tensor1D
+type Tensor2D = tf.Tensor2D
 
 function testWithDataset(
   loadData: () => Promise<dfd.DataFrame>,
@@ -54,7 +55,7 @@ function testWithDataset(
       atol: 0,
       rtol: 0.01
     })
-  })
+  }, 60_000)
 }
 
 for (const algorithm of [
