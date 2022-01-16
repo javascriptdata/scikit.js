@@ -137,8 +137,7 @@ export class KFold implements CrossValidator {
           'KFold::split(X,y,groups): X.shape[0] must equal groups.shape[0].'
         )
       }
-    }
-    finally {
+    } finally {
       tf.engine().endScope()
     }
 
