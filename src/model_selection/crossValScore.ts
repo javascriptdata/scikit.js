@@ -59,7 +59,7 @@ export async function crossValScore<
 /**
  * Evaluates a score by cross-validation. This particular overload
  * of the function uses the given scorer to cross validate an
- * unsuperwised estimator.
+ * unsupervised estimator.
  *
  * @param estimator A supervised estimator that has an async `fit(X)` function.
  *
