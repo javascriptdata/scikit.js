@@ -1,8 +1,9 @@
-import { ImpurityMeasure, RegressionCriterion } from './criterion'
+import { ImpurityMeasure } from './criterion'
 import { Splitter } from './splitter'
 import { int } from '../randUtils'
-import { ClassifierMixin, RegressorMixin } from '../mixins'
+import { r2Score, accuracyScore } from '../metrics/metrics'
 import { Split, makeDefaultSplit } from './splitter'
+import { assert } from '../typesUtils'
 interface NodeRecord {
   start: int
   end: int
@@ -57,10 +58,6 @@ function argMax(array: number[]) {
 class DecisionTree {
   nodes: Node[] = []
   is_built = false
-  AddNode(node: Node) {
-    this.nodes.push(node)
-    return this.nodes.length - 1
-  }
   GetLeafNodes(feature_data: number[][]): int[] {
     let leaf_node_ids: int[] = []
     for (let i = 0; i < feature_data.length; i++) {
@@ -187,7 +184,7 @@ function validateY(label_data: int[]) {
   }
 }
 
-export class DecisionTreeBase {
+class DecisionTreeBase {
   splitter_!: Splitter
   stack_: NodeRecord[] = []
   min_samples_leaf: int
@@ -221,14 +218,11 @@ export class DecisionTreeBase {
     this.tree_ = new DecisionTree()
   }
 
-  predict(feature_data: number[][]) {
-    return this.tree_.predictClassification(feature_data)
-  }
-
-  predictProba(feature_data: number[][]) {
-    return this.tree_.predictProba(feature_data)
-  }
-  fit(feature_data: number[][], label_data: int[], samples_subset?: number[]) {
+  public fit(
+    feature_data: number[][],
+    label_data: int[],
+    samples_subset?: number[]
+  ) {
     validateY(label_data)
     validateX(feature_data)
 
@@ -307,7 +301,8 @@ export class DecisionTreeBase {
         right_child_id: -1
       }
 
-      let node_id = this.tree_.AddNode(current_node)
+      this.tree_.nodes.push(current_node)
+      let node_id = this.tree_.nodes.length - 1
 
       if (!is_leaf) {
         let right_record: NodeRecord = {
@@ -340,6 +335,14 @@ export class DecisionTreeBase {
   }
 }
 
+interface DecisionTreeClassifierParams {
+  criterion?: 'gini' | 'entropy'
+  max_depth?: int
+  min_samples_split?: number
+  min_samples_leaf?: number
+  max_features?: number
+  min_impurity_decrease?: number
+}
 export class DecisionTreeClassifier extends DecisionTreeBase {
   constructor({
     criterion = 'gini',
@@ -347,165 +350,71 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
     min_samples_split = 2,
     min_samples_leaf = 1,
     max_features = -1,
-    max_features_method = 'all_method',
-    min_impurity_split = 0.0
-  } = {}) {
-    super()
+    min_impurity_decrease = 0.0
+  }: DecisionTreeClassifierParams = {}) {
+    assert(
+      ['gini', 'entropy'].includes(criterion as string),
+      'Must pass a criterion that makes sense'
+    )
+    super({
+      criterion,
+      max_depth,
+      min_samples_split,
+      min_samples_leaf,
+      max_features,
+      min_impurity_split: min_impurity_decrease
+    })
+  }
+  public predict(feature_data: number[][]) {
+    return this.tree_.predictClassification(feature_data)
+  }
+
+  public predictProba(feature_data: number[][]) {
+    return this.tree_.predictProba(feature_data)
+  }
+
+  public score(X: number[][], y: number[]): number {
+    const yPred = this.predict(X)
+    return accuracyScore(y, yPred)
   }
 }
 
-// export class DecisionTreeRegressor extends RegressorMixin {
-//   splitter_?: Splitter
-//   stack_: NodeRecord[] = []
-//   min_samples_leaf: int
-//   max_depth_: int
-//   min_samples_split: int
-//   min_impurity_split_: number
-//   n_features_: int = 0
-//   tree_: DecisionTree
-//   criterion_: ImpurityMeasure
-//   max_features_: int
-//   max_features_method: 'log2_method' | 'sqrt_method' | 'all_method'
-//   feature_data_: number[][] = []
-//   label_data_: number[] = []
+interface DecisionTreeRegressorParams {
+  criterion?: 'mse'
+  max_depth?: int
+  min_samples_split?: number
+  min_samples_leaf?: number
+  max_features?: number
+  min_impurity_decrease?: number
+}
+export class DecisionTreeRegressor extends DecisionTreeBase {
+  constructor({
+    criterion = 'mse',
+    max_depth = Number.POSITIVE_INFINITY,
+    min_samples_split = 2,
+    min_samples_leaf = 1,
+    max_features = -1,
+    min_impurity_decrease = 0.0
+  }: DecisionTreeRegressorParams = {}) {
+    assert(
+      ['mse'].includes(criterion as string),
+      'Must pass a criterion that makes sense'
+    )
+    super({
+      criterion,
+      max_depth,
+      min_samples_split,
+      min_samples_leaf,
+      max_features,
+      min_impurity_split: min_impurity_decrease
+    })
+  }
+  public predict(feature_data: number[][]) {
+    return this.tree_.predictRegression(feature_data)
+  }
 
-//   constructor({
-//     criterion = 'mse',
-//     max_depth = Number.POSITIVE_INFINITY,
-//     min_samples_split = 2,
-//     min_samples_leaf = 1,
-//     max_features = -1,
-//     max_features_method = 'all_method',
-//     min_impurity_split = 0.0
-//   } = {}) {
-//     super()
-//     this.criterion_ = criterion as any
-//     this.max_depth_ = max_depth
-//     this.min_samples_split = min_samples_split
-//     this.min_samples_leaf = min_samples_leaf
-//     this.max_features_ = max_features
-//     this.max_features_method = max_features_method as any
-//     this.min_impurity_split_ = min_impurity_split
-//     this.tree_ = new DecisionTree()
-//   }
-
-//   public predict(feature_data: number[][]) {
-//     return this.tree_.predictRegression(feature_data)
-//   }
-
-//   public fit(
-//     feature_data: number[][],
-//     label_data: int[],
-//     samples_subset?: number[]
-//   ) {
-//     this.feature_data_ = feature_data
-//     this.label_data_ = label_data
-
-//     let new_samples_subset = samples_subset || []
-
-//     // CheckNegativeLabels(label_data_ptr);
-//     this.max_features_ = SetMaxFeatures(
-//       this.max_features_,
-//       this.max_features_method,
-//       feature_data
-//     )
-
-//     this.splitter_ = new Splitter(
-//       feature_data,
-//       label_data,
-//       this.min_samples_leaf,
-//       this.criterion_,
-//       this.max_features_,
-//       new_samples_subset
-//     )
-
-//     // put root node on stack
-//     let root_node: NodeRecord = {
-//       start: 0,
-//       end: this.splitter_.sample_map_.length,
-//       depth: 0,
-//       impurity: 0,
-//       n_samples: this.splitter_.sample_map_.length,
-//       parent_id: -1,
-//       is_left: false
-//     }
-//     this.stack_.push(root_node)
-
-//     let is_root_node = true
-
-//     while (this.stack_.length !== 0) {
-//       // take next node from stack
-//       let current_record = this.stack_.pop() as NodeRecord
-//       this.splitter_.resetSampleRange(current_record.start, current_record.end)
-
-//       let is_leaf =
-//         !(current_record.depth < this.max_depth_) ||
-//         current_record.n_samples < this.min_samples_split ||
-//         current_record.n_samples < 2 * this.min_samples_leaf
-
-//       if (is_root_node) {
-//         // current_split = this.splitter_.splitNode()
-//         current_record.impurity = this.splitter_.criterion_.nodeImpurity()
-//         is_root_node = false
-//       }
-
-//       is_leaf = is_leaf || current_record.impurity <= this.min_impurity_split_
-
-//       let current_split = null
-//       // evaluate abort criterion
-//       // or current_record.impurity <= 0.0;
-//       // split unless is_leaf
-//       if (!is_leaf) {
-//         current_split = this.splitter_.splitNode()
-//         console.log(current_split)
-//         throw new Error('woah')
-//         // Todo more logic to implement (line 223)
-//         // https://github.com/scikit-learn/scikit-learn/blob/7e1e6d09bcc2eaeba98f7e737aac2ac782f0e5f1/sklearn/tree/_tree.pyx
-//         is_leaf = is_leaf || current_split.pos >= this.end
-//       }
-
-//       let current_node: Node = {
-//         parent_id: current_record.parent_id,
-//         impurity: current_record.impurity,
-//         is_leaf: is_leaf,
-//         is_left: current_record.is_left,
-//         n_samples: current_record.n_samples,
-//         split_feature: current_split?.feature || -1,
-//         threshold: current_split?.threshold || NaN,
-//         value: this.splitter_.criterion_.nodeValue().slice(),
-//         left_child_id: -1,
-//         right_child_id: -1
-//       }
-
-//       let node_id = this.tree_.AddNode(current_node)
-
-//       if (!is_leaf) {
-//         let right_record: NodeRecord = {
-//           start: current_split?.pos as number,
-//           end: current_record.end,
-//           n_samples: current_record.end - (current_split?.pos as number),
-//           depth: current_record.depth + 1,
-//           parent_id: node_id,
-//           is_left: false,
-//           impurity: current_split?.impurity_right as number
-//         }
-
-//         this.stack_.push(right_record)
-
-//         let left_record: NodeRecord = {
-//           start: current_record.start,
-//           end: current_split?.pos as number,
-//           n_samples: (current_split?.pos as number) - current_record.start,
-//           depth: current_record.depth + 1,
-//           parent_id: node_id,
-//           is_left: true,
-//           impurity: current_split?.impurity_left as number
-//         }
-
-//         this.stack_.push(left_record)
-//       }
-//     }
-//     this.tree_.PopulateChildIds()
-//     this.tree_.is_built = true
-//   }
-// }
+  public score(X: number[][], y: number[]): number {
+    const yPred = this.predict(X)
+    return r2Score(y, yPred)
+  }
+}

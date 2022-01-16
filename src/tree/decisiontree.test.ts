@@ -1,5 +1,4 @@
-import { DecisionTreeClassifier } from './decisiontree'
-import { loadIris } from '../datasets/datasets'
+import { DecisionTreeClassifier, DecisionTreeRegressor } from './decisiontree'
 
 describe('DecisionTree', function () {
   it('Use the DecisionTree (toy)', async function () {
@@ -82,16 +81,15 @@ describe('DecisionTree', function () {
     expect(() => tree_classifier.fit(X2 as any, y1 as any)).toThrow()
     expect(() => tree_classifier.fit(X3 as any, y1 as any)).toThrow()
   }, 1000)
+  it('Use the DecisionTreeRegressor', async function () {
+    let X = [[1], [2], [3], [4], [5], [6], [7], [8]]
+    let y = [1, 1, 1, 1, 2, 2, 2, 2]
 
-  // it('Use the DecisionTreeRegressor', async function () {
-  //   let X = [[1], [2], [3], [4], [5], [6], [7], [8]]
-  //   let y = [1, 1, 1, 1, 2, 2, 2, 2]
+    let tree_regressor = new DecisionTreeRegressor()
+    tree_regressor.fit(X, y)
 
-  //   let tree_regressor = new DecisionTreeRegressor()
-  //   tree_regressor.fit(X, y)
-
-  //   expect(tree_regressor.tree_.nodes.length).toEqual(3)
-  //   expect(tree_regressor.predict([[3]])).toEqual([1])
-  //   expect(tree_regressor.score(X, y)).toEqual(1.0)
-  // }, 1000)
+    expect(tree_regressor.tree_.nodes.length).toEqual(3)
+    expect(tree_regressor.predict([[3]])).toEqual([1])
+    expect(tree_regressor.score(X, y)).toEqual(1.0)
+  }, 1000)
 })
