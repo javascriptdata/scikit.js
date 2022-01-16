@@ -8,13 +8,24 @@ import { shuffle } from 'lodash'
 import { quickSort } from './utils'
 import { int } from '../randUtils'
 
-export class Split {
-  feature: int = 0
-  threshold = 0
-  pos = -1
-  impurity_left: number = Number.POSITIVE_INFINITY
-  impurity_right: number = Number.POSITIVE_INFINITY
-  found_split = false
+export interface Split {
+  feature: int
+  threshold: int
+  pos: int
+  impurity_left: number
+  impurity_right: number
+  found_split: boolean
+}
+
+export function makeDefaultSplit() {
+  return {
+    feature: 0,
+    threshold: 0,
+    pos: -1,
+    impurity_left: Number.POSITIVE_INFINITY,
+    impurity_right: Number.POSITIVE_INFINITY,
+    found_split: false
+  }
 }
 
 export class Splitter {
@@ -85,9 +96,9 @@ export class Splitter {
     this.criterion_.init(start, end, this.sample_map_)
   }
 
-  splitNode() {
-    let current_split = new Split()
-    let best_split = new Split()
+  splitNode(): Split {
+    let current_split = makeDefaultSplit()
+    let best_split = makeDefaultSplit()
     let current_impurity_improvement = Number.NEGATIVE_INFINITY
     let best_impurity_improvement = Number.NEGATIVE_INFINITY
     let current_feature_num = 0
@@ -96,6 +107,7 @@ export class Splitter {
     if (this.shuffle_features_) {
       this.feature_order_ = shuffle(this.feature_order_)
     }
+
     while (current_feature_num < this.max_features_) {
       current_feature = this.feature_order_[current_feature_num]
 
@@ -153,6 +165,7 @@ export class Splitter {
             best_impurity_improvement = current_impurity_improvement
             current_split.found_split = true
             current_split.feature = current_feature
+
             current_split.threshold =
               (this.sample_map_[pos - 1].current_feature_value +
                 this.sample_map_[pos].current_feature_value) /
