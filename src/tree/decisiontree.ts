@@ -332,6 +332,10 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
     )
     return this
   }
+
+  public getNLeaves() {
+    return this.tree.nodes.filter((el) => el.isLeaf).length
+  }
   public predict(X: Scikit2D) {
     assert(isScikit2D(X), 'X value is not a 2D container')
     let XArray = convertScikit2DToArray(X)
