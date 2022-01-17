@@ -27,30 +27,6 @@ interface Node {
   value: int[]
 }
 
-function SetMaxFeatures(
-  maxFeatures: int,
-  maxFeaturesMethod: string,
-  X: number[][]
-) {
-  let nFeatures = X[0].length
-  if (maxFeatures < 1) {
-    switch (maxFeaturesMethod) {
-      case 'log2':
-        maxFeatures = Math.floor(Math.log2(nFeatures))
-        break
-      case 'sqrt':
-        maxFeatures = Math.floor(Math.sqrt(nFeatures))
-        break
-      case 'all':
-        maxFeatures = nFeatures
-        break
-    }
-  } else if (maxFeatures > nFeatures) {
-    maxFeatures = nFeatures
-  }
-  return maxFeatures
-}
-
 function argMax(array: number[]) {
   return array.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1]
 }
@@ -182,17 +158,26 @@ function validateY(y: int[]) {
   }
 }
 
+interface DecisionTreeBaseParams {
+  criterion?: 'gini' | 'entropy' | 'mse'
+  maxDepth?: int
+  minSamplesSplit?: number
+  minSamplesLeaf?: number
+  maxFeatures?: number | 'auto' | 'sqrt' | 'log2'
+  minImpurityDecrease?: number
+}
+
 class DecisionTreeBase {
   splitter!: Splitter
   stack: NodeRecord[] = []
   minSamplesLeaf: int
   maxDepth: int
   minSamplesSplit: int
-  minImpuritySplit: number
+  minImpurityDecrease: number
   tree: DecisionTree
   criterion: ImpurityMeasure
-  maxFeatures: int
-  maxFeaturesMethod: 'log2' | 'sqrt' | 'all'
+  maxFeatures?: number | 'log2' | 'sqrt' | 'auto'
+  maxFeaturesNumb: int
   X: number[][] = []
   y: number[] = []
 
@@ -201,20 +186,39 @@ class DecisionTreeBase {
     maxDepth = Number.POSITIVE_INFINITY,
     minSamplesSplit = 2,
     minSamplesLeaf = 1,
-    maxFeatures = -1,
-    maxFeaturesMethod = 'all',
-    minImpuritySplit = 0.0
-  } = {}) {
+    maxFeatures = undefined,
+    minImpurityDecrease = 0.0
+  }: DecisionTreeBaseParams = {}) {
     this.criterion = criterion as any
-    this.maxDepth = maxDepth
+    this.maxDepth =
+      maxDepth === undefined ? Number.POSITIVE_INFINITY : Number(maxDepth)
     this.minSamplesSplit = minSamplesSplit
     this.minSamplesLeaf = minSamplesLeaf
     this.maxFeatures = maxFeatures
-    this.maxFeaturesMethod = maxFeaturesMethod as any
-    this.minImpuritySplit = minImpuritySplit
+    this.minImpurityDecrease = minImpurityDecrease
+    this.maxFeaturesNumb = 0
     this.tree = new DecisionTree()
   }
+  calcMaxFeatures(
+    nFeatures: int,
+    maxFeatures?: number | 'auto' | 'sqrt' | 'log2'
+  ) {
+    if (maxFeatures === 'log2') {
+      return Math.floor(Math.log2(nFeatures))
+    }
+    if (maxFeatures === 'sqrt') {
+      return Math.floor(Math.sqrt(nFeatures))
+    }
+    if (maxFeatures === 'auto') {
+      return Math.floor(Math.sqrt(nFeatures))
+    }
+    if (typeof maxFeatures === 'number') {
+      assert(maxFeatures >= 1, 'maxFeatures must be greater than 1')
+      return Math.min(Math.floor(maxFeatures), nFeatures)
+    }
 
+    return nFeatures
+  }
   public fit(X: number[][], y: int[], samplesSubset?: number[]) {
     validateY(y)
     validateX(X)
@@ -225,18 +229,14 @@ class DecisionTreeBase {
     let newSamplesSubset = samplesSubset || []
 
     // CheckNegativeLabels(yptr);
-    this.maxFeatures = SetMaxFeatures(
-      this.maxFeatures,
-      this.maxFeaturesMethod,
-      X
-    )
+    this.maxFeaturesNumb = this.calcMaxFeatures(X[0].length, this.maxFeatures)
 
     this.splitter = new Splitter(
       X,
       y,
       this.minSamplesLeaf,
       this.criterion,
-      this.maxFeatures,
+      this.maxFeaturesNumb,
       newSamplesSubset
     )
 
@@ -278,7 +278,7 @@ class DecisionTreeBase {
         isLeaf =
           isLeaf ||
           !currentSplit.foundSplit ||
-          currentRecord.impurity <= this.minImpuritySplit
+          currentRecord.impurity <= this.minImpurityDecrease
       }
 
       let currentNode: Node = {
@@ -333,16 +333,16 @@ interface DecisionTreeClassifierParams {
   maxDepth?: int
   minSamplesSplit?: number
   minSamplesLeaf?: number
-  maxFeatures?: number
+  maxFeatures?: number | 'auto' | 'sqrt' | 'log2'
   minImpurityDecrease?: number
 }
 export class DecisionTreeClassifier extends DecisionTreeBase {
   constructor({
     criterion = 'gini',
-    maxDepth = Number.POSITIVE_INFINITY,
+    maxDepth = undefined,
     minSamplesSplit = 2,
     minSamplesLeaf = 1,
-    maxFeatures = -1,
+    maxFeatures = undefined,
     minImpurityDecrease = 0.0
   }: DecisionTreeClassifierParams = {}) {
     assert(
@@ -355,7 +355,7 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
       minSamplesSplit,
       minSamplesLeaf,
       maxFeatures,
-      minImpuritySplit: minImpurityDecrease
+      minImpurityDecrease: minImpurityDecrease
     })
   }
   public predict(X: number[][]) {
@@ -377,16 +377,16 @@ interface DecisionTreeRegressorParams {
   maxDepth?: int
   minSamplesSplit?: number
   minSamplesLeaf?: number
-  maxFeatures?: number
+  maxFeatures?: number | 'auto' | 'sqrt' | 'log2'
   minImpurityDecrease?: number
 }
 export class DecisionTreeRegressor extends DecisionTreeBase {
   constructor({
     criterion = 'mse',
-    maxDepth = Number.POSITIVE_INFINITY,
+    maxDepth = undefined,
     minSamplesSplit = 2,
     minSamplesLeaf = 1,
-    maxFeatures = -1,
+    maxFeatures = undefined,
     minImpurityDecrease = 0.0
   }: DecisionTreeRegressorParams = {}) {
     assert(
@@ -399,7 +399,7 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
       minSamplesSplit,
       minSamplesLeaf,
       maxFeatures,
-      minImpuritySplit: minImpurityDecrease
+      minImpurityDecrease: minImpurityDecrease
     })
   }
   public predict(X: number[][]) {
