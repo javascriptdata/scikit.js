@@ -289,8 +289,20 @@ export const arrayEqual = (
   return true
 }
 
-export function convertTo2DArray(data: Scikit2D): any[] {
+export function convertScikit2DToArray(
+  data: Scikit2D
+): any[][] | TypedArray[] {
   if (data instanceof dfd.DataFrame) {
+    return data.values as any[][]
+  }
+  if (data instanceof tf.Tensor) {
+    return data.arraySync()
+  }
+  return data
+}
+
+export function convertScikit1DToArray(data: Scikit1D): any[] | TypedArray {
+  if (data instanceof dfd.Series) {
     return data.values
   }
   if (data instanceof tf.Tensor) {

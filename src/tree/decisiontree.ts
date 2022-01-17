@@ -3,7 +3,11 @@ import { Splitter } from './splitter'
 import { int } from '../randUtils'
 import { r2Score, accuracyScore } from '../metrics/metrics'
 import { Split, makeDefaultSplit } from './splitter'
-import { assert } from '../typesUtils'
+import { assert, isScikit1D, isScikit2D } from '../typesUtils'
+import { validateX, validateY } from './utils'
+import { Scikit1D, Scikit2D } from '../types'
+import { convertScikit2DToArray, convertScikit1DToArray } from '../utils'
+import { LabelEncoder } from '../preprocessing/labelEncoder'
 interface NodeRecord {
   start: int
   end: int
@@ -114,50 +118,6 @@ class DecisionTree {
   }
 }
 
-function validateX(X: number[][]) {
-  if (X.length === 0) {
-    throw new Error(
-      `X can not be empty, but it has a length of 0. It is ${X}.`
-    )
-  }
-  for (let i = 0; i < X.length; i++) {
-    let curRow = X[i]
-    if (curRow.length === 0) {
-      throw new Error(
-        `Rows in X can not be empty, but row ${i} in X is ${curRow}.`
-      )
-    }
-    for (let j = 0; j < curRow.length; j++) {
-      if (typeof curRow[j] !== 'number' || !Number.isFinite(curRow[j])) {
-        throw new Error(
-          `X must contain finite non-NaN numbers, but the element at X[${i}][${j}] is ${curRow[j]}`
-        )
-      }
-    }
-  }
-}
-
-function validateY(y: int[]) {
-  if (y.length === 0) {
-    throw new Error(
-      `y can not be empty, but it has a length of 0. It is ${y}.`
-    )
-  }
-  for (let i = 0; i < y.length; i++) {
-    let curVal = y[i]
-    if (!Number.isSafeInteger(curVal)) {
-      throw new Error(
-        `Some y values are not an integer. Found ${curVal} but must be an integer only`
-      )
-    }
-    if (curVal < 0) {
-      throw new Error(
-        `y values must be in the range [0, N]. This implementation expects that the labels are already normalized. We found label value ${curVal}`
-      )
-    }
-  }
-}
-
 interface DecisionTreeBaseParams {
   criterion?: 'gini' | 'entropy' | 'squared_error'
   maxDepth?: int
@@ -220,9 +180,6 @@ class DecisionTreeBase {
     return nFeatures
   }
   public fit(X: number[][], y: int[], samplesSubset?: number[]) {
-    validateY(y)
-    validateX(X)
-
     this.X = X
     this.y = y
 
@@ -337,6 +294,7 @@ interface DecisionTreeClassifierParams {
   minImpurityDecrease?: number
 }
 export class DecisionTreeClassifier extends DecisionTreeBase {
+  labelEncoder: LabelEncoder
   constructor({
     criterion = 'gini',
     maxDepth = undefined,
@@ -355,11 +313,31 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
       minSamplesSplit,
       minSamplesLeaf,
       maxFeatures,
-      minImpurityDecrease: minImpurityDecrease
+      minImpurityDecrease
     })
+    this.labelEncoder = new LabelEncoder()
   }
-  public predict(X: number[][]) {
-    return this.tree.predictClassification(X)
+  public fit(X: Scikit2D, y: Scikit1D): DecisionTreeClassifier {
+    assert(isScikit1D(y), 'y value is not a 1D container')
+    assert(isScikit2D(X), 'X value is not a 2D container')
+    let XArray = convertScikit2DToArray(X)
+    let yArray = convertScikit1DToArray(y)
+    assert(XArray.length === yArray.length, 'X and y must be the same size')
+    validateX(XArray) // checks to make sure there are no NaN's etc
+    validateY(yArray) // checks to make sure there are no NaN's etc
+    let yArrayFixed = this.labelEncoder.fitTransform(yArray)
+    super.fit(
+      XArray as number[][],
+      convertScikit1DToArray(yArrayFixed) as number[]
+    )
+    return this
+  }
+  public predict(X: Scikit2D) {
+    assert(isScikit2D(X), 'X value is not a 2D container')
+    let XArray = convertScikit2DToArray(X)
+    validateX(XArray)
+    let yValues = this.tree.predictClassification(XArray as number[][])
+    return this.labelEncoder.inverseTransform(yValues)
   }
 
   public predictProba(X: number[][]) {
@@ -399,8 +377,18 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
       minSamplesSplit,
       minSamplesLeaf,
       maxFeatures,
-      minImpurityDecrease: minImpurityDecrease
+      minImpurityDecrease
     })
+  }
+  public fit(X: Scikit2D, y: Scikit1D): DecisionTreeRegressor {
+    assert(isScikit1D(y), 'y value is not a 1D container')
+    assert(isScikit2D(X), 'X value is not a 2D container')
+    let XArray = convertScikit2DToArray(X)
+    let yArray = convertScikit1DToArray(y)
+    assert(XArray.length === yArray.length, 'X and y must be the same size')
+    validateX(XArray)
+    super.fit(XArray as number[][], yArray as number[])
+    return this
   }
   public predict(X: number[][]) {
     return this.tree.predictRegression(X)
