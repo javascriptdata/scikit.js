@@ -1,7 +1,7 @@
 import { assert } from '../typesUtils'
 import { int } from '../randUtils'
 
-export type ImpurityMeasure = 'gini' | 'entropy' | 'mse'
+export type ImpurityMeasure = 'gini' | 'entropy' | 'squared_error'
 export interface SampleData {
   sampleNumber: int
   currentFeatureValue: number
@@ -27,7 +27,7 @@ export function entropy(labelFreqs: int[], nSamples: int) {
   return totalEntropy
 }
 
-export function MSE(ySquaredSum: number, ySum: number, nSamples: int) {
+export function mse(ySquaredSum: number, ySum: number, nSamples: int) {
   let yBar = ySum / nSamples
   let val = ySquaredSum / nSamples - yBar * yBar
   return val
@@ -145,7 +145,7 @@ export class ClassificationCriterion {
 
 export class RegressionCriterion {
   y: number[]
-  impurityMeasure: 'mse'
+  impurityMeasure: 'squared_error'
   impurityFunc: (ySquaredSum: number, ySum: number, nSamples: int) => number
   start: int = 0
   end: int = 0
@@ -160,15 +160,15 @@ export class RegressionCriterion {
   nSamplesLeft: int = 0
   nSamplesRight: int = 0
 
-  constructor(impurityMeasure: 'mse', y: number[]) {
+  constructor(impurityMeasure: 'squared_error', y: number[]) {
     assert(
-      ['mse'].includes(impurityMeasure),
-      'Unkown impurity measure. Only supports mse'
+      ['squared_error'].includes(impurityMeasure),
+      'Unkown impurity measure. Only supports squared_error'
     )
 
     // Support MAE one day
     this.impurityMeasure = impurityMeasure
-    this.impurityFunc = MSE
+    this.impurityFunc = mse
     this.y = y
   }
 

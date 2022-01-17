@@ -2,7 +2,7 @@ import { ImpurityMeasure } from './criterion'
 import { Splitter } from './splitter'
 
 describe('Splitter', function () {
-  let types = ['gini', 'entropy', 'mse']
+  let types = ['gini', 'entropy', 'squared_error']
   it('Use the criterion (init)', async function () {
     let X = [[-2], [-1], [-1], [1], [1], [2]]
     let y = [0, 0, 0, 1, 1, 1]
@@ -42,7 +42,7 @@ describe('Splitter', function () {
     })
   }, 1000)
 
-  it('Use the criterion (init diff example mse)', async function () {
+  it('Use the criterion (init diff example 2)', async function () {
     let X = [[1], [1], [1], [1], [1], [1], [1], [1]]
     let y = [1, 1, 1, 1, 2, 2, 2, 2]
 

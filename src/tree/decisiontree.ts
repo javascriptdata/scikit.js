@@ -159,7 +159,7 @@ function validateY(y: int[]) {
 }
 
 interface DecisionTreeBaseParams {
-  criterion?: 'gini' | 'entropy' | 'mse'
+  criterion?: 'gini' | 'entropy' | 'squared_error'
   maxDepth?: int
   minSamplesSplit?: number
   minSamplesLeaf?: number
@@ -373,7 +373,7 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
 }
 
 interface DecisionTreeRegressorParams {
-  criterion?: 'mse'
+  criterion?: 'squared_error'
   maxDepth?: int
   minSamplesSplit?: number
   minSamplesLeaf?: number
@@ -382,7 +382,7 @@ interface DecisionTreeRegressorParams {
 }
 export class DecisionTreeRegressor extends DecisionTreeBase {
   constructor({
-    criterion = 'mse',
+    criterion = 'squared_error',
     maxDepth = undefined,
     minSamplesSplit = 2,
     minSamplesLeaf = 1,
@@ -390,7 +390,7 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
     minImpurityDecrease = 0.0
   }: DecisionTreeRegressorParams = {}) {
     assert(
-      ['mse'].includes(criterion as string),
+      ['squared_error'].includes(criterion as string),
       'Must pass a criterion that makes sense'
     )
     super({

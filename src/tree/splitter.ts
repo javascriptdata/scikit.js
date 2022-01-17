@@ -75,7 +75,7 @@ export class Splitter {
         })
       }
     }
-    if (impurityMeasure === 'mse') {
+    if (impurityMeasure === 'squared_error') {
       this.criterion = new RegressionCriterion(impurityMeasure, y)
     } else {
       this.criterion = new ClassificationCriterion(impurityMeasure, y)
