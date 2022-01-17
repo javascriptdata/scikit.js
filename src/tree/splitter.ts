@@ -12,9 +12,9 @@ export interface Split {
   feature: int
   threshold: int
   pos: int
-  impurity_left: number
-  impurity_right: number
-  found_split: boolean
+  impurityLeft: number
+  impurityRight: number
+  foundSplit: boolean
 }
 
 export function makeDefaultSplit() {
@@ -22,156 +22,150 @@ export function makeDefaultSplit() {
     feature: 0,
     threshold: 0,
     pos: -1,
-    impurity_left: Number.POSITIVE_INFINITY,
-    impurity_right: Number.POSITIVE_INFINITY,
-    found_split: false
+    impurityLeft: Number.POSITIVE_INFINITY,
+    impurityRight: Number.POSITIVE_INFINITY,
+    foundSplit: false
   }
 }
 
 export class Splitter {
-  kMinSplitDiff_: number
-  feature_data_: number[][]
-  label_data_: int[]
-  criterion_: ClassificationCriterion | RegressionCriterion
-  start_: int
-  end_: int
-  min_samples_leaf_: int
-  max_features_: int
-  feature_order_: int[]
-  shuffle_features_: boolean
+  kMinSplitDiff: number
+  X: number[][]
+  y: int[]
+  criterion: ClassificationCriterion | RegressionCriterion
+  start: int
+  end: int
+  minSamplesLeaf: int
+  maxFeatures: int
+  featureOrder: int[]
+  shuffleFeatures: boolean
+  sampleMap: SampleData[]
+  nSamplesTotal: int
+  nFeatures: int
 
-  sample_map_: SampleData[]
-  n_samples_total_: int
-  n_features_: int
   constructor(
-    feature_data: number[][],
-    label_data: int[],
-    min_samples_leaf: int,
-    impurity_measure: ImpurityMeasure,
-    max_features: int,
-    samples_subset: int[] = []
+    X: number[][],
+    y: int[],
+    minSamplesLeaf: int,
+    impurityMeasure: ImpurityMeasure,
+    maxFeatures: int,
+    samplesSubset: int[] = []
   ) {
-    this.feature_data_ = feature_data
-    this.label_data_ = label_data
-    this.n_features_ = feature_data[0].length
-    this.min_samples_leaf_ = min_samples_leaf
-    this.max_features_ = max_features
-    this.shuffle_features_ = max_features < this.n_features_
-    this.sample_map_ = []
-    this.start_ = 0
-    this.end_ = 0
-    this.kMinSplitDiff_ = 1e-8
-    if (samples_subset.length === 0) {
-      this.n_samples_total_ = feature_data.length
-      for (let i = 0; i < this.n_samples_total_; i++) {
-        this.sample_map_.push({ current_feature_value: 0, sample_number: i })
+    this.X = X
+    this.y = y
+    this.nFeatures = X[0].length
+    this.minSamplesLeaf = minSamplesLeaf
+    this.maxFeatures = maxFeatures
+    this.shuffleFeatures = maxFeatures < this.nFeatures
+    this.sampleMap = []
+    this.start = 0
+    this.end = 0
+    this.kMinSplitDiff = 1e-8
+    if (samplesSubset.length === 0) {
+      this.nSamplesTotal = X.length
+      for (let i = 0; i < this.nSamplesTotal; i++) {
+        this.sampleMap.push({ currentFeatureValue: 0, sampleNumber: i })
       }
     } else {
-      this.n_samples_total_ = samples_subset.length
-      for (let i = 0; i < this.n_samples_total_; i++) {
-        this.sample_map_.push({
-          current_feature_value: 0,
-          sample_number: samples_subset[i]
+      this.nSamplesTotal = samplesSubset.length
+      for (let i = 0; i < this.nSamplesTotal; i++) {
+        this.sampleMap.push({
+          currentFeatureValue: 0,
+          sampleNumber: samplesSubset[i]
         })
       }
     }
-    if (impurity_measure === 'mse') {
-      this.criterion_ = new RegressionCriterion(impurity_measure, label_data)
+    if (impurityMeasure === 'mse') {
+      this.criterion = new RegressionCriterion(impurityMeasure, y)
     } else {
-      this.criterion_ = new ClassificationCriterion(
-        impurity_measure,
-        label_data
-      )
+      this.criterion = new ClassificationCriterion(impurityMeasure, y)
     }
-    this.feature_order_ = []
-    for (let i = 0; i < this.n_features_; i++) {
-      this.feature_order_.push(i)
+    this.featureOrder = []
+    for (let i = 0; i < this.nFeatures; i++) {
+      this.featureOrder.push(i)
     }
-    this.resetSampleRange(0, this.n_samples_total_)
+    this.resetSampleRange(0, this.nSamplesTotal)
   }
 
   resetSampleRange(start: int, end: int) {
-    this.start_ = start
-    this.end_ = end
-    this.criterion_.init(start, end, this.sample_map_)
+    this.start = start
+    this.end = end
+    this.criterion.init(start, end, this.sampleMap)
   }
 
   splitNode(): Split {
-    let current_split = makeDefaultSplit()
-    let best_split = makeDefaultSplit()
-    let current_impurity_improvement = Number.NEGATIVE_INFINITY
-    let best_impurity_improvement = Number.NEGATIVE_INFINITY
-    let current_feature_num = 0
-    let current_feature = 0
-    current_split.found_split = false
-    if (this.shuffle_features_) {
-      this.feature_order_ = shuffle(this.feature_order_)
+    let currentSplit = makeDefaultSplit()
+    let bestSplit = makeDefaultSplit()
+    let currentImpurityImprovement = Number.NEGATIVE_INFINITY
+    let bestImpurityImprovement = Number.NEGATIVE_INFINITY
+    let currentFeatureNum = 0
+    let currentFeature = 0
+    currentSplit.foundSplit = false
+    if (this.shuffleFeatures) {
+      this.featureOrder = shuffle(this.featureOrder)
     }
 
-    while (current_feature_num < this.max_features_) {
-      current_feature = this.feature_order_[current_feature_num]
+    while (currentFeatureNum < this.maxFeatures) {
+      currentFeature = this.featureOrder[currentFeatureNum]
 
       // Copies feature data into sample map
-      for (let i = this.start_; i < this.end_; i++) {
-        this.sample_map_[i].current_feature_value =
-          this.feature_data_[this.sample_map_[i].sample_number][
-            current_feature
-          ]
+      for (let i = this.start; i < this.end; i++) {
+        this.sampleMap[i].currentFeatureValue =
+          this.X[this.sampleMap[i].sampleNumber][currentFeature]
       }
-      this.criterion_.reset()
-      this.sample_map_ = quickSort(
-        this.sample_map_,
-        this.start_,
-        this.end_ - 1,
-        'current_feature_value'
+      this.criterion.reset()
+      this.sampleMap = quickSort(
+        this.sampleMap,
+        this.start,
+        this.end - 1,
+        'currentFeatureValue'
       )
 
       // If this feature value is constant, then skip it.
       if (
-        this.sample_map_[this.start_].current_feature_value ===
-        this.sample_map_[this.end_ - 1].current_feature_value
+        this.sampleMap[this.start].currentFeatureValue ===
+        this.sampleMap[this.end - 1].currentFeatureValue
       ) {
-        current_feature_num += 1
+        currentFeatureNum += 1
         continue
       }
-      let pos = this.start_ + 1
+      let pos = this.start + 1
       // Loop over all split points
-      while (pos < this.end_) {
+      while (pos < this.end) {
         // Skip split points where the features are equal because
         // you can't "slice" there
         while (
-          pos < this.end_ &&
-          this.sample_map_[pos].current_feature_value <=
-            this.sample_map_[pos - 1].current_feature_value +
-              this.kMinSplitDiff_
+          pos < this.end &&
+          this.sampleMap[pos].currentFeatureValue <=
+            this.sampleMap[pos - 1].currentFeatureValue + this.kMinSplitDiff
         ) {
           pos++
         }
-        if (pos === this.end_) {
+        if (pos === this.end) {
           pos++
           continue
         }
-        // Check if split would lead to less than min_samples_leaf samples
+        // Check if split would lead to less than minSamplesLeaf samples
         if (
           !(
-            pos - this.start_ < this.min_samples_leaf_ ||
-            this.end_ - pos < this.min_samples_leaf_
+            pos - this.start < this.minSamplesLeaf ||
+            this.end - pos < this.minSamplesLeaf
           )
         ) {
-          current_split.pos = pos
-          this.criterion_.update(current_split.pos, this.sample_map_)
-          current_impurity_improvement = this.criterion_.impurityImprovement()
-          if (current_impurity_improvement > best_impurity_improvement) {
-            best_impurity_improvement = current_impurity_improvement
-            current_split.found_split = true
-            current_split.feature = current_feature
+          currentSplit.pos = pos
+          this.criterion.update(currentSplit.pos, this.sampleMap)
+          currentImpurityImprovement = this.criterion.impurityImprovement()
+          if (currentImpurityImprovement > bestImpurityImprovement) {
+            bestImpurityImprovement = currentImpurityImprovement
+            currentSplit.foundSplit = true
+            currentSplit.feature = currentFeature
 
-            current_split.threshold =
-              (this.sample_map_[pos - 1].current_feature_value +
-                this.sample_map_[pos].current_feature_value) /
+            currentSplit.threshold =
+              (this.sampleMap[pos - 1].currentFeatureValue +
+                this.sampleMap[pos].currentFeatureValue) /
               2.0
 
-            best_split = Object.assign({}, current_split)
+            bestSplit = Object.assign({}, currentSplit)
           }
         }
 
@@ -179,45 +173,44 @@ export class Splitter {
         pos += 1
       }
       // increment the feature that we are looking at
-      current_feature_num += 1
+      currentFeatureNum += 1
     }
 
-    if (current_split.found_split) {
-      if (best_split.pos < this.end_) {
-        if (current_feature !== best_split.feature) {
-          let left_pos = this.start_
-          let right_pos = this.end_
+    if (currentSplit.foundSplit) {
+      if (bestSplit.pos < this.end) {
+        if (currentFeature !== bestSplit.feature) {
+          let leftPos = this.start
+          let rightPos = this.end
           let tmp = 0
-          while (left_pos < right_pos) {
+          while (leftPos < rightPos) {
             if (
-              this.feature_data_[this.sample_map_[left_pos].sample_number][
-                best_split.feature
-              ] <= best_split.threshold
+              this.X[this.sampleMap[leftPos].sampleNumber][
+                bestSplit.feature
+              ] <= bestSplit.threshold
             ) {
-              left_pos += 1
+              leftPos += 1
             } else {
-              right_pos -= 1
-              tmp = this.sample_map_[left_pos].sample_number
-              this.sample_map_[left_pos].sample_number =
-                this.sample_map_[right_pos].sample_number
-              this.sample_map_[right_pos].sample_number = tmp
+              rightPos -= 1
+              tmp = this.sampleMap[leftPos].sampleNumber
+              this.sampleMap[leftPos].sampleNumber =
+                this.sampleMap[rightPos].sampleNumber
+              this.sampleMap[rightPos].sampleNumber = tmp
             }
           }
         }
       }
 
-      this.criterion_.reset()
-      this.criterion_.update(best_split.pos, this.sample_map_)
-      let { impurity_left, impurity_right } =
-        this.criterion_.childrenImpurities()
+      this.criterion.reset()
+      this.criterion.update(bestSplit.pos, this.sampleMap)
+      let { impurityLeft, impurityRight } = this.criterion.childrenImpurities()
 
-      best_split.impurity_left = impurity_left
-      best_split.impurity_right = impurity_right
+      bestSplit.impurityLeft = impurityLeft
+      bestSplit.impurityRight = impurityRight
 
-      return best_split
+      return bestSplit
     } else {
-      // passing back split.found_split = false
-      return current_split
+      // passing back split.foundSplit = false
+      return currentSplit
     }
   }
 }

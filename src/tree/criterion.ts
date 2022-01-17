@@ -3,33 +3,33 @@ import { int } from '../randUtils'
 
 export type ImpurityMeasure = 'gini' | 'entropy' | 'mse'
 export interface SampleData {
-  sample_number: int
-  current_feature_value: number
+  sampleNumber: int
+  currentFeatureValue: number
 }
 
-export function GiniCoefficient(label_freqs: int[], n_samples_: int) {
-  let freq_squares = 0
-  for (let i = 0; i < label_freqs.length; i++) {
-    freq_squares += label_freqs[i] * label_freqs[i]
+export function giniCoefficient(labelFreqs: int[], nSamples: int) {
+  let freqSquares = 0
+  for (let i = 0; i < labelFreqs.length; i++) {
+    freqSquares += labelFreqs[i] * labelFreqs[i]
   }
-  return 1 - freq_squares / (n_samples_ * n_samples_)
+  return 1 - freqSquares / (nSamples * nSamples)
 }
 
-export function Entropy(label_freqs: int[], n_samples: int) {
-  let entropy = 0
-  for (let i = 0; i < label_freqs.length; i++) {
-    let label_frequency = label_freqs[i]
-    if (label_frequency > 0) {
-      label_frequency /= n_samples
-      entropy -= label_frequency * Math.log2(label_frequency)
+export function entropy(labelFreqs: int[], nSamples: int) {
+  let totalEntropy = 0
+  for (let i = 0; i < labelFreqs.length; i++) {
+    let labelFrequency = labelFreqs[i]
+    if (labelFrequency > 0) {
+      labelFrequency /= nSamples
+      totalEntropy -= labelFrequency * Math.log2(labelFrequency)
     }
   }
-  return entropy
+  return totalEntropy
 }
 
-export function MSE(y_squared_sum: number, y_sum: number, n_samples: int) {
-  let y_bar = y_sum / n_samples
-  let val = y_squared_sum / n_samples - y_bar * y_bar
+export function MSE(ySquaredSum: number, ySum: number, nSamples: int) {
+  let yBar = ySum / nSamples
+  let val = ySquaredSum / nSamples - yBar * yBar
   return val
 }
 
@@ -44,212 +44,203 @@ function arrayMax(labels: int[]) {
 }
 
 export class ClassificationCriterion {
-  label_data_: int[]
-  impurity_measure_: ImpurityMeasure
-  impurity_fn_: (label_freqs: int[], n_samples: int) => number
-  start_: int = 0
-  end_: int = 0
-  pos_: int = 0
-  n_labels_: int
-  label_freqs_total_: int[] = []
-  label_freqs_left_: int[] = []
-  label_freqs_right_: int[] = []
-  n_samples_: int = 0
-  n_samples_left_: int = 0
-  n_samples_right_: int = 0
+  y: int[]
+  impurityMeasure: ImpurityMeasure
+  impurityFunc: (labelFreqs: int[], nSamples: int) => number
+  start: int = 0
+  end: int = 0
+  pos: int = 0
+  nLabels: int
+  labelFreqsTotal: int[] = []
+  labelFreqsLeft: int[] = []
+  labelFreqsRight: int[] = []
+  nSamples: int = 0
+  nSamplesLeft: int = 0
+  nSamplesRight: int = 0
 
-  constructor(impurity_measure: ImpurityMeasure, label_data: number[]) {
+  constructor(impurityMeasure: ImpurityMeasure, y: number[]) {
     assert(
-      ['gini', 'entropy'].includes(impurity_measure),
+      ['gini', 'entropy'].includes(impurityMeasure),
       'Unkown impurity measure. Only supports gini, and entropy'
     )
 
-    this.impurity_measure_ = impurity_measure
-    if (this.impurity_measure_ === 'gini') {
-      this.impurity_fn_ = GiniCoefficient
+    this.impurityMeasure = impurityMeasure
+    if (this.impurityMeasure === 'gini') {
+      this.impurityFunc = giniCoefficient
     } else {
-      this.impurity_fn_ = Entropy
+      this.impurityFunc = entropy
     }
     // This assumes that the labels are 0,1,2,...,(n-1)
-    this.n_labels_ = arrayMax(label_data) + 1
-    this.label_data_ = label_data
-    this.label_freqs_total_ = new Array(this.n_labels_).fill(0)
-    this.label_freqs_left_ = new Array(this.n_labels_).fill(0)
-    this.label_freqs_right_ = new Array(this.n_labels_).fill(0)
+    this.nLabels = arrayMax(y) + 1
+    this.y = y
+    this.labelFreqsTotal = new Array(this.nLabels).fill(0)
+    this.labelFreqsLeft = new Array(this.nLabels).fill(0)
+    this.labelFreqsRight = new Array(this.nLabels).fill(0)
   }
 
-  init(start: int, end: int, sample_map: SampleData[]) {
-    this.start_ = start
-    this.end_ = end
-    this.n_samples_ = end - start
-    this.label_freqs_total_ = this.label_freqs_total_.fill(0)
-    this.label_freqs_left_ = this.label_freqs_left_.fill(0)
-    this.label_freqs_right_ = this.label_freqs_right_.fill(0)
+  init(start: int, end: int, sampleMap: SampleData[]) {
+    this.start = start
+    this.end = end
+    this.nSamples = end - start
+    this.labelFreqsTotal = this.labelFreqsTotal.fill(0)
+    this.labelFreqsLeft = this.labelFreqsLeft.fill(0)
+    this.labelFreqsRight = this.labelFreqsRight.fill(0)
 
     for (let i = start; i < end; i++) {
-      let sampleNumber = sample_map[i].sample_number
-      this.label_freqs_total_[this.label_data_[sampleNumber]] += 1
+      let sampleNumber = sampleMap[i].sampleNumber
+      this.labelFreqsTotal[this.y[sampleNumber]] += 1
     }
   }
 
   reset() {
-    this.pos_ = this.start_
-    this.label_freqs_left_ = this.label_freqs_left_.fill(0)
-    this.label_freqs_right_ = this.label_freqs_right_.fill(0)
+    this.pos = this.start
+    this.labelFreqsLeft = this.labelFreqsLeft.fill(0)
+    this.labelFreqsRight = this.labelFreqsRight.fill(0)
   }
 
-  update(new_pos: int, sample_map: SampleData[]) {
-    for (let i = this.pos_; i < new_pos; i++) {
-      // This assumes that the labels take values 0,..., n_labels - 1
-      let sampleNumber = sample_map[i].sample_number
-      this.label_freqs_left_[this.label_data_[sampleNumber]] += 1
+  update(newPos: int, sampleMap: SampleData[]) {
+    for (let i = this.pos; i < newPos; i++) {
+      // This assumes that the labels take values 0,..., nLabels - 1
+      let sampleNumber = sampleMap[i].sampleNumber
+      this.labelFreqsLeft[this.y[sampleNumber]] += 1
     }
 
-    // calculate label_freqs_right_
-    for (let i = 0; i < this.label_freqs_total_.length; i++) {
-      this.label_freqs_right_[i] =
-        this.label_freqs_total_[i] - this.label_freqs_left_[i]
+    // calculate labelFreqsRight
+    for (let i = 0; i < this.labelFreqsTotal.length; i++) {
+      this.labelFreqsRight[i] =
+        this.labelFreqsTotal[i] - this.labelFreqsLeft[i]
     }
 
-    this.pos_ = new_pos
-    this.n_samples_left_ = this.pos_ - this.start_
-    this.n_samples_right_ = this.end_ - this.pos_
+    this.pos = newPos
+    this.nSamplesLeft = this.pos - this.start
+    this.nSamplesRight = this.end - this.pos
   }
 
   childrenImpurities() {
     return {
-      impurity_left: this.impurity_fn_(
-        this.label_freqs_left_,
-        this.n_samples_left_
-      ),
-      impurity_right: this.impurity_fn_(
-        this.label_freqs_right_,
-        this.n_samples_right_
+      impurityLeft: this.impurityFunc(this.labelFreqsLeft, this.nSamplesLeft),
+      impurityRight: this.impurityFunc(
+        this.labelFreqsRight,
+        this.nSamplesRight
       )
     }
   }
 
   impurityImprovement() {
-    let { impurity_left, impurity_right } = this.childrenImpurities()
+    let { impurityLeft, impurityRight } = this.childrenImpurities()
 
     return (
-      -this.n_samples_left_ * impurity_left -
-      this.n_samples_right_ * impurity_right
+      -this.nSamplesLeft * impurityLeft - this.nSamplesRight * impurityRight
     )
   }
 
   nodeImpurity() {
-    return this.impurity_fn_(this.label_freqs_total_, this.n_samples_)
+    return this.impurityFunc(this.labelFreqsTotal, this.nSamples)
   }
 
   nodeValue() {
-    return this.label_freqs_total_
+    return this.labelFreqsTotal
   }
 }
 
 export class RegressionCriterion {
-  label_data_: number[]
-  impurity_measure_: 'mse'
-  impurity_fn_: (
-    y_squared_sum: number,
-    y_sum: number,
-    n_samples: int
-  ) => number
-  start_: int = 0
-  end_: int = 0
-  pos_: int = 0
-  squared_sum = 0
-  squared_sum_left = 0
-  squared_sum_right = 0
-  sum_total = 0
-  sum_total_left = 0
-  sum_total_right = 0
-  n_samples_: int = 0
-  n_samples_left_: int = 0
-  n_samples_right_: int = 0
+  y: number[]
+  impurityMeasure: 'mse'
+  impurityFunc: (ySquaredSum: number, ySum: number, nSamples: int) => number
+  start: int = 0
+  end: int = 0
+  pos: int = 0
+  squaredSum = 0
+  squaredSumLeft = 0
+  squaredSumRight = 0
+  sumTotal = 0
+  sumTotalLeft = 0
+  sumTotalRight = 0
+  nSamples: int = 0
+  nSamplesLeft: int = 0
+  nSamplesRight: int = 0
 
-  constructor(impurity_measure: 'mse', label_data: number[]) {
+  constructor(impurityMeasure: 'mse', y: number[]) {
     assert(
-      ['mse'].includes(impurity_measure),
+      ['mse'].includes(impurityMeasure),
       'Unkown impurity measure. Only supports mse'
     )
 
     // Support MAE one day
-    this.impurity_measure_ = impurity_measure
-    this.impurity_fn_ = MSE
-    this.label_data_ = label_data
+    this.impurityMeasure = impurityMeasure
+    this.impurityFunc = MSE
+    this.y = y
   }
 
-  init(start: int, end: int, sample_map: SampleData[]) {
-    this.sum_total = 0
-    this.squared_sum = 0
-    this.start_ = start
-    this.end_ = end
-    this.n_samples_ = end - start
+  init(start: int, end: int, sampleMap: SampleData[]) {
+    this.sumTotal = 0
+    this.squaredSum = 0
+    this.start = start
+    this.end = end
+    this.nSamples = end - start
 
     for (let i = start; i < end; i++) {
-      let sampleNumber = sample_map[i].sample_number
-      let y_value = this.label_data_[sampleNumber]
-      this.sum_total += y_value
-      this.squared_sum += y_value * y_value
+      let sampleNumber = sampleMap[i].sampleNumber
+      let yValue = this.y[sampleNumber]
+      this.sumTotal += yValue
+      this.squaredSum += yValue * yValue
     }
   }
 
   reset() {
-    this.pos_ = this.start_
-    this.squared_sum_left = 0
-    this.sum_total_left = 0
-    this.squared_sum_right = 0
-    this.sum_total_right = 0
+    this.pos = this.start
+    this.squaredSumLeft = 0
+    this.sumTotalLeft = 0
+    this.squaredSumRight = 0
+    this.sumTotalRight = 0
   }
 
-  update(new_pos: int, sample_map: SampleData[]) {
-    for (let i = this.pos_; i < new_pos; i++) {
-      // This assumes that the labels take values 0,..., n_labels - 1
-      let sampleNumber = sample_map[i].sample_number
-      let y_value = this.label_data_[sampleNumber]
-      this.sum_total_left += y_value
-      this.squared_sum_left += y_value * y_value
+  update(newPos: int, sampleMap: SampleData[]) {
+    for (let i = this.pos; i < newPos; i++) {
+      // This assumes that the labels take values 0,..., nLabels - 1
+      let sampleNumber = sampleMap[i].sampleNumber
+      let yValue = this.y[sampleNumber]
+      this.sumTotalLeft += yValue
+      this.squaredSumLeft += yValue * yValue
     }
 
-    // calculate label_freqs_right_
-    this.sum_total_right = this.sum_total - this.sum_total_left
-    this.squared_sum_right = this.squared_sum - this.squared_sum_left
+    // calculate labelFreqsRight
+    this.sumTotalRight = this.sumTotal - this.sumTotalLeft
+    this.squaredSumRight = this.squaredSum - this.squaredSumLeft
 
-    this.pos_ = new_pos
-    this.n_samples_left_ = this.pos_ - this.start_
-    this.n_samples_right_ = this.end_ - this.pos_
+    this.pos = newPos
+    this.nSamplesLeft = this.pos - this.start
+    this.nSamplesRight = this.end - this.pos
   }
 
   childrenImpurities() {
     return {
-      impurity_left: this.impurity_fn_(
-        this.squared_sum_left,
-        this.sum_total_left,
-        this.n_samples_left_
+      impurityLeft: this.impurityFunc(
+        this.squaredSumLeft,
+        this.sumTotalLeft,
+        this.nSamplesLeft
       ),
-      impurity_right: this.impurity_fn_(
-        this.squared_sum_right,
-        this.sum_total_right,
-        this.n_samples_right_
+      impurityRight: this.impurityFunc(
+        this.squaredSumRight,
+        this.sumTotalRight,
+        this.nSamplesRight
       )
     }
   }
 
   impurityImprovement() {
-    let { impurity_left, impurity_right } = this.childrenImpurities()
+    let { impurityLeft, impurityRight } = this.childrenImpurities()
 
     return (
-      -this.n_samples_left_ * impurity_left -
-      this.n_samples_right_ * impurity_right
+      -this.nSamplesLeft * impurityLeft - this.nSamplesRight * impurityRight
     )
   }
 
   nodeImpurity() {
-    return this.impurity_fn_(this.squared_sum, this.sum_total, this.n_samples_)
+    return this.impurityFunc(this.squaredSum, this.sumTotal, this.nSamples)
   }
 
   nodeValue() {
-    return [this.sum_total / this.n_samples_]
+    return [this.sumTotal / this.nSamples]
   }
 }

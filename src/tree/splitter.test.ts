@@ -10,10 +10,10 @@ describe('Splitter', function () {
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
 
-      let best_split = splitter.splitNode()
-      expect(best_split.threshold).toEqual(0)
-      expect(best_split.feature).toEqual(0)
-      expect(best_split.pos).toEqual(3)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.threshold).toEqual(0)
+      expect(bestSplit.feature).toEqual(0)
+      expect(bestSplit.pos).toEqual(3)
     })
   }, 1000)
   it('Use the criterion (init diff example)', async function () {
@@ -23,10 +23,10 @@ describe('Splitter', function () {
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
 
-      let best_split = splitter.splitNode()
-      expect(best_split.threshold).toEqual(0)
-      expect(best_split.feature).toEqual(0)
-      expect(best_split.pos).toEqual(3)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.threshold).toEqual(0)
+      expect(bestSplit.feature).toEqual(0)
+      expect(bestSplit.pos).toEqual(3)
     })
   }, 1000)
   it('Use the criterion (init diff example 2)', async function () {
@@ -35,10 +35,10 @@ describe('Splitter', function () {
 
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
-      let best_split = splitter.splitNode()
-      expect(best_split.threshold).toEqual(-0.5)
-      expect(best_split.feature).toEqual(0)
-      expect(best_split.pos).toEqual(2)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.threshold).toEqual(-0.5)
+      expect(bestSplit.feature).toEqual(0)
+      expect(bestSplit.pos).toEqual(2)
     })
   }, 1000)
 
@@ -48,11 +48,11 @@ describe('Splitter', function () {
 
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
-      let best_split = splitter.splitNode()
-      expect(best_split.found_split).toEqual(false)
-      expect(best_split.threshold).toEqual(0)
-      expect(best_split.feature).toEqual(0)
-      expect(best_split.pos).toEqual(-1)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.foundSplit).toEqual(false)
+      expect(bestSplit.threshold).toEqual(0)
+      expect(bestSplit.feature).toEqual(0)
+      expect(bestSplit.pos).toEqual(-1)
     })
   }, 1000)
   it('Use the criterion (init diff example min samples test)', async function () {
@@ -61,11 +61,11 @@ describe('Splitter', function () {
 
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 4, type as ImpurityMeasure, 1, [])
-      let best_split = splitter.splitNode()
-      expect(best_split.found_split).toEqual(true)
-      expect(best_split.feature).toEqual(0)
-      expect(best_split.threshold).toEqual(3.5)
-      expect(best_split.pos).toEqual(4)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.foundSplit).toEqual(true)
+      expect(bestSplit.feature).toEqual(0)
+      expect(bestSplit.threshold).toEqual(3.5)
+      expect(bestSplit.pos).toEqual(4)
     })
   }, 1000)
   it('Use the criterion (init diff example min samples test)', async function () {
@@ -74,11 +74,11 @@ describe('Splitter', function () {
 
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 4, type as ImpurityMeasure, 1, [])
-      let best_split = splitter.splitNode()
-      expect(best_split.found_split).toEqual(true)
-      expect(best_split.feature).toEqual(0)
-      expect(best_split.threshold).toEqual(3.5)
-      expect(best_split.pos).toEqual(4)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.foundSplit).toEqual(true)
+      expect(bestSplit.feature).toEqual(0)
+      expect(bestSplit.threshold).toEqual(3.5)
+      expect(bestSplit.pos).toEqual(4)
     })
   }, 1000)
   it('Use the criterion (init diff example min samples test)', async function () {
@@ -96,11 +96,11 @@ describe('Splitter', function () {
 
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 20, [])
-      let best_split = splitter.splitNode()
-      expect(best_split.found_split).toEqual(true)
-      expect(best_split.feature).toEqual(1)
-      expect(best_split.threshold).toEqual(2.5)
-      expect(best_split.pos).toEqual(4)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.foundSplit).toEqual(true)
+      expect(bestSplit.feature).toEqual(1)
+      expect(bestSplit.threshold).toEqual(2.5)
+      expect(bestSplit.pos).toEqual(4)
     })
   }, 1000)
   it('Use the criterion (init diff example min samples test)', async function () {
@@ -118,11 +118,11 @@ describe('Splitter', function () {
 
     types.forEach((type) => {
       let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 20, [])
-      let best_split = splitter.splitNode()
-      expect(best_split.found_split).toEqual(true)
-      expect(best_split.feature).toEqual(1)
-      expect(best_split.threshold).toEqual(2.5)
-      expect(best_split.pos).toEqual(4)
+      let bestSplit = splitter.splitNode()
+      expect(bestSplit.foundSplit).toEqual(true)
+      expect(bestSplit.feature).toEqual(1)
+      expect(bestSplit.threshold).toEqual(2.5)
+      expect(bestSplit.pos).toEqual(4)
     })
   }, 1000)
 })

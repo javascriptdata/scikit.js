@@ -7,48 +7,48 @@ import { assert } from '../typesUtils'
 interface NodeRecord {
   start: int
   end: int
-  n_samples: int
+  nSamples: int
   depth: int
-  parent_id: int
-  is_left: boolean
+  parentId: int
+  isLeft: boolean
   impurity: number
 }
 
 interface Node {
-  parent_id: int
-  left_child_id: int
-  right_child_id: int
-  is_left: boolean
-  is_leaf: boolean
+  parentId: int
+  leftChildId: int
+  rightChildId: int
+  isLeft: boolean
+  isLeaf: boolean
   impurity: number
-  split_feature: int
+  splitFeature: int
   threshold: number
-  n_samples: int
+  nSamples: int
   value: int[]
 }
 
 function SetMaxFeatures(
-  max_features: int,
-  max_features_method: string,
-  feature_data: number[][]
+  maxFeatures: int,
+  maxFeaturesMethod: string,
+  X: number[][]
 ) {
-  let n_features = feature_data[0].length
-  if (max_features < 1) {
-    switch (max_features_method) {
-      case 'log2_method':
-        max_features = Math.floor(Math.log2(n_features))
+  let nFeatures = X[0].length
+  if (maxFeatures < 1) {
+    switch (maxFeaturesMethod) {
+      case 'log2':
+        maxFeatures = Math.floor(Math.log2(nFeatures))
         break
-      case 'sqrt_method':
-        max_features = Math.floor(Math.sqrt(n_features))
+      case 'sqrt':
+        maxFeatures = Math.floor(Math.sqrt(nFeatures))
         break
-      case 'all_method':
-        max_features = n_features
+      case 'all':
+        maxFeatures = nFeatures
         break
     }
-  } else if (max_features > n_features) {
-    max_features = n_features
+  } else if (maxFeatures > nFeatures) {
+    maxFeatures = nFeatures
   }
-  return max_features
+  return maxFeatures
 }
 
 function argMax(array: number[]) {
@@ -57,97 +57,95 @@ function argMax(array: number[]) {
 
 class DecisionTree {
   nodes: Node[] = []
-  is_built = false
-  GetLeafNodes(feature_data: number[][]): int[] {
-    let leaf_node_ids: int[] = []
-    for (let i = 0; i < feature_data.length; i++) {
-      let node_id = 0
-      while (!this.nodes[node_id].is_leaf) {
+  isBuilt = false
+
+  getLeafNodes(X: number[][]): int[] {
+    let leafNodeIds: int[] = []
+    for (let i = 0; i < X.length; i++) {
+      let nodeId = 0
+      while (!this.nodes[nodeId].isLeaf) {
         if (
-          feature_data[i][this.nodes[node_id].split_feature] <=
-          this.nodes[node_id].threshold
+          X[i][this.nodes[nodeId].splitFeature] <= this.nodes[nodeId].threshold
         ) {
-          node_id = this.nodes[node_id].left_child_id
+          nodeId = this.nodes[nodeId].leftChildId
         } else {
-          node_id = this.nodes[node_id].right_child_id
+          nodeId = this.nodes[nodeId].rightChildId
         }
       }
-      leaf_node_ids.push(node_id)
+      leafNodeIds.push(nodeId)
     }
-    return leaf_node_ids
+    return leafNodeIds
   }
-  PopulateChildIds(): void {
+  populateChildIds(): void {
     for (let i = 1; i < this.nodes.length; i++) {
-      if (this.nodes[i].is_left) {
-        this.nodes[this.nodes[i].parent_id].left_child_id = i
+      if (this.nodes[i].isLeft) {
+        this.nodes[this.nodes[i].parentId].leftChildId = i
       } else {
-        this.nodes[this.nodes[i].parent_id].right_child_id = i
+        this.nodes[this.nodes[i].parentId].rightChildId = i
       }
     }
   }
   predictProba(samples: number[][]): number[][] {
-    if (!this.is_built) {
+    if (!this.isBuilt) {
       throw new Error(
         'Decision tree must be built with BuildTree method before predictions can be made.'
       )
     }
-    let leaf_node_ids = this.GetLeafNodes(samples)
-    let class_probabilities = []
-    let current_class_probabilities = []
+    let leafNodeIds = this.getLeafNodes(samples)
+    let classProbabilities = []
 
-    for (let n_sample = 0; n_sample < leaf_node_ids.length; n_sample++) {
-      current_class_probabilities = []
-      let current_node_id = leaf_node_ids[n_sample]
-      for (let n_class = 0; n_class < this.nodes[0].value.length; n_class++) {
-        current_class_probabilities.push(
-          this.nodes[current_node_id].value[n_class] /
-            this.nodes[current_node_id].n_samples
+    for (let i = 0; i < leafNodeIds.length; i++) {
+      let currentClassProbabilities = []
+      let curNodeId = leafNodeIds[i]
+      for (let nClass = 0; nClass < this.nodes[0].value.length; nClass++) {
+        currentClassProbabilities.push(
+          this.nodes[curNodeId].value[nClass] / this.nodes[curNodeId].nSamples
         )
       }
-      class_probabilities.push(current_class_probabilities)
+      classProbabilities.push(currentClassProbabilities)
     }
-    return class_probabilities
+    return classProbabilities
   }
   predictClassification(samples: number[][]): int[] {
-    if (!this.is_built) {
+    if (!this.isBuilt) {
       throw new Error(
         'Decision tree must be built with BuildTree method before predictions can be made.'
       )
     }
-    let leaf_node_ids = this.GetLeafNodes(samples)
-    let class_predictions = []
+    let leafNodeIds = this.getLeafNodes(samples)
+    let classPredictions = []
 
-    for (let n_sample = 0; n_sample < leaf_node_ids.length; n_sample++) {
-      let current_node_id = leaf_node_ids[n_sample]
-      class_predictions.push(argMax(this.nodes[current_node_id].value))
+    for (let nSample = 0; nSample < leafNodeIds.length; nSample++) {
+      let curNodeId = leafNodeIds[nSample]
+      classPredictions.push(argMax(this.nodes[curNodeId].value))
     }
-    return class_predictions
+    return classPredictions
   }
   predictRegression(samples: number[][]): int[] {
-    if (!this.is_built) {
+    if (!this.isBuilt) {
       throw new Error(
         'Decision tree must be built with BuildTree method before predictions can be made.'
       )
     }
-    let leaf_node_ids = this.GetLeafNodes(samples)
-    let class_predictions = []
+    let leafNodeIds = this.getLeafNodes(samples)
+    let classPredictions = []
 
-    for (let n_sample = 0; n_sample < leaf_node_ids.length; n_sample++) {
-      let current_node_id = leaf_node_ids[n_sample]
-      class_predictions.push(this.nodes[current_node_id].value[0])
+    for (let nSample = 0; nSample < leafNodeIds.length; nSample++) {
+      let curNodeId = leafNodeIds[nSample]
+      classPredictions.push(this.nodes[curNodeId].value[0])
     }
-    return class_predictions
+    return classPredictions
   }
 }
 
-function validateX(feature_data: number[][]) {
-  if (feature_data.length === 0) {
+function validateX(X: number[][]) {
+  if (X.length === 0) {
     throw new Error(
-      `X can not be empty, but it has a length of 0. It is ${feature_data}.`
+      `X can not be empty, but it has a length of 0. It is ${X}.`
     )
   }
-  for (let i = 0; i < feature_data.length; i++) {
-    let curRow = feature_data[i]
+  for (let i = 0; i < X.length; i++) {
+    let curRow = X[i]
     if (curRow.length === 0) {
       throw new Error(
         `Rows in X can not be empty, but row ${i} in X is ${curRow}.`
@@ -163,14 +161,14 @@ function validateX(feature_data: number[][]) {
   }
 }
 
-function validateY(label_data: int[]) {
-  if (label_data.length === 0) {
+function validateY(y: int[]) {
+  if (y.length === 0) {
     throw new Error(
-      `y can not be empty, but it has a length of 0. It is ${label_data}.`
+      `y can not be empty, but it has a length of 0. It is ${y}.`
     )
   }
-  for (let i = 0; i < label_data.length; i++) {
-    let curVal = label_data[i]
+  for (let i = 0; i < y.length; i++) {
+    let curVal = y[i]
     if (!Number.isSafeInteger(curVal)) {
       throw new Error(
         `Some y values are not an integer. Found ${curVal} but must be an integer only`
@@ -185,172 +183,167 @@ function validateY(label_data: int[]) {
 }
 
 class DecisionTreeBase {
-  splitter_!: Splitter
-  stack_: NodeRecord[] = []
-  min_samples_leaf: int
-  max_depth_: int
-  min_samples_split: int
-  min_impurity_split_: number
-  n_features_: int = 0
-  tree_: DecisionTree
-  criterion_: ImpurityMeasure
-  max_features_: int
-  max_features_method: 'log2_method' | 'sqrt_method' | 'all_method'
-  feature_data_: number[][] = []
-  label_data_: number[] = []
+  splitter!: Splitter
+  stack: NodeRecord[] = []
+  minSamplesLeaf: int
+  maxDepth: int
+  minSamplesSplit: int
+  minImpuritySplit: number
+  tree: DecisionTree
+  criterion: ImpurityMeasure
+  maxFeatures: int
+  maxFeaturesMethod: 'log2' | 'sqrt' | 'all'
+  X: number[][] = []
+  y: number[] = []
 
   constructor({
     criterion = 'gini',
-    max_depth = Number.POSITIVE_INFINITY,
-    min_samples_split = 2,
-    min_samples_leaf = 1,
-    max_features = -1,
-    max_features_method = 'all_method',
-    min_impurity_split = 0.0
+    maxDepth = Number.POSITIVE_INFINITY,
+    minSamplesSplit = 2,
+    minSamplesLeaf = 1,
+    maxFeatures = -1,
+    maxFeaturesMethod = 'all',
+    minImpuritySplit = 0.0
   } = {}) {
-    this.criterion_ = criterion as any
-    this.max_depth_ = max_depth
-    this.min_samples_split = min_samples_split
-    this.min_samples_leaf = min_samples_leaf
-    this.max_features_ = max_features
-    this.max_features_method = max_features_method as any
-    this.min_impurity_split_ = min_impurity_split
-    this.tree_ = new DecisionTree()
+    this.criterion = criterion as any
+    this.maxDepth = maxDepth
+    this.minSamplesSplit = minSamplesSplit
+    this.minSamplesLeaf = minSamplesLeaf
+    this.maxFeatures = maxFeatures
+    this.maxFeaturesMethod = maxFeaturesMethod as any
+    this.minImpuritySplit = minImpuritySplit
+    this.tree = new DecisionTree()
   }
 
-  public fit(
-    feature_data: number[][],
-    label_data: int[],
-    samples_subset?: number[]
-  ) {
-    validateY(label_data)
-    validateX(feature_data)
+  public fit(X: number[][], y: int[], samplesSubset?: number[]) {
+    validateY(y)
+    validateX(X)
 
-    this.feature_data_ = feature_data
-    this.label_data_ = label_data
+    this.X = X
+    this.y = y
 
-    let new_samples_subset = samples_subset || []
+    let newSamplesSubset = samplesSubset || []
 
-    // CheckNegativeLabels(label_data_ptr);
-    this.max_features_ = SetMaxFeatures(
-      this.max_features_,
-      this.max_features_method,
-      feature_data
+    // CheckNegativeLabels(yptr);
+    this.maxFeatures = SetMaxFeatures(
+      this.maxFeatures,
+      this.maxFeaturesMethod,
+      X
     )
 
-    this.splitter_ = new Splitter(
-      feature_data,
-      label_data,
-      this.min_samples_leaf,
-      this.criterion_,
-      this.max_features_,
-      new_samples_subset
+    this.splitter = new Splitter(
+      X,
+      y,
+      this.minSamplesLeaf,
+      this.criterion,
+      this.maxFeatures,
+      newSamplesSubset
     )
 
     // put root node on stack
-    let root_node: NodeRecord = {
+    let rootNode: NodeRecord = {
       start: 0,
-      end: this.splitter_.sample_map_.length,
+      end: this.splitter.sampleMap.length,
       depth: 0,
       impurity: 0,
-      n_samples: this.splitter_.sample_map_.length,
-      parent_id: -1,
-      is_left: false
+      nSamples: this.splitter.sampleMap.length,
+      parentId: -1,
+      isLeft: false
     }
-    this.stack_.push(root_node)
+    this.stack.push(rootNode)
 
-    let is_root_node = true
+    let isRootNode = true
 
-    while (this.stack_.length !== 0) {
+    while (this.stack.length !== 0) {
       // take next node from stack
-      let current_record = this.stack_.pop() as NodeRecord
-      this.splitter_.resetSampleRange(current_record.start, current_record.end)
-      let current_split: Split = makeDefaultSplit()
+      let currentRecord = this.stack.pop() as NodeRecord
+      this.splitter.resetSampleRange(currentRecord.start, currentRecord.end)
+      let currentSplit: Split = makeDefaultSplit()
 
-      let is_leaf =
-        !(current_record.depth < this.max_depth_) ||
-        current_record.n_samples < this.min_samples_split ||
-        current_record.n_samples < 2 * this.min_samples_leaf
+      let isLeaf =
+        !(currentRecord.depth < this.maxDepth) ||
+        currentRecord.nSamples < this.minSamplesSplit ||
+        currentRecord.nSamples < 2 * this.minSamplesLeaf
 
       // evaluate abort criterion
-      if (is_root_node) {
-        current_record.impurity = this.splitter_.criterion_.nodeImpurity()
-        is_root_node = false
+      if (isRootNode) {
+        currentRecord.impurity = this.splitter.criterion.nodeImpurity()
+        isRootNode = false
       }
 
-      // or current_record.impurity <= 0.0;
-      // split unless is_leaf
-      if (!is_leaf) {
-        current_split = this.splitter_.splitNode()
-        is_leaf =
-          is_leaf ||
-          !current_split.found_split ||
-          current_record.impurity <= this.min_impurity_split_
+      // or currentRecord.impurity <= 0.0;
+      // split unless isLeaf
+      if (!isLeaf) {
+        currentSplit = this.splitter.splitNode()
+        isLeaf =
+          isLeaf ||
+          !currentSplit.foundSplit ||
+          currentRecord.impurity <= this.minImpuritySplit
       }
 
-      let current_node: Node = {
-        parent_id: current_record.parent_id,
-        impurity: current_record.impurity,
-        is_leaf: is_leaf,
-        is_left: current_record.is_left,
-        n_samples: current_record.n_samples,
-        split_feature: current_split.feature,
-        threshold: current_split.threshold,
-        value: this.splitter_.criterion_.nodeValue().slice(),
-        left_child_id: -1,
-        right_child_id: -1
+      let currentNode: Node = {
+        parentId: currentRecord.parentId,
+        impurity: currentRecord.impurity,
+        isLeaf: isLeaf,
+        isLeft: currentRecord.isLeft,
+        nSamples: currentRecord.nSamples,
+        splitFeature: currentSplit.feature,
+        threshold: currentSplit.threshold,
+        value: this.splitter.criterion.nodeValue().slice(),
+        leftChildId: -1,
+        rightChildId: -1
       }
 
-      this.tree_.nodes.push(current_node)
-      let node_id = this.tree_.nodes.length - 1
+      this.tree.nodes.push(currentNode)
+      let nodeId = this.tree.nodes.length - 1
 
-      if (!is_leaf) {
-        let right_record: NodeRecord = {
-          start: current_split.pos,
-          end: current_record.end,
-          n_samples: current_record.end - current_split.pos,
-          depth: current_record.depth + 1,
-          parent_id: node_id,
-          is_left: false,
-          impurity: current_split.impurity_right
+      if (!isLeaf) {
+        let rightRecord: NodeRecord = {
+          start: currentSplit.pos,
+          end: currentRecord.end,
+          nSamples: currentRecord.end - currentSplit.pos,
+          depth: currentRecord.depth + 1,
+          parentId: nodeId,
+          isLeft: false,
+          impurity: currentSplit.impurityRight
         }
 
-        this.stack_.push(right_record)
+        this.stack.push(rightRecord)
 
-        let left_record: NodeRecord = {
-          start: current_record.start,
-          end: current_split.pos,
-          n_samples: current_split.pos - current_record.start,
-          depth: current_record.depth + 1,
-          parent_id: node_id,
-          is_left: true,
-          impurity: current_split.impurity_left
+        let leftRecord: NodeRecord = {
+          start: currentRecord.start,
+          end: currentSplit.pos,
+          nSamples: currentSplit.pos - currentRecord.start,
+          depth: currentRecord.depth + 1,
+          parentId: nodeId,
+          isLeft: true,
+          impurity: currentSplit.impurityLeft
         }
 
-        this.stack_.push(left_record)
+        this.stack.push(leftRecord)
       }
     }
-    this.tree_.PopulateChildIds()
-    this.tree_.is_built = true
+    this.tree.populateChildIds()
+    this.tree.isBuilt = true
   }
 }
 
 interface DecisionTreeClassifierParams {
   criterion?: 'gini' | 'entropy'
-  max_depth?: int
-  min_samples_split?: number
-  min_samples_leaf?: number
-  max_features?: number
-  min_impurity_decrease?: number
+  maxDepth?: int
+  minSamplesSplit?: number
+  minSamplesLeaf?: number
+  maxFeatures?: number
+  minImpurityDecrease?: number
 }
 export class DecisionTreeClassifier extends DecisionTreeBase {
   constructor({
     criterion = 'gini',
-    max_depth = Number.POSITIVE_INFINITY,
-    min_samples_split = 2,
-    min_samples_leaf = 1,
-    max_features = -1,
-    min_impurity_decrease = 0.0
+    maxDepth = Number.POSITIVE_INFINITY,
+    minSamplesSplit = 2,
+    minSamplesLeaf = 1,
+    maxFeatures = -1,
+    minImpurityDecrease = 0.0
   }: DecisionTreeClassifierParams = {}) {
     assert(
       ['gini', 'entropy'].includes(criterion as string),
@@ -358,19 +351,19 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
     )
     super({
       criterion,
-      max_depth,
-      min_samples_split,
-      min_samples_leaf,
-      max_features,
-      min_impurity_split: min_impurity_decrease
+      maxDepth,
+      minSamplesSplit,
+      minSamplesLeaf,
+      maxFeatures,
+      minImpuritySplit: minImpurityDecrease
     })
   }
-  public predict(feature_data: number[][]) {
-    return this.tree_.predictClassification(feature_data)
+  public predict(X: number[][]) {
+    return this.tree.predictClassification(X)
   }
 
-  public predictProba(feature_data: number[][]) {
-    return this.tree_.predictProba(feature_data)
+  public predictProba(X: number[][]) {
+    return this.tree.predictProba(X)
   }
 
   public score(X: number[][], y: number[]): number {
@@ -381,20 +374,20 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
 
 interface DecisionTreeRegressorParams {
   criterion?: 'mse'
-  max_depth?: int
-  min_samples_split?: number
-  min_samples_leaf?: number
-  max_features?: number
-  min_impurity_decrease?: number
+  maxDepth?: int
+  minSamplesSplit?: number
+  minSamplesLeaf?: number
+  maxFeatures?: number
+  minImpurityDecrease?: number
 }
 export class DecisionTreeRegressor extends DecisionTreeBase {
   constructor({
     criterion = 'mse',
-    max_depth = Number.POSITIVE_INFINITY,
-    min_samples_split = 2,
-    min_samples_leaf = 1,
-    max_features = -1,
-    min_impurity_decrease = 0.0
+    maxDepth = Number.POSITIVE_INFINITY,
+    minSamplesSplit = 2,
+    minSamplesLeaf = 1,
+    maxFeatures = -1,
+    minImpurityDecrease = 0.0
   }: DecisionTreeRegressorParams = {}) {
     assert(
       ['mse'].includes(criterion as string),
@@ -402,15 +395,15 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
     )
     super({
       criterion,
-      max_depth,
-      min_samples_split,
-      min_samples_leaf,
-      max_features,
-      min_impurity_split: min_impurity_decrease
+      maxDepth,
+      minSamplesSplit,
+      minSamplesLeaf,
+      maxFeatures,
+      minImpuritySplit: minImpurityDecrease
     })
   }
-  public predict(feature_data: number[][]) {
-    return this.tree_.predictRegression(feature_data)
+  public predict(X: number[][]) {
+    return this.tree.predictRegression(X)
   }
 
   public score(X: number[][], y: number[]): number {

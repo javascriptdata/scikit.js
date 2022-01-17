@@ -37,7 +37,7 @@ describe('DecisionTree', function () {
     let tree_classifier = new DecisionTreeClassifier()
     tree_classifier.fit(X, y)
 
-    expect(tree_classifier.tree_.nodes.length).toEqual(5)
+    expect(tree_classifier.tree.nodes.length).toEqual(5)
     expect(tree_classifier.score(X, y)).toEqual(1.0)
   }, 1000)
   it('Deals with bad y input', async function () {
@@ -88,7 +88,7 @@ describe('DecisionTree', function () {
     let tree_regressor = new DecisionTreeRegressor()
     tree_regressor.fit(X, y)
 
-    expect(tree_regressor.tree_.nodes.length).toEqual(3)
+    expect(tree_regressor.tree.nodes.length).toEqual(3)
     expect(tree_regressor.predict([[3]])).toEqual([1])
     expect(tree_regressor.score(X, y)).toEqual(1.0)
   }, 1000)
