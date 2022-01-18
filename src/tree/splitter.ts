@@ -39,7 +39,7 @@ export class Splitter {
   maxFeatures: int
   featureOrder: int[]
   shuffleFeatures: boolean
-  sampleMap: SampleData[]
+  sampleMap: SampleData
   nSamplesTotal: int
   nFeatures: int
 
@@ -55,24 +55,21 @@ export class Splitter {
     this.y = y
     this.nFeatures = X[0].length
     this.minSamplesLeaf = minSamplesLeaf
-    this.maxFeatures = maxFeatures
+    this.maxFeatures = Math.min(maxFeatures, this.nFeatures)
     this.shuffleFeatures = maxFeatures < this.nFeatures
-    this.sampleMap = []
+    this.sampleMap = new Int32Array(X.length)
     this.start = 0
     this.end = 0
     this.kMinSplitDiff = 1e-8
     if (samplesSubset.length === 0) {
       this.nSamplesTotal = X.length
       for (let i = 0; i < this.nSamplesTotal; i++) {
-        this.sampleMap.push({ currentFeatureValue: 0, sampleNumber: i })
+        this.sampleMap[i] = i
       }
     } else {
       this.nSamplesTotal = samplesSubset.length
       for (let i = 0; i < this.nSamplesTotal; i++) {
-        this.sampleMap.push({
-          currentFeatureValue: 0,
-          sampleNumber: samplesSubset[i]
-        })
+        this.sampleMap[i] = samplesSubset[i]
       }
     }
     if (impurityMeasure === 'squared_error') {
@@ -106,25 +103,53 @@ export class Splitter {
     }
 
     while (currentFeatureNum < this.maxFeatures) {
+      // console.log({ maxFeatures: this.maxFeatures })
+      // console.log({ featureOrder: this.featureOrder, currentFeatureNum })
       currentFeature = this.featureOrder[currentFeatureNum]
-
+      // console.log({ currentFeature })
       // Copies feature data into sample map
+      let currentFeatureValues = []
       for (let i = this.start; i < this.end; i++) {
-        this.sampleMap[i].currentFeatureValue =
-          this.X[this.sampleMap[i].sampleNumber][currentFeature]
+        let row = this.X[this.sampleMap[i]]
+        let val = row[currentFeature]
+        // console.log({ row, currentFeature, val })
+        currentFeatureValues.push(val)
       }
+      // console.log({ start: 'true', currentFeatureValues })
+      // console.log({ currentFeatureValues })
       this.criterion.reset()
-      this.sampleMap = quickSort(
-        this.sampleMap,
-        this.start,
-        this.end - 1,
-        'currentFeatureValue'
+
+      /* Construct intermediate object */
+      let sampleMapIndices = []
+      for (let i = this.start; i < this.end; i++) {
+        sampleMapIndices.push(this.sampleMap[i])
+      }
+
+      sampleMapIndices.sort(
+        (a, b) => this.X[a][currentFeature] - this.X[b][currentFeature]
       )
+
+      currentFeatureValues.sort((a, b) => a - b)
+
+      for (let i = this.start; i < this.end; i++) {
+        this.sampleMap[i] = sampleMapIndices[i - this.start]
+      }
+      // console.log('sampleMap', this.sampleMap)
+      // console.log({ end: 'true', currentFeatureValues })
+
+      // this.sampleMap = quickSort(
+      //   this.sampleMap,
+      //   this.start,
+      //   this.end - 1,
+      //   'currentFeatureValue'
+      // )
+
+      /* Back to the normal shit */
 
       // If this feature value is constant, then skip it.
       if (
-        this.sampleMap[this.start].currentFeatureValue ===
-        this.sampleMap[this.end - 1].currentFeatureValue
+        currentFeatureValues[0] ===
+        currentFeatureValues[currentFeatureValues.length - 1]
       ) {
         currentFeatureNum += 1
         continue
@@ -136,8 +161,8 @@ export class Splitter {
         // you can't "slice" there
         while (
           pos < this.end &&
-          this.sampleMap[pos].currentFeatureValue <=
-            this.sampleMap[pos - 1].currentFeatureValue + this.kMinSplitDiff
+          currentFeatureValues[pos - this.start] <=
+            currentFeatureValues[pos - this.start - 1] + this.kMinSplitDiff
         ) {
           pos++
         }
@@ -161,8 +186,8 @@ export class Splitter {
             currentSplit.feature = currentFeature
 
             currentSplit.threshold =
-              (this.sampleMap[pos - 1].currentFeatureValue +
-                this.sampleMap[pos].currentFeatureValue) /
+              (currentFeatureValues[pos - this.start - 1] +
+                currentFeatureValues[pos - this.start]) /
               2.0
 
             bestSplit = Object.assign({}, currentSplit)
@@ -184,17 +209,15 @@ export class Splitter {
           let tmp = 0
           while (leftPos < rightPos) {
             if (
-              this.X[this.sampleMap[leftPos].sampleNumber][
-                bestSplit.feature
-              ] <= bestSplit.threshold
+              this.X[this.sampleMap[leftPos]][bestSplit.feature] <=
+              bestSplit.threshold
             ) {
               leftPos += 1
             } else {
               rightPos -= 1
-              tmp = this.sampleMap[leftPos].sampleNumber
-              this.sampleMap[leftPos].sampleNumber =
-                this.sampleMap[rightPos].sampleNumber
-              this.sampleMap[rightPos].sampleNumber = tmp
+              tmp = this.sampleMap[leftPos]
+              this.sampleMap[leftPos] = this.sampleMap[rightPos]
+              this.sampleMap[rightPos] = tmp
             }
           }
         }

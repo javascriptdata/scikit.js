@@ -15,9 +15,9 @@ describe('Criterion', function () {
     [2, 1]
   ]
   let y = [0, 0, 0, 1, 1, 1]
-  let sampleMap: SampleData[] = []
+  let sampleMap: SampleData = new Int32Array(X.length)
   for (let i = 0; i < X.length; i++) {
-    sampleMap.push({ currentFeatureValue: 0, sampleNumber: i })
+    sampleMap[i] = i
   }
   it('Use the criterion (init)', async function () {
     let criterion = new ClassificationCriterion('gini', y)
