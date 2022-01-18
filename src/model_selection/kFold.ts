@@ -18,7 +18,7 @@ import { CrossValidator } from './crossValidator'
 import { alea } from 'seedrandom'
 import * as randUtils from '../randUtils'
 import { Scikit1D, Scikit2D } from '../types'
-import { convertToTensor1D, convertToTensor2D } from '../utils'
+import { getLength } from '../utils'
 import { tf } from '../shared/globals'
 type Tensor1D = tf.Tensor1D
 
@@ -90,11 +90,11 @@ export class KFold implements CrossValidator {
   }: KFoldParams = {}) {
     nSplits = Number(nSplits)
     assert(
-      nSplits % 1 === 0 && nSplits > 1,
+      Number.isInteger(nSplits) && nSplits > 1,
       'new KFold({nSplits}): nSplits must be an int greater than 1.'
     )
     this.nSplits = nSplits
-    this.shuffle = !!shuffle
+    this.shuffle = Boolean(shuffle)
     this.randomState = randomState
   }
 
@@ -111,34 +111,25 @@ export class KFold implements CrossValidator {
 
     let nSamples: number
 
-    tf.engine().startScope()
-    try {
-      X = convertToTensor2D(X)
+    nSamples = getLength(X)
 
-      nSamples = X.shape[0]
+    assert(
+      nSplits <= nSamples,
+      'KFold({nSplits})::split(X): nSplits must not be greater than X.shape[0].'
+    )
 
+    if (null != y) {
       assert(
-        nSplits <= nSamples,
-        'KFold({nSplits})::split(X): nSplits must not be greater than X.shape[0].'
+        nSamples === getLength(y),
+        'KFold::split(X,y): X.shape[0] must equal y.shape[0].'
       )
+    }
 
-      if (null != y) {
-        y = convertToTensor1D(y)
-        assert(
-          nSamples === y.shape[0],
-          'KFold::split(X,y): X.shape[0] must equal y.shape[0].'
-        )
-      }
-
-      if (null != groups) {
-        groups = convertToTensor1D(groups)
-        assert(
-          nSamples === groups.shape[0],
-          'KFold::split(X,y,groups): X.shape[0] must equal groups.shape[0].'
-        )
-      }
-    } finally {
-      tf.engine().endScope()
+    if (null != groups) {
+      assert(
+        nSamples === getLength(groups),
+        'KFold::split(X,y,groups): X.shape[0] must equal groups.shape[0].'
+      )
     }
 
     const range = new Int32Array(nSamples)

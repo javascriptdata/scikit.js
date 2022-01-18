@@ -48,7 +48,8 @@ function testWithDataset(
 
     const accuracies = await crossValScore(
       new KNeighborsClassifier(params),
-      [X, y],
+      X,
+      y,
       {
         cv: new KFold({ nSplits: 3 })
       }

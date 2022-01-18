@@ -42,14 +42,10 @@ function testWithDataset(
     const X = Xy.slice([0, 0], [nSamples, nFeatures])
     const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
 
-    const scores = await crossValScore(
-      new KNeighborsRegressor(params),
-      [X, y],
-      {
-        cv: new KFold({ nSplits: 3 }),
-        scoring: negMeanSquaredError
-      }
-    )
+    const scores = await crossValScore(new KNeighborsRegressor(params), X, y, {
+      cv: new KFold({ nSplits: 3 }),
+      scoring: negMeanSquaredError
+    })
 
     expect(scores.mean()).toBeAllCloseTo(-referenceError, {
       atol: 0,

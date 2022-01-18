@@ -17,6 +17,7 @@ import { assert } from '../typesUtils'
 import { CrossValidator } from './crossValidator'
 import { KFold } from './kFold'
 import { Scikit1D, Scikit2D } from '../types'
+import { isScikit1D } from '../typesUtils'
 import { convertToTensor1D, convertToTensor2D } from '../utils'
 import { tf } from '../shared/globals'
 type Scalar = tf.Scalar
@@ -52,7 +53,8 @@ export async function crossValScore<
   }
 >(
   estimator: T,
-  Xy: [Scikit2D, Scikit1D],
+  X: Scikit2D,
+  y: Scikit1D,
   params: {
     cv?: CrossValidator
     groups?: Scikit1D
@@ -89,7 +91,7 @@ export async function crossValScore<
   }
 >(
   estimator: T,
-  X: [Scikit2D],
+  X: Scikit2D,
   params: {
     cv?: CrossValidator
     groups?: Scikit1D
@@ -123,7 +125,8 @@ export async function crossValScore(
     fit(X: Tensor2D, y: Tensor1D): Promise<unknown>
     score(X: Tensor2D, y: Tensor1D): Scalar
   },
-  Xy: [Scikit2D, Scikit1D],
+  X: Scikit2D,
+  y: Scikit1D,
   params: {
     cv?: CrossValidator
     groups?: Scikit1D
@@ -156,7 +159,7 @@ export async function crossValScore(
     fit(X: Tensor2D): Promise<unknown>
     score(X: Tensor2D): Scalar
   },
-  X: [Scikit2D],
+  X: Scikit2D,
   params: {
     cv?: CrossValidator
     groups?: Scikit1D
@@ -165,17 +168,25 @@ export async function crossValScore(
 
 export async function crossValScore(
   estimator: any,
-  [X, y]: [Scikit2D, Scikit1D?],
-  {
-    cv = new KFold(),
-    groups,
-    scoring
-  }: {
+  X: Scikit2D,
+  y?: any,
+  params?: {
     cv?: CrossValidator
     groups?: Scikit1D
     scoring?: any
-  } = {}
+  }
 ): Promise<Tensor1D> {
+  let unsupervised = null == y || null == params && !isScikit1D(y)
+  if (unsupervised) {
+    params = params ?? y
+  }
+
+  let {
+    cv = new KFold,
+    groups,
+    scoring
+  } = params ?? {}
+
   if (undefined === scoring) {
     assert(
       'function' === typeof estimator.score,
@@ -199,17 +210,32 @@ export async function crossValScore(
     for (const { trainIndex, testIndex } of cv.split(X, y, groups)) {
       let score: Scalar | undefined
 
-      tf.engine().startScope()
-      try {
-        await estimator.fit(X.gather(trainIndex), y?.gather(trainIndex))
+      const X_train = X.gather(trainIndex)
+      const X_test = X.gather(testIndex)
 
-        score = scoring(X.gather(testIndex), y?.gather(testIndex)) as Scalar
-        scores.push(score)
-      } finally {
-        tf.engine().endScope(score)
-        trainIndex.dispose()
-        testIndex.dispose()
+      if (unsupervised) {
+        await estimator.fit(X_train)
+
+        score = scoring(X_test) as Scalar
       }
+      else {
+        const y_train = y.gather(trainIndex)
+        const y_test = y.gather(testIndex)
+
+        await estimator.fit(X_train, y_train)
+
+        score = scoring(X_test, y_test) as Scalar
+
+        y_train.dispose()
+        y_test.dispose()
+      }
+
+      scores.push(score)
+
+      trainIndex.dispose()
+      testIndex.dispose()
+      X_train.dispose()
+      X_test.dispose()
     }
 
     return (result = tf.stack(scores) as Tensor1D)
