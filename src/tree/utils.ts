@@ -36,11 +36,6 @@ export function validateY(y: any[] | TypedArray) {
         `Some y values are not an integer. Found ${curVal} but must be an integer only`
       )
     }
-    // if (curVal < 0) {
-    //   throw new Error(
-    //     `y values must be in the range [0, N]. This implementation expects that the labels are already normalized. We found label value ${curVal}`
-    //   )
-    // }
   }
 }
 
