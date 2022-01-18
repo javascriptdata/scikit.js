@@ -103,48 +103,19 @@ export class Splitter {
     }
 
     while (currentFeatureNum < this.maxFeatures) {
-      // console.log({ maxFeatures: this.maxFeatures })
-      // console.log({ featureOrder: this.featureOrder, currentFeatureNum })
       currentFeature = this.featureOrder[currentFeatureNum]
-      // console.log({ currentFeature })
-      // Copies feature data into sample map
-      let currentFeatureValues = []
+      let currentFeatureValues = new Float32Array(this.end - this.start)
       for (let i = this.start; i < this.end; i++) {
         let row = this.X[this.sampleMap[i]]
         let val = row[currentFeature]
-        // console.log({ row, currentFeature, val })
-        currentFeatureValues.push(val)
+        currentFeatureValues[i - this.start] = val
       }
-      // console.log({ start: 'true', currentFeatureValues })
-      // console.log({ currentFeatureValues })
+      currentFeatureValues.sort()
       this.criterion.reset()
 
-      /* Construct intermediate object */
-      let sampleMapIndices = []
-      for (let i = this.start; i < this.end; i++) {
-        sampleMapIndices.push(this.sampleMap[i])
-      }
-
-      sampleMapIndices.sort(
-        (a, b) => this.X[a][currentFeature] - this.X[b][currentFeature]
-      )
-
-      currentFeatureValues.sort((a, b) => a - b)
-
-      for (let i = this.start; i < this.end; i++) {
-        this.sampleMap[i] = sampleMapIndices[i - this.start]
-      }
-      // console.log('sampleMap', this.sampleMap)
-      // console.log({ end: 'true', currentFeatureValues })
-
-      // this.sampleMap = quickSort(
-      //   this.sampleMap,
-      //   this.start,
-      //   this.end - 1,
-      //   'currentFeatureValue'
-      // )
-
-      /* Back to the normal shit */
+      this.sampleMap
+        .subarray(this.start, this.end)
+        .sort((a, b) => this.X[a][currentFeature] - this.X[b][currentFeature])
 
       // If this feature value is constant, then skip it.
       if (
