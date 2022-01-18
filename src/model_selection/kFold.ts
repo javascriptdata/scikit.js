@@ -15,7 +15,6 @@
 
 import { assert } from '../typesUtils'
 import { CrossValidator } from './crossValidator'
-import { alea } from 'seedrandom'
 import * as randUtils from '../randUtils'
 import { Scikit1D, Scikit2D } from '../types'
 import { getLength } from '../utils'
@@ -137,7 +136,7 @@ export class KFold implements CrossValidator {
       range[i] = i
     }
     if (shuffle) {
-      const rng = alea(randomState?.toString())
+      const rng = randUtils.createRng(randomState)
       randUtils.shuffle(rng)(range)
     }
 

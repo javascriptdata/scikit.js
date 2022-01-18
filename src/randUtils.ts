@@ -13,7 +13,18 @@
 * ==========================================================================
 */
 
+import { alea } from 'seedrandom'
+
 type int = number
+
+/**
+ * Creates a new random number generator, optionally using the given seed.
+ *
+ * @param seed (Optional) the seed to be used.
+ * @returns A new RNG method which returns floats from range `[0,1)`.
+ */
+export const createRng = (seed?: number) =>
+  alea(seed?.toString()) as () => number
 
 /**
  * Take a uniform [0,1) random number generator (RNG) function and turns it into an
