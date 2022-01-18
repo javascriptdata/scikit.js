@@ -5,7 +5,6 @@ import {
   SampleData
 } from './criterion'
 import { shuffle } from 'lodash'
-import { quickSort } from './utils'
 import { int } from '../randUtils'
 
 export interface Split {
