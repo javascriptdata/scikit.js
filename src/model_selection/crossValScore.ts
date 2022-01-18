@@ -176,16 +176,12 @@ export async function crossValScore(
     scoring?: any
   }
 ): Promise<Tensor1D> {
-  let unsupervised = null == y || null == params && !isScikit1D(y)
+  let unsupervised = null == y || (null == params && !isScikit1D(y))
   if (unsupervised) {
     params = params ?? y
   }
 
-  let {
-    cv = new KFold,
-    groups,
-    scoring
-  } = params ?? {}
+  let { cv = new KFold(), groups, scoring } = params ?? {}
 
   if (undefined === scoring) {
     assert(
@@ -217,8 +213,7 @@ export async function crossValScore(
         await estimator.fit(X_train)
 
         score = scoring(X_test) as Scalar
-      }
-      else {
+      } else {
         const y_train = y.gather(trainIndex)
         const y_test = y.gather(testIndex)
 
