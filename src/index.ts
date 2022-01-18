@@ -75,3 +75,9 @@ export { LinearSVR, LinearSVRParams } from './svm/linearSVR'
 export { SVR, SVRParams } from './svm/SVR'
 export { SVC, SVCParams } from './svm/SVC'
 export { GaussianNB } from './naive_bayes/gaussianNaiveBayes'
+export {
+  DecisionTreeClassifier,
+  DecisionTreeClassifierParams,
+  DecisionTreeRegressor,
+  DecisionTreeRegressorParams
+} from './tree/decisiontree'
