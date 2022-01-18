@@ -305,7 +305,7 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
   }: DecisionTreeClassifierParams = {}) {
     assert(
       ['gini', 'entropy'].includes(criterion as string),
-      'Must pass a criterion that makes sense'
+      'For classification must pass either the "gini" or "entropy" criterion'
     )
     super({
       criterion,
@@ -373,7 +373,7 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
   }: DecisionTreeRegressorParams = {}) {
     assert(
       ['squared_error'].includes(criterion as string),
-      'Must pass a criterion that makes sense'
+      'Must pass the regression criterion of "squared_error"'
     )
     super({
       criterion,
@@ -391,8 +391,12 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
     let yArray = convertScikit1DToArray(y)
     assert(XArray.length === yArray.length, 'X and y must be the same size')
     validateX(XArray)
+    // TODO yValidation for regression (check that there are no NaN's etc)
     super.fit(XArray as number[][], yArray as number[])
     return this
+  }
+  public getNLeaves() {
+    return this.tree.nodes.filter((el) => el.isLeaf).length
   }
   public predict(X: number[][]) {
     return this.tree.predictRegression(X)
