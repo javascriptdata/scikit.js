@@ -1,4 +1,4 @@
-import { TypedArray, int } from '../types'
+import { TypedArray } from '../types'
 
 export function validateX(X: number[][] | TypedArray[]) {
   if (X.length === 0) {

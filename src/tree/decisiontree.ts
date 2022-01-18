@@ -8,6 +8,18 @@ import { validateX, validateY } from './utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { convertScikit2DToArray, convertScikit1DToArray } from '../utils'
 import { LabelEncoder } from '../preprocessing/labelEncoder'
+
+/*
+Next steps:
+1. feature_importances
+2. nFeaturesIn / featureNamesIn
+3. getDepth
+4. add randomState seed to classifier/regressor
+5. Add "improvement" to Split interface
+6. Pull values array out to live separately from Node interface
+7. Add "absolute_error" criterion for DecisionTreeRegressor
+7. Possible remove squaredLeft/squaredRight from DecisionTreeRegressor
+*/
 interface NodeRecord {
   start: int
   end: int
@@ -285,14 +297,47 @@ class DecisionTreeBase {
   }
 }
 
-interface DecisionTreeClassifierParams {
+export interface DecisionTreeClassifierParams {
+  /** The function to measure the quality of the split. Default is **gini**. */
   criterion?: 'gini' | 'entropy'
+  /** The maximum depth of the tree. Default is **undefined**. */
   maxDepth?: int
+  /** The minimum number of samples that you'd need before you can split on that node. Default is **2**. */
   minSamplesSplit?: number
+  /** The minimum number of samples that every leaf must contain. Default is **1**. */
   minSamplesLeaf?: number
+  /** The number of features that you would consider. Default is **undefined**. */
   maxFeatures?: number | 'auto' | 'sqrt' | 'log2'
+  /** The amount of impurity that would need to exist before you could split. */
   minImpurityDecrease?: number
 }
+
+/**
+ * Build a Decision Tree for Classification problems.
+ *
+ * @example
+ * ```js
+ * import { DecisionTreeClassifier } from 'scikitjs'
+ *
+ * const X = [
+     [0.1, 0.9],
+     [0.3, 0.7],
+     [0.9, 0.1],
+     [0.8, 0.2],
+     [0.81, 0.19]
+   ]
+   const y = [0, 0, 1, 1, 1]
+
+   const clf = new DecisionTreeClassifier({ criterion: 'gini', maxDepth: 4 })
+   await clf.fit(X, y)
+
+   clf.predict([
+     [0.1, 0.9],
+     [0.01, 0.99]
+   ]) // [0, 1]
+ * ```
+ *
+ */
 export class DecisionTreeClassifier extends DecisionTreeBase {
   labelEncoder: LabelEncoder
   constructor({
@@ -354,12 +399,36 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
   }
 }
 
-interface DecisionTreeRegressorParams {
+/**
+ * Build a Decision Tree for Regression problems.
+ * @example
+ * ```js
+ * import { DecisionTreeRegressor } from 'scikitjs'
+ *
+ * let X = [
+ *  [1, 2],
+ *  [1, 4],
+ *  [2, 6],
+ *  [3, 5],
+ *  [10, 20]
+ * ]
+ * let y = [3, 5, 8, 8, 30]
+ * const dt = new DecisionTreeRegressor({fitIntercept: false})
+  await dt.fit(X, y)
+ * ```
+ */
+export interface DecisionTreeRegressorParams {
+  /** The function to measure the quality of the split. Default is **squared_error**. */
   criterion?: 'squared_error'
+  /** The maximum depth of the tree. Default is **undefined**. */
   maxDepth?: int
+  /** The minimum number of samples that you'd need before you can split on that node. Default is **2**. */
   minSamplesSplit?: number
+  /** The minimum number of samples that every leaf must contain. Default is **1**. */
   minSamplesLeaf?: number
+  /** The number of features that you would consider. Default is **undefined**. */
   maxFeatures?: number | 'auto' | 'sqrt' | 'log2'
+  /** The amount of impurity that would need to exist before you could split. */
   minImpurityDecrease?: number
 }
 export class DecisionTreeRegressor extends DecisionTreeBase {
