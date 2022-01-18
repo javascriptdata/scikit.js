@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/javascriptdata/scikit.js/compare/v1.3.0...v1.4.0) (2022-01-18)
+
+
+### Features
+
+* added ability for decision tree to handle negative input ([a6cf53f](https://github.com/javascriptdata/scikit.js/commit/a6cf53ff301bbf463187b4aa41519ec6c25d8d06))
+* first pass at decision tree classifier ([550551e](https://github.com/javascriptdata/scikit.js/commit/550551eb0beca2effb6428368d1b9c94d27a0fb1))
+* first pass at regression tree ([849469a](https://github.com/javascriptdata/scikit.js/commit/849469ab103e1e5e2c5e2a33773bf2fc4476baa9))
+
 # [1.3.0](https://github.com/javascriptdata/scikit.js/compare/v1.2.0...v1.3.0) (2022-01-14)
 
 
