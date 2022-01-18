@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { convertTo2DArray } from '../utils'
+import { convertScikit2DToArray } from '../utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { TransformerMixin } from '../mixins'
 import { tf, dfd } from '../shared/globals'
@@ -147,7 +147,7 @@ export class OneHotEncoder extends TransformerMixin {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public fit(X: Scikit2D, y?: Scikit1D): OneHotEncoder {
-    const array2D = convertTo2DArray(X)
+    const array2D = convertScikit2DToArray(X)
 
     if (this.categoriesParam === 'auto') {
       this.loopOver2DArrayToSetLabels(array2D)
@@ -223,7 +223,7 @@ export class OneHotEncoder extends TransformerMixin {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
-    const array2D = convertTo2DArray(X)
+    const array2D = convertScikit2DToArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
     const newTensor = tf.tensor2d(result2D as number[][], undefined, 'int32')
     return tf.concat(

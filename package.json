@@ -38,8 +38,8 @@
   },
   "homepage": "https://github.com/javascriptdata/scikit.js#readme",
   "dependencies": {
-    "danfojs": "^1.0.0",
-    "danfojs-node": "^1.0.0",
+    "danfojs": "^1.0.1",
+    "danfojs-node": "^1.0.1",
     "libsvm-wasm": "^0.0.8",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
