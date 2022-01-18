@@ -176,14 +176,14 @@ export async function crossValScore(
     scoring?: any
   }
 ): Promise<Tensor1D> {
-  let unsupervised = null == y || (null == params && !isScikit1D(y))
+  let unsupervised = y == null || (params == null && !isScikit1D(y))
   if (unsupervised) {
     params = params ?? y
   }
 
   let { cv = new KFold(), groups, scoring } = params ?? {}
 
-  if (undefined === scoring) {
+  if (scoring == null) {
     assert(
       'function' === typeof estimator.score,
       'crossValScore(estimator,[X,y],params): Either params.scoring or estimator.score(X,y) must be defined.'
