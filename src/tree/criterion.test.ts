@@ -1,9 +1,4 @@
-import {
-  ClassificationCriterion,
-  giniCoefficient,
-  entropy,
-  SampleData
-} from './criterion'
+import { ClassificationCriterion, giniCoefficient, entropy } from './criterion'
 
 describe('Criterion', function () {
   let X = [
@@ -15,7 +10,7 @@ describe('Criterion', function () {
     [2, 1]
   ]
   let y = [0, 0, 0, 1, 1, 1]
-  let sampleMap: SampleData = new Int32Array(X.length)
+  let sampleMap = new Int32Array(X.length)
   for (let i = 0; i < X.length; i++) {
     sampleMap[i] = i
   }

@@ -2,11 +2,6 @@ import { assert } from '../typesUtils'
 import { int } from '../randUtils'
 
 export type ImpurityMeasure = 'gini' | 'entropy' | 'squared_error'
-// export interface SampleData {
-//   sampleNumber: int
-// }
-
-export type SampleData = Int32Array
 
 export function giniCoefficient(labelFreqs: int[], nSamples: int) {
   let freqSquares = 0
@@ -79,7 +74,7 @@ export class ClassificationCriterion {
     this.labelFreqsRight = new Array(this.nLabels).fill(0)
   }
 
-  init(start: int, end: int, sampleMap: SampleData) {
+  init(start: int, end: int, sampleMap: Int32Array) {
     this.start = start
     this.end = end
     this.nSamples = end - start
@@ -99,7 +94,7 @@ export class ClassificationCriterion {
     this.labelFreqsRight = this.labelFreqsRight.fill(0)
   }
 
-  update(newPos: int, sampleMap: SampleData) {
+  update(newPos: int, sampleMap: Int32Array) {
     for (let i = this.pos; i < newPos; i++) {
       // This assumes that the labels take values 0,..., nLabels - 1
       let sampleNumber = sampleMap[i]
@@ -173,7 +168,7 @@ export class RegressionCriterion {
     this.y = y
   }
 
-  init(start: int, end: int, sampleMap: SampleData) {
+  init(start: int, end: int, sampleMap: Int32Array) {
     this.sumTotal = 0
     this.squaredSum = 0
     this.start = start
@@ -196,7 +191,7 @@ export class RegressionCriterion {
     this.sumTotalRight = 0
   }
 
-  update(newPos: int, sampleMap: SampleData) {
+  update(newPos: int, sampleMap: Int32Array) {
     for (let i = this.pos; i < newPos; i++) {
       // This assumes that the labels take values 0,..., nLabels - 1
       let sampleNumber = sampleMap[i]

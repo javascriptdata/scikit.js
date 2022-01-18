@@ -1,8 +1,7 @@
 import {
   ClassificationCriterion,
   RegressionCriterion,
-  ImpurityMeasure,
-  SampleData
+  ImpurityMeasure
 } from './criterion'
 import { shuffle } from 'lodash'
 import { int } from '../randUtils'
@@ -38,7 +37,7 @@ export class Splitter {
   maxFeatures: int
   featureOrder: int[]
   shuffleFeatures: boolean
-  sampleMap: SampleData
+  sampleMap: Int32Array
   nSamplesTotal: int
   nFeatures: int
 
