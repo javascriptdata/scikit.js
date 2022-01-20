@@ -11,6 +11,10 @@ lerna-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# Cypress
+cypress/videos
+cypress/screenshots
+
 # Runtime data
 pids
 *.pid
