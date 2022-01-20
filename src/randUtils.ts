@@ -15,7 +15,7 @@
 
 import { alea } from 'seedrandom'
 
-type int = number
+export type int = number
 
 /**
  * Creates a new random number generator, optionally using the given seed.
