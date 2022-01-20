@@ -1,5 +1,6 @@
 import { tf } from '../shared/globals'
-type Tensor = tf.Tensor
+type Tensor2D = tf.Tensor2D
+type Tensor1D = tf.Tensor1D
 interface MakeRegressionInput {
   nSamples?: number
   nFeatures?: number
@@ -13,8 +14,6 @@ interface MakeRegressionInput {
   coef?: boolean
 }
 
-type MakeRegressionOutput = [Tensor, Tensor] | [Tensor, Tensor, Tensor]
-
 export const makeRegression = ({
   nSamples = 100,
   nFeatures = 100,
@@ -26,7 +25,10 @@ export const makeRegression = ({
   tailStrength = 0.5,
   shuffle = false,
   coef = false
-}: MakeRegressionInput = {}): MakeRegressionOutput => {
+}: MakeRegressionInput = {}):
+  | [Tensor2D, Tensor1D | Tensor2D]
+  | [Tensor2D, Tensor1D, Tensor1D]
+  | [Tensor2D, Tensor2D, Tensor2D] => {
   return tf.tidy(() => {
     const numberInformative = Math.min(nFeatures, nInformative)
 
@@ -67,9 +69,9 @@ export const makeRegression = ({
     Y = tf.squeeze(Y)
 
     if (coef) {
-      return [X, Y, tf.squeeze(groundTruth)]
+      return [X, Y as Tensor2D, tf.squeeze(groundTruth) as Tensor2D]
     }
-    return [X, Y]
+    return [X, Y as Tensor2D]
   })
 }
 
@@ -94,7 +96,7 @@ export const makeLowRankMatrix = ({
     let [v] = tf.linalg.qr(tf.randomNormal([nFeatures, n]))
 
     // Index of the singular values
-    let singularIndex = tf.linspace(0, n - 1, n)
+    let singularIndex = tf.range(0, n)
 
     // Build the singular profile by assembling signal and noise components
     const singularIndexByRank = singularIndex.div(effectiveRank)
@@ -105,6 +107,6 @@ export const makeLowRankMatrix = ({
 
     let s = tf.diag(lowRank.add(tail))
 
-    return u.dot(s).dot(v.transpose()) as tf.Tensor2D
+    return u.mul(s).dot(v.transpose()) as tf.Tensor2D
   })
 }
