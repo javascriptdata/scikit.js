@@ -105,7 +105,7 @@ export const makeLowRankMatrix = ({
       .mul(1 - tailStrength)
     let tail = tf.exp(singularIndexByRank.mul(-0.1)).mul(tailStrength)
 
-    let s = tf.diag(lowRank.add(tail))
+    let s = lowRank.add(tail)
 
     return u.mul(s).dot(v.transpose()) as tf.Tensor2D
   })
