@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/javascriptdata/scikit.js/compare/v1.4.0...v1.5.0) (2022-01-20)
+
+
+### Features
+
+* add makeRegression function ([5337ecf](https://github.com/javascriptdata/scikit.js/commit/5337ecfc6bb77fd6cfe0f278e66555b194194b10))
+
 # [1.4.0](https://github.com/javascriptdata/scikit.js/compare/v1.3.0...v1.4.0) (2022-01-18)
 
 
