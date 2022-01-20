@@ -141,7 +141,8 @@ export class KFold implements CrossValidator {
     const chunkBase = Math.floor(nSamples / nSplits)
     let remainder = nSamples % nSplits
 
-    for (let offset = 0; offset < nSamples; ) {
+    let offset = 0
+    while (offset < nSamples) {
       const chunk = remainder-- > 0 ? chunkBase + 1 : chunkBase
 
       const train = new Int32Array(nSamples - chunk)
