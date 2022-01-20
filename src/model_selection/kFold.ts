@@ -108,23 +108,21 @@ export class KFold implements CrossValidator {
   ): IterableIterator<{ trainIndex: Tensor1D; testIndex: Tensor1D }> {
     const { nSplits, shuffle, randomState } = this
 
-    let nSamples: number
-
-    nSamples = getLength(X)
+    const nSamples = getLength(X)
 
     assert(
       nSplits <= nSamples,
       'KFold({nSplits})::split(X): nSplits must not be greater than X.shape[0].'
     )
 
-    if (null != y) {
+    if (y != null) {
       assert(
         nSamples === getLength(y),
         'KFold::split(X,y): X.shape[0] must equal y.shape[0].'
       )
     }
 
-    if (null != groups) {
+    if (groups != null) {
       assert(
         nSamples === getLength(groups),
         'KFold::split(X,y,groups): X.shape[0] must equal groups.shape[0].'
@@ -144,7 +142,7 @@ export class KFold implements CrossValidator {
     let remainder = nSamples % nSplits
 
     for (let offset = 0; offset < nSamples; ) {
-      const chunk = chunkBase + Number(remainder-- > 0)
+      const chunk = remainder-- > 0 ? chunkBase + 1 : chunkBase
 
       const train = new Int32Array(nSamples - chunk)
       train.set(range.subarray(0, offset), 0)

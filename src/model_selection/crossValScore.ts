@@ -199,7 +199,7 @@ export async function crossValScore(
   tf.engine().startScope()
   try {
     X = convertToTensor2D(X)
-    if (null != y) {
+    if (!unsupervised) {
       y = convertToTensor1D(y)
     }
 
