@@ -51,7 +51,7 @@ function testWithDataset(
       atol: 0,
       rtol: 0.01
     })
-  }, 60_000)
+  }, 600_000)
 }
 
 for (const algorithm of [
