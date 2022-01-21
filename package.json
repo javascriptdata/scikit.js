@@ -1,16 +1,17 @@
 {
   "name": "scikitjs",
-  "version": "1.5.0",
+  "version": "1.5.4",
   "description": "Scikit-Learn for JS",
   "output": {
     "node": "dist/node/index.js",
     "node-gpu": "dist/node-gpu/index.js",
-    "web": "dist/web/index.js"
+    "web": "dist/web/index.js",
+    "es5": "dist/es5/index.js"
   },
   "exports": {
     "./node": "./dist/node/index.js"
   },
-  "main": "dist/esm/index.js",
+  "main": "dist/es5/index.js",
   "directories": {
     "doc": "docs"
   },
@@ -21,8 +22,9 @@
     "compile:web": "node --max_old_space_size=8192 node_modules/.bin/rollup -c",
     "compile:esm": "node_modules/.bin/tsc -p tsconfig.build-esm.json && node_modules/.bin/tsc-alias -p tsconfig.build-esm.json",
     "compile:node-cjs": "node_modules/.bin/tsc -p tsconfig.build-node.json && node_modules/.bin/tsc-alias -p tsconfig.build-node.json",
+    "compile:es5": "node_modules/.bin/tsc -p tsconfig.build-es5.json && node_modules/.bin/tsc-alias -p tsconfig.build-es5.json",
     "prettier:check": "node_modules/prettier/bin-prettier.js --check src",
-    "build": "npm run compile:esm && npm run compile:node-cjs && npm run compile:web",
+    "build": "npm run compile:esm && npm run compile:node-cjs && npm run compile:web && npm run compile:es5",
     "build:docs": "cd docs && npm run build",
     "coverage": "node_modules/.bin/coveralls < coverage/lcov.info"
   },
@@ -37,19 +39,20 @@
   },
   "homepage": "https://github.com/javascriptdata/scikit.js#readme",
   "dependencies": {
-    "danfojs": "^1.0.1",
-    "danfojs-node": "^1.0.1",
+    "@tensorflow/tfjs": "3.13.0",
+    "@tensorflow/tfjs-node": "^3.13.0",
+    "danfojs": "^1.0.2",
+    "danfojs-node": "^1.0.2",
     "libsvm-wasm": "^0.0.8",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "seedrandom": "^3.0.5",
-    "simple-statistics": "^7.7.0",
-    "@tensorflow/tfjs": "3.11.0",
-    "@tensorflow/tfjs-node": "3.6.1"
+    "simple-statistics": "^7.7.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.10.4",
     "@babel/register": "^7.10.1",
