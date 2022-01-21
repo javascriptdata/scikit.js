@@ -41,7 +41,7 @@
   "homepage": "https://github.com/javascriptdata/scikit.js#readme",
   "dependencies": {
     "@tensorflow/tfjs": "3.13.0",
-    "@tensorflow/tfjs-node": "^3.13.0",
+    "@tensorflow/tfjs-node": "3.13.0",
     "danfojs": "^1.0.2",
     "danfojs-node": "^1.0.2",
     "libsvm-wasm": "^0.0.8",
