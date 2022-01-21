@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "declarationDir": "./dist/es5",
+    "outDir": "./dist/es5",
+    "target": "ES5",
+    "downlevelIteration": true,
+    "baseUrl": "./src",
+    "paths": {
+      "shared/*": ["shared/*"]
+    }
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true,
+    "replacers": {
+      "exampleReplacer": {
+        "enabled": true,
+        "file": "./build/browserReplacer.js"
+      }
+    }
+  }
+}
