@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/javascriptdata/scikit.js/compare/v1.5.0...v1.6.0) (2022-01-21)
+
+
+### Features
+
+* fixed build ([cbdbbda](https://github.com/javascriptdata/scikit.js/commit/cbdbbda59a819c0a777b0eba40263abf16a24d2c))
+
 # [1.5.0](https://github.com/javascriptdata/scikit.js/compare/v1.4.0...v1.5.0) (2022-01-20)
 
 
