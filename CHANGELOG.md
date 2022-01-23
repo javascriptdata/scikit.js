@@ -1,3 +1,18 @@
+# [1.7.0](https://github.com/javascriptdata/scikit.js/compare/v1.6.0...v1.7.0) (2022-01-23)
+
+
+### Bug Fixes
+
+* cross-val-score and k-fold fixes+improvements ([21a566b](https://github.com/javascriptdata/scikit.js/commit/21a566b98e6e05cab620008fd4d913eebdee495b))
+* cross-val-score api improvement etc ([efe63f9](https://github.com/javascriptdata/scikit.js/commit/efe63f9683ee100182a1a6cdfc0148572aed7174))
+* k-fold memory leak ([2f5529d](https://github.com/javascriptdata/scikit.js/commit/2f5529d9ba1204dfaec3c85234d83f11f453634e))
+
+
+### Features
+
+* cross-val-score and k-fold implemented ([6bc3ee3](https://github.com/javascriptdata/scikit.js/commit/6bc3ee38f118bc094ad31d44f9494308bb25b311))
+* rand-utils create-rng ([553232f](https://github.com/javascriptdata/scikit.js/commit/553232f5b57db1f2834bba02cd95ed039e71b39a))
+
 # [1.6.0](https://github.com/javascriptdata/scikit.js/compare/v1.5.0...v1.6.0) (2022-01-21)
 
 
