@@ -29,6 +29,8 @@ export function neighborhoodGenericTests(
 ) {
   describe(`${name} [generic tests]`, () => {
     for (const p of [1, 2, Infinity]) {
+      const numRuns = 128
+
       const metric = minkowskiMetric(p)
 
       const anyFloat = () => fc.double(-(2 ** 16), +(2 ** 16))
@@ -36,7 +38,7 @@ export function neighborhoodGenericTests(
       it(`kNearest(1, ...) returns distinct points as closest to themselves { metric: ${metric.name} }`, async () => {
         const anyDistinctPoints = () =>
           fc
-            .tuple(fc.nat(512), fc.nat(8), fc.string(), anyFloat(), anyFloat())
+            .tuple(fc.nat(256), fc.nat(4), fc.string(), anyFloat(), anyFloat())
             .chain(([nSamples, nDim, seed, scale, offset]) => {
               ++nSamples
               ++nDim
@@ -84,7 +86,12 @@ export function neighborhoodGenericTests(
           }
         }
 
-        await fc.assert(fc.asyncProperty(anyDistinctPoints(), testBody), { numRuns: 128 })
+        tf.engine().startScope()
+        try {
+          await fc.assert(fc.asyncProperty(anyDistinctPoints(), testBody), { numRuns })
+        } finally {
+          tf.engine().endScope()
+        }
       })
 
       it(`kNearest(k, ...) returns nearest k points { metric: ${metric.name} }`, async () => {
@@ -98,7 +105,7 @@ export function neighborhoodGenericTests(
 
         const anyInput = () =>
           fc
-            .tuple(fc.nat(512), fc.nat(32), fc.nat(8))
+            .tuple(fc.nat(256), fc.nat(8), fc.nat(4))
             .chain(([nSamples, nQueries, nDim]) => {
               ++nSamples
               ++nQueries
@@ -171,10 +178,11 @@ export function neighborhoodGenericTests(
         }
 
         tf.engine().startScope()
-        await fc.assert(fc.asyncProperty(anyInput(), testBody), {
-          numRuns: 128
-        })
-        tf.engine().endScope()
+        try {
+          await fc.assert(fc.asyncProperty(anyInput(), testBody), { numRuns })
+        } finally {
+          tf.engine().endScope()
+        }
       })
     }
   })

@@ -55,7 +55,7 @@ function testWithDataset(
 
       expect(scores.mean()).toBeAllCloseTo(-referenceError, {
         atol: 0,
-        rtol: 0.01
+        rtol: 0.005
       })
     },
     60_000
@@ -77,22 +77,21 @@ for (const algorithm of [
       { nNeighbors: 3, weights: 'uniform', algorithm },
       3833
     )
-    if ('brute' !== algorithm) {
+    if ('kdTree' === algorithm) {
       testWithDataset(
         fetchCaliforniaHousing,
         { nNeighbors: 3, weights: 'distance', algorithm },
         1.31
       )
-      testWithDataset(
-        fetchCaliforniaHousing,
-        { nNeighbors: 4, weights: 'uniform', algorithm },
-        1.28
-      )
+    }
+    if ('auto' === algorithm) {
       testWithDataset(
         fetchCaliforniaHousing,
         { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
         1.19
       )
+    }
+    if (undefined === algorithm) {
       testWithDataset(
         fetchCaliforniaHousing,
         { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
