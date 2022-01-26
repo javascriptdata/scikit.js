@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-import { Tensor2D } from '@tensorflow/tfjs-core'
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
@@ -275,8 +274,8 @@ export class KdTree implements Neighborhood {
 
   kNearest(
     k: number,
-    queryPoints: Tensor2D
-  ): { distances: Tensor2D; indices: Tensor2D } {
+    queryPoints: tf.Tensor2D
+  ): { distances: tf.Tensor2D; indices: tf.Tensor2D } {
     const {
       _nSamples,
       _nFeatures,

@@ -11,9 +11,7 @@ import { dfd } from '../shared/globals'
     ```
  */
 export async function loadBoston(): Promise<dfd.DataFrame> {
-  return await dfd.read_csv('http://scikitjs.org/data/boston.csv', {
-    download: true
-  })
+  return await dfd.readCSV('http://scikitjs.org/data/boston.csv')
 }
 
 /**
@@ -28,9 +26,7 @@ export async function loadBoston(): Promise<dfd.DataFrame> {
     ```
  */
 export async function loadIris(): Promise<dfd.DataFrame> {
-  return await dfd.read_csv('http://scikitjs.org/data/iris.csv', {
-    download: true
-  })
+  return await dfd.readCSV('http://scikitjs.org/data/iris.csv')
 }
 
 /**
@@ -46,9 +42,7 @@ export async function loadIris(): Promise<dfd.DataFrame> {
  */
 
 export async function loadWine(): Promise<dfd.DataFrame> {
-  return await dfd.read_csv('http://scikitjs.org/data/wine.csv', {
-    download: true
-  })
+  return await dfd.readCSV('http://scikitjs.org/data/wine.csv')
 }
 
 /**
@@ -64,9 +58,7 @@ export async function loadWine(): Promise<dfd.DataFrame> {
  */
 
 export async function loadDiabetes(): Promise<dfd.DataFrame> {
-  return await dfd.read_csv('http://scikitjs.org/data/diabetes.csv', {
-    download: true
-  })
+  return await dfd.readCSV('http://scikitjs.org/data/diabetes.csv')
 }
 
 /**
@@ -82,9 +74,7 @@ export async function loadDiabetes(): Promise<dfd.DataFrame> {
  */
 
 export async function loadBreastCancer(): Promise<dfd.DataFrame> {
-  return await dfd.read_csv('http://scikitjs.org/data/breast_cancer.csv', {
-    download: true
-  })
+  return await dfd.readCSV('http://scikitjs.org/data/breast_cancer.csv')
 }
 
 /**
@@ -99,9 +89,7 @@ export async function loadBreastCancer(): Promise<dfd.DataFrame> {
     ```
  */
 export async function loadDigits(): Promise<dfd.DataFrame> {
-  return await dfd.read_csv('http://scikitjs.org/data/digits.csv', {
-    download: true
-  })
+  return await dfd.readCSV('http://scikitjs.org/data/digits.csv')
 }
 
 /**
@@ -111,10 +99,5 @@ export async function loadDigits(): Promise<dfd.DataFrame> {
  */
 
 export async function fetchCaliforniaHousing(): Promise<dfd.DataFrame> {
-  return await dfd.read_csv(
-    'http://scikitjs.org/data/california_housing.csv',
-    {
-      download: true
-    }
-  )
+  return await dfd.readCSV('http://scikitjs.org/data/california_housing.csv')
 }

@@ -3,7 +3,6 @@ import { dfd } from '../shared/globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { arrayEqual } from '../utils'
 
-
 describe('MaxAbsScaler', function () {
   it('Standardize values in a DataFrame using a MaxAbsScaler', function () {
     const scaler = new MaxAbsScaler()

@@ -1,6 +1,5 @@
 import * as metrics from './metrics'
 
-
 describe('Metrics', function () {
   it('accuracyScore', function () {
     const labels = [1, 2, 3, 1]
@@ -30,8 +29,10 @@ describe('Metrics', function () {
   it('meanSquaredLogError', function () {
     const labels = [3, 5, 2.5, 7]
     const predictions = [2.5, 5, 4, 8]
-    expect(Math.abs(metrics.meanSquaredLogError(labels, predictions) - 0.03973) <
-      0.01).toBe(true)
+    expect(
+      Math.abs(metrics.meanSquaredLogError(labels, predictions) - 0.03973) <
+        0.01
+    ).toBe(true)
   })
   it('confusionMatrix', function () {
     const labels = [2, 0, 2, 2, 0, 1]

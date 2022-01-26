@@ -1,3 +1,49 @@
+# [1.7.0](https://github.com/javascriptdata/scikit.js/compare/v1.6.0...v1.7.0) (2022-01-23)
+
+
+### Bug Fixes
+
+* cross-val-score and k-fold fixes+improvements ([21a566b](https://github.com/javascriptdata/scikit.js/commit/21a566b98e6e05cab620008fd4d913eebdee495b))
+* cross-val-score api improvement etc ([efe63f9](https://github.com/javascriptdata/scikit.js/commit/efe63f9683ee100182a1a6cdfc0148572aed7174))
+* k-fold memory leak ([2f5529d](https://github.com/javascriptdata/scikit.js/commit/2f5529d9ba1204dfaec3c85234d83f11f453634e))
+
+
+### Features
+
+* cross-val-score and k-fold implemented ([6bc3ee3](https://github.com/javascriptdata/scikit.js/commit/6bc3ee38f118bc094ad31d44f9494308bb25b311))
+* rand-utils create-rng ([553232f](https://github.com/javascriptdata/scikit.js/commit/553232f5b57db1f2834bba02cd95ed039e71b39a))
+
+# [1.6.0](https://github.com/javascriptdata/scikit.js/compare/v1.5.0...v1.6.0) (2022-01-21)
+
+
+### Features
+
+* fixed build ([cbdbbda](https://github.com/javascriptdata/scikit.js/commit/cbdbbda59a819c0a777b0eba40263abf16a24d2c))
+
+# [1.5.0](https://github.com/javascriptdata/scikit.js/compare/v1.4.0...v1.5.0) (2022-01-20)
+
+
+### Features
+
+* add makeRegression function ([5337ecf](https://github.com/javascriptdata/scikit.js/commit/5337ecfc6bb77fd6cfe0f278e66555b194194b10))
+
+# [1.4.0](https://github.com/javascriptdata/scikit.js/compare/v1.3.0...v1.4.0) (2022-01-18)
+
+
+### Features
+
+* added ability for decision tree to handle negative input ([a6cf53f](https://github.com/javascriptdata/scikit.js/commit/a6cf53ff301bbf463187b4aa41519ec6c25d8d06))
+* first pass at decision tree classifier ([550551e](https://github.com/javascriptdata/scikit.js/commit/550551eb0beca2effb6428368d1b9c94d27a0fb1))
+* first pass at regression tree ([849469a](https://github.com/javascriptdata/scikit.js/commit/849469ab103e1e5e2c5e2a33773bf2fc4476baa9))
+
+# [1.3.0](https://github.com/javascriptdata/scikit.js/compare/v1.2.0...v1.3.0) (2022-01-14)
+
+
+### Features
+
+* gaussian naive bayes classifier ([8174ae1](https://github.com/javascriptdata/scikit.js/commit/8174ae17806b18d5d4488fa2d26086463dc240dc))
+* gaussian naive bayes classifier ([d520b1a](https://github.com/javascriptdata/scikit.js/commit/d520b1a9720ad613bcf08915c03233ce6958ebe2))
+
 # [1.2.0](https://github.com/javascriptdata/scikit.js/compare/v1.1.0...v1.2.0) (2022-01-02)
 
 

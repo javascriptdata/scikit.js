@@ -9,7 +9,6 @@ import {
   randomUniform
 } from '@tensorflow/tfjs-core'
 
-
 function roughlyEqual(a: number, b: number, tol = 0.1) {
   return Math.abs(a - b) < tol
 }
@@ -99,5 +98,40 @@ describe('LinearRegression', function () {
 
     expect(tensorEqual(lr.coef, tensor1d([2.5, 1]), 0.1)).toBe(true)
     expect(roughlyEqual(lr.intercept as number, 0)).toBe(true)
+  }, 30000)
+  it('Cog python test', async function () {
+    /*
+      [[[cog
+      import cog
+      import numpy as np
+
+      def print_numpy(X):
+        return repr(X).replace('array(', '').replace(')', '')
+
+      np.set_printoptions(threshold=np.inf)
+      from sklearn.datasets import make_regression
+      from sklearn.linear_model import LinearRegression
+      X, y = make_regression(5, 5, n_informative=5)
+
+      lf = LinearRegression()
+      lf.fit(X, y)
+      cog.outl("let X = " + print_numpy(X))
+      cog.outl("let y = " + print_numpy(y))
+      cog.outl("let score = " + print_numpy(lf.score(X, y)))
+      ]]]*/
+    let X = [
+      [-0.00244914, 0.06518702, -1.36608168, -0.5427704, 1.48407056],
+      [1.30791547, -0.70896184, 1.51020065, 0.06197986, 2.28595886],
+      [-0.17730942, -1.09547718, 0.29676505, 1.19286185, -1.88178388],
+      [1.20533452, -0.53933888, 0.20527909, -0.79376298, -0.5496481],
+      [-0.03124791, -0.3598143, 1.74913615, -0.89918996, -0.21714292]
+    ]
+    let y = [-70.62017777, 130.65722027, 18.93268378, 13.60904025, 48.96704418]
+    let score = 1.0
+    /*[[[end]]]*/
+
+    const lr = new LinearRegression()
+    await lr.fit(X, y)
+    expect(lr.score(X, y)).toBeCloseTo(score)
   }, 30000)
 })

@@ -37,6 +37,8 @@ export type Iterable<K> = {
   length: number
 }
 
+export type int = number
+
 export interface Transformer {
   fit(X: Scikit2D, y?: Scikit1D): any
   transform(X: Scikit2D, y?: Scikit1D): Tensor2D

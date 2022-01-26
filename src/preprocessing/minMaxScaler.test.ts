@@ -3,7 +3,6 @@ import { dfd } from '../shared/globals'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { convertTensorToInputType } from '../utils'
 
-
 describe('MinMaxscaler', function () {
   it('Standardize values in a DataFrame using a MinMaxScaler', function () {
     const data = [
@@ -87,10 +86,12 @@ describe('MinMaxscaler', function () {
     const data = tensor2d([3, 3, 3, 3, 3], [5, 1])
     const scaler = new MinMaxScaler()
     scaler.fit(data)
-    expect(scaler
-      .transform(tensor2d([0, 1, 10, 10], [4, 1]))
-      .arraySync()
-      .flat()).toEqual([-3, -2, 7, 7])
+    expect(
+      scaler
+        .transform(tensor2d([0, 1, 10, 10], [4, 1]))
+        .arraySync()
+        .flat()
+    ).toEqual([-3, -2, 7, 7])
   })
   it('featureRange', function () {
     const data = [

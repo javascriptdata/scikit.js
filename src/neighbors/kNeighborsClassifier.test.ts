@@ -14,18 +14,109 @@
 */
 
 import { KNeighborsClassifier } from './kNeighborsClassifier'
+import { KNeighborsParams } from './kNeighborsBase'
+import {
+  loadDigits,
+  loadIris,
+  loadWine,
+  loadBreastCancer
+} from '../datasets/datasets'
+import { crossValScore } from '../model_selection/crossValScore'
+import { KFold } from '../model_selection/kFold'
 import { arrayEqual } from '../utils'
+import '../jestTensorMatchers'
+import { dfd, tf } from '../shared/globals'
+type Tensor1D = tf.Tensor1D
+type Tensor2D = tf.Tensor2D
+
+function testWithDataset(
+  loadData: () => Promise<dfd.DataFrame>,
+  params: KNeighborsParams,
+  referenceAccuracy: number
+) {
+  it(
+    `matches sklearn fitting ${loadData.name}`.padEnd(48) +
+      JSON.stringify(params),
+    async () => {
+      const df = await loadData()
+
+      const Xy = df.tensor as unknown as Tensor2D
+      let [nSamples, nFeatures] = Xy.shape
+      --nFeatures
+
+      const X = Xy.slice([0, 0], [nSamples, nFeatures])
+      const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
+
+      const accuracies = await crossValScore(
+        new KNeighborsClassifier(params),
+        X,
+        y,
+        {
+          cv: new KFold({ nSplits: 3 })
+        }
+      )
+
+      expect(accuracies.mean()).toBeAllCloseTo(referenceAccuracy, {
+        atol: 0,
+        rtol: 0.005
+      })
+    },
+    60_000
+  )
+}
 
 for (const algorithm of [
   ...KNeighborsClassifier.SUPPORTED_ALGORITHMS,
   undefined
-]) {
-  describe('KNeighborsClassifier', () => {
+] as KNeighborsParams['algorithm'][]) {
+  describe(`KNeighborsClassifier({ algorithm: ${algorithm} })`, () => {
+    testWithDataset(
+      loadDigits,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      0.963
+    )
+    testWithDataset(
+      loadIris,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      0.0
+    )
+    testWithDataset(
+      loadWine,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      0.135
+    )
+    testWithDataset(
+      loadBreastCancer,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      0.92
+    )
+
+    testWithDataset(
+      loadDigits,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      0.967
+    )
+    testWithDataset(
+      loadIris,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      0.0
+    )
+    testWithDataset(
+      loadWine,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      0.158
+    )
+    testWithDataset(
+      loadBreastCancer,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      0.916
+    )
+
     it('correctly predicts sklearn example', async () => {
       const X_train = [[0], [1], [2], [3]]
       const y_train = [0, 0, 1, 1]
 
-      const model = new KNeighborsClassifier({ algorithm, nNeighbors: 3 })
+      const model = new KNeighborsClassifier({ nNeighbors: 3, algorithm })
       await model.fit(X_train, y_train)
 
       const prob = await model.predictProba([[0.9]]).array()

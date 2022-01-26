@@ -12,135 +12,72 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { KNeighborsRegressor } from './neighbors/kNeighborsRegressor'
-import {
+export { KNeighborsRegressor } from './neighbors/kNeighborsRegressor'
+export {
   LinearRegression,
   LinearRegressionParams
 } from './linear_model/linearRegression'
-import { LassoRegression, LassoParams } from './linear_model/lassoRegression'
-import {
+export { LassoRegression, LassoParams } from './linear_model/lassoRegression'
+export {
   RidgeRegression,
   RidgeRegressionParams
 } from './linear_model/ridgeRegression'
-import { ElasticNet, ElasticNetParams } from './linear_model/elasticNet'
-import {
+export { ElasticNet, ElasticNetParams } from './linear_model/elasticNet'
+export {
   LogisticRegression,
   LogisticRegressionParams
 } from './linear_model/logisticRegression'
-import * as metrics from './metrics/metrics'
-import { DummyRegressor, DummyRegressorParams } from './dummy/dummyRegressor'
-import {
+export * as metrics from './metrics/metrics'
+export { DummyRegressor, DummyRegressorParams } from './dummy/dummyRegressor'
+export {
   DummyClassifier,
   DummyClassifierParams
 } from './dummy/dummyClassifier'
-import { MinMaxScaler, MinMaxScalerParams } from './preprocessing/minMaxScaler'
-import {
+export { MinMaxScaler, MinMaxScalerParams } from './preprocessing/minMaxScaler'
+export {
   StandardScaler,
   StandardScalerParams
 } from './preprocessing/standardScaler'
-import { MaxAbsScaler } from './preprocessing/maxAbsScaler'
-import { SimpleImputer, SimpleImputerParams } from './impute/simpleImputer'
-import {
+export { MaxAbsScaler } from './preprocessing/maxAbsScaler'
+export { SimpleImputer, SimpleImputerParams } from './impute/simpleImputer'
+export {
   OneHotEncoder,
   OneHotEncoderParams
 } from './preprocessing/oneHotEncoder'
-import { LabelEncoder } from './preprocessing/labelEncoder'
-import {
+export { LabelEncoder } from './preprocessing/labelEncoder'
+export {
   OrdinalEncoder,
   OrdinalEncoderParams
 } from './preprocessing/ordinalEncoder'
-import { Normalizer, NormalizerParams } from './preprocessing/normalizer'
-import { Pipeline, PipelineParams, makePipeline } from './pipeline/pipeline'
-import {
+export { Normalizer, NormalizerParams } from './preprocessing/normalizer'
+export { Pipeline, PipelineParams, makePipeline } from './pipeline/pipeline'
+export {
   ColumnTransformer,
   ColumnTransformerParams
 } from './compose/columnTransformer'
-import { RobustScaler, RobustScalerParams } from './preprocessing/robustScaler'
-import { KMeans, KMeansParams } from './cluster/kmeans'
-import { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
-import {
-  loadBoston,
-  loadIris,
-  loadWine,
-  loadDiabetes,
-  loadBreastCancer,
-  loadDigits,
-  fetchCaliforniaHousing
-} from './datasets/datasets'
-import {
+export { RobustScaler, RobustScalerParams } from './preprocessing/robustScaler'
+export { KMeans, KMeansParams } from './cluster/kmeans'
+export { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
+export * as datasets from './datasets/datasets'
+export {
   makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams
 } from './ensemble/votingRegressor'
-import {
+export {
   makeVotingClassifier,
   VotingClassifier,
   VotingClassifierParams
 } from './ensemble/votingClassifier'
-import { LinearSVC, LinearSVCParams } from './svm/linearSVC'
-import { LinearSVR, LinearSVRParams } from './svm/linearSVR'
+export { LinearSVC, LinearSVCParams } from './svm/linearSVC'
+export { LinearSVR, LinearSVRParams } from './svm/linearSVR'
 
 export { SVR, SVRParams } from './svm/SVR'
 export { SVC, SVCParams } from './svm/SVC'
-
+export { GaussianNB } from './naive_bayes/gaussianNaiveBayes'
 export {
-  MinMaxScaler,
-  MinMaxScalerParams,
-  StandardScaler,
-  StandardScalerParams,
-  MaxAbsScaler,
-  RobustScaler,
-  RobustScalerParams,
-  Normalizer,
-  NormalizerParams,
-  OneHotEncoder,
-  OneHotEncoderParams,
-  LabelEncoder,
-  SimpleImputer,
-  SimpleImputerParams,
-  DummyRegressor,
-  DummyRegressorParams,
-  DummyClassifier,
-  DummyClassifierParams,
-  KNeighborsRegressor,
-  LinearRegression,
-  LinearRegressionParams,
-  LassoRegression,
-  LassoParams,
-  RidgeRegression,
-  RidgeRegressionParams,
-  LogisticRegression,
-  LogisticRegressionParams,
-  LinearSVC,
-  LinearSVCParams,
-  LinearSVR,
-  LinearSVRParams,
-  ElasticNet,
-  ElasticNetParams,
-  metrics,
-  Pipeline,
-  PipelineParams,
-  makePipeline,
-  ColumnTransformer,
-  ColumnTransformerParams,
-  OrdinalEncoder,
-  OrdinalEncoderParams,
-  KMeans,
-  KMeansParams,
-  makeVotingRegressor,
-  VotingRegressor,
-  VotingRegressorParams,
-  makeVotingClassifier,
-  VotingClassifier,
-  VotingClassifierParams,
-  loadBoston,
-  loadDiabetes,
-  loadIris,
-  loadWine,
-  loadBreastCancer,
-  loadDigits,
-  fetchCaliforniaHousing,
-  Scikit1D,
-  Scikit2D,
-  ScikitVecOrMatrix
-}
+  DecisionTreeClassifier,
+  DecisionTreeClassifierParams,
+  DecisionTreeRegressor,
+  DecisionTreeRegressorParams
+} from './tree/decisiontree'
