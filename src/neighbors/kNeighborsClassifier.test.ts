@@ -68,7 +68,7 @@ function testWithDataset(
 for (const algorithm of [
   ...KNeighborsClassifier.SUPPORTED_ALGORITHMS,
   undefined
-] as KNeighborsParams['algorithm'][]) {
+]) {
   describe(`KNeighborsClassifier({ algorithm: ${algorithm} })`, () => {
     testWithDataset(
       loadIris,

@@ -88,7 +88,9 @@ export function neighborhoodGenericTests(
 
         tf.engine().startScope()
         try {
-          await fc.assert(fc.asyncProperty(anyDistinctPoints(), testBody), { numRuns })
+          await fc.assert(fc.asyncProperty(anyDistinctPoints(), testBody), {
+            numRuns
+          })
         } finally {
           tf.engine().endScope()
         }
