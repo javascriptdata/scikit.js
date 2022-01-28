@@ -1,3 +1,17 @@
+# [1.8.0](https://github.com/javascriptdata/scikit.js/compare/v1.7.0...v1.8.0) (2022-01-28)
+
+
+### Bug Fixes
+
+* k-neighbors-regressor now supports no params ([9656d6b](https://github.com/javascriptdata/scikit.js/commit/9656d6b378db3d81fdb927ec5daaa97092b644d2))
+* kd-tree index issue fix + docs ([5eba76c](https://github.com/javascriptdata/scikit.js/commit/5eba76c5a9c0daa4f884880fdb5ee2d833347f49))
+* kd-tree protection copy + tfjs-core import ([5c4348d](https://github.com/javascriptdata/scikit.js/commit/5c4348d8f7a52b9c675365753d4647b41cb435f9))
+
+
+### Features
+
+* k-neighbors now lists available algorithms ([fcfcb87](https://github.com/javascriptdata/scikit.js/commit/fcfcb879ce857b110c6cd60a0e857656a7fd15eb))
+
 # [1.7.0](https://github.com/javascriptdata/scikit.js/compare/v1.6.0...v1.7.0) (2022-01-23)
 
 
