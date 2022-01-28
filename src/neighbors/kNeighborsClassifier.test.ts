@@ -34,83 +34,88 @@ function testWithDataset(
   params: KNeighborsParams,
   referenceAccuracy: number
 ) {
-  it(`KNeighborsClassifier(${JSON.stringify(params)}) fits ${
-    loadData.name
-  } as well as sklearn`, async () => {
-    const df = await loadData()
+  it(
+    `matches sklearn fitting ${loadData.name}`.padEnd(48) +
+      JSON.stringify(params),
+    async () => {
+      const df = await loadData()
 
-    const Xy = df.tensor as unknown as Tensor2D
-    let [nSamples, nFeatures] = Xy.shape
-    --nFeatures
+      const Xy = df.tensor as unknown as Tensor2D
+      let [nSamples, nFeatures] = Xy.shape
+      --nFeatures
 
-    const X = Xy.slice([0, 0], [nSamples, nFeatures])
-    const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
+      const X = Xy.slice([0, 0], [nSamples, nFeatures])
+      const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
 
-    const accuracies = await crossValScore(
-      new KNeighborsClassifier(params),
-      X,
-      y,
-      {
-        cv: new KFold({ nSplits: 3 })
-      }
-    )
+      const accuracies = await crossValScore(
+        new KNeighborsClassifier(params),
+        X,
+        y,
+        {
+          cv: new KFold({ nSplits: 3 })
+        }
+      )
 
-    expect(accuracies.mean()).toBeAllCloseTo(referenceAccuracy, {
-      atol: 0,
-      rtol: 0.005
-    })
-  }, 600_000)
+      expect(accuracies.mean()).toBeAllCloseTo(referenceAccuracy, {
+        atol: 0,
+        rtol: 0.005
+      })
+    },
+    60_000
+  )
 }
 
 for (const algorithm of [
-  'kdTree',
-  'brute',
-  undefined,
-  'auto'
-] as KNeighborsParams['algorithm'][]) {
-  testWithDataset(
-    loadDigits,
-    { nNeighbors: 5, weights: 'distance', algorithm },
-    0.963
-  )
-  testWithDataset(
-    loadIris,
-    { nNeighbors: 5, weights: 'distance', algorithm },
-    0.0
-  )
-  testWithDataset(
-    loadWine,
-    { nNeighbors: 5, weights: 'distance', algorithm },
-    0.135
-  )
-  testWithDataset(
-    loadBreastCancer,
-    { nNeighbors: 5, weights: 'distance', algorithm },
-    0.92
-  )
-
-  testWithDataset(
-    loadDigits,
-    { nNeighbors: 3, weights: 'uniform', algorithm },
-    0.967
-  )
-  testWithDataset(
-    loadIris,
-    { nNeighbors: 3, weights: 'uniform', algorithm },
-    0.0
-  )
-  testWithDataset(
-    loadWine,
-    { nNeighbors: 3, weights: 'uniform', algorithm },
-    0.158
-  )
-  testWithDataset(
-    loadBreastCancer,
-    { nNeighbors: 3, weights: 'uniform', algorithm },
-    0.916
-  )
-
+  ...KNeighborsClassifier.SUPPORTED_ALGORITHMS,
+  undefined
+]) {
   describe(`KNeighborsClassifier({ algorithm: ${algorithm} })`, () => {
+    testWithDataset(
+      loadIris,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      0.0
+    )
+    testWithDataset(
+      loadIris,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      0.0
+    )
+
+    testWithDataset(
+      loadWine,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      0.135
+    )
+    testWithDataset(
+      loadWine,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      0.158
+    )
+
+    testWithDataset(
+      loadBreastCancer,
+      { nNeighbors: 5, weights: 'distance', algorithm },
+      0.92
+    )
+    testWithDataset(
+      loadBreastCancer,
+      { nNeighbors: 3, weights: 'uniform', algorithm },
+      0.916
+    )
+
+    if ('brute' !== algorithm) {
+      testWithDataset(
+        loadDigits,
+        { nNeighbors: 5, weights: 'distance', algorithm, leafSize: 256 },
+        0.963
+      )
+      testWithDataset(
+        loadDigits,
+        { nNeighbors: 3, weights: 'uniform', algorithm, leafSize: 256 },
+        0.967
+      )
+    }
+
     it('correctly predicts sklearn example', async () => {
       const X_train = [[0], [1], [2], [3]]
       const y_train = [0, 0, 1, 1]

@@ -30,36 +30,42 @@ function testWithDataset(
   params: KNeighborsParams,
   referenceError: number
 ) {
-  it(`KNeighborsRegressor(${JSON.stringify(params)}) fits ${
-    loadData.name
-  } as well as sklearn`, async () => {
-    const df = await loadData()
+  it(
+    `matches sklearn fitting ${loadData.name}`.padEnd(48) +
+      JSON.stringify(params),
+    async () => {
+      const df = await loadData()
 
-    const Xy = df.tensor as unknown as Tensor2D
-    let [nSamples, nFeatures] = Xy.shape
-    --nFeatures
+      const Xy = df.tensor as unknown as Tensor2D
+      let [nSamples, nFeatures] = Xy.shape
+      --nFeatures
 
-    const X = Xy.slice([0, 0], [nSamples, nFeatures])
-    const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
+      const X = Xy.slice([0, 0], [nSamples, nFeatures])
+      const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
 
-    const scores = await crossValScore(new KNeighborsRegressor(params), X, y, {
-      cv: new KFold({ nSplits: 3 }),
-      scoring: negMeanSquaredError
-    })
+      const scores = await crossValScore(
+        new KNeighborsRegressor(params),
+        X,
+        y,
+        {
+          cv: new KFold({ nSplits: 3 }),
+          scoring: negMeanSquaredError
+        }
+      )
 
-    expect(scores.mean()).toBeAllCloseTo(-referenceError, {
-      atol: 0,
-      rtol: 0.01
-    })
-  }, 600_000)
+      expect(scores.mean()).toBeAllCloseTo(-referenceError, {
+        atol: 0,
+        rtol: 0.005
+      })
+    },
+    60_000
+  )
 }
 
 for (const algorithm of [
-  'kdTree',
-  'brute',
-  undefined,
-  'auto'
-] as KNeighborsParams['algorithm'][]) {
+  ...KNeighborsRegressor.SUPPORTED_ALGORITHMS,
+  undefined
+]) {
   describe(`KNeighborsRegressor({ algorithm: ${algorithm} })`, function () {
     testWithDataset(
       loadDiabetes,
@@ -71,22 +77,21 @@ for (const algorithm of [
       { nNeighbors: 3, weights: 'uniform', algorithm },
       3833
     )
-    if ('brute' !== algorithm) {
+    if ('kdTree' === algorithm) {
       testWithDataset(
         fetchCaliforniaHousing,
         { nNeighbors: 3, weights: 'distance', algorithm },
         1.31
       )
-      testWithDataset(
-        fetchCaliforniaHousing,
-        { nNeighbors: 4, weights: 'uniform', algorithm },
-        1.28
-      )
+    }
+    if ('auto' === algorithm) {
       testWithDataset(
         fetchCaliforniaHousing,
         { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
         1.19
       )
+    }
+    if (undefined === algorithm) {
       testWithDataset(
         fetchCaliforniaHousing,
         { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },

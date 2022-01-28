@@ -130,7 +130,12 @@ export class KdTree implements Neighborhood {
       indices[i] = i
     }
 
-    const data = await entries.data()
+    // TFJS may or may not return the underlying data array here.
+    // Changes to the array may or may not cause the content of
+    // `entries` to change. `entries.data()` may also be a small
+    // subarray of a much much larger array. To avoid any issue
+    // a protection copy needs to be made.
+    const data = (await entries.data()).slice()
 
     const points: Vec[] = Array.from(indices, (_, i) =>
       data.subarray(nFeatures * i, nFeatures * ++i)
@@ -170,9 +175,9 @@ export class KdTree implements Neighborhood {
       }
 
       for (let i = from; i < until; i++) {
-        const j = indices[i]
+        const j = nFeatures * indices[i]
         for (let k = 0; k < bBox.length; ) {
-          const djk = data[nFeatures * j + (k >>> 1)]
+          const djk = data[j + (k >>> 1)]
           bBox[k] = Math.min(bBox[k++], djk)
           bBox[k] = Math.max(bBox[k++], djk)
         }
@@ -192,10 +197,11 @@ export class KdTree implements Neighborhood {
 
       // 2.1: Determine Split Axis
       // -------------------------
+      // Choose largest side of bounding box as axis to split.
       const axis = (function () {
         let axis = 0
         let dMax = -Infinity
-        for (let i = bBox.length; i >= 0; ) {
+        for (let i = bBox.length; i > 0; ) {
           const di = bBox[--i] - bBox[--i]
           if (di > dMax) {
             dMax = di
@@ -358,8 +364,8 @@ export class KdTree implements Neighborhood {
     // KNeighborsBaseParams and add backpropagation support
     // to KdTree.
     return {
-      distances: tf.tensor(dists, [nQueries, k], 'float32'),
-      indices: tf.tensor(indxs, [nQueries, k], 'int32')
+      distances: tf.tensor2d(dists, [nQueries, k], 'float32'),
+      indices: tf.tensor2d(indxs, [nQueries, k], 'int32')
     }
   }
 }
