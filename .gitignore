@@ -107,6 +107,7 @@ dist
 
 # IDE Files
 .vscode/
+.idea/
 
 # Any copied src from shared
 scikitjs-node/src/shared
