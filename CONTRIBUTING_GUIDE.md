@@ -42,7 +42,7 @@ Some important scripts in the package.json file are:
 
 ### File names
 
-File names must be all snakecase names that specify the function or class that is inside. E.g `labelEncoder.ts` houses the class `LabelEncoder`. `trainTestSplit.ts` contains the function `trainTestSplit`.
+File names must be all lowerCamelCase names that specify the function or class that is inside. E.g `labelEncoder.ts` houses the class `LabelEncoder`. `trainTestSplit.ts` contains the function `trainTestSplit`.
 
 ### Source file structure
 
