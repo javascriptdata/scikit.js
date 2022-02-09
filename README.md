@@ -53,7 +53,7 @@ const y = [10, 20]
 
 await lr.fit(X, y)
 
-lr.predict([[3, 4]]) // roughly [30, 40]
+lr.predict([[3], [4]]) // roughly [30, 40]
 console.log(lr.coef)
 console.log(lr.intercept)
 ```
