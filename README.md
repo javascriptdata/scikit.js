@@ -20,16 +20,35 @@ Documentation site: [www.scikitjs.org](https://www.scikitjs.org)
 
 For use with modern bundlers in a frontend application, simply
 
-```js
+```bash
 npm i scikitjs
+```
+
+Usage is similar to other js libraries.
+
+```js
+import { LinearRegression } from 'scikitjs'
 ```
 
 ### Backend Users
 
 For Node.js users who wish to bind to the Tensorflow C++ library, simply
 
+```bash
+npm i scikitjs
+```
+
+But then import the node bindings
+
 ```js
-npm i scikitjs-node
+import { LinearRegression } from 'scikitjs/node'
+```
+
+The `scikitjs/node` path uses the new "exports" feature of node (which is available in node v13.3+).
+If you are using an older version of node, simply pass in the path to the cjs build
+
+```js
+import { LinearRegression } from 'scikitjs/dist/cjs/index.js'
 ```
 
 ### Script src
