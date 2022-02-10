@@ -437,7 +437,7 @@ describe('DecisionTree', function () {
       expect(clf.getNLeaves()).toEqual(el.leaf_count)
       expect(clf.score(X as number[][], y)).toBeCloseTo(el.score)
     })
-  }, 5000)
+  })
   it('Medium sized Boston example', async function () {
     /*
     [[[cog
