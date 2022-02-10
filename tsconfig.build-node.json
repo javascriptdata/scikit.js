@@ -1,5 +1,5 @@
 {
-  "extends":"./tsconfig.build.json",
+  "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "declarationDir": "./dist/node",
     "outDir": "./dist/node",
@@ -7,7 +7,7 @@
     "target": "esnext",
     "baseUrl": "./src",
     "paths": {
-      "shared/*": ["shared-node/*"],
+      "shared/*": ["shared-node/*"]
     }
   },
   "tsc-alias": {
@@ -17,8 +17,7 @@
       "exampleReplacer": {
         "enabled": true,
         "file": "./build/nodeReplacer.js"
-      },
+      }
     }
   }
 }
-

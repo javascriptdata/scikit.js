@@ -4,18 +4,12 @@
     "declarationDir": "./dist/esm",
     "outDir": "./dist/esm",
     "target": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    // "strict": false,
     "forceConsistentCasingInFileNames": true,
-    // "downlevelIteration": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -24,17 +18,8 @@
     "jsx": "react",
     "strict": true /* Enable all strict type-checking options. */,
     "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-    // "noUnusedLocals": true /* Report errors on unused locals. */,
-    // "noUnusedParameters": true /* Report errors on unused parameters. */,
-    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */
   },
-  "include": [
-    "src/**/*.ts",
-    // "src/**/*.tsx",
-  ],
-  "exclude": [
-    "docs",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["docs", "**/*.test.ts", "**/*.test.tsx"]
 }
