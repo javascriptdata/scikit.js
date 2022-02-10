@@ -58,7 +58,7 @@ function testWithDataset(
         rtol: 0.005
       })
     },
-    60_000
+    90_000
   )
 }
 
