@@ -16,9 +16,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
-    "test:ci": "node --max_old_space_size=8192 node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage --runInBand --ci && npm run prettier:check",
-    "test:clean": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
+    "test": "node_modules/jest/bin/jest.js src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
+    "test:ci": "node --max_old_space_size=8192 node_modules/jest/bin/jest.js src/**/*.test.ts src/*.test.ts --coverage --runInBand --ci && npm run prettier:check",
+    "test:clean": "node_modules/jest/bin/jest.js src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check",
     "compile:web": "node --max_old_space_size=8192 node_modules/.bin/rollup -c",
     "compile:esm": "node_modules/.bin/tsc -p tsconfig.build-esm.json && node_modules/.bin/tsc-alias -p tsconfig.build-esm.json",
     "compile:node-cjs": "node_modules/.bin/tsc -p tsconfig.build-node.json && node_modules/.bin/tsc-alias -p tsconfig.build-node.json",
@@ -83,6 +83,7 @@
     "eslint": "^8.4.1",
     "fast-check": "^2.20.0",
     "husky": "^7.0.4",
+    "jest": "^27.5.1",
     "jsdoc": "^3.6.7",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
