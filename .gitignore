@@ -70,6 +70,7 @@ typings/
 
 # dotenv environment variables file
 .env
+*.env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -105,7 +106,4 @@ dist
 
 # IDE Files
 .vscode/
-
-# Any copied src from shared
-scikitjs-node/src/shared
-scikitjs-browser/src/shared
+.idea/

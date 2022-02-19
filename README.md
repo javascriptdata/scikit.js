@@ -1,5 +1,7 @@
 # scikit.js
 
+[![Coverage Status](https://coveralls.io/repos/github/javascriptdata/scikit.js/badge.svg?branch=main)](https://coveralls.io/github/javascriptdata/scikit.js?branch=main) [![Release](https://github.com/javascriptdata/scikit.js/actions/workflows/release.yml/badge.svg)](https://github.com/javascriptdata/scikit.js/actions/workflows/release.yml)
+
 TypeScript package for predictive data analysis, data preparation and machine learning.
 
 Aims to be a Typescript port of the [scikit-learn](https://scikit-learn.org) python library.
@@ -18,16 +20,35 @@ Documentation site: [www.scikitjs.org](https://www.scikitjs.org)
 
 For use with modern bundlers in a frontend application, simply
 
-```js
+```bash
 npm i scikitjs
+```
+
+Usage is similar to other js libraries.
+
+```js
+import { LinearRegression } from 'scikitjs'
 ```
 
 ### Backend Users
 
 For Node.js users who wish to bind to the Tensorflow C++ library, simply
 
+```bash
+npm i scikitjs
+```
+
+But then import the node bindings
+
 ```js
-npm i scikitjs-node
+import { LinearRegression } from 'scikitjs/node'
+```
+
+The `scikitjs/node` path uses the new "exports" feature of node (which is available in node v13.3+).
+If you are using an older version of node, simply pass in the path to the cjs build
+
+```js
+import { LinearRegression } from 'scikitjs/dist/cjs/index.js'
 ```
 
 ### Script src
@@ -35,8 +56,10 @@ npm i scikitjs-node
 For those that wish to use script src tags, simply
 
 ```js
-<script src="https://unpkg.com/scikitjs/dist/scikit.min.js"></script>
+<script src="https://unpkg.com/scikitjs/dist/web/index.min.js"></script>
 ```
+
+This will expose a `scikitjs` object on the window which houses all of the libraries Estimators and functions.
 
 ## Simple Example
 
@@ -49,7 +72,7 @@ const y = [10, 20]
 
 await lr.fit(X, y)
 
-lr.predict([[3, 4]]) // roughly [30, 40]
+lr.predict([[3], [4]]) // roughly [30, 40]
 console.log(lr.coef)
 console.log(lr.intercept)
 ```
@@ -176,4 +199,3 @@ console.log(lr.coef)
 ## Contribution Guide
 
 See [guide](https://github.com/opensource9ja/scikit.js/blob/main/CONTRIBUTING_GUIDE.md)
-

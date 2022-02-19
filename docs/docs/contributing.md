@@ -196,16 +196,22 @@ and have it just work.
 2. It needs to be compatible with script tags. Someone should be able to just
 
 ```js
-<script src="https://unpkg.com/scikitjs/dist/scikit.min.js"></script>
+<script src="https://unpkg.com/scikitjs/dist/web/index.min.js"></script>
 ```
 
 3. It needs to be compatible with backend Node.js environments, and use the C++ Tensorflow.js bindings for speed improvements there.
 
 ```js
-yarn add scikitjs-node
+yarn add scikitjs
 ```
 
-Because there are two deploy environments (frontend / backend), we have two directories in the repo named `scikitjs-browser` and `scikitjs-node`. They are both responsible for building their separate bundles. The browser "bundle" is technically two separate bundles (a script tag bundle, and an ESM module) You'll notice that their `src` directories are basically empty.
+And then use it easily with
+
+```js
+import { LinearRegression } from 'scikitjs/node'
+```
+
+Because there are multiple deploy environments (frontend / backend and eventually gpu), we have multiple output directories. We build an esm (ES Modules), cjs (Commonjs modules), (ES5 build) for older browsers, and a full-fledged script tag bundle which bundles up tensorflow, and other dependencies.
 
 The repo basically looks like this.
 
@@ -214,27 +220,25 @@ scikitjs
 │   README.md
 │   package.json
 │
-└───scikitjs-browser
+└───src
+│   │   package.json
+│   └───shared
+│       │    globals.ts
+|
+|   └───shared-esm
+|       |    globals.ts
+|
+|   └───shared-node
+|       |    globals.ts
+│
+└───docs
 │   │   package.json
 │   └───src
 │       │    globals.ts
 │
-└───scikitjs-node
-│   │   package.json
-│   └───src
-│       │    globals.ts
-│
-└───shared
-    │   package.json
-    └───lib
-        │    newFile.ts
 ```
 
-You'll notice a `shared` directory at the bottom. This is because all of the important algorithmic code is in the directory `shared/lib`. That `shared/lib` directory is copied into the other two and build time, where it is then built for the different environments.
-
-## Shared directory
-
-So our new DummyRegressor will live in the `shared/lib` directory. Moreover, we use the exact same folder structure as scikit-learn just to make it easier to know for certain if an estimator has been built or not. Because the `DummyRegressor` lives in the `dummy` directory, then we simply need to navigate to `/shared/lib/dummy` and create the file there.
+The `src` directory contains all of the important algorithmic code. The build scripts swap the `shared/globals.ts` file for other `shared-*/globals.ts` files that have different versions of our dependencies to build different versions of the library (esm, cjs, etc).
 
 ## There ya have it
 

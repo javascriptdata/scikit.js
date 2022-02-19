@@ -4,6 +4,8 @@
 
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
+  # This is useful for programs that wish to download the datasets that
+  # we store on the docs site (Iris, Boston Housing, etc)
   for = "/*"
     [headers.values]
     Access-Control-Allow-Origin = "*"
