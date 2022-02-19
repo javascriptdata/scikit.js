@@ -1,7 +1,7 @@
 import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { Scikit2D, Scikit1D } from './types'
 import { r2Score, accuracyScore } from './metrics/metrics'
-
+import Serialize from './serialize'
 export class TransformerMixin {
   // We assume that fit and transform exist
   [x: string]: any
@@ -31,7 +31,7 @@ export class RegressorMixin {
   }
 }
 
-export class ClassifierMixin {
+export class ClassifierMixin extends Serialize{
   // We assume we have a predict function
   [x: string]: any
 
