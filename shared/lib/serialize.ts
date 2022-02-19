@@ -2,6 +2,8 @@
  * A Generic class to serialized and Unserialized classes (models, transformers,
  * or any operator)
  */
+
+import { tf } from '../globals'
 export default class Serialize {
   public name = 'Serialize' // default name for all inherited class
 
@@ -11,7 +13,14 @@ export default class Serialize {
    * @returns Json string
    */
   public toJson(): string {
-    return JSON.stringify(this)
+    const thisCopy: any = Object.assign({}, this)
+    for (const key of Object.keys(thisCopy)) {
+      let value = thisCopy[key]
+      if (value instanceof tf.Tensor) {
+        thisCopy[key] = value.arraySync()
+      }
+    }
+    return JSON.stringify(thisCopy)
   }
 
   /**
@@ -24,6 +33,14 @@ export default class Serialize {
     let jsonClass = JSON.parse(model)
     if (jsonClass.name != this.name) {
       throw new Error(`wrong json values for ${this.name} constructor`)
+    }
+
+    const copyThis: any = Object.assign({}, this)
+    for (let key of Object.keys(this)) {
+      let value = copyThis[key]
+      if (value instanceof tf.Tensor) {
+        jsonClass[key] = tf.tensor(jsonClass[key])
+      }
     }
 
     return Object.assign(this, jsonClass)
