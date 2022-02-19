@@ -12,6 +12,7 @@ import {
 import { Scikit2D } from '../types'
 import { convertToNumericTensor2D, sampleWithoutReplacement } from '../utils'
 import { tf } from '../../globals'
+import Serialize from '../serialize'
 
 /*
 Next steps
@@ -68,7 +69,7 @@ export interface KMeansParams {
    kmean.fit(X)
    ```
  */
-export class KMeans {
+export class KMeans extends Serialize {
   nClusters: number
   init: string
   nInit?: number
@@ -91,6 +92,7 @@ export class KMeans {
     nInit = 10,
     randomState
   }: KMeansParams = {}) {
+    super()
     this.nClusters = nClusters
     this.init = init
     this.maxIter = maxIter
