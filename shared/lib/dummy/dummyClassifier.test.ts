@@ -53,4 +53,36 @@ describe('DummyClassifier', function () {
 
     assert.deepEqual(scaler.classes, [1, 2, 3])
   })
+  it('should serialize DummyClassifier', function () {
+    const clf = new DummyClassifier()
+
+    const X = [
+      [-1, 5],
+      [-0.5, 5],
+      [0, 10],
+      [1, 10]
+    ]
+    const y = [10, 20, 20, 30]
+    const expectedResult = { "name":"dummyclassifier", "EstimatorType":"classifier", "constant":20, "strategy":"mostFrequent", "classes":[10, 20, 30] }
+
+    clf.fit(X, y)
+    const clfSave = clf.toJson()
+    assert.deepEqual(expectedResult, JSON.parse(clfSave))
+  })
+  it('should load DummyClassifier', function () {
+    const clf = new DummyClassifier()
+
+    const X = [
+      [-1, 5],
+      [-0.5, 5],
+      [0, 10],
+      [1, 10]
+    ]
+    const y = [10, 20, 20, 30]
+
+    clf.fit(X, y)
+    const clfSave = clf.toJson()
+    const newClf = new DummyClassifier().fromJson(clfSave)
+    assert.deepEqual(clf, newClf)
+  })
 })
