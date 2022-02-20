@@ -44,8 +44,7 @@ describe('KMeans', () => {
     kmean.fit(X)
     const ksave = kmean.toJson()
 
-    assert.deepEqual(
-      expectedResult,
+    expect(expectedResult).toEqual(
       JSON.parse(ksave)
     )
   })
@@ -59,8 +58,7 @@ describe('KMeans', () => {
     kmean.fit(X)
     const ksave = kmean.toJson()
     const ksaveModel = new KMeans().fromJson(ksave)
-    assert.deepEqual(
-      centroids,
+    expect(centroids).toEqual(
       ksaveModel.clusterCenters.arraySync()
     )
   })
