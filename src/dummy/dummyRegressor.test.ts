@@ -55,4 +55,41 @@ describe('DummyRegressor', function () {
     reg.fit(X, y)
     expect(reg.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })
+  it('Should save DummyRegressor', function () {
+    const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
+
+    const X = [
+      [-1, 5],
+      [-0.5, 5],
+      [0, 10]
+    ]
+    const y = [10, 12, 30]
+    const saveResult = {"name":"dummyregressor","EstimatorType":"regressor","strategy":"constant","constant":10}
+
+    reg.fit(X, y)
+    
+    expect(saveResult).toEqual(JSON.parse(reg.toJson()))
+  })
+
+  it('Should load serialized DummyRegressor', function () {
+    const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
+
+    const X = [
+      [-1, 5],
+      [-0.5, 5],
+      [0, 10]
+    ]
+    const y = [10, 12, 30]
+    const predictX = [
+      [1, 0],
+      [1, 1],
+      [1, 1]
+    ]
+
+    reg.fit(X, y)
+    const saveReg = reg.toJson()
+    const newReg = new DummyRegressor().fromJson(saveReg)
+    
+    expect(newReg.predict(predictX).arraySync()).toEqual([10, 10, 10])
+  })
 })
