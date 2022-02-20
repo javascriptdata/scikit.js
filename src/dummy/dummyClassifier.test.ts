@@ -65,7 +65,7 @@ describe('DummyClassifier', function () {
 
     clf.fit(X, y)
     const clfSave = clf.toJson()
-    assert.deepEqual(expectedResult, JSON.parse(clfSave))
+    expect(expectedResult).toEqual(JSON.parse(clfSave))
   })
   it('should load DummyClassifier', function () {
     const clf = new DummyClassifier()
@@ -81,6 +81,6 @@ describe('DummyClassifier', function () {
     clf.fit(X, y)
     const clfSave = clf.toJson()
     const newClf = new DummyClassifier().fromJson(clfSave)
-    assert.deepEqual(clf, newClf)
+    expect(clf).toEqual(newClf)
   })
 })
