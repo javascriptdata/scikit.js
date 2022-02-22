@@ -19,21 +19,23 @@ import {
   Tensor2D,
   tensor1d,
   tensor2d,
-  losses
+  losses,
+  RecursiveArray
 } from '@tensorflow/tfjs-core'
 import {
   layers,
   sequential,
   Sequential,
   ModelFitArgs,
-  ModelCompileArgs
+  ModelCompileArgs,
 } from '@tensorflow/tfjs-layers'
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
-import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
-import { Scikit2D, Scikit1D } from '../types'
+import { convertToNumericTensor1D, convertToNumericTensor2D, optimizer } from '../utils'
+import { Scikit2D, Scikit1D, optimizerTypes, lossTypes } from '../types'
 import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
 import { assert } from '../typesUtils'
 import { ClassifierMixin } from '../mixins'
+import { tf } from '../shared/globals'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -91,6 +93,10 @@ export interface SGDClassifierParams {
    */
 
   isClassification?: boolean
+
+  optimizerType: optimizerTypes,
+
+  lossType: lossTypes
 }
 
 export class SGDClassifier extends ClassifierMixin {
@@ -98,19 +104,25 @@ export class SGDClassifier extends ClassifierMixin {
   modelFitArgs: ModelFitArgs
   modelCompileArgs: ModelCompileArgs
   denseLayerArgs: DenseLayerArgs
+  optimizerType: optimizerTypes
+  lossType: lossTypes
 
   oneHot: OneHotEncoder
 
   constructor({
     modelFitArgs,
     modelCompileArgs,
-    denseLayerArgs
+    denseLayerArgs,
+    optimizerType,
+    lossType
   }: SGDClassifierParams) {
     super()
     this.model = sequential()
     this.modelFitArgs = modelFitArgs
     this.modelCompileArgs = modelCompileArgs
     this.denseLayerArgs = denseLayerArgs
+    this.optimizerType = optimizerType
+    this.lossType = lossType
     // Next steps: Implement "drop" mechanics for OneHotEncoder
     // There is a possibility to do a drop => if_binary which would
     // squash down on the number of variables that we'd have to learn
@@ -267,7 +279,9 @@ export class SGDClassifier extends ClassifierMixin {
     return {
       modelFitArgs: this.modelFitArgs,
       modelCompileArgs: this.modelCompileArgs,
-      denseLayerArgs: this.denseLayerArgs
+      denseLayerArgs: this.denseLayerArgs,
+      optimizerType: this.optimizerType,
+      lossType: this.lossType
     }
   }
 
@@ -400,5 +414,59 @@ export class SGDClassifier extends ClassifierMixin {
     }
 
     return intercept
+  }
+
+  private getModelWeight(): Promise<RecursiveArray<number>> {
+    return Promise.all(this.model.getWeights().map((weight) => weight.array()))
+  }
+  
+  public async toJson(): Promise<string> {
+    const classifierJson = JSON.parse(super.toJson() as string)
+    const modelConfig = this.model.getConfig()
+    const modelWeight = await this.getModelWeight()
+    classifierJson.model = {
+      config: modelConfig,
+      weight: modelWeight
+    }
+    
+    if (this.denseLayerArgs.kernelInitializer) {
+      const initializerName = this.denseLayerArgs.kernelInitializer.constructor.name
+      classifierJson.denseLayerArgs.kernelInitializer = initializerName
+    }
+    if (this.denseLayerArgs.biasInitializer) {
+      const biasName = this.denseLayerArgs.biasInitializer.constructor.name
+      classifierJson.denseLayerArgs.biasInitializer = biasName
+    }
+
+    return JSON.stringify(classifierJson)
+
+  }
+
+  public fromJson(model: string) {
+    let jsonClass = JSON.parse(model)
+    if (jsonClass.name != this.name) {
+      throw new Error(`wrong json values for ${this.name} constructor`)
+    }
+
+    const jsonModel = Sequential.fromConfig(Sequential, jsonClass.model.config) as Sequential
+    const jsonOpt = optimizer(jsonClass.optimizerType)
+    const optim = Object.assign(jsonOpt, jsonClass.modelCompileArgs.optimizer)
+    const loss = losses.meanSquaredError
+    jsonClass.modelCompileArgs = {
+      ...jsonClass.modelCompileArgs,
+      optimizer: optim,
+      loss: loss
+    }
+
+    jsonModel.compile(jsonClass.modelCompileArgs)
+    const weights = []
+    for (const weight of jsonClass.model.weight) {
+      weights.push(tf.tensor(weight))
+    }
+    jsonModel.setWeights(weights)
+    jsonClass.model = jsonModel
+
+    return jsonClass
+
   }
 }
