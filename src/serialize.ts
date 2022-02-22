@@ -12,7 +12,7 @@ export default class Serialize {
    * a json string
    * @returns Json string
    */
-  public toJson(): string {
+  public toJson(): string | Promise<string> {
     const thisCopy: any = Object.assign({}, this)
     for (const key of Object.keys(thisCopy)) {
       let value = thisCopy[key]
