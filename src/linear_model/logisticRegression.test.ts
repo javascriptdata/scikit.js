@@ -91,4 +91,53 @@ describe('LogisticRegression', function () {
     let finalResults = logreg.predict(Xtest)
     expect(finalResults.arraySync()).toEqual([0, 0, 0, 1, 1, 1, 2, 2, 2])
   }, 30000)
+
+  it('Should save and load  trained model', async function () {
+    let X = [
+      [0, -1],
+      [1, 0],
+      [1, 1],
+      [1, -1],
+      [2, 0],
+      [2, 1],
+      [2, -1],
+      [3, 2],
+      [0, 4],
+      [1, 3],
+      [1, 4],
+      [1, 5],
+      [2, 3],
+      [2, 4],
+      [2, 5],
+      [3, 4],
+      [1, 10],
+      [1, 12],
+      [2, 10],
+      [2, 11],
+      [2, 14],
+      [3, 11]
+    ]
+    let y = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
+
+    let Xtest = [
+      [0, -2],
+      [1, 0.5],
+      [1.5, -1],
+      [1, 2.5],
+      [2, 3.5],
+      [1.5, 4],
+      [1, 10.5],
+      [2.5, 10.5],
+      [2, 11.5]
+    ]
+
+    let logreg = new LogisticRegression({ penalty: 'l2' })
+    await logreg.fit(X, y)
+
+    const serializeModel = await logreg.toJson()
+    const newModel = logreg.fromJson(serializeModel) as LogisticRegression
+    const newModelResult = newModel.predict(Xtest)
+
+    expect(newModelResult.arraySync()).toEqual([0, 0, 0, 0, 0, 0, 2, 2, 2])
+  }, 30000)
 })
