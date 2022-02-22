@@ -23,6 +23,11 @@ export type ScikitLike2D = TypedArray[] | number[][] | boolean[][] | string[][]
 export type Scikit1D = ScikitLike1D | Tensor1D | dfd.Series
 export type Scikit2D = ScikitLike2D | Tensor2D | dfd.DataFrame
 export type ScikitVecOrMatrix = Scikit1D | Scikit2D
+export type optimizerTypes = "sgd" | "momemtum" | "adadelta" | "rmsprop" | "adamax" | "adam"
+export type lossTypes = "meanSquaredError" | "meanAbsoluteError" | "meanAbsolutePercentageError" |
+  "meanSquaredLogarithmicError" | "squaredHinge" | "hinge" | "categoricalHinge" |
+  "logcosh" | "categoricalCrossentropy" | "sparseCategoricalCrossentropy" | "binaryCrossentropy" |
+  "kullbackLeiblerDivergence" | "poisson" | "cosineProximity"
 
 export type ArrayType1D = Array<
   number | string | boolean | (number | string | boolean)
