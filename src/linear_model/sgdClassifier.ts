@@ -28,10 +28,11 @@ import {
   Sequential,
   ModelFitArgs,
   ModelCompileArgs,
+  callbacks
 } from '@tensorflow/tfjs-layers'
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
-import { convertToNumericTensor1D, convertToNumericTensor2D, optimizer } from '../utils'
-import { Scikit2D, Scikit1D, optimizerTypes, lossTypes } from '../types'
+import { convertToNumericTensor1D, convertToNumericTensor2D, optimizer, getLoss, initializer } from '../utils'
+import { Scikit2D, Scikit1D, OptimizerTypes, LossTypes } from '../types'
 import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
 import { assert } from '../typesUtils'
 import { ClassifierMixin } from '../mixins'
@@ -94,9 +95,9 @@ export interface SGDClassifierParams {
 
   isClassification?: boolean
 
-  optimizerType: optimizerTypes,
+  optimizerType: OptimizerTypes,
 
-  lossType: lossTypes
+  lossType: LossTypes
 }
 
 export class SGDClassifier extends ClassifierMixin {
@@ -104,8 +105,8 @@ export class SGDClassifier extends ClassifierMixin {
   modelFitArgs: ModelFitArgs
   modelCompileArgs: ModelCompileArgs
   denseLayerArgs: DenseLayerArgs
-  optimizerType: optimizerTypes
-  lossType: lossTypes
+  optimizerType: OptimizerTypes
+  lossType: LossTypes
 
   oneHot: OneHotEncoder
 
@@ -419,7 +420,7 @@ export class SGDClassifier extends ClassifierMixin {
   private getModelWeight(): Promise<RecursiveArray<number>> {
     return Promise.all(this.model.getWeights().map((weight) => weight.array()))
   }
-  
+
   public async toJson(): Promise<string> {
     const classifierJson = JSON.parse(super.toJson() as string)
     const modelConfig = this.model.getConfig()
@@ -428,7 +429,7 @@ export class SGDClassifier extends ClassifierMixin {
       config: modelConfig,
       weight: modelWeight
     }
-    
+
     if (this.denseLayerArgs.kernelInitializer) {
       const initializerName = this.denseLayerArgs.kernelInitializer.constructor.name
       classifierJson.denseLayerArgs.kernelInitializer = initializerName
@@ -437,9 +438,7 @@ export class SGDClassifier extends ClassifierMixin {
       const biasName = this.denseLayerArgs.biasInitializer.constructor.name
       classifierJson.denseLayerArgs.biasInitializer = biasName
     }
-
     return JSON.stringify(classifierJson)
-
   }
 
   public fromJson(model: string) {
@@ -451,7 +450,7 @@ export class SGDClassifier extends ClassifierMixin {
     const jsonModel = Sequential.fromConfig(Sequential, jsonClass.model.config) as Sequential
     const jsonOpt = optimizer(jsonClass.optimizerType)
     const optim = Object.assign(jsonOpt, jsonClass.modelCompileArgs.optimizer)
-    const loss = losses.meanSquaredError
+    const loss = getLoss(jsonClass.lossType)
     jsonClass.modelCompileArgs = {
       ...jsonClass.modelCompileArgs,
       optimizer: optim,
@@ -466,7 +465,29 @@ export class SGDClassifier extends ClassifierMixin {
     jsonModel.setWeights(weights)
     jsonClass.model = jsonModel
 
-    return jsonClass
+    // if call back create callback
+    // default usecase is set to EarlyStop
+    // might get complex for custom callback
+    if (jsonClass.modelFitArgs.callbacks) {
+      let jsonCallback = callbacks.earlyStopping()
+      let modelFitArgs = jsonClass.modelFitArgs
+      jsonCallback = Object.assign(jsonCallback, modelFitArgs.callbacks[0])
+      modelFitArgs.callbacks = [jsonCallback]
+    }
 
+    if (jsonClass.denseLayerArgs.kernelInitializer) {
+      let initializerName = jsonClass.denseLayerArgs.kernelInitializer
+      jsonClass.denseLayerArgs.kernelInitializer = initializer(initializerName)
+    }
+    if (jsonClass.denseLayerArgs.biasInitializer) {
+      let biasName = jsonClass.denseLayerArgs.biasInitializer
+      jsonClass.denseLayerArgs.biasInitializer = initializer(biasName)
+    }
+
+    if (jsonClass.oneHot) {
+      let jsonOneHotEncoder = new OneHotEncoder()
+      jsonClass.oneHot = Object.assign(jsonOneHotEncoder, jsonClass.oneHot)
+    }
+    return Object.assign(this, jsonClass)
   }
 }
