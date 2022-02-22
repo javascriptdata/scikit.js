@@ -39,10 +39,15 @@ describe('KMeans', () => {
   })
 
   it('should save kmeans model', () => {
-    const expectedResult = { "name":"kmeans", "nClusters":2, "init":"random", "maxIter":300, "tol":0.0001, "randomState":0, "nInit":10, "clusterCenters":[[2.5, 1], [2.5, 4]] }
+    const expectedResult = {
+      "name": "kmeans", "nClusters": 2,
+      "init": "random", "maxIter": 300,
+      "tol": 0.0001, "randomState": 0,
+      "nInit": 10, "clusterCenters": [[2.5, 1], [2.5, 4]]
+    }
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
-    const ksave = kmean.toJson()
+    const ksave = kmean.toJson() as string
 
     expect(expectedResult).toEqual(
       JSON.parse(ksave)
@@ -56,7 +61,7 @@ describe('KMeans', () => {
     ]
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
-    const ksave = kmean.toJson()
+    const ksave = kmean.toJson() as string
     const ksaveModel = new KMeans().fromJson(ksave)
     expect(centroids).toEqual(
       ksaveModel.clusterCenters.arraySync()
