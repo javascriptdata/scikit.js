@@ -64,7 +64,7 @@ describe('DummyClassifier', function () {
     const expectedResult = { "name":"dummyclassifier", "EstimatorType":"classifier", "constant":20, "strategy":"mostFrequent", "classes":[10, 20, 30] }
 
     clf.fit(X, y)
-    const clfSave = clf.toJson()
+    const clfSave = clf.toJson() as string
     expect(expectedResult).toEqual(JSON.parse(clfSave))
   })
   it('should load DummyClassifier', function () {
@@ -79,7 +79,7 @@ describe('DummyClassifier', function () {
     const y = [10, 20, 20, 30]
 
     clf.fit(X, y)
-    const clfSave = clf.toJson()
+    const clfSave = clf.toJson() as string
     const newClf = new DummyClassifier().fromJson(clfSave)
     expect(clf).toEqual(newClf)
   })
