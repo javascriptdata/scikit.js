@@ -2,6 +2,7 @@ import { Scikit1D, Scikit2D } from '../types'
 import { tf } from '../shared/globals'
 import { RegressorMixin } from '../mixins'
 import { Tensor1D } from '@tensorflow/tfjs-core'
+import { fromJson, toJson } from './serializeEnsemble'
 /*
   Next steps:
   0. Write validation code to check Estimator inputs
@@ -94,6 +95,15 @@ export class VotingRegressor extends RegressorMixin {
 
   public async fitTransform(X: Scikit2D, y: Scikit1D) {
     return (await this.fit(X, y)).transform(X)
+  }
+
+  public fromJson(model: string) {
+    return fromJson(this, model) as this
+  }
+
+  public async toJson(): Promise<string> {
+    const classJson = JSON.parse(super.toJson() as string)
+    return toJson(this, classJson)
   }
 }
 
