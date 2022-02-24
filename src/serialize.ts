@@ -43,6 +43,6 @@ export default class Serialize {
       }
     }
 
-    return Object.assign(this, jsonClass)
+    return Object.assign(this, jsonClass) as this
   }
 }
