@@ -94,7 +94,9 @@ export class LinearSVR extends SGDRegressor {
         units: 1,
         useBias: Boolean(fitIntercept),
         kernelRegularizer: tf.regularizers.l2({ l2: C })
-      }
+      },
+      optimizerType: 'adam',
+      lossType: 'custom'
     })
   }
 }
