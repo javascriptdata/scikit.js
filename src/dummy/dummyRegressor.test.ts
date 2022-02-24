@@ -64,7 +64,12 @@ describe('DummyRegressor', function () {
       [0, 10]
     ]
     const y = [10, 12, 30]
-    const saveResult = { "name":"dummyregressor", "EstimatorType":"regressor", "strategy":"constant", "constant":10 }
+    const saveResult = {
+      name: 'dummyregressor',
+      EstimatorType: 'regressor',
+      strategy: 'constant',
+      constant: 10
+    }
 
     reg.fit(X, y)
 
@@ -87,7 +92,7 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    const saveReg = reg.toJson()
+    const saveReg = reg.toJson() as string
     const newReg = new DummyRegressor().fromJson(saveReg)
 
     expect(newReg.predict(predictX).arraySync()).toEqual([10, 10, 10])
