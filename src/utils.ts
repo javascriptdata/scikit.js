@@ -15,7 +15,6 @@
 import { DataType } from '@tensorflow/tfjs-core/dist/types'
 import { losses, train } from '@tensorflow/tfjs-core'
 
-
 import {
   ArrayType1D,
   ArrayType2D,
@@ -369,76 +368,73 @@ export function sampleWithoutReplacement(
 
 export function optimizer(opt: OptimizerTypes) {
   switch (opt) {
-    case "sgd":
+    case 'sgd':
       return train.sgd(0.1)
-      break;
-    case "momentum":
+      break
+    case 'momentum':
       return train.momentum(0.1, 0.9)
-      break;
-    case "adadelta":
+      break
+    case 'adadelta':
       return train.adadelta()
-      break;
-    case "adagrad":
+      break
+    case 'adagrad':
       return train.adagrad(0.1)
-      break;
-    case "rmsprop":
+      break
+    case 'rmsprop':
       return train.rmsprop(0.1)
-      break;
-    case "adamax":
+      break
+    case 'adamax':
       return train.adamax()
-      break;
-    case "adam":
+      break
+    case 'adam':
       return train.adam()
-      break;
-
+      break
   }
 }
 
 export function getLoss(loss: LossTypes) {
   switch (loss) {
-    case "meanSquaredError":
+    case 'meanSquaredError':
       return losses.meanSquaredError
-      break;
-    case "sigmoidCrossEntropy":
+      break
+    case 'sigmoidCrossEntropy':
       return losses.sigmoidCrossEntropy
-      break;
-    case "softmaxCrossEntropy":
+      break
+    case 'softmaxCrossEntropy':
       return losses.softmaxCrossEntropy
-      break;
-    case "logLoss":
+      break
+    case 'logLoss':
       return losses.logLoss
-      break;
-    case "huberLoss":
+      break
+    case 'huberLoss':
       return losses.huberLoss
-      break;
-    case "hingeLoss":
+      break
+    case 'hingeLoss':
       return losses.hingeLoss
-      break;
-    case "cosineDistance":
+      break
+    case 'cosineDistance':
       return losses.cosineDistance
-      break;
-    case "computeWeightedLoss":
+      break
+    case 'computeWeightedLoss':
       return losses.computeWeightedLoss
-      break;
-    case "absoluteDifference":
+      break
+    case 'absoluteDifference':
       return losses.absoluteDifference
-      break;
+      break
     default:
       throw new Error(`${loss} loss not supported`)
-      break;
-
+      break
   }
 }
 
 export function initializer(init: Initializers) {
   switch (init) {
-    case "Zeros":
+    case 'Zeros':
       return tf.initializers.zeros()
-    case "Ones":
+    case 'Ones':
       return tf.initializers.ones()
     default:
       throw new Error(`${init} initializer not supported`)
-      break;
+      break
   }
 }
-
