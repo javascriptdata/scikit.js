@@ -86,4 +86,23 @@ describe('GaussianNB', function () {
 
     expect(labels.arraySync()).toEqual([0, 0, 1, 1, 1])
   })
+  it('Should save and load Model', async () => {
+    const X = [
+      [0.1, 0.9],
+      [0.3, 0.7],
+      [0.9, 0.1],
+      [0.8, 0.2],
+      [0.81, 0.19]
+    ]
+    const y = [0, 0, 1, 1, 1]
+
+    const model = new GaussianNB({ priors: [0.5, 0.5], varSmoothing: 1.0 })
+
+    await model.fit(X, y)
+    const labels = model.predict(X)
+
+    const serializeModel = model.toJson()
+    const newModel = new GaussianNB().fromJson(serializeModel)
+    expect(newModel.predict(X).arraySync()).toEqual([0, 0, 1, 1, 1])
+  })
 })
