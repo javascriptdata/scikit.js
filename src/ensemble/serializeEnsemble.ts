@@ -6,7 +6,9 @@ import { LinearRegression } from '../linear_model/linearRegression'
 import { LassoRegression } from '../linear_model/lassoRegression'
 import { ElasticNet } from '../linear_model/elasticNet'
 import { LabelEncoder } from '../preprocessing/labelEncoder'
+import { SimpleImputer } from '../impute/simpleImputer'
 import { tf } from '../shared/globals'
+import { MinMaxScaler } from '../preprocessing/minMaxScaler'
 
 function getEstimator(name: string, serialJson: string) {
   switch (name) {
@@ -20,10 +22,14 @@ function getEstimator(name: string, serialJson: string) {
       return new RidgeRegression().fromJson(serialJson)
     case 'linearregression':
       return new LinearRegression().fromJson(serialJson)
-    case 'lassoregresion':
+    case 'lassoregression':
       return new LassoRegression().fromJson(serialJson)
     case 'elasticnet':
       return new ElasticNet().fromJson(serialJson)
+    case 'simpleimputer':
+      return new SimpleImputer().fromJson(serialJson)
+    case 'minmaxscaler':
+        return new MinMaxScaler().fromJson(serialJson)
     default:
       throw new Error(`${name} estimator not supported`)
   }
@@ -45,16 +51,17 @@ export function fromJson(classConstructor: any, model: string) {
     }
   }
   // for ensembles
-  if (jsonClass.estimators) {
-    for (let i = 0; i < jsonClass.estimators.length; i++) {
-      const estimatorName = jsonClass.estimators[i][0]
+  if (jsonClass.estimators || jsonClass.steps) {
+    const jsonEstimatorOrStep = jsonClass.estimators || jsonClass.steps
+    for (let i = 0; i < jsonEstimatorOrStep.length; i++) {
+      const estimatorName = JSON.parse(jsonEstimatorOrStep[i][1]).name
       const estimators = getEstimator(
         estimatorName,
-        jsonClass.estimators[i][1]
+        jsonEstimatorOrStep[i][1]
       )
-      jsonClass.estimators[i][1] = Object.assign(
+      jsonEstimatorOrStep[i][1] = Object.assign(
         estimators,
-        jsonClass.estimators[i][1]
+        jsonEstimatorOrStep[i][1]
       )
     }
   }
@@ -68,9 +75,19 @@ export function fromJson(classConstructor: any, model: string) {
 
 export async function toJson(classConstructor: any, classJson: any) {
   let i = 0
-  for (const estimator of classConstructor.estimators) {
-    classJson.estimators[i][1] = await estimator[1].toJson()
-    i += 1
+  if (classConstructor.estimators) {
+    for (const estimator of classConstructor.estimators) {
+      classJson.estimators[i][1] = await estimator[1].toJson()
+      i += 1
+    }
   }
+
+  if (classConstructor.steps) {
+    for (const step of classConstructor.steps) {
+      classJson.steps[i][1] = await step[1].toJson()
+      i += 1
+    }
+  }
+
   return JSON.stringify(classJson)
 }
