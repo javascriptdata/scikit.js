@@ -17,7 +17,10 @@ export default class Serialize {
     for (const key of Object.keys(thisCopy)) {
       let value = thisCopy[key]
       if (value instanceof tf.Tensor) {
-        thisCopy[key] = value.arraySync()
+        thisCopy[key] = {
+          type: "Tensor",
+          value: value.arraySync()
+        }
       }
     }
     return JSON.stringify(thisCopy)
@@ -35,11 +38,10 @@ export default class Serialize {
       throw new Error(`wrong json values for ${this.name} constructor`)
     }
 
-    const copyThis: any = Object.assign({}, this)
-    for (let key of Object.keys(this)) {
-      let value = copyThis[key]
-      if (value instanceof tf.Tensor) {
-        jsonClass[key] = tf.tensor(jsonClass[key])
+    for (let key of Object.keys(jsonClass)) {
+      let value = jsonClass[key]
+      if (typeof value === "object" && value?.type === "Tensor") {
+        jsonClass[key] = tf.tensor(jsonClass[key].value)
       }
     }
 
