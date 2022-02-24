@@ -29,7 +29,7 @@ function getEstimator(name: string, serialJson: string) {
     case 'simpleimputer':
       return new SimpleImputer().fromJson(serialJson)
     case 'minmaxscaler':
-        return new MinMaxScaler().fromJson(serialJson)
+      return new MinMaxScaler().fromJson(serialJson)
     default:
       throw new Error(`${name} estimator not supported`)
   }
@@ -55,10 +55,7 @@ export function fromJson(classConstructor: any, model: string) {
     const jsonEstimatorOrStep = jsonClass.estimators || jsonClass.steps
     for (let i = 0; i < jsonEstimatorOrStep.length; i++) {
       const estimatorName = JSON.parse(jsonEstimatorOrStep[i][1]).name
-      const estimators = getEstimator(
-        estimatorName,
-        jsonEstimatorOrStep[i][1]
-      )
+      const estimators = getEstimator(estimatorName, jsonEstimatorOrStep[i][1])
       jsonEstimatorOrStep[i][1] = Object.assign(
         estimators,
         jsonEstimatorOrStep[i][1]
