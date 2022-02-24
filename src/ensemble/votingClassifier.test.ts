@@ -102,4 +102,25 @@ describe('VotingClassifier', function () {
     await voter.fit(X, y)
     expect(voter.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
   }, 10000)
+  it('Save and load votingclassifier', async function () {
+    const X = [
+      [1, 2],
+      [2, 1],
+      [2, 2],
+      [3, 1],
+      [4, 4]
+    ]
+    const y = [0, 0, 1, 1, 1]
+    const voter = makeVotingClassifier(
+      new DummyClassifier(),
+      new DummyClassifier()
+    )
+
+    await voter.fit(X, y)
+
+    const savedModel = (await voter.toJson()) as string
+    const newModel = new VotingClassifier({}).fromJson(savedModel)
+
+    expect(newModel.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
+  }, 10000)
 })
