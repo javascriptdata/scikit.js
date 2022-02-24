@@ -18,7 +18,7 @@ export default class Serialize {
       let value = thisCopy[key]
       if (value instanceof tf.Tensor) {
         thisCopy[key] = {
-          type: "Tensor",
+          type: 'Tensor',
           value: value.arraySync()
         }
       }
@@ -40,7 +40,7 @@ export default class Serialize {
 
     for (let key of Object.keys(jsonClass)) {
       let value = jsonClass[key]
-      if (typeof value === "object" && value?.type === "Tensor") {
+      if (typeof value === 'object' && value?.type === 'Tensor') {
         jsonClass[key] = tf.tensor(jsonClass[key].value)
       }
     }
