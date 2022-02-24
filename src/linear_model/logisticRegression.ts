@@ -99,8 +99,8 @@ export class LogisticRegression extends SGDClassifier {
             : undefined
       },
       isClassification: true,
-      optimizerType: "adam",
-      lossType: "meanSquaredError"
+      optimizerType: 'adam',
+      lossType: 'meanSquaredError'
     })
   }
 }

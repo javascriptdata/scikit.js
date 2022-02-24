@@ -135,7 +135,7 @@ describe('LogisticRegression', function () {
     await logreg.fit(X, y)
 
     const serializeModel = await logreg.toJson()
-    const newModel = logreg.fromJson(serializeModel) as LogisticRegression
+    const newModel = logreg.fromJson(serializeModel)
     const newModelResult = newModel.predict(Xtest)
 
     expect(newModelResult.arraySync()).toEqual([0, 0, 0, 0, 0, 0, 2, 2, 2])

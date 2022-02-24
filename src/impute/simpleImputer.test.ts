@@ -130,10 +130,15 @@ describe('SimpleImputer', function () {
       [6, NaN]
     ]
 
-    const expected = {"name":"simpleimputer","missingValues":null,"strategy":"mostFrequent","statistics":[4,3]}
+    const expected = {
+      name: 'simpleimputer',
+      missingValues: null,
+      strategy: 'mostFrequent',
+      statistics: [4, 3]
+    }
 
     const returned = imputer.fitTransform(data)
-    expect(JSON.parse(imputer.toJson())).toEqual(expected)
+    expect(JSON.parse(imputer.toJson() as string)).toEqual(expected)
   })
   it('Should load serialized Imputer', function () {
     const imputer = new SimpleImputer({ strategy: 'mostFrequent' })
@@ -155,7 +160,7 @@ describe('SimpleImputer', function () {
     ]
 
     const returned = imputer.fitTransform(data)
-    const newImputer = new SimpleImputer().fromJson(imputer.toJson())
+    const newImputer = new SimpleImputer().fromJson(imputer.toJson() as string)
     const newReturned = newImputer.transform(data)
     expect(newReturned.arraySync()).toEqual(expected)
     expect(newImputer.transform([[NaN, NaN]]).arraySync()).toEqual([[4, 3]])
