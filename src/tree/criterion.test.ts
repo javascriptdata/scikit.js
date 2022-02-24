@@ -74,4 +74,11 @@ describe('Criterion', function () {
     let nSamples = 100
     expect(entropy(labelFreqs, nSamples)).toEqual(0.7219280948873623)
   }, 1000)
+  it('Use the criterion (entropy)', async function () {
+    let criterion = new ClassificationCriterion('entropy', y)
+    criterion.init(0, 6, sampleMap)
+    const serial = criterion.toJson() as string
+    const newCriterion = ClassificationCriterion.fromJson(serial)
+    expect(newCriterion.nodeImpurity()).toEqual(1)
+  }, 1000)
 })
