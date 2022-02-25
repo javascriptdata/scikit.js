@@ -76,7 +76,7 @@ export class LogisticRegression extends SGDClassifier {
     super({
       modelCompileArgs: {
         optimizer: train.adam(0.1),
-        loss: losses.meanSquaredError,
+        loss: losses.softmaxCrossEntropy,
         metrics: ['accuracy']
       },
       modelFitArgs: {
@@ -100,7 +100,7 @@ export class LogisticRegression extends SGDClassifier {
       },
       isClassification: true,
       optimizerType: 'adam',
-      lossType: 'meanSquaredError'
+      lossType: 'softmaxCrossEntropy'
     })
   }
 }
