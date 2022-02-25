@@ -54,6 +54,7 @@ export class ClassificationCriterion extends Serialize {
   nSamples: int = 0
   nSamplesLeft: int = 0
   nSamplesRight: int = 0
+  name = 'classificationCriterion'
 
   constructor(impurityMeasure: ImpurityMeasure, y: number[]) {
     super()
@@ -166,6 +167,7 @@ export class RegressionCriterion extends Serialize {
   nSamples: int = 0
   nSamplesLeft: int = 0
   nSamplesRight: int = 0
+  name = 'regressionCriterion'
 
   constructor(impurityMeasure: 'squared_error', y: number[]) {
     super()
