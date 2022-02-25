@@ -134,7 +134,9 @@ describe('SimpleImputer', function () {
       name: 'simpleimputer',
       missingValues: null,
       strategy: 'mostFrequent',
-      statistics: [4, 3]
+      statistics: {
+        type: "Tensor",
+        value: [4, 3] }
     }
 
     const returned = imputer.fitTransform(data)

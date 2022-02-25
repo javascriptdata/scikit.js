@@ -47,10 +47,12 @@ describe('KMeans', () => {
       tol: 0.0001,
       randomState: 0,
       nInit: 10,
-      clusterCenters: [
+      clusterCenters: {
+        type: "Tensor",
+        value: [
         [2.5, 1],
         [2.5, 4]
-      ]
+        ] }
     }
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
