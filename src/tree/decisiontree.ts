@@ -8,6 +8,7 @@ import { validateX, validateY } from './utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { convertScikit2DToArray, convertScikit1DToArray } from '../utils'
 import { LabelEncoder } from '../preprocessing/labelEncoder'
+import Serialize from '../serialize'
 
 /*
 Next steps:
@@ -139,7 +140,7 @@ interface DecisionTreeBaseParams {
   minImpurityDecrease?: number
 }
 
-class DecisionTreeBase {
+class DecisionTreeBase extends Serialize {
   splitter!: Splitter
   stack: NodeRecord[] = []
   minSamplesLeaf: int
@@ -152,6 +153,7 @@ class DecisionTreeBase {
   maxFeaturesNumb: int
   X: number[][] = []
   y: number[] = []
+  labelEncoder?: LabelEncoder
 
   constructor({
     criterion = 'gini',
@@ -161,6 +163,7 @@ class DecisionTreeBase {
     maxFeatures = undefined,
     minImpurityDecrease = 0.0
   }: DecisionTreeBaseParams = {}) {
+    super()
     this.criterion = criterion as any
     this.maxDepth =
       maxDepth === undefined ? Number.POSITIVE_INFINITY : Number(maxDepth)
@@ -295,6 +298,37 @@ class DecisionTreeBase {
     this.tree.populateChildIds()
     this.tree.isBuilt = true
   }
+
+  public toJson(): string {
+    const jsonClass = JSON.parse(super.toJson() as string)
+
+    if (this.splitter) {
+      jsonClass.splitter = this.splitter.toJson() as string
+    }
+    if (this.labelEncoder) {
+      jsonClass.labelEncoder = this.labelEncoder.toJson()
+    }
+    return JSON.stringify(jsonClass)
+  }
+
+  public fromJson(model: string) {
+    const jsonClass = JSON.parse(model)
+
+    if (jsonClass.tree) {
+      const tree = new DecisionTree()
+      jsonClass.tree = Object.assign(tree, jsonClass.tree)
+    }
+
+    if (jsonClass.splitter) {
+      jsonClass.splitter = Splitter.fromJson(jsonClass.splitter)
+    }
+    if (jsonClass.labelEncoder) {
+      jsonClass.labelEncoder = new LabelEncoder().fromJson(
+        jsonClass.labelEncoder
+      )
+    }
+    return Object.assign(this, jsonClass) as this
+  }
 }
 
 export interface DecisionTreeClassifierParams {
@@ -340,6 +374,7 @@ export interface DecisionTreeClassifierParams {
  */
 export class DecisionTreeClassifier extends DecisionTreeBase {
   labelEncoder: LabelEncoder
+  name: string
   constructor({
     criterion = 'gini',
     maxDepth = undefined,
@@ -361,6 +396,7 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
       minImpurityDecrease
     })
     this.labelEncoder = new LabelEncoder()
+    this.name = 'decisionTreeClassifier'
   }
   public fit(X: Scikit2D, y: Scikit1D): DecisionTreeClassifier {
     assert(isScikit1D(y), 'y value is not a 1D container')
@@ -432,6 +468,7 @@ export interface DecisionTreeRegressorParams {
   minImpurityDecrease?: number
 }
 export class DecisionTreeRegressor extends DecisionTreeBase {
+  name: string
   constructor({
     criterion = 'squared_error',
     maxDepth = undefined,
@@ -452,6 +489,7 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
       maxFeatures,
       minImpurityDecrease
     })
+    this.name = 'decisionTreeRegressor'
   }
   public fit(X: Scikit2D, y: Scikit1D): DecisionTreeRegressor {
     assert(isScikit1D(y), 'y value is not a 1D container')
