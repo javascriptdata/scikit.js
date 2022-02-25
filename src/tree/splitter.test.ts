@@ -125,4 +125,26 @@ describe('Splitter', function () {
       expect(bestSplit.pos).toEqual(4)
     })
   }, 1000)
+  it('Should save and load Splitter', async function () {
+    let X = [
+      [3, 4],
+      [1, 1],
+      [1, 2],
+      [2, 3],
+      [2, 2],
+      [2, 3],
+      [3, 4],
+      [0, 1]
+    ]
+    let y = [2, 1, 1, 2, 1, 2, 2, 1]
+    let splitter = new Splitter(X, y, 1, 'gini', 20, [])
+    let bestSplit = splitter.splitNode()
+    const serial = splitter.toJson()
+    const newSpliter = Splitter.fromJson(serial)
+    const newBestSplitter = newSpliter.splitNode()
+    expect(newBestSplitter.foundSplit).toEqual(true)
+    expect(newBestSplitter.feature).toEqual(1)
+    expect(newBestSplitter.threshold).toEqual(2.5)
+    expect(newBestSplitter.pos).toEqual(4)
+  }, 1000)
 })
