@@ -55,7 +55,9 @@ export class RidgeRegression extends SGDRegressor {
         units: 1,
         kernelRegularizer: tf.regularizers.l2({ l2: alpha }),
         useBias: Boolean(fitIntercept)
-      }
+      },
+      optimizerType: 'adam',
+      lossType: 'meanSquaredError'
     })
   }
 }

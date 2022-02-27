@@ -2,6 +2,8 @@
 import { assert } from '../typesUtils'
 import { Scikit1D, Scikit2D } from '../types'
 import { Tensor2D } from '@tensorflow/tfjs-core'
+import Serialize from '../serialize'
+import { toJson, fromJson } from '../ensemble/serializeEnsemble'
 
 /*
 Next steps:
@@ -42,13 +44,14 @@ export interface PipelineParams {
     await pipeline.fit(X, y)
  * ```
  */
-export class Pipeline {
+export class Pipeline extends Serialize {
   steps: Array<[string, any]>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'pipeline'
 
   constructor({ steps = [] }: PipelineParams = {}) {
+    super()
     this.steps = steps
     this.validateSteps(this.steps)
   }
@@ -202,6 +205,15 @@ export class Pipeline {
 
     let XT = this.fitTransformExceptLast(X)
     return await lastEstimator.fitPredict(XT, y)
+  }
+
+  public async toJson(): Promise<string> {
+    const classJson = JSON.parse(super.toJson() as string)
+    return toJson(this, classJson)
+  }
+
+  public fromJson(model: string) {
+    return fromJson(this, model) as this
   }
 }
 

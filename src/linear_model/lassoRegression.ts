@@ -50,7 +50,9 @@ export class LassoRegression extends SGDRegressor {
         units: 1,
         kernelRegularizer: tf.regularizers.l1({ l1: alpha }),
         useBias: Boolean(fitIntercept)
-      }
+      },
+      optimizerType: 'adam',
+      lossType: 'meanSquaredError'
     })
   }
 }

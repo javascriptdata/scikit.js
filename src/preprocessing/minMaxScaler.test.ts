@@ -138,4 +138,18 @@ describe('MinMaxscaler', function () {
       0
     ])
   })
+  it('Serialize and unserialize MinMaxScaler', function () {
+    const data = tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
+    const scaler = new MinMaxScaler()
+    scaler.fit(data)
+    const serial = scaler.toJson() as string
+    const newModel = new MinMaxScaler().fromJson(serial)
+    expect(newModel.transform(data).arraySync().flat()).toEqual([
+      1,
+      1,
+      NaN,
+      0,
+      0
+    ])
+  })
 })

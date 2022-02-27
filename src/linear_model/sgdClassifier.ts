@@ -19,21 +19,24 @@ import {
   Tensor2D,
   tensor1d,
   tensor2d,
-  losses
+  losses,
+  RecursiveArray
 } from '@tensorflow/tfjs-core'
 import {
   layers,
   sequential,
   Sequential,
   ModelFitArgs,
-  ModelCompileArgs
+  ModelCompileArgs,
+  callbacks
 } from '@tensorflow/tfjs-layers'
 import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
-import { Scikit2D, Scikit1D } from '../types'
+import { Scikit2D, Scikit1D, OptimizerTypes, LossTypes } from '../types'
 import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
 import { assert } from '../typesUtils'
 import { ClassifierMixin } from '../mixins'
+import { fromJson, toJSON } from './modelSerializer'
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -91,6 +94,10 @@ export interface SGDClassifierParams {
    */
 
   isClassification?: boolean
+
+  optimizerType: OptimizerTypes
+
+  lossType: LossTypes
 }
 
 export class SGDClassifier extends ClassifierMixin {
@@ -98,19 +105,25 @@ export class SGDClassifier extends ClassifierMixin {
   modelFitArgs: ModelFitArgs
   modelCompileArgs: ModelCompileArgs
   denseLayerArgs: DenseLayerArgs
+  optimizerType: OptimizerTypes
+  lossType: LossTypes
 
   oneHot: OneHotEncoder
 
   constructor({
     modelFitArgs,
     modelCompileArgs,
-    denseLayerArgs
+    denseLayerArgs,
+    optimizerType,
+    lossType
   }: SGDClassifierParams) {
     super()
     this.model = sequential()
     this.modelFitArgs = modelFitArgs
     this.modelCompileArgs = modelCompileArgs
     this.denseLayerArgs = denseLayerArgs
+    this.optimizerType = optimizerType
+    this.lossType = lossType
     // Next steps: Implement "drop" mechanics for OneHotEncoder
     // There is a possibility to do a drop => if_binary which would
     // squash down on the number of variables that we'd have to learn
@@ -267,7 +280,9 @@ export class SGDClassifier extends ClassifierMixin {
     return {
       modelFitArgs: this.modelFitArgs,
       modelCompileArgs: this.modelCompileArgs,
-      denseLayerArgs: this.denseLayerArgs
+      denseLayerArgs: this.denseLayerArgs,
+      optimizerType: this.optimizerType,
+      lossType: this.lossType
     }
   }
 
@@ -400,5 +415,18 @@ export class SGDClassifier extends ClassifierMixin {
     }
 
     return intercept
+  }
+
+  private getModelWeight(): Promise<RecursiveArray<number>> {
+    return Promise.all(this.model.getWeights().map((weight) => weight.array()))
+  }
+
+  public async toJson(): Promise<string> {
+    const classifierJson = JSON.parse(super.toJson() as string)
+    return toJSON(this, classifierJson)
+  }
+
+  public fromJson(model: string) {
+    return fromJson(this, model) as this
   }
 }

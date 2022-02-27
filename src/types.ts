@@ -23,7 +23,27 @@ export type ScikitLike2D = TypedArray[] | number[][] | boolean[][] | string[][]
 export type Scikit1D = ScikitLike1D | Tensor1D | dfd.Series
 export type Scikit2D = ScikitLike2D | Tensor2D | dfd.DataFrame
 export type ScikitVecOrMatrix = Scikit1D | Scikit2D
+export type OptimizerTypes =
+  | 'sgd'
+  | 'momentum'
+  | 'adadelta'
+  | 'rmsprop'
+  | 'adamax'
+  | 'adam'
+  | 'adagrad'
+export type LossTypes =
+  | 'meanSquaredError'
+  | 'sigmoidCrossEntropy'
+  | 'softmaxCrossEntropy'
+  | 'logLoss'
+  | 'huberLoss'
+  | 'hingeLoss'
+  | 'cosineDistance'
+  | 'computeWeightedLoss'
+  | 'absoluteDifference'
+  | 'custom'
 
+export type Initializers = 'Zeros' | 'Ones'
 export type ArrayType1D = Array<
   number | string | boolean | (number | string | boolean)
 >

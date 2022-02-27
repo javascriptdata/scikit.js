@@ -97,7 +97,9 @@ export class LinearSVC extends SGDClassifier {
             ? tf.regularizers.l1({ l1: C })
             : undefined
       },
-      isClassification: true
+      isClassification: true,
+      optimizerType: 'adam',
+      lossType: 'hingeLoss'
     })
   }
 }

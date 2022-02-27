@@ -134,4 +134,31 @@ describe('LinearRegression', function () {
     await lr.fit(X, y)
     expect(lr.score(X, y)).toBeCloseTo(score)
   }, 30000)
+  it('Should save and load Model using arrays with none zero intercept (medium example)', async function () {
+    const sizeOfMatrix = 1000
+    const seed = 42
+    let mediumX = randomUniform(
+      [sizeOfMatrix, 2],
+      -10,
+      10,
+      'float32',
+      seed
+    ) as Tensor2D
+    let [firstCol, secondCol] = mediumX.split([1, 1], 1)
+    let y = firstCol
+      .mul(2.5)
+      .add(secondCol)
+      .reshape([sizeOfMatrix]) as Tensor1D
+    const yPlusJitter = y.add(
+      randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
+    ) as Tensor1D
+    const lr = new LinearRegression({ fitIntercept: false })
+    await lr.fit(mediumX, yPlusJitter)
+
+    const serialized = await lr.toJson()
+    const newModel = new LinearRegression({}).fromJson(serialized)
+
+    expect(tensorEqual(newModel.coef, tensor1d([2.5, 1]), 0.1)).toBe(true)
+    expect(roughlyEqual(newModel.intercept as number, 0)).toBe(true)
+  }, 30000)
 })

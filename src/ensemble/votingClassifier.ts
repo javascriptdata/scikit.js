@@ -3,6 +3,8 @@ import { tf } from '../shared/globals'
 import { ClassifierMixin } from '../mixins'
 import { tensor1d, Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { LabelEncoder } from '../preprocessing/labelEncoder'
+import { fromJson, toJson } from './serializeEnsemble'
+
 /*
   Next steps:
   0. Write validation code to check Estimator inputs
@@ -148,6 +150,15 @@ export class VotingClassifier extends ClassifierMixin {
     y: Scikit1D
   ): Promise<Array<Tensor1D> | Array<Tensor2D>> {
     return (await this.fit(X, y)).transform(X)
+  }
+
+  public fromJson(model: string) {
+    return fromJson(this, model)
+  }
+
+  public async toJson(): Promise<string> {
+    const classJson = JSON.parse(super.toJson() as string)
+    return toJson(this, classJson)
   }
 }
 

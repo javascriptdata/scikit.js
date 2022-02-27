@@ -86,7 +86,9 @@ export class LinearRegression extends SGDRegressor {
       denseLayerArgs: {
         units: 1,
         useBias: Boolean(fitIntercept)
-      }
+      },
+      optimizerType: 'adam',
+      lossType: 'meanSquaredError'
     })
   }
 }

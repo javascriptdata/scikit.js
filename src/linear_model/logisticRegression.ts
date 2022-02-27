@@ -17,6 +17,7 @@ import { losses, train } from '@tensorflow/tfjs-core'
 import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGDClassifier } from './sgdClassifier'
 import { tf } from '../shared/globals'
+import { meanAbsoluteError } from '../metrics/metrics'
 
 // First pass at a LogisticRegression implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
@@ -97,7 +98,9 @@ export class LogisticRegression extends SGDClassifier {
             ? tf.regularizers.l1({ l1: C })
             : undefined
       },
-      isClassification: true
+      isClassification: true,
+      optimizerType: 'adam',
+      lossType: 'softmaxCrossEntropy'
     })
   }
 }
