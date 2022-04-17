@@ -1,3 +1,13 @@
+# [1.14.0](https://github.com/javascriptdata/scikit.js/compare/v1.13.0...v1.14.0) (2022-04-17)
+
+
+### Features
+
+* commented out tests ([77b6ab6](https://github.com/javascriptdata/scikit.js/commit/77b6ab64c3c59fdcba8f87f8e48a6bb77f90438b))
+* commenting out svc, svr code until it can be built in browser ([dd95256](https://github.com/javascriptdata/scikit.js/commit/dd952567e6b41c5e314e99f62debae4e81b9d0f5))
+* disable libsvm until we can ship to the browser ([fdc3214](https://github.com/javascriptdata/scikit.js/commit/fdc3214649ebd0a8868ce183b45e199fa7b99a0c))
+* updated tests ([6938b32](https://github.com/javascriptdata/scikit.js/commit/6938b326cee279bd41700eb73bf9b2b9b4153096))
+
 # [1.13.0](https://github.com/javascriptdata/scikit.js/compare/v1.12.0...v1.13.0) (2022-04-17)
 
 
