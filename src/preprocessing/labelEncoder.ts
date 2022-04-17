@@ -14,7 +14,8 @@
 */
 
 import { Scikit1D } from '../types'
-import { tf, dfd } from '../shared/globals'
+import { tf } from '../shared/globals'
+import { isSeriesInterface } from '../typesUtils'
 import Serialize from '../serialize'
 
 /*
@@ -48,7 +49,7 @@ export class LabelEncoder extends Serialize {
   }
 
   convertTo1DArray(X: Scikit1D): Iterable<string | number | boolean> {
-    if (X instanceof dfd.Series) {
+    if (isSeriesInterface(X)) {
       return X.values as any[]
     }
     if (X instanceof tf.Tensor) {

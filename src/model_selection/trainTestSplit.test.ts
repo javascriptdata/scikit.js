@@ -4,7 +4,9 @@ import {
   getIndices
 } from './trainTestSplit'
 
-import { dfd, tf } from '../shared/globals'
+import * as dfd from 'danfojs-node'
+import { tf } from '../shared/globals'
+import { DataFrameInterface } from '../types'
 
 describe('Testing trainTestSplit', function () {
   it('Testing train/test validation logic', () => {
@@ -67,7 +69,7 @@ describe('Testing trainTestSplit', function () {
       [2, 3]
     ])
 
-    let val3 = getIndices(X, [1, 2, 0]) as dfd.DataFrame
+    let val3 = getIndices(X as any, [1, 2, 0]) as DataFrameInterface
     expect(val3.values).toEqual([
       [1, 2],
       [2, 3],
@@ -76,7 +78,7 @@ describe('Testing trainTestSplit', function () {
 
     let X1 = new dfd.Series([0, 1, 2])
 
-    let val4 = getIndices(X1, [1, 2, 0]) as dfd.DataFrame
+    let val4 = getIndices(X1 as any, [1, 2, 0]) as DataFrameInterface
     expect(val4.values).toEqual([1, 2, 0])
 
     let X2D = tf.tensor2d([
@@ -85,7 +87,7 @@ describe('Testing trainTestSplit', function () {
       [3, 4]
     ])
 
-    let val5 = getIndices(X2D, [1, 2, 0]) as dfd.DataFrame
+    let val5 = getIndices(X2D as any, [1, 2, 0]) as DataFrameInterface
     expect(val5.arraySync()).toEqual([
       [2, 3],
       [3, 4],
@@ -94,7 +96,7 @@ describe('Testing trainTestSplit', function () {
 
     let X1D = tf.tensor1d([1, 2, 3, 4, 5])
 
-    let val6 = getIndices(X1D, [1, 2, 0, 3, 4]) as dfd.DataFrame
+    let val6 = getIndices(X1D as any, [1, 2, 0, 3, 4]) as DataFrameInterface
     expect(val6.arraySync()).toEqual([2, 3, 1, 4, 5])
   })
   it('trainTestSplit indices', () => {

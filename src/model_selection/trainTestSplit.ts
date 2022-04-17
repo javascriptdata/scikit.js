@@ -1,7 +1,7 @@
 import { Scikit1D, Scikit2D } from '../types'
-import { assert } from '../typesUtils'
+import { assert, isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { getLength, sampleWithoutReplacement } from '../utils'
-import { dfd, tf } from '../shared/globals'
+import { tf } from '../shared/globals'
 import { Tensor } from '@tensorflow/tfjs-core'
 
 /**
@@ -115,10 +115,10 @@ export function getIndices(X: Scikit2D | Scikit1D, indices: number[]) {
   if (X instanceof Tensor) {
     return tf.gather(X, indices)
   }
-  if (X instanceof dfd.DataFrame) {
+  if (isDataFrameInterface(X)) {
     return X.iloc({ rows: indices })
   }
-  if (X instanceof dfd.Series) {
+  if (isSeriesInterface(X)) {
     return X.iloc(indices)
   }
   return indices.map((i) => X[i])

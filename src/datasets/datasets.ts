@@ -1,5 +1,3 @@
-import { dfd } from '../shared/globals'
-
 /**
  * Loads the Boston housing dataset (regression). Samples 506, features 13.
  * @example
@@ -10,8 +8,8 @@ import { dfd } from '../shared/globals'
     df.print()
     ```
  */
-export async function loadBoston(): Promise<dfd.DataFrame> {
-  return await dfd.readCSV('http://scikitjs.org/data/boston.csv')
+export function loadBoston(): string {
+  return 'http://scikitjs.org/data/boston.csv'
 }
 
 /**
@@ -25,8 +23,8 @@ export async function loadBoston(): Promise<dfd.DataFrame> {
     df.print()
     ```
  */
-export async function loadIris(): Promise<dfd.DataFrame> {
-  return await dfd.readCSV('http://scikitjs.org/data/iris.csv')
+export function loadIris(): string {
+  return 'http://scikitjs.org/data/iris.csv'
 }
 
 /**
@@ -41,8 +39,8 @@ export async function loadIris(): Promise<dfd.DataFrame> {
     ```
  */
 
-export async function loadWine(): Promise<dfd.DataFrame> {
-  return await dfd.readCSV('http://scikitjs.org/data/wine.csv')
+export function loadWine(): string {
+  return 'http://scikitjs.org/data/wine.csv'
 }
 
 /**
@@ -57,8 +55,8 @@ export async function loadWine(): Promise<dfd.DataFrame> {
     ```
  */
 
-export async function loadDiabetes(): Promise<dfd.DataFrame> {
-  return await dfd.readCSV('http://scikitjs.org/data/diabetes.csv')
+export function loadDiabetes(): string {
+  return 'http://scikitjs.org/data/diabetes.csv'
 }
 
 /**
@@ -73,8 +71,8 @@ export async function loadDiabetes(): Promise<dfd.DataFrame> {
     ```
  */
 
-export async function loadBreastCancer(): Promise<dfd.DataFrame> {
-  return await dfd.readCSV('http://scikitjs.org/data/breast_cancer.csv')
+export function loadBreastCancer(): string {
+  return 'http://scikitjs.org/data/breast_cancer.csv'
 }
 
 /**
@@ -88,8 +86,8 @@ export async function loadBreastCancer(): Promise<dfd.DataFrame> {
     df.print()
     ```
  */
-export async function loadDigits(): Promise<dfd.DataFrame> {
-  return await dfd.readCSV('http://scikitjs.org/data/digits.csv')
+export function loadDigits(): string {
+  return 'http://scikitjs.org/data/digits.csv'
 }
 
 /**
@@ -98,6 +96,6 @@ export async function loadDigits(): Promise<dfd.DataFrame> {
  * Samples 20640, Features 8.
  */
 
-export async function fetchCaliforniaHousing(): Promise<dfd.DataFrame> {
-  return await dfd.readCSV('http://scikitjs.org/data/california_housing.csv')
+export function fetchCaliforniaHousing(): string {
+  return 'http://scikitjs.org/data/california_housing.csv'
 }

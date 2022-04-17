@@ -15,9 +15,9 @@
 
 import { convertToNumericTensor2D } from '../utils'
 import { Scikit2D } from '../types'
-import { isScikit2D, assert } from '../typesUtils'
+import { isScikit2D, assert, isDataFrameInterface } from '../typesUtils'
 import { TransformerMixin } from '../mixins'
-import { tf, dfd } from '../shared/globals'
+import { tf } from '../shared/globals'
 
 /*
 Next steps:
@@ -81,7 +81,7 @@ export class Normalizer extends TransformerMixin {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     this.nFeaturesIn = tensorArray.shape[1]
-    if (X instanceof dfd.DataFrame) {
+    if (isDataFrameInterface(X)) {
       this.featureNamesIn = [...X.columns]
     }
     return this

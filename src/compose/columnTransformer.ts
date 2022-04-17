@@ -1,7 +1,7 @@
 import { concat, Tensor2D } from '@tensorflow/tfjs-core'
-import { dfd } from '../shared/globals'
-import { Scikit1D, Scikit2D, Transformer } from '../types'
-
+import { DataFrameInterface, Scikit1D, Scikit2D, Transformer } from '../types'
+import { isDataFrameInterface, isScikitLike2D } from '../typesUtils'
+import { tf } from '../shared/globals'
 /*
 Next steps:
 1. Support 'passthrough' and 'drop' and estimator for remainder (also in transformer list)
@@ -80,56 +80,74 @@ export class ColumnTransformer {
     this.remainder = remainder
   }
 
-  public fit(X: Scikit2D, y?: Scikit1D) {
-    const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
-
+  public fit(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
 
-      let subsetX = this.getColumns(newDf, selection)
+      let subsetX = this.getColumns(X, selection)
       curTransform.fit(subsetX, y)
     }
     return this
   }
 
-  public transform(X: Scikit2D, y?: Scikit1D) {
-    const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
-
+  public transform(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
 
-      let subsetX = this.getColumns(newDf, selection)
+      let subsetX = this.getColumns(X, selection)
 
       output.push(curTransform.transform(subsetX, y))
     }
     return concat(output, 1)
   }
 
-  public fitTransform(X: Scikit2D, y?: Scikit1D) {
-    const newDf = X instanceof dfd.DataFrame ? X : new dfd.DataFrame(X)
-
+  public fitTransform(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
 
-      let subsetX = this.getColumns(newDf, selection)
+      let subsetX = this.getColumns(X, selection)
 
       output.push(curTransform.fitTransform(subsetX, y))
     }
     return concat(output, 1)
   }
 
-  getColumns(X: dfd.DataFrame, selectedColumns: Selection): Tensor2D {
-    if (isStringArray(selectedColumns)) {
-      return X.loc({ columns: selectedColumns }).tensor as unknown as Tensor2D
+  getColumns(
+    X: DataFrameInterface | Tensor2D,
+    selectedColumns: Selection
+  ): Tensor2D {
+    if (isDataFrameInterface(X)) {
+      if (isStringArray(selectedColumns)) {
+        return X.loc({ columns: selectedColumns })
+          .tensor as unknown as Tensor2D
+      }
+      if (Array.isArray(selectedColumns)) {
+        return X.iloc({ columns: selectedColumns })
+          .tensor as unknown as Tensor2D
+      }
+      if (typeof selectedColumns === 'string') {
+        return X[selectedColumns].tensor
+      }
+      return X.iloc({ columns: [selectedColumns] })
+        .tensor as unknown as Tensor2D
+    } else {
+      if (
+        isStringArray(selectedColumns) ||
+        typeof selectedColumns === 'string'
+      ) {
+        throw new Error(
+          "Can't pass string selected columns when not a DataFrame"
+        )
+      }
+      if (typeof selectedColumns === 'number') {
+        let columns = tf.tensor1d([selectedColumns])
+        return X.gather(columns, 1)
+      } else {
+        let columns = tf.tensor1d(selectedColumns)
+        return X.gather(columns, 1)
+      }
     }
-    if (Array.isArray(selectedColumns)) {
-      return X.iloc({ columns: selectedColumns }).tensor as unknown as Tensor2D
-    }
-    if (typeof selectedColumns === 'string') {
-      return X[selectedColumns].tensor
-    }
-    return X.iloc({ columns: [selectedColumns] }).tensor as unknown as Tensor2D
   }
 }

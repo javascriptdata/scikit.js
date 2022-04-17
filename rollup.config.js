@@ -11,7 +11,7 @@ import alias from '@rollup/plugin-alias'
 
 const name = 'scikitjs'
 
-function getOutput({ minify = false }) {
+function getOutput({ minify = false } = {}) {
   const output = [
     {
       file: pkg.output.web,
@@ -32,7 +32,7 @@ function getOutput({ minify = false }) {
   })
 }
 
-function getPlugins({ minify = false }) {
+function getPlugins({ minify = false } = {}) {
   const plugins = []
 
   plugins.push(
@@ -40,8 +40,7 @@ function getPlugins({ minify = false }) {
       alias({
         resolve: ['.js', '.ts'],
         entries: {
-          '@tensorflow/tfjs-node': '@tensorflow/tfjs',
-          'danfojs-node': 'danfojs'
+          '@tensorflow/tfjs-node': '@tensorflow/tfjs'
         }
       })
     ]
@@ -94,25 +93,9 @@ function getPlugins({ minify = false }) {
 }
 
 export default [
-  //web
-  {
-    // input: "dist/umd/index.js",
-    input: 'src/index.ts',
-    output: getOutput({
-      minify: false
-    }),
-    plugins: getPlugins({
-      minify: false
-    })
-  },
-  //web minified
   {
     input: 'src/index.ts',
-    output: getOutput({
-      minify: true
-    }),
-    plugins: getPlugins({
-      minify: true
-    })
+    output: getOutput(),
+    plugins: getPlugins()
   }
 ]
