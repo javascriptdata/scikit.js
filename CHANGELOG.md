@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/javascriptdata/scikit.js/compare/v1.11.0...v1.12.0) (2022-04-17)
+
+
+### Features
+
+* only import from tensorflow and not subpackages ([f971942](https://github.com/javascriptdata/scikit.js/commit/f971942ab40f4c12ce84fb37f39c669db9b95250))
+
 # [1.11.0](https://github.com/javascriptdata/scikit.js/compare/v1.10.0...v1.11.0) (2022-04-17)
 
 
