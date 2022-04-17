@@ -21,5 +21,7 @@
 // })
 
 describe('SVC', function () {
-  expect(1).toEqual(1)
+  it('works', function () {
+    expect(1).toEqual(1)
+  })
 })
