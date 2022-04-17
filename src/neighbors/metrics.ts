@@ -14,7 +14,6 @@
 */
 
 import { assert } from '../typesUtils'
-import { Tensor, Tensor2D } from '@tensorflow/tfjs-core'
 import { tf } from '../shared/globals'
 
 /**
@@ -33,7 +32,7 @@ export interface Metric {
    * @returns A broadcasted distance tensor `D`, where `D[..., i, j]` represents
    *          the distance between point `X[..., i, j, k]` and point `Y[..., i, j, k]`.
    */
-  tensorDistance(u: Tensor, v: Tensor): Tensor
+  tensorDistance(u: tf.Tensor, v: tf.Tensor): tf.Tensor
 
   /**
    * Returns the distance between two points `u` and `v`.
@@ -67,19 +66,20 @@ export interface Metric {
   toString(): string
 }
 
-const minkowskiTensorDistance = (p: number) => (u: Tensor, v: Tensor) => {
-  // FIXME: tf.norm still underflows and overflows,
-  // see: https://github.com/tensorflow/tfjs/issues/895
-  const m = u.shape[u.rank - 1] ?? NaN
-  const n = v.shape[v.rank - 1] ?? NaN
-  assert(
-    m === n,
-    `minkowskiDistance(${p}).tensorDistance(u,v): u.shape[-1] must equal v.shape[-1].`
-  )
-  return tf.tidy(() => {
-    return tf.norm(tf.sub(u, v), p, -1)
-  }) as Tensor2D
-}
+const minkowskiTensorDistance =
+  (p: number) => (u: tf.Tensor, v: tf.Tensor) => {
+    // FIXME: tf.norm still underflows and overflows,
+    // see: https://github.com/tensorflow/tfjs/issues/895
+    const m = u.shape[u.rank - 1] ?? NaN
+    const n = v.shape[v.rank - 1] ?? NaN
+    assert(
+      m === n,
+      `minkowskiDistance(${p}).tensorDistance(u,v): u.shape[-1] must equal v.shape[-1].`
+    )
+    return tf.tidy(() => {
+      return tf.norm(tf.sub(u, v), p, -1)
+    }) as tf.Tensor2D
+  }
 
 /**
  * Returns the Minkowski distance metric with the given power `p`.

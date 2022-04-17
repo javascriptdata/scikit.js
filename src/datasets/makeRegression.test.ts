@@ -1,5 +1,6 @@
 import { makeLowRankMatrix, makeRegression } from './makeRegression'
-import { Tensor } from '@tensorflow/tfjs-core'
+import { tf } from '../shared/globals'
+
 describe('makeRegression tests', () => {
   it('returns the right size', () => {
     let [X, y, model] = makeRegression({
@@ -20,7 +21,7 @@ describe('makeRegression tests', () => {
       noise: 0,
       coef: true
     })
-    expect(X.dot(model as Tensor).dataSync()).toEqual(y.dataSync())
+    expect(X.dot(model as tf.Tensor).dataSync()).toEqual(y.dataSync())
   })
   it('test low rank matrix', () => {
     let X = makeLowRankMatrix({

@@ -1,4 +1,3 @@
-import { concat, Tensor2D } from '@tensorflow/tfjs-core'
 import { DataFrameInterface, Scikit1D, Scikit2D, Transformer } from '../types'
 import { isDataFrameInterface, isScikitLike2D } from '../typesUtils'
 import { tf } from '../shared/globals'
@@ -80,7 +79,7 @@ export class ColumnTransformer {
     this.remainder = remainder
   }
 
-  public fit(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
+  public fit(X: tf.Tensor2D | DataFrameInterface, y?: Scikit1D) {
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
 
@@ -90,7 +89,7 @@ export class ColumnTransformer {
     return this
   }
 
-  public transform(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
+  public transform(X: tf.Tensor2D | DataFrameInterface, y?: Scikit1D) {
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
@@ -99,10 +98,10 @@ export class ColumnTransformer {
 
       output.push(curTransform.transform(subsetX, y))
     }
-    return concat(output, 1)
+    return tf.concat(output, 1)
   }
 
-  public fitTransform(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
+  public fitTransform(X: tf.Tensor2D | DataFrameInterface, y?: Scikit1D) {
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
@@ -111,27 +110,27 @@ export class ColumnTransformer {
 
       output.push(curTransform.fitTransform(subsetX, y))
     }
-    return concat(output, 1)
+    return tf.concat(output, 1)
   }
 
   getColumns(
-    X: DataFrameInterface | Tensor2D,
+    X: DataFrameInterface | tf.Tensor2D,
     selectedColumns: Selection
-  ): Tensor2D {
+  ): tf.Tensor2D {
     if (isDataFrameInterface(X)) {
       if (isStringArray(selectedColumns)) {
         return X.loc({ columns: selectedColumns })
-          .tensor as unknown as Tensor2D
+          .tensor as unknown as tf.Tensor2D
       }
       if (Array.isArray(selectedColumns)) {
         return X.iloc({ columns: selectedColumns })
-          .tensor as unknown as Tensor2D
+          .tensor as unknown as tf.Tensor2D
       }
       if (typeof selectedColumns === 'string') {
         return X[selectedColumns].tensor
       }
       return X.iloc({ columns: [selectedColumns] })
-        .tensor as unknown as Tensor2D
+        .tensor as unknown as tf.Tensor2D
     } else {
       if (
         isStringArray(selectedColumns) ||

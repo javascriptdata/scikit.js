@@ -19,7 +19,6 @@ import { isScikit2D, assert, isScikit1D } from '../typesUtils'
 import { modeFast } from 'simple-statistics'
 import { uniq, sample } from 'lodash'
 import { ClassifierMixin } from '../mixins'
-import { tensor1d, Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { tf } from '../shared/globals'
 
 /*
@@ -118,16 +117,19 @@ export class DummyClassifier extends ClassifierMixin {
     return this
   }
 
-  public predictProba(X: Scikit2D): Tensor2D {
+  public predictProba(X: Scikit2D): tf.Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 1D or 2D matrix.')
     assert(
       ['mostFrequent', 'uniform', 'constant'].includes(this.strategy),
       `Strategy ${this.strategy} not supported. We support 'mostFrequent', 'uniform', and 'constant'`
     )
-    return tf.oneHot(this.predict(X).toInt(), this.classes.length) as Tensor2D
+    return tf.oneHot(
+      this.predict(X).toInt(),
+      this.classes.length
+    ) as tf.Tensor2D
   }
 
-  public predict(X: Scikit2D): Tensor1D {
+  public predict(X: Scikit2D): tf.Tensor1D {
     assert(isScikit2D(X), 'Data can not be converted to a 1D or 2D matrix.')
     assert(
       ['mostFrequent', 'uniform', 'constant'].includes(this.strategy),
@@ -136,7 +138,7 @@ export class DummyClassifier extends ClassifierMixin {
     let newData = convertToNumericTensor2D(X)
     let length = newData.shape[0]
     if (this.strategy === 'mostFrequent' || this.strategy === 'constant') {
-      return tensor1d(Array(length).fill(this.constant))
+      return tf.tensor1d(Array(length).fill(this.constant))
     }
 
     // "Uniform case"
@@ -144,6 +146,6 @@ export class DummyClassifier extends ClassifierMixin {
     for (let i = 0; i < length; i++) {
       returnArr.push(sample(this.classes))
     }
-    return tensor1d(returnArr as number[])
+    return tf.tensor1d(returnArr as number[])
   }
 }

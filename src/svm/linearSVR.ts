@@ -13,8 +13,6 @@
 // * ==========================================================================
 // */
 
-import { losses, train } from '@tensorflow/tfjs-core'
-import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGDRegressor } from '../linear_model/sgdRegressor'
 import { tf } from '../shared/globals'
 
@@ -78,7 +76,7 @@ export class LinearSVR extends SGDRegressor {
     // If we call fit, and it isn't binary then update args
     super({
       modelCompileArgs: {
-        optimizer: train.adam(0.1),
+        optimizer: tf.train.adam(0.1),
         loss: function (yPred, yTrue) {
           return tf.abs(tf.sub(yPred, yTrue)).sub(epsilon).maximum(0)
         },
@@ -88,7 +86,9 @@ export class LinearSVR extends SGDRegressor {
         batchSize: 32,
         epochs: 1000,
         verbose: 0,
-        callbacks: [callbacks.earlyStopping({ monitor: 'loss', patience: 50 })]
+        callbacks: [
+          tf.callbacks.earlyStopping({ monitor: 'loss', patience: 50 })
+        ]
       },
       denseLayerArgs: {
         units: 1,

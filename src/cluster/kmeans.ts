@@ -1,14 +1,3 @@
-import {
-  div,
-  equal,
-  scalar,
-  squaredDifference,
-  sum,
-  Tensor1D,
-  tensor2d,
-  Tensor2D,
-  tidy
-} from '@tensorflow/tfjs-core'
 import { Scikit2D } from '../types'
 import { convertToNumericTensor2D, sampleWithoutReplacement } from '../utils'
 import Serialize from '../serialize'
@@ -79,7 +68,7 @@ export class KMeans extends Serialize {
 
   // Attributes
   /** The actual cluster centers found by KMeans */
-  clusterCenters: Tensor2D
+  clusterCenters: tf.Tensor2D
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'kmeans'
@@ -99,10 +88,10 @@ export class KMeans extends Serialize {
     this.tol = tol
     this.randomState = randomState
     this.nInit = nInit
-    this.clusterCenters = tensor2d([[]])
+    this.clusterCenters = tf.tensor2d([[]])
   }
 
-  initCentroids(X: Tensor2D) {
+  initCentroids(X: tf.Tensor2D) {
     if (this.init === 'random') {
       let indices = sampleWithoutReplacement(
         X.shape[0],
@@ -115,29 +104,29 @@ export class KMeans extends Serialize {
     throw new Error(`init ${this.init} is not currently implemented`)
   }
 
-  closestCentroid(X: Tensor2D): Tensor1D {
-    return tidy(() => {
+  closestCentroid(X: tf.Tensor2D): tf.Tensor1D {
+    return tf.tidy(() => {
       const expandedX = tf.expandDims(X, 1)
       const expandedClusters = tf.expandDims(this.clusterCenters, 0)
-      return squaredDifference(expandedX, expandedClusters).sum(2).argMin(1)
+      return tf.squaredDifference(expandedX, expandedClusters).sum(2).argMin(1)
     })
   }
 
-  updateCentroids(X: Tensor2D, nearestIndices: Tensor1D): Tensor2D {
-    return tidy(() => {
+  updateCentroids(X: tf.Tensor2D, nearestIndices: tf.Tensor1D): tf.Tensor2D {
+    return tf.tidy(() => {
       const newCentroids = []
       for (let i = 0; i < this.nClusters; i++) {
-        const mask = equal(nearestIndices, scalar(i).toInt())
-        const currentCentroid = div(
+        const mask = tf.equal(nearestIndices, tf.scalar(i).toInt())
+        const currentCentroid = tf.div(
           // set all masked instances to 0 by multiplying the mask tensor,
           // then sum across all instances
-          sum(tf.mul(tf.expandDims(mask.toFloat(), 1), X), 0),
+          tf.sum(tf.mul(tf.expandDims(mask.toFloat(), 1), X), 0),
           // divided by number of instances
-          sum(mask.toFloat())
+          tf.sum(mask.toFloat())
         )
         newCentroids.push(currentCentroid)
       }
-      return tf.stack(newCentroids) as Tensor2D
+      return tf.stack(newCentroids) as tf.Tensor2D
     })
   }
 
@@ -159,19 +148,20 @@ export class KMeans extends Serialize {
    * Converts 2D input into a 1D Tensor which holds the Kmeans cluster Class label
    * @param X The 2D Matrix that you wish to cluster
    */
-  public predict(X: Scikit2D): Tensor1D {
+  public predict(X: Scikit2D): tf.Tensor1D {
     let XTensor2D = convertToNumericTensor2D(X)
     return this.closestCentroid(XTensor2D)
   }
 
-  public transform(X: Scikit2D): Tensor2D {
-    return tidy(() => {
+  public transform(X: Scikit2D): tf.Tensor2D {
+    return tf.tidy(() => {
       const XTensor2D = convertToNumericTensor2D(X)
       const expandedX = tf.expandDims(XTensor2D, 1)
       const expandedClusters = tf.expandDims(this.clusterCenters, 0)
-      return squaredDifference(expandedX, expandedClusters)
+      return tf
+        .squaredDifference(expandedX, expandedClusters)
         .sum(2)
-        .sqrt() as Tensor2D
+        .sqrt() as tf.Tensor2D
     })
   }
 
@@ -183,12 +173,13 @@ export class KMeans extends Serialize {
     return this.fit(X).transform(X)
   }
 
-  public score(X: Scikit2D): Tensor1D {
-    return tidy(() => {
+  public score(X: Scikit2D): tf.Tensor1D {
+    return tf.tidy(() => {
       const XTensor2D = convertToNumericTensor2D(X)
       const expandedX = tf.expandDims(XTensor2D, 1)
       const expandedClusters = tf.expandDims(this.clusterCenters, 0)
-      return squaredDifference(expandedX, expandedClusters)
+      return tf
+        .squaredDifference(expandedX, expandedClusters)
         .sum(2)
         .min(1)
         .sqrt()

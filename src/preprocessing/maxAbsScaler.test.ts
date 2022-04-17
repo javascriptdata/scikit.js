@@ -1,6 +1,6 @@
 import { MaxAbsScaler } from './maxAbsScaler'
 import * as dfd from 'danfojs-node'
-import { tensor2d } from '@tensorflow/tfjs-core'
+import { tf } from '../shared/globals'
 import { arrayEqual } from '../utils'
 
 describe('MaxAbsScaler', function () {
@@ -51,14 +51,14 @@ describe('MaxAbsScaler', function () {
   })
   it('InverseTransform with MaxAbsScaler', function () {
     const scaler = new MaxAbsScaler()
-    scaler.fit(tensor2d([1, 5, 10, 10, 5], [5, 1])) // scaling factor is 10
+    scaler.fit(tf.tensor2d([1, 5, 10, 10, 5], [5, 1])) // scaling factor is 10
     const resultTransform = scaler.transform(
-      tensor2d([10, 5, 50, 100, 50], [5, 1])
+      tf.tensor2d([10, 5, 50, 100, 50], [5, 1])
     )
     expect(resultTransform.arraySync().flat()).toEqual([1, 0.5, 5, 10, 5])
 
     const resultInverse = scaler.inverseTransform(
-      tensor2d([0.1, 0.5, 1, 1, 0.5], [5, 1])
+      tf.tensor2d([0.1, 0.5, 1, 1, 0.5], [5, 1])
     )
     expect([1, 5, 10, 10, 5]).toEqual(resultInverse.arraySync().flat())
   })
@@ -80,7 +80,7 @@ describe('MaxAbsScaler', function () {
     expect(() => scaler.fit(data as any)).toThrow()
   })
   it('Gracefully handles Nan as inputs MaxAbsScaler', function () {
-    const data = tensor2d([4, 4, 'whoops', 4, -4] as any, [5, 1])
+    const data = tf.tensor2d([4, 4, 'whoops', 4, -4] as any, [5, 1])
     const scaler = new MaxAbsScaler()
     scaler.fit(data as any)
     expect(scaler.transform(data as any).arraySync()).toEqual([

@@ -16,7 +16,6 @@ import { polyfillUnique } from '../tfUtils'
 import { tf } from '../shared/globals'
 import { Scikit1D, Scikit2D } from '../types'
 import { convertToNumericTensor2D, convertToTensor1D } from '../utils'
-import { Tensor1D } from '@tensorflow/tfjs-core'
 import Serialize from '../serialize'
 
 export interface NaiveBayesParams {
@@ -63,8 +62,8 @@ export abstract class BaseNaiveBayes extends Serialize {
 
     const { values, meansByLabel, variancesByLabel } = tf.tidy(() => {
       polyfillUnique(tf)
-      const meansByLabel: Tensor1D[] = []
-      const variancesByLabel: Tensor1D[] = []
+      const meansByLabel: tf.Tensor1D[] = []
+      const variancesByLabel: tf.Tensor1D[] = []
 
       // Get the list of unique labels
       const { values } = tf.unique(labels)
@@ -87,8 +86,8 @@ export abstract class BaseNaiveBayes extends Serialize {
           .div(numInstances)
           .add(epsilon)
 
-        meansByLabel.push(mean as Tensor1D)
-        variancesByLabel.push(variance as Tensor1D)
+        meansByLabel.push(mean as tf.Tensor1D)
+        variancesByLabel.push(variance as tf.Tensor1D)
       })
 
       return { values, meansByLabel, variancesByLabel }
@@ -161,8 +160,8 @@ export abstract class BaseNaiveBayes extends Serialize {
       jsonClass.priors = this.priors.arraySync()
     }
     jsonClass.classes = this.classes.arraySync()
-    jsonClass.means = this.means.map((t: Tensor1D) => t.arraySync())
-    jsonClass.variances = this.variances.map((v: Tensor1D) => v.arraySync())
+    jsonClass.means = this.means.map((t: tf.Tensor1D) => t.arraySync())
+    jsonClass.variances = this.variances.map((v: tf.Tensor1D) => v.arraySync())
     return JSON.stringify(jsonClass)
   }
 

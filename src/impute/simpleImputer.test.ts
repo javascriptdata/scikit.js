@@ -1,11 +1,11 @@
-import { tensor2d } from '@tensorflow/tfjs-core'
+import { tf } from '../shared/globals'
 import { SimpleImputer } from './simpleImputer'
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({ strategy: 'constant', fillValue: 3 })
 
-    const data = tensor2d([1, 2, NaN, 4, 4], [5, 1])
+    const data = tf.tensor2d([1, 2, NaN, 4, 4], [5, 1])
 
     const expected = [1, 2, 3, 4, 4]
 
@@ -24,7 +24,7 @@ describe('SimpleImputer', function () {
       fillValue: 4
     })
 
-    const data = tensor2d([
+    const data = tf.tensor2d([
       [1, NaN],
       [4, 4],
       [NaN, 3]

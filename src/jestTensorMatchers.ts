@@ -14,7 +14,6 @@
 */
 
 import { tf } from './shared/globals'
-import { Tensor, TensorLike } from '@tensorflow/tfjs-core'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -32,9 +31,9 @@ declare global {
        *               iff `|x-y| <= max(|x|, |y|)*rtol + atol`. Set `{rtol: 0, atol: 0}`
        *               for exact equality.
        */
-      toBeAllCloseTo: T extends Tensor | TensorLike
+      toBeAllCloseTo: T extends tf.Tensor | tf.TensorLike
         ? (
-            expected: Tensor | TensorLike,
+            expected: tf.Tensor | tf.TensorLike,
             params?: {
               rtol?: number
               atol?: number
@@ -55,9 +54,9 @@ declare global {
        *               iff `x-y <= max(|x|, |y|)*rtol + atol`. Set `{rtol: 0, atol: 0}`
        *               for exact equality.
        */
-      toBeAllLessOrClose: T extends Tensor | TensorLike
+      toBeAllLessOrClose: T extends tf.Tensor | tf.TensorLike
         ? (
-            expected: Tensor | TensorLike,
+            expected: tf.Tensor | tf.TensorLike,
             params?: {
               rtol?: number
               atol?: number
@@ -78,9 +77,9 @@ declare global {
        *               iff `x-y >= -max(|x|, |y|)*rtol - atol`. Set `{rtol: 0, atol: 0}`
        *               for exact equality.
        */
-      toBeAllGreaterOrClose: T extends Tensor | TensorLike
+      toBeAllGreaterOrClose: T extends tf.Tensor | tf.TensorLike
         ? (
-            expected: Tensor | TensorLike,
+            expected: tf.Tensor | tf.TensorLike,
             params?: {
               rtol?: number
               atol?: number
@@ -101,9 +100,9 @@ declare global {
        *               iff `x-y < -max(|x|, |y|)*rtol - atol`. Set `{rtol: 0, atol: 0}`
        *               for exact equality.
        */
-      toBeAllLessNotClose: T extends Tensor | TensorLike
+      toBeAllLessNotClose: T extends tf.Tensor | tf.TensorLike
         ? (
-            expected: Tensor | TensorLike,
+            expected: tf.Tensor | tf.TensorLike,
             params?: {
               rtol?: number
               atol?: number
@@ -124,9 +123,9 @@ declare global {
        *               iff `x-y > max(|x|, |y|)*rtol + atol`. Set `{rtol: 0, atol: 0}`
        *               for exact equality.
        */
-      toBeAllGreaterNotClose: T extends Tensor | TensorLike
+      toBeAllGreaterNotClose: T extends tf.Tensor | tf.TensorLike
         ? (
-            expected: Tensor | TensorLike,
+            expected: tf.Tensor | tf.TensorLike,
             params?: {
               rtol?: number
               atol?: number
@@ -187,15 +186,15 @@ const isLessNotClose =
 
 export function toBeAll(
   this: { isNot: boolean },
-  result: TensorLike | Tensor,
-  expect: TensorLike | Tensor,
+  result: tf.TensorLike | tf.Tensor,
+  expect: tf.TensorLike | tf.Tensor,
   { broadcast = true, allowEmpty = false },
   description: string,
   match: (x: number, y: number) => boolean
 ) {
   const { isNot } = this
-  const a = result instanceof Tensor ? result : tf.tensor(result)
-  const b = expect instanceof Tensor ? expect : tf.tensor(expect)
+  const a = result instanceof tf.Tensor ? result : tf.tensor(result)
+  const b = expect instanceof tf.Tensor ? expect : tf.tensor(expect)
 
   const msg = (msg: string) => () =>
     `\nA: ${a.toString(true)}` +
@@ -313,8 +312,8 @@ export function toBeAll(
 
 export function toBeAllCloseTo(
   this: { isNot: boolean },
-  result: TensorLike | Tensor,
-  expect: TensorLike | Tensor,
+  result: tf.TensorLike | tf.Tensor,
+  expect: tf.TensorLike | tf.Tensor,
   params: { rtol?: number; atol?: number; broadcast?: boolean } = {}
 ) {
   return toBeAll.call(
@@ -329,8 +328,8 @@ export function toBeAllCloseTo(
 
 export function toBeAllLessOrClose(
   this: { isNot: boolean },
-  result: TensorLike | Tensor,
-  expect: TensorLike | Tensor,
+  result: tf.TensorLike | tf.Tensor,
+  expect: tf.TensorLike | tf.Tensor,
   params: { rtol?: number; atol?: number; broadcast?: boolean } = {}
 ) {
   return toBeAll.call(
@@ -345,8 +344,8 @@ export function toBeAllLessOrClose(
 
 export function toBeAllGreaterOrClose(
   this: { isNot: boolean },
-  result: TensorLike | Tensor,
-  expect: TensorLike | Tensor,
+  result: tf.TensorLike | tf.Tensor,
+  expect: tf.TensorLike | tf.Tensor,
   params: { rtol?: number; atol?: number; broadcast?: boolean } = {}
 ) {
   const le = isLessOrClose(params)
@@ -362,8 +361,8 @@ export function toBeAllGreaterOrClose(
 
 export function toBeAllLessNotClose(
   this: { isNot: boolean },
-  result: TensorLike | Tensor,
-  expect: TensorLike | Tensor,
+  result: tf.TensorLike | tf.Tensor,
+  expect: tf.TensorLike | tf.Tensor,
   params: { rtol?: number; atol?: number; broadcast?: boolean } = {}
 ) {
   return toBeAll.call(
@@ -378,8 +377,8 @@ export function toBeAllLessNotClose(
 
 export function toBeAllGreaterNotClose(
   this: { isNot: boolean },
-  result: TensorLike | Tensor,
-  expect: TensorLike | Tensor,
+  result: tf.TensorLike | tf.Tensor,
+  expect: tf.TensorLike | tf.Tensor,
   params: { rtol?: number; atol?: number; broadcast?: boolean } = {}
 ) {
   const le = isLessNotClose(params)

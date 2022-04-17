@@ -12,22 +12,8 @@
 * limitations under the License.
 * ==========================================================================
 */
-
-import {
-  Tensor,
-  Tensor1D,
-  Tensor2D,
-  tensor1d,
-  tensor2d
-} from '@tensorflow/tfjs-core'
-import {
-  layers,
-  sequential,
-  Sequential,
-  ModelFitArgs,
-  ModelCompileArgs
-} from '@tensorflow/tfjs-layers'
-import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
+import { tf } from '../shared/globals'
+// import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
 import {
   convertToNumericTensor1D_2D,
   convertToNumericTensor2D
@@ -56,7 +42,7 @@ export interface SGDRegressorParams {
         metrics: ['mse'],
       })
    */
-  modelCompileArgs: ModelCompileArgs
+  modelCompileArgs: tf.ModelCompileArgs
 
   /**
    * The complete list of `model.fit` args from Tensorflow.js
@@ -69,7 +55,7 @@ export interface SGDRegressorParams {
         callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })],
       })
    */
-  modelFitArgs: ModelFitArgs
+  modelFitArgs: tf.ModelFitArgs
 
   /**
    * The arguments for a single dense layer in tensorflow. This also defaults to
@@ -83,7 +69,7 @@ export interface SGDRegressorParams {
       })
       )
    */
-  denseLayerArgs: DenseLayerArgs
+  denseLayerArgs: any //DenseLayerArgs
 
   /**
    * This class specifies that we are building a linear model that uses SGD. But there still is the
@@ -99,10 +85,10 @@ export interface SGDRegressorParams {
 }
 
 export class SGDRegressor extends RegressorMixin {
-  model: Sequential
-  modelFitArgs: ModelFitArgs
-  modelCompileArgs: ModelCompileArgs
-  denseLayerArgs: DenseLayerArgs
+  model: tf.Sequential
+  modelFitArgs: tf.ModelFitArgs
+  modelCompileArgs: tf.ModelCompileArgs
+  denseLayerArgs: any //DenseLayerArgs
   isMultiOutput: boolean
   optimizerType: OptimizerTypes
   lossType: LossTypes
@@ -115,7 +101,7 @@ export class SGDRegressor extends RegressorMixin {
     lossType
   }: SGDRegressorParams) {
     super()
-    this.model = sequential()
+    this.model = tf.sequential()
     this.modelFitArgs = modelFitArgs
     this.modelCompileArgs = modelCompileArgs
     this.denseLayerArgs = denseLayerArgs
@@ -137,14 +123,14 @@ export class SGDRegressor extends RegressorMixin {
    */
 
   initializeModel(
-    X: Tensor2D,
-    y: Tensor1D | Tensor2D,
-    weightsTensors: Tensor[] = []
+    X: tf.Tensor2D,
+    y: tf.Tensor1D | tf.Tensor2D,
+    weightsTensors: tf.Tensor[] = []
   ): void {
     this.denseLayerArgs.units = y.shape.length === 1 ? 1 : y.shape[1]
-    const model = sequential()
+    const model = tf.sequential()
     model.add(
-      layers.dense({ inputShape: [X.shape[1]], ...this.denseLayerArgs })
+      tf.layers.dense({ inputShape: [X.shape[1]], ...this.denseLayerArgs })
     )
     model.compile(this.modelCompileArgs)
     if (weightsTensors?.length) {
@@ -216,8 +202,8 @@ export class SGDRegressor extends RegressorMixin {
 
   importModel(params: { coef: number[]; intercept: number }): SGDRegressor {
     // Next steps: Need to update for possible 2D coef case, and 1D intercept case
-    let myCoef = tensor2d(params.coef, [params.coef.length, 1], 'float32')
-    let myIntercept = tensor1d([params.intercept], 'float32')
+    let myCoef = tf.tensor2d(params.coef, [params.coef.length, 1], 'float32')
+    let myIntercept = tf.tensor1d([params.intercept], 'float32')
     this.initializeModel(myCoef, myIntercept, [myCoef, myIntercept])
     return this
   }
@@ -311,16 +297,16 @@ export class SGDRegressor extends RegressorMixin {
    * // => tensor2d([[ 4.5, 10.3, 19.1, 0.22 ]])
    */
 
-  public predict(X: Scikit2D): Tensor1D | Tensor2D {
+  public predict(X: Scikit2D): tf.Tensor1D | tf.Tensor2D {
     let XTwoD = convertToNumericTensor2D(X)
     if (this.model.layers.length === 0) {
       throw new RangeError('Need to call "fit" before "predict"')
     }
-    const predictions = this.model.predict(XTwoD) as Tensor2D
+    const predictions = this.model.predict(XTwoD) as tf.Tensor2D
     if (!this.isMultiOutput) {
-      return predictions.reshape([-1]) as Tensor1D
+      return predictions.reshape([-1]) as tf.Tensor1D
     }
-    return predictions as Tensor2D
+    return predictions as tf.Tensor2D
   }
 
   /**
@@ -346,16 +332,16 @@ export class SGDRegressor extends RegressorMixin {
 
    */
 
-  get coef(): Tensor1D | Tensor2D {
+  get coef(): tf.Tensor1D | tf.Tensor2D {
     const modelWeights = this.model.getWeights()
     if (modelWeights.length === 0) {
-      return tensor2d([])
+      return tf.tensor2d([])
     }
     let coefficients = modelWeights[0]
     if (coefficients.shape[1] === 1) {
-      return coefficients.reshape([coefficients.shape[0]]) as Tensor1D
+      return coefficients.reshape([coefficients.shape[0]]) as tf.Tensor1D
     }
-    return coefficients as Tensor2D
+    return coefficients as tf.Tensor2D
   }
 
   /**
@@ -382,12 +368,12 @@ export class SGDRegressor extends RegressorMixin {
    * lr.intercept
    * // => tensor1d([1.2, 2.3])
    */
-  get intercept(): number | Tensor1D {
+  get intercept(): number | tf.Tensor1D {
     const modelWeights = this.model.getWeights()
     if (modelWeights.length < 2) {
       return 0.0
     }
-    let intercept = modelWeights[1] as Tensor1D
+    let intercept = modelWeights[1] as tf.Tensor1D
     if (intercept.size === 1) {
       return intercept.arraySync()[0]
     }
