@@ -601,4 +601,27 @@ describe('DecisionTree', function () {
       expect(clf.score(X as number[][], y)).toBeCloseTo(el.score)
     })
   })
+  it('Use the DecisionTree (toy)', async function () {
+    let X = [
+      [-2, -1],
+      [-1, -1],
+      [-1, -2],
+      [1, 1],
+      [1, 2],
+      [2, 1]
+    ]
+    let y = [0, 0, 0, 1, 1, 1]
+    let T = [
+      [-1, -1],
+      [2, 2],
+      [3, 2]
+    ]
+    let true_result = [0, 1, 1]
+    let tree_classifier = new DecisionTreeClassifier()
+    tree_classifier.fit(X, y)
+
+    const serial = tree_classifier.toJson()
+    const newTree = new DecisionTreeClassifier().fromJson(serial)
+    expect(newTree.predict(T)).toEqual(true_result)
+  }, 1000)
 })

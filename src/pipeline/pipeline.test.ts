@@ -75,6 +75,35 @@ describe('Pipeline', function () {
       tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)
     ).toEqual(true)
   }, 4000)
+  it('Save and Load Pipeline', async function () {
+    const X = [
+      [2, 2], // [1, .5]
+      [2, NaN], // [1, 0]
+      [NaN, 4], // [0, 1]
+      [1, 0] // [.5, 0]
+    ]
+    const y = [5, 3, 4, 1.5]
+    const pipeline = new Pipeline({
+      steps: [
+        [
+          'simpleImputer',
+          new SimpleImputer({ strategy: 'constant', fillValue: 0 })
+        ],
+        ['minmax', new MinMaxScaler()],
+        ['lr', new LinearRegression({ fitIntercept: false })]
+      ]
+    })
+
+    await pipeline.fit(X, y)
+
+    const saveModel = (await pipeline.toJson()) as string
+    const newPipeLine = new Pipeline().fromJson(saveModel)
+
+    expect(newPipeLine.steps[1][1].min.arraySync()).toEqual([0, 0])
+    expect(
+      tensorEqual(newPipeLine.steps[2][1].coef, tensor1d([3, 4]), 0.3)
+    ).toEqual(true)
+  }, 4000)
   it('Make sure the pipeline throws on bad input', async function () {
     expect(
       () =>

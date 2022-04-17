@@ -37,4 +37,22 @@ describe('VotingRegressor', function () {
     await voter.fit(X, y)
     expect(voter.score(X, y) > 0).toBe(true)
   }, 10000)
+  it('Should save and load VotingRegressor ', async function () {
+    const X = [
+      [1, 2],
+      [2, 1],
+      [2, 2],
+      [3, 1]
+    ]
+    const y = [3, 3, 4, 4]
+    const voter = makeVotingRegressor(
+      new LinearRegression({ fitIntercept: true })
+    )
+
+    await voter.fit(X, y)
+
+    const savedModel = (await voter.toJson()) as string
+    const newModel = new VotingRegressor({}).fromJson(savedModel)
+    expect(newModel.score(X, y)).toEqual(voter.score(X, y))
+  }, 10000)
 })

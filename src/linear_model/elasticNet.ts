@@ -62,7 +62,9 @@ export class ElasticNet extends SGDRegressor {
           l2: 0.5 * alpha * (1 - l1Ratio)
         }),
         useBias: Boolean(fitIntercept)
-      }
+      },
+      optimizerType: 'adam',
+      lossType: 'meanSquaredError'
     })
   }
 }

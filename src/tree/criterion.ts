@@ -1,5 +1,6 @@
 import { assert } from '../typesUtils'
 import { int } from '../randUtils'
+import Serialize from '../serialize'
 
 export type ImpurityMeasure = 'gini' | 'entropy' | 'squared_error'
 
@@ -39,7 +40,7 @@ function arrayMax(labels: int[]) {
   return max
 }
 
-export class ClassificationCriterion {
+export class ClassificationCriterion extends Serialize {
   y: int[]
   impurityMeasure: ImpurityMeasure
   impurityFunc: (labelFreqs: int[], nSamples: int) => number
@@ -53,8 +54,10 @@ export class ClassificationCriterion {
   nSamples: int = 0
   nSamplesLeft: int = 0
   nSamplesRight: int = 0
+  name = 'classificationCriterion'
 
   constructor(impurityMeasure: ImpurityMeasure, y: number[]) {
+    super()
     assert(
       ['gini', 'entropy'].includes(impurityMeasure),
       'Unkown impurity measure. Only supports gini, and entropy'
@@ -137,9 +140,18 @@ export class ClassificationCriterion {
   nodeValue() {
     return this.labelFreqsTotal
   }
+
+  static fromJson(model: string) {
+    const jsonClass = JSON.parse(model)
+    const newModel = new ClassificationCriterion(
+      jsonClass.impurityMeasure,
+      jsonClass.y
+    )
+    return Object.assign(newModel, jsonClass)
+  }
 }
 
-export class RegressionCriterion {
+export class RegressionCriterion extends Serialize {
   y: number[]
   impurityMeasure: 'squared_error'
   impurityFunc: (ySquaredSum: number, ySum: number, nSamples: int) => number
@@ -155,8 +167,10 @@ export class RegressionCriterion {
   nSamples: int = 0
   nSamplesLeft: int = 0
   nSamplesRight: int = 0
+  name = 'regressionCriterion'
 
   constructor(impurityMeasure: 'squared_error', y: number[]) {
+    super()
     assert(
       ['squared_error'].includes(impurityMeasure),
       'Unkown impurity measure. Only supports squared_error'
@@ -238,5 +252,14 @@ export class RegressionCriterion {
 
   nodeValue() {
     return [this.sumTotal / this.nSamples]
+  }
+
+  static fromJson(model: string) {
+    const jsonClass = JSON.parse(model)
+    const newModel = new RegressionCriterion(
+      jsonClass.impurityMeasure,
+      jsonClass.y
+    )
+    return Object.assign(newModel, jsonClass)
   }
 }

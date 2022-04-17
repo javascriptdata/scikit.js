@@ -22,6 +22,7 @@ import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
 import { KdTree } from './kdTree'
+import Serialize from '../serialize'
 
 const WEIGHTS_FUNCTIONS = {
   uniform(distances: Tensor2D) {
@@ -106,7 +107,7 @@ export interface KNeighborsParams {
  * Common superclass for {@link KNeighborsRegressor} and {@link KNeighborsClassifier}.
  * Handles common constructor parameters and fitting.
  */
-export class KNeighborsBase implements KNeighborsParams {
+export class KNeighborsBase extends Serialize implements KNeighborsParams {
   static readonly SUPPORTED_ALGORITHMS = Object.freeze(
     Object.keys(ALGORITHMS)
   ) as (keyof typeof ALGORITHMS)[]
@@ -122,6 +123,7 @@ export class KNeighborsBase implements KNeighborsParams {
   nNeighbors: KNeighborsParams['nNeighbors']
 
   constructor(params: KNeighborsParams = {}) {
+    super()
     Object.assign(this, params)
   }
 

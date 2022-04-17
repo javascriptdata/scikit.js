@@ -1,6 +1,6 @@
 {
   "name": "scikitjs",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Scikit-Learn for JS",
   "output": {
     "node": "dist/node/index.js",

@@ -38,6 +38,42 @@ describe('KMeans', () => {
     )
   })
 
+  it('should save kmeans model', () => {
+    const expectedResult = {
+      name: 'kmeans',
+      nClusters: 2,
+      init: 'random',
+      maxIter: 300,
+      tol: 0.0001,
+      randomState: 0,
+      nInit: 10,
+      clusterCenters: {
+        type: 'Tensor',
+        value: [
+          [2.5, 1],
+          [2.5, 4]
+        ]
+      }
+    }
+    const kmean = new KMeans({ nClusters: 2, randomState: 0 })
+    kmean.fit(X)
+    const ksave = kmean.toJson() as string
+
+    expect(expectedResult).toEqual(JSON.parse(ksave))
+  })
+
+  it('should load serialized kmeans model', () => {
+    const centroids = [
+      [2.5, 1],
+      [2.5, 4]
+    ]
+    const kmean = new KMeans({ nClusters: 2, randomState: 0 })
+    kmean.fit(X)
+    const ksave = kmean.toJson() as string
+    const ksaveModel = new KMeans().fromJson(ksave)
+    expect(centroids).toEqual(ksaveModel.clusterCenters.arraySync())
+  })
+
   // it('should fit vector1 + k=3 size 3 and clusters of size 2', () => {
   //   const expectedCluster = {
   //     centroids: [

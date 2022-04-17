@@ -16,6 +16,7 @@
 import { Scikit1D } from '../types'
 import { tf } from '../shared/globals'
 import { isSeriesInterface } from '../typesUtils'
+import Serialize from '../serialize'
 
 /*
 Next steps:
@@ -35,7 +36,7 @@ Next steps:
     scaler.transform([2, 2, "boy"]) // [1, 1, 2]
  * ```
  */
-export class LabelEncoder {
+export class LabelEncoder extends Serialize {
   /** Unique classes that we see in this single array of data */
   classes: Array<string | number | boolean>
 
@@ -43,6 +44,7 @@ export class LabelEncoder {
   name = 'labelencoder'
 
   constructor() {
+    super()
     this.classes = []
   }
 

@@ -1,3 +1,45 @@
+# [1.9.0](https://github.com/javascriptdata/scikit.js/compare/v1.8.0...v1.9.0) (2022-02-27)
+
+
+### Bug Fixes
+
+* fix ci issue base on update to serializer ([c8bf774](https://github.com/javascriptdata/scikit.js/commit/c8bf774bb23ff26ab4020b2042829db1028b2015))
+* fix lint error ([6590072](https://github.com/javascriptdata/scikit.js/commit/6590072fdbe9fd4adf740fa0284f7110a10e2b31))
+* fix lint errors ([e8dab99](https://github.com/javascriptdata/scikit.js/commit/e8dab99d1d5292c5e9808e91b3975ee13162c820))
+* fix lint issues ([61e584b](https://github.com/javascriptdata/scikit.js/commit/61e584b2d19ce6abf57c374c3b53e14742b1ce0b))
+* fix type errors ([83a78dc](https://github.com/javascriptdata/scikit.js/commit/83a78dc76f7041775014e5e6bbdef2cc4592b939))
+
+
+### Features
+
+* add custom serializer to sgdclassifier (wip) ([9c3f3dc](https://github.com/javascriptdata/scikit.js/commit/9c3f3dc1af84fede71bd0d37e2f19bee36d580fc))
+* add loss and optimizer type to enable easy parsing ([08809ec](https://github.com/javascriptdata/scikit.js/commit/08809ec121056156e4bfb13d4677248f6f1ef830))
+* add loss types  and initializer types ([33e1d2c](https://github.com/javascriptdata/scikit.js/commit/33e1d2ca6ee084c4ef0c76119e7af546c012f9f4))
+* add more estimators and makes serializer flexible for ensembles and pipeline ([e2d319b](https://github.com/javascriptdata/scikit.js/commit/e2d319b52173e388198696a0b1499af8b70e62fa))
+* add optimizer, loss and intializer caller ([8778f73](https://github.com/javascriptdata/scikit.js/commit/8778f731200ba8860133c142be3558a918d46699))
+* add serializer to criterion ([8cbb737](https://github.com/javascriptdata/scikit.js/commit/8cbb7374ac81f585d10aba950a03883633e3846c))
+* add serializer to criterion ([92f765e](https://github.com/javascriptdata/scikit.js/commit/92f765e6cdb2028b055e281623f3137668e0737c))
+* add serializer to decision tree and update test ([83ef949](https://github.com/javascriptdata/scikit.js/commit/83ef949fb524877f49ceb8418105bf0085769f41))
+* add serializer to kNeighborBase ([5314044](https://github.com/javascriptdata/scikit.js/commit/531404440a6eaebeb073bd704370bc3de5cbdfa5))
+* add serializer to labelencoder ([6a1c362](https://github.com/javascriptdata/scikit.js/commit/6a1c3626914a473b6c32d5bd4038a7e517bda87a))
+* add serializer to linear model base class ([9701a3e](https://github.com/javascriptdata/scikit.js/commit/9701a3e1fe1646dea7e1542d81fe8082b522f54e))
+* add serializer to NaiveBayes ([84e747e](https://github.com/javascriptdata/scikit.js/commit/84e747ef27b9e0a42c5b7e56ea113abab6779cbe))
+* add serializer to pipeline ([6c425e1](https://github.com/javascriptdata/scikit.js/commit/6c425e1cbb778d756ad4541c6ee252909c73df9a))
+* add serializer to splitter ([763d7e1](https://github.com/javascriptdata/scikit.js/commit/763d7e13c5ef38f7331ed5fd90349c268e175647))
+* add serializer to SVC AND SVR ([672328f](https://github.com/javascriptdata/scikit.js/commit/672328f048832918e950f44cd394004901323b73))
+* add serializer to votingclassifier ([2a21f31](https://github.com/javascriptdata/scikit.js/commit/2a21f317f7bcffbb80b73a22652ceaf5d7038f07))
+* add serializer to votingRegressor ([6d59faf](https://github.com/javascriptdata/scikit.js/commit/6d59faf2548b0e1707996a7b54f42d60bba102d0))
+* allow ClassifierMixin to extends Serialize class ([48d15f1](https://github.com/javascriptdata/scikit.js/commit/48d15f1db3fa967f248fbe2f17f8bbf11d16035d))
+* allow Kmeans to inherit from serializer ([6b36f4c](https://github.com/javascriptdata/scikit.js/commit/6b36f4cbc1450cc0f72201c3b3e435cb3955965f))
+* implement generic class to Serialize models and transformers e.t.c ([7f617bc](https://github.com/javascriptdata/scikit.js/commit/7f617bcfd93ed6e214ee4a05ccb3eaa8d8adc808))
+* implement serialize ensembles for ensemble class ([bbd9fac](https://github.com/javascriptdata/scikit.js/commit/bbd9facb6b332b7ba536b7275d028bcc918ba9af))
+* make TransformerMixin and RegressorMixin extends serialize ([5a001fd](https://github.com/javascriptdata/scikit.js/commit/5a001fdbca241f916396a66aaf4d6eec0d0e50ad))
+* update linear model with new args to enable easy serialization ([ec559e1](https://github.com/javascriptdata/scikit.js/commit/ec559e192e12c5b2bb8e2849932110de762e78f0))
+* update serialize to easily parse tensors ([232cb62](https://github.com/javascriptdata/scikit.js/commit/232cb621ae1090b15840e7ff6f68311593c1f13e))
+* update Serialize to handle serialization of tensors ([924b050](https://github.com/javascriptdata/scikit.js/commit/924b0501de07f560a78e9fac6f643d19f6a84a89))
+* update serialize to return inherited class ([0733023](https://github.com/javascriptdata/scikit.js/commit/073302383228af55091e0b378aac139f3c429638))
+* update serializer for sgdclassifier ([4971b3c](https://github.com/javascriptdata/scikit.js/commit/4971b3cde5773e7c2622112b4f103df004f26263))
+
 # [1.8.0](https://github.com/javascriptdata/scikit.js/compare/v1.7.0...v1.8.0) (2022-01-28)
 
 
