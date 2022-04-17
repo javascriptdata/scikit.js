@@ -1,3 +1,24 @@
+# [1.12.0](https://github.com/javascriptdata/scikit.js/compare/v1.11.0...v1.12.0) (2022-04-17)
+
+
+### Features
+
+* only import from tensorflow and not subpackages ([f971942](https://github.com/javascriptdata/scikit.js/commit/f971942ab40f4c12ce84fb37f39c669db9b95250))
+
+# [1.11.0](https://github.com/javascriptdata/scikit.js/compare/v1.10.0...v1.11.0) (2022-04-17)
+
+
+### Features
+
+* updated export map ([8b688bc](https://github.com/javascriptdata/scikit.js/commit/8b688bcc56d99456e1a3b40921ea3858edd6e808))
+
+# [1.10.0](https://github.com/javascriptdata/scikit.js/compare/v1.9.0...v1.10.0) (2022-04-17)
+
+
+### Features
+
+* removed danfo as a dependency ([b8b5578](https://github.com/javascriptdata/scikit.js/commit/b8b5578bf66f6c3978bf03cb3f9b21895b2aaca7))
+
 # [1.9.0](https://github.com/javascriptdata/scikit.js/compare/v1.8.0...v1.9.0) (2022-02-27)
 
 
