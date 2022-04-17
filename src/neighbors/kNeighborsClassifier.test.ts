@@ -25,12 +25,13 @@ import { crossValScore } from '../model_selection/crossValScore'
 import { KFold } from '../model_selection/kFold'
 import { arrayEqual } from '../utils'
 import '../jestTensorMatchers'
-import { dfd, tf } from '../shared/globals'
+import * as dfd from 'danfojs'
+import { tf } from '../shared/globals'
 type Tensor1D = tf.Tensor1D
 type Tensor2D = tf.Tensor2D
 
 function testWithDataset(
-  loadData: () => Promise<dfd.DataFrame>,
+  loadData: () => string,
   params: KNeighborsParams,
   referenceAccuracy: number
 ) {
@@ -38,7 +39,7 @@ function testWithDataset(
     `matches sklearn fitting ${loadData.name}`.padEnd(48) +
       JSON.stringify(params),
     async () => {
-      const df = await loadData()
+      const df = await dfd.readCSV(loadData())
 
       const Xy = df.tensor as unknown as Tensor2D
       let [nSamples, nFeatures] = Xy.shape

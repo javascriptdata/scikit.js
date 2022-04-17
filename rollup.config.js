@@ -94,25 +94,9 @@ function getPlugins({ minify = false }) {
 }
 
 export default [
-  //web
-  {
-    // input: "dist/umd/index.js",
-    input: 'src/index.ts',
-    output: getOutput({
-      minify: false
-    }),
-    plugins: getPlugins({
-      minify: false
-    })
-  },
-  //web minified
   {
     input: 'src/index.ts',
-    output: getOutput({
-      minify: true
-    }),
-    plugins: getPlugins({
-      minify: true
-    })
+    output: getOutput(),
+    plugins: getPlugins()
   }
 ]

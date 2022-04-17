@@ -16,7 +16,8 @@
 import { convertScikit2DToArray } from '../utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { TransformerMixin } from '../mixins'
-import { tf, dfd } from '../shared/globals'
+import { tf } from '../shared/globals'
+import { isDataFrameInterface } from '../typesUtils'
 
 /*
 Next steps:
@@ -138,7 +139,7 @@ export class OrdinalEncoder extends TransformerMixin {
     }
     this.categories = this.categoriesParam
     this.nFeaturesIn = array2D.length === 0 ? 0 : array2D[0].length || 0
-    if (X instanceof dfd.DataFrame) {
+    if (isDataFrameInterface(X)) {
       this.featureNamesIn = [...X.columns]
     }
     return this

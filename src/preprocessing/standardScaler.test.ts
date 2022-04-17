@@ -1,5 +1,5 @@
 import { StandardScaler } from './standardScaler'
-import { dfd } from '../shared/globals'
+import * as dfd from 'danfojs'
 
 describe('StandardScaler', function () {
   it('StandardScaler works for DataFrame', function () {

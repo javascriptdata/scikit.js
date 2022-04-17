@@ -1,4 +1,3 @@
-import * as tf from '@tensorflow/tfjs-node'
-import * as dfd from 'danfojs-node'
+import * as tf from '@tensorflow/tfjs'
 
-export { tf, dfd }
+export { tf }

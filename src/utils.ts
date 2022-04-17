@@ -17,20 +17,23 @@ import { DataType } from '@tensorflow/tfjs-core/dist/types'
 import {
   ArrayType1D,
   ArrayType2D,
+  DataFrameInterface,
   Scikit1D,
   Scikit2D,
   ScikitVecOrMatrix,
+  SeriesInterface,
   TypedArray
 } from './types'
 import {
   assert,
   inferShape,
-  // isScikit2D,
+  isDataFrameInterface,
   isScikitVecOrMatrix,
+  isSeriesInterface,
   isTypedArray
 } from './typesUtils'
 
-import { tf, dfd } from './shared/globals'
+import { tf } from './shared/globals'
 import { Tensor } from '@tensorflow/tfjs-core'
 /**
  * Generates an array of dim (row x column) with inner values set to zero
@@ -77,7 +80,7 @@ export function convertToTensor1D(
   data: Scikit1D,
   dtype?: DataType
 ): tf.Tensor1D {
-  if (data instanceof dfd.Series) {
+  if (isSeriesInterface(data)) {
     // Do type inference if no dtype is passed, otherwise try to parse as that dtype
     return dtype
       ? (data.tensor.asType(dtype) as unknown as tf.Tensor1D)
@@ -112,7 +115,7 @@ export function convertToTensor2D(
   data: Scikit2D,
   dtype?: DataType
 ): tf.Tensor2D {
-  if (data instanceof dfd.DataFrame) {
+  if (isDataFrameInterface(data)) {
     return dtype
       ? (data.tensor.asType(dtype) as unknown as tf.Tensor2D)
       : (data.tensor as unknown as tf.Tensor2D)
@@ -183,14 +186,14 @@ export function convertToNumericTensor1D_2D(
 }
 
 export function convertToTensor(
-  data: tf.TensorLike | tf.Tensor | dfd.DataFrame | dfd.Series,
+  data: tf.TensorLike | tf.Tensor | DataFrameInterface | SeriesInterface,
   shape?: number[],
   dtype?: keyof tf.DataTypeMap
 ): tf.Tensor {
-  if (data instanceof dfd.DataFrame) {
+  if (isDataFrameInterface(data)) {
     return data.tensor as unknown as tf.Tensor2D
   }
-  if (data instanceof dfd.Series) {
+  if (isSeriesInterface(data)) {
     return data.tensor as unknown as tf.Tensor2D
   }
   if (data instanceof tf.Tensor) {
@@ -204,27 +207,6 @@ export function convertToTensor(
     return newData
   }
   return tf.tensor(data, shape, dtype)
-}
-export function convertTensorToInputType(
-  tensor: tf.Tensor,
-  inputData: ScikitVecOrMatrix
-) {
-  if (inputData instanceof tf.Tensor) {
-    return tensor
-  } else if (inputData instanceof dfd.DataFrame) {
-    return new dfd.DataFrame(tensor, {
-      index: inputData.index,
-      columns: inputData.columns
-    })
-  } else if (inputData instanceof dfd.Series) {
-    return new dfd.Series(tensor, {
-      index: inputData.index
-    })
-  } else if (Array.isArray(inputData)) {
-    return tensor.arraySync()
-  } else {
-    return tensor
-  }
 }
 
 /**
@@ -292,7 +274,7 @@ export const arrayEqual = (
 export function convertScikit2DToArray(
   data: Scikit2D
 ): any[][] | TypedArray[] {
-  if (data instanceof dfd.DataFrame) {
+  if (isDataFrameInterface(data)) {
     return data.values as any[][]
   }
   if (data instanceof tf.Tensor) {
@@ -302,7 +284,7 @@ export function convertScikit2DToArray(
 }
 
 export function convertScikit1DToArray(data: Scikit1D): any[] | TypedArray {
-  if (data instanceof dfd.Series) {
+  if (isSeriesInterface(data)) {
     return data.values
   }
   if (data instanceof tf.Tensor) {
@@ -324,7 +306,7 @@ export function getLength(X: Scikit2D | Scikit1D): number {
   if (X instanceof Tensor) {
     return X.shape[0]
   }
-  if (X instanceof dfd.DataFrame || X instanceof dfd.Series) {
+  if (isDataFrameInterface(X) || isSeriesInterface(X)) {
     return X.size
   }
   return X.length

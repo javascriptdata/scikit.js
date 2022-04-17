@@ -1,7 +1,31 @@
 import { MinMaxScaler } from './minMaxScaler'
-import { dfd } from '../shared/globals'
+import * as dfd from 'danfojs'
 import { tensor2d } from '@tensorflow/tfjs-core'
-import { convertTensorToInputType } from '../utils'
+import { isDataFrameInterface, isSeriesInterface } from '../typesUtils'
+import { ScikitVecOrMatrix } from '../types'
+import { tf } from '../shared/globals'
+
+export function convertTensorToInputType(
+  tensor: tf.Tensor,
+  inputData: ScikitVecOrMatrix
+) {
+  if (inputData instanceof tf.Tensor) {
+    return tensor
+  } else if (isDataFrameInterface(inputData)) {
+    return new dfd.DataFrame(tensor, {
+      index: inputData.index,
+      columns: inputData.columns
+    })
+  } else if (isSeriesInterface(inputData)) {
+    return new dfd.Series(tensor, {
+      index: inputData.index
+    })
+  } else if (Array.isArray(inputData)) {
+    return tensor.arraySync()
+  } else {
+    return tensor
+  }
+}
 
 describe('MinMaxscaler', function () {
   it('Standardize values in a DataFrame using a MinMaxScaler', function () {

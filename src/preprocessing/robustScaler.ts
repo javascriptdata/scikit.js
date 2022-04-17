@@ -15,11 +15,11 @@
 
 import { convertToNumericTensor2D } from '../utils'
 import { Scikit2D } from '../types'
-import { isScikit2D, assert } from '../typesUtils'
+import { isScikit2D, assert, isDataFrameInterface } from '../typesUtils'
 import { turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
 import { quantileSeq } from 'mathjs'
-import { tf, dfd } from '../shared/globals'
+import { tf } from '../shared/globals'
 
 /*
 Next steps:
@@ -171,7 +171,7 @@ export class RobustScaler extends TransformerMixin {
     }
 
     this.nFeaturesIn = tensorArray.shape[1]
-    if (X instanceof dfd.DataFrame) {
+    if (isDataFrameInterface(X)) {
       this.featureNamesIn = [...X.columns]
     }
     return this

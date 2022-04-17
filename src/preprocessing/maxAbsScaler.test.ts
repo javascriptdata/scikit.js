@@ -1,5 +1,5 @@
 import { MaxAbsScaler } from './maxAbsScaler'
-import { dfd } from '../shared/globals'
+import * as dfd from 'danfojs'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { arrayEqual } from '../utils'
 

@@ -15,14 +15,16 @@
 
 import { Tensor } from '@tensorflow/tfjs-core'
 import {
+  DataFrameInterface,
   Scikit1D,
   Scikit2D,
   ScikitLike1D,
   ScikitLike2D,
-  ScikitVecOrMatrix
+  ScikitVecOrMatrix,
+  SeriesInterface
 } from './types'
 
-import { tf, dfd } from './shared/globals'
+import { tf } from './shared/globals'
 
 export function isString(value: unknown): value is string {
   return typeof value === 'string' || value instanceof String
@@ -135,8 +137,27 @@ export function isScikitLike2D(arr: any): arr is ScikitLike2D {
   return shape.length === 2 && dtype !== null
 }
 
+export function isSeriesInterface(arr: any): arr is SeriesInterface {
+  if (typeof arr !== 'object') {
+    return false
+  }
+  if (arr && arr.iloc && !arr.applyMap) {
+    return true
+  }
+  return false
+}
+export function isDataFrameInterface(arr: any): arr is DataFrameInterface {
+  if (typeof arr !== 'object') {
+    return false
+  }
+  if (arr && arr.iloc && arr.applyMap) {
+    return true
+  }
+  return false
+}
+
 export function isScikit1D(arr: unknown): arr is Scikit1D {
-  if (arr instanceof dfd.Series) {
+  if (isSeriesInterface(arr)) {
     return true
   }
   if (arr instanceof Tensor) {
@@ -146,7 +167,7 @@ export function isScikit1D(arr: unknown): arr is Scikit1D {
 }
 
 export function isScikit2D(arr: unknown): arr is Scikit2D {
-  if (arr instanceof dfd.DataFrame) {
+  if (isDataFrameInterface(arr)) {
     return true
   }
   if (arr instanceof Tensor) {

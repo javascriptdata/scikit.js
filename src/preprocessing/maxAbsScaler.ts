@@ -14,11 +14,11 @@
 */
 
 import { convertToNumericTensor2D } from '../utils'
-import { assert, isScikit2D } from '../typesUtils'
+import { assert, isDataFrameInterface, isScikit2D } from '../typesUtils'
 import { tensorMax, turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
 import { Scikit2D } from '../types'
-import { tf, dfd } from '../shared/globals'
+import { tf } from '../shared/globals'
 
 /*
 Next steps:
@@ -90,7 +90,7 @@ export class MaxAbsScaler extends TransformerMixin {
 
     this.nSamplesSeen = tensorArray.shape[0]
     this.nFeaturesIn = tensorArray.shape[1]
-    if (X instanceof dfd.DataFrame) {
+    if (isDataFrameInterface(X)) {
       this.featureNamesIn = [...X.columns]
     }
     return this
