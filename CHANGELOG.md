@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/javascriptdata/scikit.js/compare/v1.10.0...v1.11.0) (2022-04-17)
+
+
+### Features
+
+* updated export map ([8b688bc](https://github.com/javascriptdata/scikit.js/commit/8b688bcc56d99456e1a3b40921ea3858edd6e808))
+
 # [1.10.0](https://github.com/javascriptdata/scikit.js/compare/v1.9.0...v1.10.0) (2022-04-17)
 
 
