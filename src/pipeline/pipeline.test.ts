@@ -1,5 +1,5 @@
 import { Pipeline, makePipeline } from './pipeline'
-import { tensor1d } from '@tensorflow/tfjs-core'
+import { tf } from '../shared/globals'
 import { tensorEqual } from '../utils'
 import { LinearRegression } from '../linear_model/linearRegression'
 import { SimpleImputer } from '../impute/simpleImputer'
@@ -25,7 +25,7 @@ describe('Pipeline', function () {
 
     expect(pipeline.steps[0][1].min.arraySync()).toEqual([0, 0])
     expect(
-      tensorEqual(pipeline.steps[1][1].coef, tensor1d([3, 4]), 0.3)
+      tensorEqual(pipeline.steps[1][1].coef, tf.tensor1d([3, 4]), 0.3)
     ).toEqual(true)
   }, 4000)
   it('Use a Pipeline (simple-imputer, min-max, linear regression)', async function () {
@@ -46,7 +46,7 @@ describe('Pipeline', function () {
 
     expect(pipeline.steps[1][1].min.arraySync()).toEqual([0, 0])
     expect(
-      tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)
+      tensorEqual(pipeline.steps[2][1].coef, tf.tensor1d([3, 4]), 0.3)
     ).toEqual(true)
   }, 4000)
   it('Use makePipeline (simple-imputer, min-max, linear regression)', async function () {
@@ -72,7 +72,7 @@ describe('Pipeline', function () {
 
     expect(pipeline.steps[1][1].min.arraySync()).toEqual([0, 0])
     expect(
-      tensorEqual(pipeline.steps[2][1].coef, tensor1d([3, 4]), 0.3)
+      tensorEqual(pipeline.steps[2][1].coef, tf.tensor1d([3, 4]), 0.3)
     ).toEqual(true)
   }, 4000)
   it('Save and Load Pipeline', async function () {
@@ -101,7 +101,7 @@ describe('Pipeline', function () {
 
     expect(newPipeLine.steps[1][1].min.arraySync()).toEqual([0, 0])
     expect(
-      tensorEqual(newPipeLine.steps[2][1].coef, tensor1d([3, 4]), 0.3)
+      tensorEqual(newPipeLine.steps[2][1].coef, tf.tensor1d([3, 4]), 0.3)
     ).toEqual(true)
   }, 4000)
   it('Make sure the pipeline throws on bad input', async function () {

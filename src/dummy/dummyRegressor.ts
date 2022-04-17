@@ -17,8 +17,8 @@ import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { assert, isScikit1D, isScikit2D } from '../typesUtils'
 import { median, quantileSeq } from 'mathjs'
-import { tensor1d, Tensor1D } from '@tensorflow/tfjs-core'
 import { RegressorMixin } from '../mixins'
+import { tf } from '../shared/globals'
 
 /*
 Next steps:
@@ -135,10 +135,10 @@ export class DummyRegressor extends RegressorMixin {
     return this
   }
 
-  public predict(X: Scikit2D): Tensor1D {
+  public predict(X: Scikit2D): tf.Tensor1D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     let newData = convertToNumericTensor2D(X)
     let length = newData.shape[0]
-    return tensor1d(Array(length).fill(this.constant))
+    return tf.tensor1d(Array(length).fill(this.constant))
   }
 }

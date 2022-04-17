@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-import { Tensor } from '@tensorflow/tfjs-core'
 import {
   DataFrameInterface,
   Scikit1D,
@@ -160,7 +159,7 @@ export function isScikit1D(arr: unknown): arr is Scikit1D {
   if (isSeriesInterface(arr)) {
     return true
   }
-  if (arr instanceof Tensor) {
+  if (arr instanceof tf.Tensor) {
     return arr.rank === 1
   }
   return isScikitLike1D(arr)
@@ -170,7 +169,7 @@ export function isScikit2D(arr: unknown): arr is Scikit2D {
   if (isDataFrameInterface(arr)) {
     return true
   }
-  if (arr instanceof Tensor) {
+  if (arr instanceof tf.Tensor) {
     return arr.rank === 2
   }
   return isScikitLike2D(arr)

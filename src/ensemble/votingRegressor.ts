@@ -1,7 +1,6 @@
 import { Scikit1D, Scikit2D } from '../types'
 import { tf } from '../shared/globals'
 import { RegressorMixin } from '../mixins'
-import { Tensor1D } from '@tensorflow/tfjs-core'
 import { fromJson, toJson } from './serializeEnsemble'
 /*
   Next steps:
@@ -69,7 +68,7 @@ export class VotingRegressor extends RegressorMixin {
     return this
   }
 
-  public predict(X: Scikit2D): Tensor1D {
+  public predict(X: Scikit2D): tf.Tensor1D {
     let responses = []
     let numEstimators = this.estimators.length
     const weights =
@@ -83,7 +82,7 @@ export class VotingRegressor extends RegressorMixin {
     return tf.addN(responses)
   }
 
-  public transform(X: Scikit2D): Array<Tensor1D> {
+  public transform(X: Scikit2D): Array<tf.Tensor1D> {
     let responses = []
     let numEstimators = this.estimators.length
     for (let i = 0; i < numEstimators; i++) {

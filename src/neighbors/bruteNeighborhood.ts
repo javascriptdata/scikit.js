@@ -15,7 +15,6 @@
 
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { Metric } from './metrics'
-import { Tensor2D } from '@tensorflow/tfjs-core'
 import { tf } from '../shared/globals'
 import { assert } from '../typesUtils'
 
@@ -26,14 +25,14 @@ import { assert } from '../typesUtils'
  */
 export class BruteNeighborhood implements Neighborhood {
   private _metric: Metric
-  private _entries: Tensor2D
+  private _entries: tf.Tensor2D
 
   constructor({ metric, entries }: NeighborhoodParams) {
     this._metric = metric
     this._entries = entries
   }
 
-  kNearest(k: number, queryPoints: Tensor2D) {
+  kNearest(k: number, queryPoints: tf.Tensor2D) {
     const { _metric, _entries } = this
 
     assert(
@@ -62,8 +61,8 @@ export class BruteNeighborhood implements Neighborhood {
         })
       })
       return {
-        distances: tf.stack(result.map((x) => x[0])).neg() as Tensor2D,
-        indices: tf.stack(result.map((x) => x[1])) as Tensor2D
+        distances: tf.stack(result.map((x) => x[0])).neg() as tf.Tensor2D,
+        indices: tf.stack(result.map((x) => x[1])) as tf.Tensor2D
       }
     })
   }

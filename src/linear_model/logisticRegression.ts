@@ -13,11 +13,8 @@
 // * ==========================================================================
 // */
 
-import { losses, train } from '@tensorflow/tfjs-core'
-import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGDClassifier } from './sgdClassifier'
 import { tf } from '../shared/globals'
-import { meanAbsoluteError } from '../metrics/metrics'
 
 // First pass at a LogisticRegression implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
@@ -75,15 +72,17 @@ export class LogisticRegression extends SGDClassifier {
     // If we call fit, and it isn't binary then update args
     super({
       modelCompileArgs: {
-        optimizer: train.adam(0.1),
-        loss: losses.softmaxCrossEntropy,
+        optimizer: tf.train.adam(0.1),
+        loss: tf.losses.softmaxCrossEntropy,
         metrics: ['accuracy']
       },
       modelFitArgs: {
         batchSize: 32,
         epochs: 1000,
         verbose: 0,
-        callbacks: [callbacks.earlyStopping({ monitor: 'loss', patience: 50 })]
+        callbacks: [
+          tf.callbacks.earlyStopping({ monitor: 'loss', patience: 50 })
+        ]
       },
       denseLayerArgs: {
         units: 1,

@@ -13,8 +13,6 @@
 // * ==========================================================================
 // */
 
-import { losses, train } from '@tensorflow/tfjs-core'
-import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGDClassifier } from '../linear_model/sgdClassifier'
 import { tf } from '../shared/globals'
 
@@ -74,15 +72,17 @@ export class LinearSVC extends SGDClassifier {
     // If we call fit, and it isn't binary then update args
     super({
       modelCompileArgs: {
-        optimizer: train.adam(0.1),
-        loss: losses.hingeLoss,
+        optimizer: tf.train.adam(0.1),
+        loss: tf.losses.hingeLoss,
         metrics: ['accuracy']
       },
       modelFitArgs: {
         batchSize: 32,
         epochs: 1000,
         verbose: 0,
-        callbacks: [callbacks.earlyStopping({ monitor: 'loss', patience: 50 })]
+        callbacks: [
+          tf.callbacks.earlyStopping({ monitor: 'loss', patience: 50 })
+        ]
       },
       denseLayerArgs: {
         units: 1,

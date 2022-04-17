@@ -2,7 +2,6 @@ import { Scikit1D, Scikit2D } from '../types'
 import { assert, isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { getLength, sampleWithoutReplacement } from '../utils'
 import { tf } from '../shared/globals'
-import { Tensor } from '@tensorflow/tfjs-core'
 
 /**
  * Validation helper to check if the test/test sizes are meaningful wrt to the
@@ -112,7 +111,7 @@ export function validateShuffleSplit(
 }
 
 export function getIndices(X: Scikit2D | Scikit1D, indices: number[]) {
-  if (X instanceof Tensor) {
+  if (X instanceof tf.Tensor) {
     return tf.gather(X, indices)
   }
   if (isDataFrameInterface(X)) {

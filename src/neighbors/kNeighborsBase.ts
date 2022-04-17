@@ -17,7 +17,6 @@ import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { BruteNeighborhood } from './bruteNeighborhood'
 import { minkowskiMetric } from './metrics'
 import { Scikit1D, Scikit2D } from '../types'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
@@ -25,11 +24,11 @@ import { KdTree } from './kdTree'
 import Serialize from '../serialize'
 
 const WEIGHTS_FUNCTIONS = {
-  uniform(distances: Tensor2D) {
+  uniform(distances: tf.Tensor2D) {
     const { shape } = distances
-    return tf.fill(shape, 1 / shape[1]) as Tensor2D
+    return tf.fill(shape, 1 / shape[1]) as tf.Tensor2D
   },
-  distance(distances: Tensor2D) {
+  distance(distances: tf.Tensor2D) {
     return tf.tidy(() => {
       // scale inverse distances by min. to avoid `1/tinyVal == Infinity`
       const min = distances.min(1, /*keepDims=*/ true)
@@ -113,7 +112,7 @@ export class KNeighborsBase extends Serialize implements KNeighborsParams {
   ) as (keyof typeof ALGORITHMS)[]
 
   private _neighborhood: Neighborhood | undefined
-  private _y: Tensor1D | undefined
+  private _y: tf.Tensor1D | undefined
 
   weights: KNeighborsParams['weights']
   algorithm: KNeighborsParams['algorithm']
@@ -149,7 +148,7 @@ export class KNeighborsBase extends Serialize implements KNeighborsParams {
       nNeighbors,
       weightsFn,
       neighborhood: _neighborhood as Neighborhood,
-      y: _y as Tensor1D
+      y: _y as tf.Tensor1D
     }
   }
 

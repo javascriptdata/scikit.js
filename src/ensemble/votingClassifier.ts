@@ -1,7 +1,6 @@
 import { Scikit1D, Scikit2D } from '../types'
 import { tf } from '../shared/globals'
 import { ClassifierMixin } from '../mixins'
-import { tensor1d, Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { LabelEncoder } from '../preprocessing/labelEncoder'
 import { fromJson, toJson } from './serializeEnsemble'
 
@@ -85,7 +84,7 @@ export class VotingClassifier extends ClassifierMixin {
     return this
   }
 
-  public predictProba(X: Scikit2D): Tensor1D {
+  public predictProba(X: Scikit2D): tf.Tensor1D {
     let responses = []
     let numEstimators = this.estimators.length
     const weights =
@@ -100,7 +99,7 @@ export class VotingClassifier extends ClassifierMixin {
   }
 
   // only hard case
-  public predict(X: Scikit2D): Tensor1D {
+  public predict(X: Scikit2D): tf.Tensor1D {
     let responses = []
     let numEstimators = this.estimators.length
     const weights =
@@ -114,7 +113,9 @@ export class VotingClassifier extends ClassifierMixin {
         let oneHot = tf.oneHot(predictions, this.le.classes.length)
         responses.push(oneHot.mul(curWeight))
       }
-      return tensor1d(this.le.inverseTransform(tf.addN(responses).argMax(1)))
+      return tf.tensor1d(
+        this.le.inverseTransform(tf.addN(responses).argMax(1))
+      )
     } else {
       for (let i = 0; i < numEstimators; i++) {
         let [_, curEstimator] = this.estimators[i]
@@ -122,11 +123,13 @@ export class VotingClassifier extends ClassifierMixin {
         let predictions = curEstimator.predictProba(X)
         responses.push(predictions.mul(curWeight))
       }
-      return tensor1d(this.le.inverseTransform(tf.addN(responses).argMax(1)))
+      return tf.tensor1d(
+        this.le.inverseTransform(tf.addN(responses).argMax(1))
+      )
     }
   }
 
-  public transform(X: Scikit2D): Array<Tensor1D> | Array<Tensor2D> {
+  public transform(X: Scikit2D): Array<tf.Tensor1D> | Array<tf.Tensor2D> {
     let responses = []
     let numEstimators = this.estimators.length
 
@@ -148,7 +151,7 @@ export class VotingClassifier extends ClassifierMixin {
   public async fitTransform(
     X: Scikit2D,
     y: Scikit1D
-  ): Promise<Array<Tensor1D> | Array<Tensor2D>> {
+  ): Promise<Array<tf.Tensor1D> | Array<tf.Tensor2D>> {
     return (await this.fit(X, y)).transform(X)
   }
 

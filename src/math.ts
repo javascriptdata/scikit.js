@@ -1,7 +1,5 @@
-import { onesLike, Tensor, tidy, where } from '@tensorflow/tfjs-core'
 import { Iterable } from './types'
 import { assert } from './typesUtils'
-
 import { tf } from './shared/globals'
 /*
 In creating the preprocessors, I wanted functions that computed the min, max, mean,
@@ -46,12 +44,12 @@ export function simpleMin<T extends Iterable<number | string | boolean>>(
 }
 
 export function tensorMin(
-  tensor: Tensor,
+  tensor: tf.Tensor,
   axis: number,
   ignoreNaN: boolean
-): Tensor {
+): tf.Tensor {
   if (ignoreNaN) {
-    return tidy(() => where(tensor.isNaN(), Infinity, tensor).min(axis))
+    return tf.tidy(() => tf.where(tensor.isNaN(), Infinity, tensor).min(axis))
   }
   return tensor.min(axis)
 }
@@ -82,12 +80,12 @@ export function simpleMax<T extends Iterable<number | string | boolean>>(
 }
 
 export function tensorMax(
-  tensor: Tensor,
+  tensor: tf.Tensor,
   axis: number,
   ignoreNaN?: boolean
-): Tensor {
+): tf.Tensor {
   if (ignoreNaN) {
-    return tidy(() => where(tensor.isNaN(), -Infinity, tensor).max(axis))
+    return tf.tidy(() => tf.where(tensor.isNaN(), -Infinity, tensor).max(axis))
   }
   return tensor.min(axis)
 }
@@ -111,9 +109,13 @@ export function simpleSum<T extends Iterable<number | boolean>>(
   return total
 }
 
-export function tensorSum(tensor: Tensor, axis: number, ignoreNaN?: boolean) {
+export function tensorSum(
+  tensor: tf.Tensor,
+  axis: number,
+  ignoreNaN?: boolean
+) {
   if (ignoreNaN) {
-    return tidy(() => where(tensor.isNaN(), 0, tensor).sum(axis))
+    return tf.tidy(() => tf.where(tensor.isNaN(), 0, tensor).sum(axis))
   }
   return tensor.sum(axis)
 }
@@ -142,16 +144,16 @@ export function simpleCount<T extends Iterable<number | string | boolean>>(
 }
 
 export function tensorCount(
-  tensor: Tensor,
+  tensor: tf.Tensor,
   axis: number,
   ignoreNaN?: boolean
 ) {
   if (ignoreNaN) {
-    return tidy(() => tf.logicalNot(tensor.isNaN()).sum(axis))
+    return tf.tidy(() => tf.logicalNot(tensor.isNaN()).sum(axis))
   }
 
   // Could definitely do this faster
-  return onesLike(tensor).sum(axis)
+  return tf.onesLike(tensor).sum(axis)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -170,7 +172,7 @@ export function simpleMean<T extends Iterable<number | boolean>>(
 }
 
 export function tensorMean(
-  tensor: Tensor,
+  tensor: tf.Tensor,
   axis: number,
   ignoreNaN?: boolean,
   safe?: boolean
@@ -180,14 +182,14 @@ export function tensorMean(
   }
 
   if (safe) {
-    return tidy(() =>
+    return tf.tidy(() =>
       tensorSum(tensor, axis, ignoreNaN).div(
         turnZerosToOnes(tensorCount(tensor, axis, ignoreNaN))
       )
     )
   }
 
-  return tidy(() =>
+  return tf.tidy(() =>
     tensorSum(tensor, axis, ignoreNaN).div(
       tensorCount(tensor, axis, ignoreNaN)
     )
@@ -198,13 +200,17 @@ export function tensorMean(
 // Std Functions
 //////////////////////////////////////////////////////////////////////////
 
-export function tensorStd(tensor: Tensor, dim: number, ignoreNaN?: boolean) {
+export function tensorStd(
+  tensor: tf.Tensor,
+  dim: number,
+  ignoreNaN?: boolean
+) {
   assert(
     Boolean(ignoreNaN),
     'We only need to call this function when ignoreNaN is true'
   )
 
-  return tidy(() => {
+  return tf.tidy(() => {
     const mean = tensorMean(tensor, dim, ignoreNaN)
     const countNaN = tensorCount(tensor, dim, ignoreNaN)
 
@@ -217,8 +223,8 @@ export function tensorStd(tensor: Tensor, dim: number, ignoreNaN?: boolean) {
   })
 }
 
-export function turnZerosToOnes(tensor: Tensor) {
-  return tidy(() => {
+export function turnZerosToOnes(tensor: tf.Tensor) {
+  return tf.tidy(() => {
     const zeros = tf.zerosLike(tensor)
     const booleanAddition = tensor.equal(zeros)
     return tensor.add(booleanAddition)

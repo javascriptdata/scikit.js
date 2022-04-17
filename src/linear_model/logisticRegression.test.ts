@@ -1,6 +1,5 @@
 import { LogisticRegression } from './logisticRegression'
-
-import { Tensor } from '@tensorflow/tfjs-core'
+import { tf } from '../shared/globals'
 
 describe('LogisticRegression', function () {
   it('Works on arrays (small example)', async function () {
@@ -42,7 +41,7 @@ describe('LogisticRegression', function () {
     let logreg = new LogisticRegression({ penalty: 'none' })
     await logreg.fit(X, y)
     let probabilities = logreg.predictProba(X)
-    expect(probabilities instanceof Tensor).toBe(true)
+    expect(probabilities instanceof tf.Tensor).toBe(true)
     let results = logreg.predict(Xtest) // compute results of the training set
     expect(results.arraySync()).toEqual([0, 0, 0, 1, 1, 1])
     expect(logreg.score(X, y) > 0.5).toBe(true)

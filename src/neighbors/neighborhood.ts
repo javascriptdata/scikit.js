@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { Tensor2D } from '@tensorflow/tfjs-core'
+import { tf } from '../shared/globals'
 import { Metric } from './metrics'
 
 /**
@@ -29,7 +29,7 @@ export interface NeighborhoodParams {
    * The row `entries[i,:]` represents the (i+1)-th point.
    * The nearest neighbors are searched for in these points.
    */
-  entries: Tensor2D
+  entries: tf.Tensor2D
   /**
    * For tree-based neighborhood data structures, this is a
    * hint as to how many points are to be stored in a single
@@ -58,6 +58,6 @@ export interface Neighborhood {
    */
   kNearest(
     k: number,
-    queryPoints: Tensor2D
-  ): { distances: Tensor2D; indices: Tensor2D }
+    queryPoints: tf.Tensor2D
+  ): { distances: tf.Tensor2D; indices: tf.Tensor2D }
 }

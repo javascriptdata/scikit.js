@@ -18,7 +18,6 @@ import { tf } from '../shared/globals'
 import { alea } from 'seedrandom'
 import { Neighborhood, NeighborhoodParams } from './neighborhood'
 import { lhs, shuffle } from '../randUtils'
-import { Tensor1D, Tensor2D } from '@tensorflow/tfjs-core'
 import { minkowskiMetric } from './metrics'
 import { polyfillUnique } from '../tfUtils'
 import '../jestTensorMatchers'
@@ -57,13 +56,16 @@ export function neighborhoodGenericTests(
 
               return fc
                 .nat(nSamples)
-                .map<[Tensor2D, Tensor1D]>((nQueries) => [
+                .map<[tf.Tensor2D, tf.Tensor1D]>((nQueries) => [
                   tf.tensor2d(entries),
                   tf.tensor1d(idx.subarray(0, ++nQueries))
                 ])
             })
 
-        const testBody = async ([entries, queryIdx]: [Tensor2D, Tensor1D]) => {
+        const testBody = async ([entries, queryIdx]: [
+          tf.Tensor2D,
+          tf.Tensor1D
+        ]) => {
           tf.engine().startScope()
           try {
             const queries = entries.gather(queryIdx)
@@ -103,7 +105,7 @@ export function neighborhoodGenericTests(
               fc.array(anyFloat(), { minLength: ndim, maxLength: ndim }),
               { minLength: nSamples, maxLength: nSamples }
             )
-            .map<Tensor2D>(tf.tensor)
+            .map<tf.Tensor2D>(tf.tensor)
 
         const anyInput = () =>
           fc
@@ -122,8 +124,8 @@ export function neighborhoodGenericTests(
         polyfillUnique(tf)
 
         const testBody = async ([entries, queries, k]: [
-          Tensor2D,
-          Tensor2D,
+          tf.Tensor2D,
+          tf.Tensor2D,
           number
         ]) => {
           tf.engine().startScope()

@@ -13,8 +13,6 @@
 * ==========================================================================
 */
 
-import { losses, train } from '@tensorflow/tfjs-core'
-import { callbacks } from '@tensorflow/tfjs-layers'
 import { SGDRegressor } from './sgdRegressor'
 import { tf } from '../shared/globals'
 
@@ -41,15 +39,17 @@ export class RidgeRegression extends SGDRegressor {
   }: RidgeRegressionParams = {}) {
     super({
       modelCompileArgs: {
-        optimizer: train.adam(0.1),
-        loss: losses.meanSquaredError,
+        optimizer: tf.train.adam(0.1),
+        loss: tf.losses.meanSquaredError,
         metrics: ['mse']
       },
       modelFitArgs: {
         batchSize: 32,
         epochs: 1000,
         verbose: 0,
-        callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })]
+        callbacks: [
+          tf.callbacks.earlyStopping({ monitor: 'mse', patience: 50 })
+        ]
       },
       denseLayerArgs: {
         units: 1,

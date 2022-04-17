@@ -1,4 +1,4 @@
-import { tensor2d } from '@tensorflow/tfjs-core'
+import { tf } from '../shared/globals'
 import { OneHotEncoder } from './oneHotEncoder'
 import { arrayTo2DColumn } from '../utils'
 
@@ -28,7 +28,7 @@ describe('OneHotEncoder', function () {
     ])
     expect(
       encode.inverseTransform(
-        tensor2d([
+        tf.tensor2d([
           [0, 0, 1],
           [0, 1, 0]
         ])

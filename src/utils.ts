@@ -12,8 +12,6 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { DataType } from '@tensorflow/tfjs-core/dist/types'
-import { losses, train } from '@tensorflow/tfjs-core'
 
 import {
   ArrayType1D,
@@ -38,7 +36,6 @@ import {
 } from './typesUtils'
 
 import { tf } from './shared/globals'
-import { Tensor } from '@tensorflow/tfjs-core'
 /**
  * Generates an array of dim (row x column) with inner values set to zero
  * @param row
@@ -82,7 +79,7 @@ export const is1DArray = (arr: ArrayType1D | ArrayType2D): boolean => {
  */
 export function convertToTensor1D(
   data: Scikit1D,
-  dtype?: DataType
+  dtype?: tf.DataType
 ): tf.Tensor1D {
   if (isSeriesInterface(data)) {
     // Do type inference if no dtype is passed, otherwise try to parse as that dtype
@@ -105,7 +102,7 @@ export function convertToTensor1D(
   return dtype ? tf.tensor1d(data, dtype) : tf.tensor1d(data)
 }
 
-export function convertToNumericTensor1D(data: Scikit1D, dtype?: DataType) {
+export function convertToNumericTensor1D(data: Scikit1D, dtype?: tf.DataType) {
   const newTensor = convertToTensor1D(data, dtype)
   if (newTensor.dtype === 'string') {
     throw new Error(
@@ -117,7 +114,7 @@ export function convertToNumericTensor1D(data: Scikit1D, dtype?: DataType) {
 
 export function convertToTensor2D(
   data: Scikit2D,
-  dtype?: DataType
+  dtype?: tf.DataType
 ): tf.Tensor2D {
   if (isDataFrameInterface(data)) {
     return dtype
@@ -151,7 +148,7 @@ export function convertToTensor2D(
 
 export function convertToTensor1D_2D(
   data: ScikitVecOrMatrix,
-  dtype?: DataType
+  dtype?: tf.DataType
 ): tf.Tensor1D | tf.Tensor2D {
   try {
     const new1DTensor = convertToTensor1D(data as tf.Tensor1D, dtype)
@@ -166,7 +163,7 @@ export function convertToTensor1D_2D(
   }
 }
 
-export function convertToNumericTensor2D(data: Scikit2D, dtype?: DataType) {
+export function convertToNumericTensor2D(data: Scikit2D, dtype?: tf.DataType) {
   const newTensor = convertToTensor2D(data, dtype)
   if (newTensor.dtype === 'string') {
     throw new Error(
@@ -178,7 +175,7 @@ export function convertToNumericTensor2D(data: Scikit2D, dtype?: DataType) {
 
 export function convertToNumericTensor1D_2D(
   data: ScikitVecOrMatrix,
-  dtype?: DataType
+  dtype?: tf.DataType
 ) {
   const newTensor = convertToTensor1D_2D(data, dtype)
   if (newTensor.dtype === 'string') {
@@ -307,7 +304,7 @@ export function arrayTo2DColumn(array: any[] | TypedArray) {
 
 export function getLength(X: Scikit2D | Scikit1D): number {
   assert(isScikitVecOrMatrix(X), "X isn't a Scikit2D or Scikit1D object")
-  if (X instanceof Tensor) {
+  if (X instanceof tf.Tensor) {
     return X.shape[0]
   }
   if (isDataFrameInterface(X) || isSeriesInterface(X)) {
@@ -351,61 +348,44 @@ export function sampleWithoutReplacement(
 export function optimizer(opt: OptimizerTypes) {
   switch (opt) {
     case 'sgd':
-      return train.sgd(0.1)
-      break
+      return tf.train.sgd(0.1)
     case 'momentum':
-      return train.momentum(0.1, 0.9)
-      break
+      return tf.train.momentum(0.1, 0.9)
     case 'adadelta':
-      return train.adadelta()
-      break
+      return tf.train.adadelta()
     case 'adagrad':
-      return train.adagrad(0.1)
-      break
+      return tf.train.adagrad(0.1)
     case 'rmsprop':
-      return train.rmsprop(0.1)
-      break
+      return tf.train.rmsprop(0.1)
     case 'adamax':
-      return train.adamax()
-      break
+      return tf.train.adamax()
     case 'adam':
-      return train.adam()
-      break
+      return tf.train.adam()
   }
 }
 
 export function getLoss(loss: LossTypes) {
   switch (loss) {
     case 'meanSquaredError':
-      return losses.meanSquaredError
-      break
+      return tf.losses.meanSquaredError
     case 'sigmoidCrossEntropy':
-      return losses.sigmoidCrossEntropy
-      break
+      return tf.losses.sigmoidCrossEntropy
     case 'softmaxCrossEntropy':
-      return losses.softmaxCrossEntropy
-      break
+      return tf.losses.softmaxCrossEntropy
     case 'logLoss':
-      return losses.logLoss
-      break
+      return tf.losses.logLoss
     case 'huberLoss':
-      return losses.huberLoss
-      break
+      return tf.losses.huberLoss
     case 'hingeLoss':
-      return losses.hingeLoss
-      break
+      return tf.losses.hingeLoss
     case 'cosineDistance':
-      return losses.cosineDistance
-      break
+      return tf.losses.cosineDistance
     case 'computeWeightedLoss':
-      return losses.computeWeightedLoss
-      break
+      return tf.losses.computeWeightedLoss
     case 'absoluteDifference':
-      return losses.absoluteDifference
-      break
+      return tf.losses.absoluteDifference
     default:
       throw new Error(`${loss} loss not supported`)
-      break
   }
 }
 

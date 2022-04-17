@@ -1,6 +1,5 @@
 import { MinMaxScaler } from './minMaxScaler'
 import * as dfd from 'danfojs-node'
-import { tensor2d } from '@tensorflow/tfjs-core'
 import { isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { ScikitVecOrMatrix } from '../types'
 import { tf } from '../shared/globals'
@@ -74,11 +73,11 @@ describe('MinMaxscaler', function () {
   })
   it('InverseTransform with MinMaxScaler', function () {
     const scaler = new MinMaxScaler()
-    const data = tensor2d([1, 2, 3, 4, 5], [5, 1])
+    const data = tf.tensor2d([1, 2, 3, 4, 5], [5, 1])
     scaler.fit(data)
     const resultTransform = scaler.transform(data)
     const resultInverse = scaler.inverseTransform(
-      tensor2d([0, 0.25, 0.5, 0.75, 1], [5, 1])
+      tf.tensor2d([0, 0.25, 0.5, 0.75, 1], [5, 1])
     )
 
     expect(resultTransform.arraySync().flat()).toEqual([0, 0.25, 0.5, 0.75, 1])
@@ -107,12 +106,12 @@ describe('MinMaxscaler', function () {
     expect(resultDf.columns).toEqual(['a', 'b'])
   })
   it('Handles pathological examples with constant features with MinMaxScaler', function () {
-    const data = tensor2d([3, 3, 3, 3, 3], [5, 1])
+    const data = tf.tensor2d([3, 3, 3, 3, 3], [5, 1])
     const scaler = new MinMaxScaler()
     scaler.fit(data)
     expect(
       scaler
-        .transform(tensor2d([0, 1, 10, 10], [4, 1]))
+        .transform(tf.tensor2d([0, 1, 10, 10], [4, 1]))
         .arraySync()
         .flat()
     ).toEqual([-3, -2, 7, 7])
@@ -151,7 +150,7 @@ describe('MinMaxscaler', function () {
     expect(() => scaler.fit(data as any)).toThrow()
   })
   it('Gracefully handles Nan as inputs MinMaxScaler', function () {
-    const data = tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
+    const data = tf.tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
     const scaler = new MinMaxScaler()
     scaler.fit(data)
     expect(scaler.transform(data).arraySync().flat()).toEqual([
@@ -163,7 +162,7 @@ describe('MinMaxscaler', function () {
     ])
   })
   it('Serialize and unserialize MinMaxScaler', function () {
-    const data = tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
+    const data = tf.tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
     const scaler = new MinMaxScaler()
     scaler.fit(data)
     const serial = scaler.toJson() as string

@@ -1,10 +1,10 @@
-import { Sequential, callbacks } from '@tensorflow/tfjs-layers'
 import { optimizer, initializer, getLoss } from '../utils'
 import { tf } from '../shared/globals'
 import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
-import { RecursiveArray } from '@tensorflow/tfjs-core'
 
-function getModelWeight(model: Sequential): Promise<RecursiveArray<number>> {
+function getModelWeight(
+  model: tf.Sequential
+): Promise<tf.RecursiveArray<number>> {
   return Promise.all(model.getWeights().map((weight) => weight.array()))
 }
 
@@ -43,10 +43,10 @@ export function fromJson(classConstructor: any, model: string) {
     )
   }
 
-  const jsonModel = Sequential.fromConfig(
-    Sequential,
+  const jsonModel = tf.Sequential.fromConfig(
+    tf.Sequential,
     jsonClass.model.config
-  ) as Sequential
+  ) as tf.Sequential
   const jsonOpt = optimizer(jsonClass.optimizerType)
   const optim = Object.assign(jsonOpt, jsonClass.modelCompileArgs.optimizer)
   const loss = getLoss(jsonClass.lossType)
@@ -68,7 +68,7 @@ export function fromJson(classConstructor: any, model: string) {
   // default usecase is set to EarlyStop
   // might get complex for custom callback
   if (jsonClass.modelFitArgs.callbacks) {
-    let jsonCallback = callbacks.earlyStopping()
+    let jsonCallback = tf.callbacks.earlyStopping()
     let modelFitArgs = jsonClass.modelFitArgs
     jsonCallback = Object.assign(jsonCallback, modelFitArgs.callbacks[0])
     modelFitArgs.callbacks = [jsonCallback]
