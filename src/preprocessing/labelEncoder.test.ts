@@ -1,5 +1,5 @@
 import { LabelEncoder } from './labelEncoder'
-import * as dfd from 'danfojs'
+import * as dfd from 'danfojs-node'
 
 describe('LabelEncoder', function () {
   it('LabelEncoder works for Series', function () {

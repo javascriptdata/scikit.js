@@ -1,5 +1,5 @@
 import { MinMaxScaler } from './minMaxScaler'
-import * as dfd from 'danfojs'
+import * as dfd from 'danfojs-node'
 import { tensor2d } from '@tensorflow/tfjs-core'
 import { isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { ScikitVecOrMatrix } from '../types'

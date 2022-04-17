@@ -25,7 +25,7 @@ import { crossValScore } from '../model_selection/crossValScore'
 import { KFold } from '../model_selection/kFold'
 import { arrayEqual } from '../utils'
 import '../jestTensorMatchers'
-import * as dfd from 'danfojs'
+import * as dfd from 'danfojs-node'
 import { tf } from '../shared/globals'
 type Tensor1D = tf.Tensor1D
 type Tensor2D = tf.Tensor2D

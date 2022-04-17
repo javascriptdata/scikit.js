@@ -1,6 +1,6 @@
 import { DecisionTreeClassifier, DecisionTreeRegressor } from './decisiontree'
 import { loadBoston, loadIris } from '../datasets/datasets'
-import * as dfd from 'danfojs'
+import * as dfd from 'danfojs-node'
 
 describe('DecisionTree', function () {
   it('Use the DecisionTree (toy)', async function () {

@@ -4,7 +4,7 @@ import {
   getIndices
 } from './trainTestSplit'
 
-import * as dfd from 'danfojs'
+import * as dfd from 'danfojs-node'
 import { tf } from '../shared/globals'
 import { DataFrameInterface } from '../types'
 

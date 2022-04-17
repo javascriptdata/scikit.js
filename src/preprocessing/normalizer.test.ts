@@ -1,5 +1,5 @@
 import { Normalizer } from './normalizer'
-import * as dfd from 'danfojs'
+import * as dfd from 'danfojs-node'
 import { arrayEqual } from '../utils'
 
 describe('Normalizer', function () {

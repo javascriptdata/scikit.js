@@ -21,7 +21,7 @@ import { crossValScore } from '../model_selection/crossValScore'
 import { KFold } from '../model_selection/kFold'
 import { negMeanSquaredError } from '../model_selection/scorers'
 import '../jestTensorMatchers'
-import * as dfd from 'danfojs'
+import * as dfd from 'danfojs-node'
 import { tf } from '../shared/globals'
 
 type Tensor1D = tf.Tensor1D
