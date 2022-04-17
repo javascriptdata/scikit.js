@@ -47,15 +47,10 @@
   "dependencies": {
     "@tensorflow/tfjs": "3.13.0",
     "@tensorflow/tfjs-node": "3.13.0",
-    "libsvm-wasm": "^0.0.8",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "seedrandom": "^3.0.5",
     "simple-statistics": "^7.7.0"
-  },
-  "browser": {
-    "path": false,
-    "fs": false
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",

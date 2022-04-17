@@ -72,8 +72,10 @@ export {
 export { LinearSVC, LinearSVCParams } from './svm/linearSVC'
 export { LinearSVR, LinearSVRParams } from './svm/linearSVR'
 
-export { SVR, SVRParams } from './svm/SVR'
-export { SVC, SVCParams } from './svm/SVC'
+// Comment these out until our libsvm version doesn't ship with fs / path subdependencies
+// They were stopping the browser build from being built
+// export { SVR, SVRParams } from './svm/SVR'
+// export { SVC, SVCParams } from './svm/SVC'
 export { GaussianNB } from './naive_bayes/gaussianNaiveBayes'
 export {
   DecisionTreeClassifier,
