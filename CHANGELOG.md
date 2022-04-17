@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/javascriptdata/scikit.js/compare/v1.12.0...v1.13.0) (2022-04-17)
+
+
+### Features
+
+* browser package json ([c13d968](https://github.com/javascriptdata/scikit.js/commit/c13d9687a40e70c025897d16dc1175c6812fd475))
+
 # [1.12.0](https://github.com/javascriptdata/scikit.js/compare/v1.11.0...v1.12.0) (2022-04-17)
 
 
