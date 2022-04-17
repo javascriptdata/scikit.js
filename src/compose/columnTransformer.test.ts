@@ -1,6 +1,7 @@
 import { ColumnTransformer } from './columnTransformer'
 import { MinMaxScaler } from '../preprocessing/minMaxScaler'
 import { SimpleImputer } from '../impute/simpleImputer'
+import * as dfd from 'danfojs'
 
 describe('ColumnTransformer', function () {
   it('ColumnTransformer simple test', function () {
@@ -10,6 +11,7 @@ describe('ColumnTransformer', function () {
       [0, NaN], // [0, 1]
       [2, 0] // [.5, 0]
     ]
+    let newDf = new dfd.DataFrame(X)
 
     const transformer = new ColumnTransformer({
       transformers: [
@@ -18,7 +20,7 @@ describe('ColumnTransformer', function () {
       ]
     })
 
-    let result = transformer.fitTransform(X)
+    let result = transformer.fitTransform(newDf)
     const expected = [
       [1, 2],
       [1, 3],

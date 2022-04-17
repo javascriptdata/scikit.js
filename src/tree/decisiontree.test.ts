@@ -1,6 +1,7 @@
 import { DecisionTreeClassifier, DecisionTreeRegressor } from './decisiontree'
 import { loadBoston, loadIris } from '../datasets/datasets'
-import { ImpurityMeasure } from './criterion'
+import * as dfd from 'danfojs'
+
 describe('DecisionTree', function () {
   it('Use the DecisionTree (toy)', async function () {
     let X = [
@@ -423,7 +424,7 @@ describe('DecisionTree', function () {
       }
     ]
     /*[[[end]]]*/
-    let df = await loadIris()
+    let df = await dfd.readCSV(loadIris())
     let y = df['target'].values
     let X = df.drop({ columns: 'target' }).values
 
@@ -585,7 +586,7 @@ describe('DecisionTree', function () {
       }
     ]
     /*[[[end]]]*/
-    let df = await loadBoston()
+    let df = await dfd.readCSV(loadBoston())
     let y = df['target'].values
     let X = df.drop({ columns: 'target' }).values
 
