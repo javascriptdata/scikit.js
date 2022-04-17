@@ -53,6 +53,10 @@
     "seedrandom": "^3.0.5",
     "simple-statistics": "^7.7.0"
   },
+  "browser": {
+    "path": false,
+    "fs": false
+  },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
