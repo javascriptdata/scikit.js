@@ -1,3 +1,11 @@
+# [1.15.0](https://github.com/javascriptdata/scikit.js/compare/v1.14.0...v1.15.0) (2022-04-18)
+
+
+### Features
+
+* remove rollup from the build process, replace with esbuild ([1f16ef8](https://github.com/javascriptdata/scikit.js/commit/1f16ef83fe291509e2dac31e4c214392013c12d6))
+* updated readme ([7e70aba](https://github.com/javascriptdata/scikit.js/commit/7e70aba606c894ed1a128bf3fc4764d02952deec))
+
 # [1.14.0](https://github.com/javascriptdata/scikit.js/compare/v1.13.0...v1.14.0) (2022-04-17)
 
 
