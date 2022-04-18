@@ -55,11 +55,13 @@ import { LinearRegression } from 'scikitjs/dist/cjs/index.js'
 
 For those that wish to use script src tags, simply
 
-```js
-<script src="https://unpkg.com/scikitjs/dist/web/index.min.js"></script>
+```html
+<script type="module">
+  import * as sk from 'https://cdn.skypack.dev/scikitjs'
+  // or alternatively you can pull the bundle from unpkg
+  import * as sk from "https://unpkg.com/scikitjs/dist/web/index.min.js"
+</script>
 ```
-
-This will expose a `scikitjs` object on the window which houses all of the libraries Estimators and functions.
 
 ## Simple Example
 

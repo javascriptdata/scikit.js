@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-
       - name: Install dependencies
         run: |
-          npm i jest typescript rollup typedoc  -g
+          npm i jest typescript esbuild typedoc  -g
           npm ci
       - name: Test coverage
         run: |
