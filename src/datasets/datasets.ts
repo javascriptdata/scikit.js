@@ -1,15 +1,33 @@
+import fetch from 'node-fetch'
+
+export const dataUrls = {
+  loadBoston: 'http://scikitjs.org/data/boston.csv'
+}
+
 /**
  * Loads the Boston housing dataset (regression). Samples 506, features 13.
  * @example
  * ```typescript
     import { loadBoston } from 'scikitjs'
 
-    let df = await loadBoston()
-    df.print()
+    let Array2D = await loadBoston()
+    console.log(Array2D[0]) // Headers ['CRIM', 'ZN', ..., 'LSTAT', 'target']
+    console.log(Array2D.slice(1)) // All the actual data
     ```
  */
-export function loadBoston(): string {
-  return 'http://scikitjs.org/data/boston.csv'
+
+export async function loadBoston(): Promise<Array<Array<number>>> {
+  let text = (await fetch(dataUrls.loadBoston)
+    .then((el) => el.text())
+    .catch((el) => {
+      console.error(`Fetch failed to get url ${dataUrls.loadBoston}`)
+      console.error(el)
+    })) as string
+  let Array2D = text
+    .split('\n')
+    .map((el) => el.split(',').map((singleNumb) => Number(singleNumb)))
+  Array2D.pop() // There is a newline that ends the file and no data after
+  return Array2D
 }
 
 /**
