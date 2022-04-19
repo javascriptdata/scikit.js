@@ -1,3 +1,12 @@
+# [1.16.0](https://github.com/javascriptdata/scikit.js/compare/v1.15.0...v1.16.0) (2022-04-19)
+
+
+### Features
+
+* fixed loadBoston calls. Need to do the others ([05c9d9a](https://github.com/javascriptdata/scikit.js/commit/05c9d9af772c1d197798ea28fdd985e92b6fc5ac))
+* fixed tests ([3f6654d](https://github.com/javascriptdata/scikit.js/commit/3f6654d3aa128cfc0296cd97cb4f672cb2184bc9))
+* remove data loading logic in favor of using dfd.readCSV(url) ([3251738](https://github.com/javascriptdata/scikit.js/commit/3251738e09b9e1af9a354b225033a57b1081f573))
+
 # [1.15.0](https://github.com/javascriptdata/scikit.js/compare/v1.14.0...v1.15.0) (2022-04-18)
 
 
