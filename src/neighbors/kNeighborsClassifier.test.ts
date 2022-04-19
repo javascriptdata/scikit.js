@@ -15,12 +15,7 @@
 
 import { KNeighborsClassifier } from './kNeighborsClassifier'
 import { KNeighborsParams } from './kNeighborsBase'
-import {
-  loadDigits,
-  loadIris,
-  loadWine,
-  loadBreastCancer
-} from '../datasets/datasets'
+import { dataUrls } from '../datasets/datasets'
 import { crossValScore } from '../model_selection/crossValScore'
 import { KFold } from '../model_selection/kFold'
 import { arrayEqual } from '../utils'
@@ -31,15 +26,16 @@ type Tensor1D = tf.Tensor1D
 type Tensor2D = tf.Tensor2D
 
 function testWithDataset(
-  loadData: () => string,
+  loadDataUrl: string,
+  loadDataName: string,
   params: KNeighborsParams,
   referenceAccuracy: number
 ) {
   it(
-    `matches sklearn fitting ${loadData.name}`.padEnd(48) +
+    `matches sklearn fitting ${loadDataName}`.padEnd(48) +
       JSON.stringify(params),
     async () => {
-      const df = await dfd.readCSV(loadData())
+      const df = await dfd.readCSV(loadDataUrl)
 
       const Xy = df.tensor as unknown as Tensor2D
       let [nSamples, nFeatures] = Xy.shape
@@ -72,46 +68,54 @@ for (const algorithm of [
 ]) {
   describe(`KNeighborsClassifier({ algorithm: ${algorithm} })`, () => {
     testWithDataset(
-      loadIris,
+      dataUrls.loadIris,
+      'loadIris',
       { nNeighbors: 5, weights: 'distance', algorithm },
       0.0
     )
     testWithDataset(
-      loadIris,
+      dataUrls.loadIris,
+      'loadIris',
       { nNeighbors: 3, weights: 'uniform', algorithm },
       0.0
     )
 
     testWithDataset(
-      loadWine,
+      dataUrls.loadWine,
+      'loadWine',
       { nNeighbors: 5, weights: 'distance', algorithm },
       0.135
     )
     testWithDataset(
-      loadWine,
+      dataUrls.loadWine,
+      'loadWine',
       { nNeighbors: 3, weights: 'uniform', algorithm },
       0.158
     )
 
     testWithDataset(
-      loadBreastCancer,
+      dataUrls.loadBreastCancer,
+      'loadBreastCancer',
       { nNeighbors: 5, weights: 'distance', algorithm },
       0.92
     )
     testWithDataset(
-      loadBreastCancer,
+      dataUrls.loadBreastCancer,
+      'loadBreastCancer',
       { nNeighbors: 3, weights: 'uniform', algorithm },
       0.916
     )
 
     if ('brute' !== algorithm) {
       testWithDataset(
-        loadDigits,
+        dataUrls.loadDigits,
+        'loadDigits',
         { nNeighbors: 5, weights: 'distance', algorithm, leafSize: 256 },
         0.963
       )
       testWithDataset(
-        loadDigits,
+        dataUrls.loadDigits,
+        'loadDigits',
         { nNeighbors: 3, weights: 'uniform', algorithm, leafSize: 256 },
         0.967
       )

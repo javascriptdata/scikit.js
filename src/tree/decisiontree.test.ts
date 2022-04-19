@@ -1,5 +1,5 @@
 import { DecisionTreeClassifier, DecisionTreeRegressor } from './decisiontree'
-import { loadIris, dataUrls } from '../datasets/datasets'
+import { dataUrls } from '../datasets/datasets'
 import * as dfd from 'danfojs-node'
 
 describe('DecisionTree', function () {
@@ -424,7 +424,7 @@ describe('DecisionTree', function () {
       }
     ]
     /*[[[end]]]*/
-    let df = await dfd.readCSV(loadIris())
+    let df = await dfd.readCSV(dataUrls.loadIris)
     let y = df['target'].values
     let X = df.drop({ columns: 'target' }).values
 
