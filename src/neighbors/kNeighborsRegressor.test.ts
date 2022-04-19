@@ -15,7 +15,7 @@
 
 import { KNeighborsRegressor } from './kNeighborsRegressor'
 import { KNeighborsParams } from './kNeighborsBase'
-import { fetchCaliforniaHousing, loadDiabetes } from '../datasets/datasets'
+import { dataUrls } from '../datasets/datasets'
 import { arrayEqual } from '../utils'
 import { crossValScore } from '../model_selection/crossValScore'
 import { KFold } from '../model_selection/kFold'
@@ -28,15 +28,16 @@ type Tensor1D = tf.Tensor1D
 type Tensor2D = tf.Tensor2D
 
 function testWithDataset(
-  loadData: () => string,
+  loadDataUrl: string,
+  loadDataName: string,
   params: KNeighborsParams,
   referenceError: number
 ) {
   it(
-    `matches sklearn fitting ${loadData.name}`.padEnd(48) +
+    `matches sklearn fitting ${loadDataName}`.padEnd(48) +
       JSON.stringify(params),
     async () => {
-      const df = await dfd.readCSV(loadData())
+      const df = await dfd.readCSV(loadDataUrl)
 
       const Xy = df.tensor as unknown as Tensor2D
       let [nSamples, nFeatures] = Xy.shape
@@ -70,32 +71,37 @@ for (const algorithm of [
 ]) {
   describe(`KNeighborsRegressor({ algorithm: ${algorithm} })`, function () {
     testWithDataset(
-      loadDiabetes,
+      dataUrls.loadDiabetes,
+      'loadDiabetes',
       { nNeighbors: 5, weights: 'distance', algorithm },
       3570
     )
     testWithDataset(
-      loadDiabetes,
+      dataUrls.loadDiabetes,
+      'loadDiabetes',
       { nNeighbors: 3, weights: 'uniform', algorithm },
       3833
     )
     if ('kdTree' === algorithm) {
       testWithDataset(
-        fetchCaliforniaHousing,
+        dataUrls.fetchCaliforniaHousing,
+        'fetchCaliforniaHousing',
         { nNeighbors: 3, weights: 'distance', algorithm },
         1.31
       )
     }
     if ('auto' === algorithm) {
       testWithDataset(
-        fetchCaliforniaHousing,
+        dataUrls.fetchCaliforniaHousing,
+        'fetchCaliforniaHousing',
         { nNeighbors: 4, weights: 'uniform', algorithm, p: 1 },
         1.19
       )
     }
     if (undefined === algorithm) {
       testWithDataset(
-        fetchCaliforniaHousing,
+        dataUrls.fetchCaliforniaHousing,
+        'fetchCaliforniaHousing',
         { nNeighbors: 4, weights: 'uniform', algorithm, p: Infinity },
         1.32
       )

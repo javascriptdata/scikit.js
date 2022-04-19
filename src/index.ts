@@ -58,7 +58,7 @@ export {
 export { RobustScaler, RobustScalerParams } from './preprocessing/robustScaler'
 export { KMeans, KMeansParams } from './cluster/kmeans'
 export { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
-export * as datasets from './datasets/datasets'
+export { dataUrls } from './datasets/datasets'
 export {
   makeVotingRegressor,
   VotingRegressor,
