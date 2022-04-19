@@ -35,11 +35,14 @@ export const createRng = (seed?: number) =>
  *          a random integer in the range [from, until).
  */
 export const randInt = (rand: () => number) => (from: int, until: int) => {
-  if (from >= until)
+  if (from >= until) {
     throw new Error('randInt(rng)(from,until): from must be less than until.')
-
-  const result = (from + (until - from) * rand()) | 0
-  return result - +(result == until)
+  }
+  const result = Math.floor(from + (until - from) * rand())
+  if (result === until) {
+    return result - 1
+  }
+  return result
 }
 
 /**
@@ -56,18 +59,20 @@ export const lhs = (rand: () => number) => (nSamples: int, nFeatures: int) => {
   const result: Float64Array[] = []
 
   // init columns to linspace(0,1, nSamples)
-  for (let i = nSamples; i-- > 0; ) {
+  const normalizeDiv = nSamples - 1 || 1
+  for (let i = nSamples - 1; i >= 0; i--) {
     const row = new Float64Array(nFeatures)
-    row.fill(i / (nSamples - 1 || 1))
+    row.fill(i / normalizeDiv)
     result.push(row)
   }
 
   // shuffle columns independently
-  for (let n, i = nSamples; (n = i--) > 1; ) {
+  for (let i = nSamples - 1; i >= 1; i--) {
+    let n = i + 1
     const ri = result[i]
-    for (let j = nFeatures; j-- > 0; ) {
-      const k = _randInt(0, n),
-        rij = ri[j]
+    for (let j = nFeatures - 1; j >= 0; j--) {
+      const k = _randInt(0, n)
+      const rij = ri[j]
       ri[j] = result[k][j]
       result[k][j] = rij
     }
@@ -76,14 +81,19 @@ export const lhs = (rand: () => number) => (nSamples: int, nFeatures: int) => {
   return result
 }
 
+interface Indexable<T> {
+  [i: number]: T
+  readonly length: number
+}
+
 export const shuffle =
   (rand: () => number) =>
-  <T>(array: { readonly length: number; [i: number]: T }) => {
+  <T>(array: Indexable<T>) => {
     const _randInt = randInt(rand)
-    for (let i = array.length; i > 1; ) {
-      const j = _randInt(0, i--),
-        tmp = array[i]
-      array[i] = array[j]
+    for (let i = array.length; i > 1; i--) {
+      const j = _randInt(0, i)
+      const tmp = array[i - 1]
+      array[i - 1] = array[j]
       array[j] = tmp
     }
   }
