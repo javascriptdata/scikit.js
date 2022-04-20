@@ -23,7 +23,7 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
     expect(voter.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
-  }, 10000)
+  }, 30000)
   it('Use VotingClassifier on simple example label encoder (voting = hard)', async function () {
     const X = [
       [1, 2],
@@ -43,7 +43,7 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
     expect(voter.predict(X).arraySync()).toEqual([2, 2, 2, 2, 2])
-  }, 10000)
+  }, 30000)
   it('Use VotingClassifier on simple example label encoder (voting = soft)', async function () {
     const X = [
       [1, 2],
@@ -63,7 +63,7 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
     expect(voter.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
-  }, 10000)
+  }, 30000)
   it('Use VotingClassifier on simple example label encoder (voting = soft)', async function () {
     const X = [
       [1, 2],
@@ -84,7 +84,7 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
     expect(voter.predict(X).arraySync()).toEqual([0, 0, 1, 1, 1])
-  }, 10000)
+  }, 30000)
   it('Use VotingClassifier on simple example label encoder (voting = soft)', async function () {
     const X = [
       [1, 2],
@@ -101,7 +101,7 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
     expect(voter.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
-  }, 10000)
+  }, 30000)
   it('Save and load votingclassifier', async function () {
     const X = [
       [1, 2],
@@ -122,5 +122,5 @@ describe('VotingClassifier', function () {
     const newModel = new VotingClassifier({}).fromJson(savedModel)
 
     expect(newModel.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
-  }, 10000)
+  }, 30000)
 })
