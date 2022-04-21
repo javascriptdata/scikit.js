@@ -1,3 +1,11 @@
+# [1.17.0](https://github.com/javascriptdata/scikit.js/compare/v1.16.0...v1.17.0) (2022-04-21)
+
+
+### Features
+
+* added automated tests to test our code in the browser ([87e06a2](https://github.com/javascriptdata/scikit.js/commit/87e06a26dea5147f3ea22a568f558a34584706b5))
+* renamed files, added to repo ([9a63da4](https://github.com/javascriptdata/scikit.js/commit/9a63da499910f0c693622f3eb56c3846672e2365))
+
 # [1.16.0](https://github.com/javascriptdata/scikit.js/compare/v1.15.0...v1.16.0) (2022-04-19)
 
 

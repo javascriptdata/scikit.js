@@ -1,6 +1,6 @@
 {
   "name": "scikitjs",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "description": "Scikit-Learn for JS",
   "output": {
     "node": "dist/node/index.js",
@@ -124,8 +124,8 @@
     "typescript": "^4.5.4"
   },
   "jest": {
-    "testPathIgnorePatterns" : [
-      "<rootDir>/src/index.test.ts" 
+    "testPathIgnorePatterns": [
+      "<rootDir>/src/index.test.ts"
     ],
     "testEnvironment": "node",
     "preset": "ts-jest",
