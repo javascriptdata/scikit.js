@@ -124,6 +124,9 @@
     "typescript": "^4.5.4"
   },
   "jest": {
+    "testPathIgnorePatterns" : [
+      "<rootDir>/src/index.test.ts" 
+    ],
     "testEnvironment": "node",
     "preset": "ts-jest",
     "globals": {

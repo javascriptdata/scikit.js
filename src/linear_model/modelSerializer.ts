@@ -1,6 +1,6 @@
 import { optimizer, initializer, getLoss } from '../utils'
 import { tf } from '../shared/globals'
-import { OneHotEncoder } from '../preprocessing/oneHotEncoder'
+import { OneHotEncoder } from '../preprocessing/OneHotEncoder'
 
 function getModelWeight(
   model: tf.Sequential
