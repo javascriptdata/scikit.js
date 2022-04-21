@@ -1,4 +1,4 @@
-import { DummyClassifier } from './dummyClassifier'
+import { DummyClassifier } from './DummyClassifier'
 
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {
@@ -62,7 +62,7 @@ describe('DummyClassifier', function () {
     ]
     const y = [10, 20, 20, 30]
     const expectedResult = {
-      name: 'dummyclassifier',
+      name: 'DummyClassifier',
       EstimatorType: 'classifier',
       constant: 20,
       strategy: 'mostFrequent',

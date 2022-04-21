@@ -2,7 +2,7 @@ import {
   ClassificationCriterion,
   RegressionCriterion,
   ImpurityMeasure
-} from './criterion'
+} from './Criterion'
 import { shuffle } from 'lodash'
 import { int } from '../randUtils'
 import Serialize from '../serialize'

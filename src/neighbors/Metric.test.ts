@@ -15,7 +15,7 @@
 
 import * as fc from 'fast-check'
 
-import { Metric, minkowskiMetric } from './metrics'
+import { Metric, minkowskiMetric } from './Metric'
 
 const NDIMS = Object.freeze([1, 2, 7])
 

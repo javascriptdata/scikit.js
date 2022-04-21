@@ -1,5 +1,5 @@
 import { tf } from '../shared/globals'
-import { OneHotEncoder } from './oneHotEncoder'
+import { OneHotEncoder } from './OneHotEncoder'
 import { arrayTo2DColumn } from '../utils'
 
 describe('OneHotEncoder', function () {

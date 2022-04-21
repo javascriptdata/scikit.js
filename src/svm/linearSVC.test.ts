@@ -1,4 +1,4 @@
-import { LinearSVC } from './linearSVC'
+import { LinearSVC } from './LinearSVC'
 
 describe('LinearSVC', function () {
   it('Works on arrays (small example)', async function () {

@@ -12,7 +12,7 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { GaussianNB } from './gaussianNaiveBayes'
+import { GaussianNB } from './GaussianNB'
 
 describe('GaussianNB', function () {
   it('without priors', async () => {

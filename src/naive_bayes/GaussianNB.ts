@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 import { tf } from '../shared/globals'
-import { BaseNaiveBayes } from './baseNaiveBayes'
+import { BaseNaiveBayes } from './BaseNaiveBayes'
 
 /**
  * Gaussian Naive Bayes classifier
@@ -45,6 +45,7 @@ import { BaseNaiveBayes } from './baseNaiveBayes'
  *
  */
 export class GaussianNB extends BaseNaiveBayes {
+  name = 'GaussianNB'
   protected kernel(
     features: tf.Tensor2D,
     mean: tf.Tensor1D,

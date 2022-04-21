@@ -1,13 +1,13 @@
-import { ImpurityMeasure } from './criterion'
-import { Splitter } from './splitter'
+import { ImpurityMeasure } from './Criterion'
+import { Splitter } from './Splitter'
 import { int } from '../randUtils'
 import { r2Score, accuracyScore } from '../metrics/metrics'
-import { Split, makeDefaultSplit } from './splitter'
+import { Split, makeDefaultSplit } from './Splitter'
 import { assert, isScikit1D, isScikit2D } from '../typesUtils'
 import { validateX, validateY } from './utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { convertScikit2DToArray, convertScikit1DToArray } from '../utils'
-import { LabelEncoder } from '../preprocessing/labelEncoder'
+import { LabelEncoder } from '../preprocessing/LabelEncoder'
 import Serialize from '../serialize'
 
 /*
@@ -396,7 +396,7 @@ export class DecisionTreeClassifier extends DecisionTreeBase {
       minImpurityDecrease
     })
     this.labelEncoder = new LabelEncoder()
-    this.name = 'decisionTreeClassifier'
+    this.name = 'DecisionTreeClassifier'
   }
   public fit(X: Scikit2D, y: Scikit1D): DecisionTreeClassifier {
     assert(isScikit1D(y), 'y value is not a 1D container')
@@ -489,7 +489,7 @@ export class DecisionTreeRegressor extends DecisionTreeBase {
       maxFeatures,
       minImpurityDecrease
     })
-    this.name = 'decisionTreeRegressor'
+    this.name = 'DecisionTreeRegressor'
   }
   public fit(X: Scikit2D, y: Scikit1D): DecisionTreeRegressor {
     assert(isScikit1D(y), 'y value is not a 1D container')

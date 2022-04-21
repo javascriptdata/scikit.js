@@ -1,4 +1,4 @@
-import { Normalizer } from './normalizer'
+import { Normalizer } from './Normalizer'
 import * as dfd from 'danfojs-node'
 import { arrayEqual } from '../utils'
 

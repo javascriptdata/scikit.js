@@ -98,7 +98,7 @@ export class OneHotEncoder extends TransformerMixin {
   featureNamesIn: Array<string>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'onehotencoder'
+  name = 'OneHotEncoder'
 
   constructor({
     categories = 'auto',

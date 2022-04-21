@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { SGDRegressor } from './sgdRegressor'
+import { SGDRegressor } from './SgdRegressor'
 import { tf } from '../shared/globals'
 
 /**
@@ -67,7 +67,7 @@ Next steps:
  */
 export class LinearRegression extends SGDRegressor {
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'linearregression'
+  name = 'LinearRegression'
 
   constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
     super({

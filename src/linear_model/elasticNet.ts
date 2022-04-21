@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { SGDRegressor } from './sgdRegressor'
+import { SGDRegressor } from './SgdRegressor'
 import { tf } from '../shared/globals'
 
 // First pass at a ElasticNet implementation using gradient descent
@@ -34,7 +34,7 @@ export interface ElasticNetParams {
  */
 export class ElasticNet extends SGDRegressor {
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'elasticnet'
+  name = 'ElasticNet'
 
   constructor({
     alpha = 1,

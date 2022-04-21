@@ -65,7 +65,7 @@ export class Normalizer extends TransformerMixin {
   featureNamesIn: Array<string>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'normalizer'
+  name = 'Normalizer'
 
   constructor({ norm = 'l2' }: NormalizerParams = {}) {
     super()

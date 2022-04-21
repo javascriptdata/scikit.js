@@ -1,4 +1,4 @@
-import { ClassificationCriterion, giniCoefficient, entropy } from './criterion'
+import { ClassificationCriterion, giniCoefficient, entropy } from './Criterion'
 
 describe('Criterion', function () {
   let X = [

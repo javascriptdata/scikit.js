@@ -107,7 +107,7 @@ export class RobustScaler extends TransformerMixin {
   withCentering: boolean
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'robustscaler'
+  name = 'RobustScaler'
 
   constructor({
     quantileRange = [25.0, 75.0],

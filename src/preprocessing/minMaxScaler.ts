@@ -83,7 +83,7 @@ export class MinMaxScaler extends TransformerMixin implements Transformer {
   featureNamesIn: Array<string>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'minmaxscaler'
+  name = 'MinMaxScaler'
 
   constructor({ featureRange = [0, 1] }: MinMaxScalerParams = {}) {
     super()

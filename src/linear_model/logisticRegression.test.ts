@@ -1,4 +1,4 @@
-import { LogisticRegression } from './logisticRegression'
+import { LogisticRegression } from './LogisticRegression'
 import { tf } from '../shared/globals'
 
 describe('LogisticRegression', function () {

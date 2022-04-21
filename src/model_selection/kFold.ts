@@ -14,7 +14,7 @@
 */
 
 import { assert } from '../typesUtils'
-import { CrossValidator } from './crossValidator'
+import { CrossValidator } from './CrossValidator'
 import * as randUtils from '../randUtils'
 import { Scikit1D, Scikit2D } from '../types'
 import { getLength } from '../utils'
@@ -81,7 +81,7 @@ export class KFold implements CrossValidator {
   nSplits: number
   shuffle: boolean
   randomState?: number
-
+  name: string
   constructor({
     nSplits = 5,
     shuffle = false,
@@ -95,6 +95,7 @@ export class KFold implements CrossValidator {
     this.nSplits = nSplits
     this.shuffle = Boolean(shuffle)
     this.randomState = randomState
+    this.name = 'KFold'
   }
 
   public getNumSplits(): number {

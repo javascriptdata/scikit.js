@@ -12,74 +12,74 @@
 * limitations under the License.
 * ==========================================================================
 */
-export { KNeighborsRegressor } from './neighbors/kNeighborsRegressor'
+export { KNeighborsRegressor } from './neighbors/KNeighborsRegressor'
 export {
   LinearRegression,
   LinearRegressionParams
-} from './linear_model/linearRegression'
-export { LassoRegression, LassoParams } from './linear_model/lassoRegression'
+} from './linear_model/LinearRegression'
+export { LassoRegression, LassoParams } from './linear_model/LassoRegression'
 export {
   RidgeRegression,
   RidgeRegressionParams
-} from './linear_model/ridgeRegression'
-export { ElasticNet, ElasticNetParams } from './linear_model/elasticNet'
+} from './linear_model/RidgeRegression'
+export { ElasticNet, ElasticNetParams } from './linear_model/ElasticNet'
 export {
   LogisticRegression,
   LogisticRegressionParams
-} from './linear_model/logisticRegression'
+} from './linear_model/LogisticRegression'
 export * as metrics from './metrics/metrics'
-export { DummyRegressor, DummyRegressorParams } from './dummy/dummyRegressor'
+export { DummyRegressor, DummyRegressorParams } from './dummy/DummyRegressor'
 export {
   DummyClassifier,
   DummyClassifierParams
-} from './dummy/dummyClassifier'
-export { MinMaxScaler, MinMaxScalerParams } from './preprocessing/minMaxScaler'
+} from './dummy/DummyClassifier'
+export { MinMaxScaler, MinMaxScalerParams } from './preprocessing/MinMaxScaler'
 export {
   StandardScaler,
   StandardScalerParams
-} from './preprocessing/standardScaler'
-export { MaxAbsScaler } from './preprocessing/maxAbsScaler'
-export { SimpleImputer, SimpleImputerParams } from './impute/simpleImputer'
+} from './preprocessing/StandardScaler'
+export { MaxAbsScaler } from './preprocessing/MaxAbsScaler'
+export { SimpleImputer, SimpleImputerParams } from './impute/SimpleImputer'
 export {
   OneHotEncoder,
   OneHotEncoderParams
-} from './preprocessing/oneHotEncoder'
-export { LabelEncoder } from './preprocessing/labelEncoder'
+} from './preprocessing/OneHotEncoder'
+export { LabelEncoder } from './preprocessing/LabelEncoder'
 export {
   OrdinalEncoder,
   OrdinalEncoderParams
-} from './preprocessing/ordinalEncoder'
-export { Normalizer, NormalizerParams } from './preprocessing/normalizer'
-export { Pipeline, PipelineParams, makePipeline } from './pipeline/pipeline'
+} from './preprocessing/OrdinalEncoder'
+export { Normalizer, NormalizerParams } from './preprocessing/Normalizer'
+export { Pipeline, PipelineParams, makePipeline } from './pipeline/Pipeline'
 export {
   ColumnTransformer,
   ColumnTransformerParams
-} from './compose/columnTransformer'
-export { RobustScaler, RobustScalerParams } from './preprocessing/robustScaler'
-export { KMeans, KMeansParams } from './cluster/kmeans'
+} from './compose/ColumnTransformer'
+export { RobustScaler, RobustScalerParams } from './preprocessing/RobustScaler'
+export { KMeans, KMeansParams } from './cluster/KMeans'
 export { Scikit1D, Scikit2D, ScikitVecOrMatrix } from './types'
 export { dataUrls } from './datasets/datasets'
 export {
   makeVotingRegressor,
   VotingRegressor,
   VotingRegressorParams
-} from './ensemble/votingRegressor'
+} from './ensemble/VotingRegressor'
 export {
   makeVotingClassifier,
   VotingClassifier,
   VotingClassifierParams
-} from './ensemble/votingClassifier'
-export { LinearSVC, LinearSVCParams } from './svm/linearSVC'
-export { LinearSVR, LinearSVRParams } from './svm/linearSVR'
+} from './ensemble/VotingClassifier'
+export { LinearSVC, LinearSVCParams } from './svm/LinearSVC'
+export { LinearSVR, LinearSVRParams } from './svm/LinearSVR'
 
 // Comment these out until our libsvm version doesn't ship with fs / path subdependencies
 // They were stopping the browser build from being built
 // export { SVR, SVRParams } from './svm/SVR'
 // export { SVC, SVCParams } from './svm/SVC'
-export { GaussianNB } from './naive_bayes/gaussianNaiveBayes'
+export { GaussianNB } from './naive_bayes/GaussianNB'
 export {
   DecisionTreeClassifier,
   DecisionTreeClassifierParams,
   DecisionTreeRegressor,
   DecisionTreeRegressorParams
-} from './tree/decisiontree'
+} from './tree/DecisionTree'

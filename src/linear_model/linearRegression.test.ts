@@ -1,4 +1,4 @@
-import { LinearRegression } from './linearRegression'
+import { LinearRegression } from './LinearRegression'
 import { tensorEqual } from '../utils'
 import { tf } from '../shared/globals'
 

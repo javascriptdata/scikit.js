@@ -1,5 +1,5 @@
 import { tf } from '../shared/globals'
-import { SimpleImputer } from './simpleImputer'
+import { SimpleImputer } from './SimpleImputer'
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
@@ -131,7 +131,7 @@ describe('SimpleImputer', function () {
     ]
 
     const expected = {
-      name: 'simpleimputer',
+      name: 'SimpleImputer',
       missingValues: null,
       strategy: 'mostFrequent',
       statistics: {

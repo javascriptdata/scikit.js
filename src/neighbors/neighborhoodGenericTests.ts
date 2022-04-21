@@ -16,9 +16,9 @@
 import * as fc from 'fast-check'
 import { tf } from '../shared/globals'
 import { alea } from 'seedrandom'
-import { Neighborhood, NeighborhoodParams } from './neighborhood'
+import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import { lhs, shuffle } from '../randUtils'
-import { minkowskiMetric } from './metrics'
+import { minkowskiMetric } from './Metric'
 import { polyfillUnique } from '../tfUtils'
 import '../jestTensorMatchers'
 

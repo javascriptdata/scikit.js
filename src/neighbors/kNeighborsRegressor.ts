@@ -14,7 +14,7 @@
 */
 
 import { Scikit2D } from '../types'
-import { KNeighborsBase } from '../neighbors/kNeighborsBase'
+import { KNeighborsBase } from './KNeighborsBase'
 import { convertToNumericTensor2D } from '../utils'
 import { tf } from '../shared/globals'
 
@@ -45,6 +45,7 @@ export class KNeighborsRegressor extends KNeighborsBase {
    * @param y The predicted targets `y` where `y[i]` is the prediction
    *          for sample `X[i,:]`
    */
+  name = 'KNeighborsRegressor'
   public predict(X: Scikit2D) {
     const { neighborhood, y, nNeighbors, weightsFn } = this._getFitParams()
 

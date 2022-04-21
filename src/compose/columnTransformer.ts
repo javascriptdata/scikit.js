@@ -69,7 +69,7 @@ export class ColumnTransformer {
   remainder: Transformer | 'drop' | 'passthrough'
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'columntransformer'
+  name = 'ColumnTransformer'
 
   constructor({
     transformers = [],

@@ -14,6 +14,6 @@
 */
 
 import { neighborhoodGenericTests } from './neighborhoodGenericTests'
-import { KdTree } from './kdTree'
+import { KdTree } from './KdTree'
 
 neighborhoodGenericTests('KdTree', KdTree.build)

@@ -66,7 +66,7 @@ export class SimpleImputer extends TransformerMixin {
   statistics: tf.Tensor1D
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'simpleimputer'
+  name = 'SimpleImputer'
 
   constructor({
     strategy = 'mean',

@@ -13,7 +13,7 @@
 // * ==========================================================================
 // */
 
-import { SGDRegressor } from '../linear_model/sgdRegressor'
+import { SGDRegressor } from '../linear_model/SgdRegressor'
 import { tf } from '../shared/globals'
 
 // First pass at a LinearSVC implementation using gradient descent

@@ -14,8 +14,8 @@
 */
 
 import { assert } from '../typesUtils'
-import { CrossValidator } from './crossValidator'
-import { KFold } from './kFold'
+import { CrossValidator } from './CrossValidator'
+import { KFold } from './KFold'
 import { Scikit1D, Scikit2D } from '../types'
 import { isScikit1D } from '../typesUtils'
 import { convertToTensor1D, convertToTensor2D } from '../utils'

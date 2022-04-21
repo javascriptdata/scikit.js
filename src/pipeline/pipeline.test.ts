@@ -1,9 +1,9 @@
-import { Pipeline, makePipeline } from './pipeline'
+import { Pipeline, makePipeline } from './Pipeline'
 import { tf } from '../shared/globals'
 import { tensorEqual } from '../utils'
-import { LinearRegression } from '../linear_model/linearRegression'
-import { SimpleImputer } from '../impute/simpleImputer'
-import { MinMaxScaler } from '../preprocessing/minMaxScaler'
+import { LinearRegression } from '../linear_model/LinearRegression'
+import { SimpleImputer } from '../impute/SimpleImputer'
+import { MinMaxScaler } from '../preprocessing/MinMaxScaler'
 
 describe('Pipeline', function () {
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {

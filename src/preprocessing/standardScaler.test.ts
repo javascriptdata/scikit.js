@@ -1,4 +1,4 @@
-import { StandardScaler } from './standardScaler'
+import { StandardScaler } from './StandardScaler'
 import * as dfd from 'danfojs-node'
 
 describe('StandardScaler', function () {

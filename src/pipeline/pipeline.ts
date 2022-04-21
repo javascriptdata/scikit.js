@@ -48,7 +48,7 @@ export class Pipeline extends Serialize {
   steps: Array<[string, any]>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'pipeline'
+  name = 'Pipeline'
 
   constructor({ steps = [] }: PipelineParams = {}) {
     super()

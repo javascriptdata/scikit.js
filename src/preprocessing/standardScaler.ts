@@ -86,7 +86,7 @@ export class StandardScaler extends TransformerMixin {
   featureNamesIn: Array<string>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'standardscaler'
+  name = 'StandardScaler'
 
   constructor({ withMean = true, withStd = true }: StandardScalerParams = {}) {
     super()

@@ -1,4 +1,4 @@
-import { DecisionTreeClassifier, DecisionTreeRegressor } from './decisiontree'
+import { DecisionTreeClassifier, DecisionTreeRegressor } from './DecisionTree'
 import { dataUrls } from '../datasets/datasets'
 import * as dfd from 'danfojs-node'
 

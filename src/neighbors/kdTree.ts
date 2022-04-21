@@ -15,10 +15,10 @@
 
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
-import { Neighborhood, NeighborhoodParams } from './neighborhood'
+import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import * as randUtils from '../randUtils'
 import { alea } from 'seedrandom'
-import { CappedMaxHeap } from './cappedMaxHeap'
+import { CappedMaxHeap } from './CappedMaxHeap'
 
 const child = (parent: number) => (parent << 1) + 1
 const parent = (child: number) => (child - 1) >> 1

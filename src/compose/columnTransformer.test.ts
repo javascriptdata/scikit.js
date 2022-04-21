@@ -1,6 +1,6 @@
-import { ColumnTransformer } from './columnTransformer'
-import { MinMaxScaler } from '../preprocessing/minMaxScaler'
-import { SimpleImputer } from '../impute/simpleImputer'
+import { ColumnTransformer } from './ColumnTransformer'
+import { MinMaxScaler } from '../preprocessing/MinMaxScaler'
+import { SimpleImputer } from '../impute/SimpleImputer'
 import * as dfd from 'danfojs-node'
 
 describe('ColumnTransformer', function () {

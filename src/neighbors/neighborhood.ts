@@ -14,7 +14,7 @@
 */
 
 import { tf } from '../shared/globals'
-import { Metric } from './metrics'
+import { Metric } from './Metric'
 
 /**
  * Default constructor parameters for {@link Neighborhood} instances.

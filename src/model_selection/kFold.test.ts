@@ -14,7 +14,7 @@
 */
 
 import * as fc from 'fast-check'
-import { KFold } from './kFold'
+import { KFold } from './KFold'
 import { alea } from 'seedrandom'
 import '../jestTensorMatchers'
 import { tf } from '../shared/globals'

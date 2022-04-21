@@ -13,14 +13,14 @@
 * ==========================================================================
 */
 
-import { Neighborhood, NeighborhoodParams } from './neighborhood'
-import { BruteNeighborhood } from './bruteNeighborhood'
-import { minkowskiMetric } from './metrics'
+import { Neighborhood, NeighborhoodParams } from './Neighborhood'
+import { BruteNeighborhood } from './BruteNeighborhood'
+import { minkowskiMetric } from './Metric'
 import { Scikit1D, Scikit2D } from '../types'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
-import { KdTree } from './kdTree'
+import { KdTree } from './KdTree'
 import Serialize from '../serialize'
 
 const WEIGHTS_FUNCTIONS = {

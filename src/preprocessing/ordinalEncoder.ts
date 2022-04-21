@@ -89,7 +89,7 @@ export class OrdinalEncoder extends TransformerMixin {
   featureNamesIn: Array<string>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'ordinalencoder'
+  name = 'OrdinalEncoder'
 
   constructor({
     categories = 'auto',

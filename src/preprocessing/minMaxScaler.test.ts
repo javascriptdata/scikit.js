@@ -1,4 +1,4 @@
-import { MinMaxScaler } from './minMaxScaler'
+import { MinMaxScaler } from './MinMaxScaler'
 import * as dfd from 'danfojs-node'
 import { isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { ScikitVecOrMatrix } from '../types'

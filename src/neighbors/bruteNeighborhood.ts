@@ -13,8 +13,8 @@
 * ==========================================================================
 */
 
-import { Neighborhood, NeighborhoodParams } from './neighborhood'
-import { Metric } from './metrics'
+import { Neighborhood, NeighborhoodParams } from './Neighborhood'
+import { Metric } from './Metric'
 import { tf } from '../shared/globals'
 import { assert } from '../typesUtils'
 

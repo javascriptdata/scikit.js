@@ -1,4 +1,4 @@
-import { LinearSVR } from './linearSVR'
+import { LinearSVR } from './LinearSVR'
 
 import { tensorEqual } from '../utils'
 import { tf } from '../shared/globals'

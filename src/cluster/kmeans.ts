@@ -71,7 +71,7 @@ export class KMeans extends Serialize {
   clusterCenters: tf.Tensor2D
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'kmeans'
+  name = 'KMeans'
 
   constructor({
     nClusters = 8,
@@ -145,7 +145,7 @@ export class KMeans extends Serialize {
   }
 
   /**
-   * Converts 2D input into a 1D Tensor which holds the Kmeans cluster Class label
+   * Converts 2D input into a 1D Tensor which holds the KMeans cluster Class label
    * @param X The 2D Matrix that you wish to cluster
    */
   public predict(X: Scikit2D): tf.Tensor1D {

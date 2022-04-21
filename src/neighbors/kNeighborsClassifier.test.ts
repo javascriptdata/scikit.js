@@ -13,11 +13,11 @@
 * ==========================================================================
 */
 
-import { KNeighborsClassifier } from './kNeighborsClassifier'
-import { KNeighborsParams } from './kNeighborsBase'
+import { KNeighborsClassifier } from './KNeighborsClassifier'
+import { KNeighborsParams } from './KNeighborsBase'
 import { dataUrls } from '../datasets/datasets'
 import { crossValScore } from '../model_selection/crossValScore'
-import { KFold } from '../model_selection/kFold'
+import { KFold } from '../model_selection/KFold'
 import { arrayEqual } from '../utils'
 import '../jestTensorMatchers'
 import * as dfd from 'danfojs-node'

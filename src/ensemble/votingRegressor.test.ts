@@ -1,6 +1,6 @@
-import { makeVotingRegressor, VotingRegressor } from './votingRegressor'
-import { DummyRegressor } from '../dummy/dummyRegressor'
-import { LinearRegression } from '../linear_model/linearRegression'
+import { makeVotingRegressor, VotingRegressor } from './VotingRegressor'
+import { DummyRegressor } from '../dummy/DummyRegressor'
+import { LinearRegression } from '../linear_model/LinearRegression'
 
 describe('VotingRegressor', function () {
   it('Use VotingRegressor on simple example ', async function () {

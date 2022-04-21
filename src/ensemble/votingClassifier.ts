@@ -1,7 +1,7 @@
 import { Scikit1D, Scikit2D } from '../types'
 import { tf } from '../shared/globals'
 import { ClassifierMixin } from '../mixins'
-import { LabelEncoder } from '../preprocessing/labelEncoder'
+import { LabelEncoder } from '../preprocessing/LabelEncoder'
 import { fromJson, toJson } from './serializeEnsemble'
 
 /*

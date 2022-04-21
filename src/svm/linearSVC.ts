@@ -13,7 +13,7 @@
 // * ==========================================================================
 // */
 
-import { SGDClassifier } from '../linear_model/sgdClassifier'
+import { SGDClassifier } from '../linear_model/SgdClassifier'
 import { tf } from '../shared/globals'
 
 // First pass at a LinearSVC implementation using gradient descent

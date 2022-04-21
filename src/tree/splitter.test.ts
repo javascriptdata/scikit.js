@@ -1,5 +1,5 @@
-import { ImpurityMeasure } from './criterion'
-import { Splitter } from './splitter'
+import { ImpurityMeasure } from './Criterion'
+import { Splitter } from './Splitter'
 
 describe('Splitter', function () {
   let types = ['gini', 'entropy', 'squared_error']

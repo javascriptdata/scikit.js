@@ -14,7 +14,7 @@
 */
 
 import { Scikit1D, Scikit2D } from '../types'
-import { KNeighborsBase } from './kNeighborsBase'
+import { KNeighborsBase } from './KNeighborsBase'
 import { convertToNumericTensor2D, convertToTensor1D } from '../utils'
 import { polyfillUnique } from '../tfUtils'
 import { accuracy } from '../model_selection/scorers'
@@ -44,6 +44,7 @@ export class KNeighborsClassifier extends KNeighborsBase {
 
   score = accuracy
 
+  name = 'KNeighborsClassifier'
   /**
    * Applies this mdodel to predict the class probabilities of each given sample.
    *

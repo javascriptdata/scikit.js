@@ -41,7 +41,7 @@ export class LabelEncoder extends Serialize {
   classes: Array<string | number | boolean>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'labelencoder'
+  name = 'LabelEncoder'
 
   constructor() {
     super()

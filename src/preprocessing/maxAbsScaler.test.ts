@@ -1,4 +1,4 @@
-import { MaxAbsScaler } from './maxAbsScaler'
+import { MaxAbsScaler } from './MaxAbsScaler'
 import * as dfd from 'danfojs-node'
 import { tf } from '../shared/globals'
 import { arrayEqual } from '../utils'

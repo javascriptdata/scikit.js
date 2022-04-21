@@ -13,7 +13,7 @@
 // * ==========================================================================
 // */
 
-import { SGDClassifier } from './sgdClassifier'
+import { SGDClassifier } from './SgdClassifier'
 import { tf } from '../shared/globals'
 
 // First pass at a LogisticRegression implementation using gradient descent
@@ -61,7 +61,7 @@ export interface LogisticRegressionParams {
 */
 export class LogisticRegression extends SGDClassifier {
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'logisticregression'
+  name = 'LogisticRegression'
 
   constructor({
     penalty = 'l2',

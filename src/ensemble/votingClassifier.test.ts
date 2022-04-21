@@ -1,7 +1,7 @@
-import { makeVotingClassifier, VotingClassifier } from './votingClassifier'
-import { DummyClassifier } from '../dummy/dummyClassifier'
+import { makeVotingClassifier, VotingClassifier } from './VotingClassifier'
+import { DummyClassifier } from '../dummy/DummyClassifier'
 
-import { LogisticRegression } from '../linear_model/logisticRegression'
+import { LogisticRegression } from '../linear_model/LogisticRegression'
 
 describe('VotingClassifier', function () {
   it('Use VotingClassifier on simple example (voting = hard)', async function () {

@@ -1,4 +1,4 @@
-import { RobustScaler } from './robustScaler'
+import { RobustScaler } from './RobustScaler'
 import * as dfd from 'danfojs-node'
 import { arrayEqual } from '../utils'
 

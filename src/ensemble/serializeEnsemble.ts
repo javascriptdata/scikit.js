@@ -1,34 +1,34 @@
-import { DummyClassifier } from '../dummy/dummyClassifier'
-import { DummyRegressor } from '../dummy/dummyRegressor'
-import { LogisticRegression } from '../linear_model/logisticRegression'
-import { RidgeRegression } from '../linear_model/ridgeRegression'
-import { LinearRegression } from '../linear_model/linearRegression'
-import { LassoRegression } from '../linear_model/lassoRegression'
-import { ElasticNet } from '../linear_model/elasticNet'
-import { LabelEncoder } from '../preprocessing/labelEncoder'
-import { SimpleImputer } from '../impute/simpleImputer'
+import { DummyClassifier } from '../dummy/DummyClassifier'
+import { DummyRegressor } from '../dummy/DummyRegressor'
+import { LogisticRegression } from '../linear_model/LogisticRegression'
+import { RidgeRegression } from '../linear_model/RidgeRegression'
+import { LinearRegression } from '../linear_model/LinearRegression'
+import { LassoRegression } from '../linear_model/LassoRegression'
+import { ElasticNet } from '../linear_model/ElasticNet'
+import { LabelEncoder } from '../preprocessing/LabelEncoder'
+import { SimpleImputer } from '../impute/SimpleImputer'
 import { tf } from '../shared/globals'
-import { MinMaxScaler } from '../preprocessing/minMaxScaler'
+import { MinMaxScaler } from '../preprocessing/MinMaxScaler'
 
 function getEstimator(name: string, serialJson: string) {
   switch (name) {
-    case 'dummyclassifier':
+    case 'DummyClassifier':
       return new DummyClassifier().fromJson(serialJson)
-    case 'dummyregressor':
+    case 'DummyRegressor':
       return new DummyRegressor().fromJson(serialJson)
-    case 'logisticregression':
+    case 'LogisticRegression':
       return new LogisticRegression().fromJson(serialJson)
-    case 'ridgeregression':
+    case 'RidgeRegression':
       return new RidgeRegression().fromJson(serialJson)
-    case 'linearregression':
+    case 'LinearRegression':
       return new LinearRegression().fromJson(serialJson)
-    case 'lassoregression':
+    case 'LassoRegression':
       return new LassoRegression().fromJson(serialJson)
-    case 'elasticnet':
+    case 'ElasticNet':
       return new ElasticNet().fromJson(serialJson)
-    case 'simpleimputer':
+    case 'SimpleImputer':
       return new SimpleImputer().fromJson(serialJson)
-    case 'minmaxscaler':
+    case 'MinMaxScaler':
       return new MinMaxScaler().fromJson(serialJson)
     default:
       throw new Error(`${name} estimator not supported`)

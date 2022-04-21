@@ -1,4 +1,4 @@
-import { DummyRegressor } from './dummyRegressor'
+import { DummyRegressor } from './DummyRegressor'
 
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {
@@ -65,7 +65,7 @@ describe('DummyRegressor', function () {
     ]
     const y = [10, 12, 30]
     const saveResult = {
-      name: 'dummyregressor',
+      name: 'DummyRegressor',
       EstimatorType: 'regressor',
       strategy: 'constant',
       constant: 10

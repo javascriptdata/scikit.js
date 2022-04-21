@@ -67,7 +67,7 @@ export class MaxAbsScaler extends TransformerMixin {
   featureNamesIn: Array<string>
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'maxabsscaler'
+  name = 'MaxAbsScaler'
 
   constructor() {
     super()

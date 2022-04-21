@@ -1,4 +1,4 @@
-import { KMeans } from './kmeans'
+import { KMeans } from './KMeans'
 
 // Next steps: Improve on kmeans cluster testing
 describe('KMeans', () => {
@@ -40,7 +40,7 @@ describe('KMeans', () => {
 
   it('should save kmeans model', () => {
     const expectedResult = {
-      name: 'kmeans',
+      name: 'KMeans',
       nClusters: 2,
       init: 'random',
       maxIter: 300,
