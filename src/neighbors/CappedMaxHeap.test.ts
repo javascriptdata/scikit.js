@@ -15,7 +15,7 @@
 
 import * as fc from 'fast-check'
 
-import { CappedMaxHeap } from './cappedMaxHeap'
+import { CappedMaxHeap } from './CappedMaxHeap'
 
 describe('CappedMaxHeap', () => {
   const anyFloat = () =>

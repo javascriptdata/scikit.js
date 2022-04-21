@@ -14,7 +14,7 @@
 */
 
 import { neighborhoodGenericTests } from './neighborhoodGenericTests'
-import { BruteNeighborhood } from './bruteNeighborhood'
+import { BruteNeighborhood } from './BruteNeighborhood'
 
 neighborhoodGenericTests(
   'BruteNeighborhood',
