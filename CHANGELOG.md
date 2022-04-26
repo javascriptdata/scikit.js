@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/javascriptdata/scikit.js/compare/v1.17.0...v1.18.0) (2022-04-26)
+
+
+### Features
+
+* removed seedrandom in favor of inlining to help build on esm.sh ([245d49c](https://github.com/javascriptdata/scikit.js/commit/245d49c904fea6ffab9201cab58c4504b6ddfe3a))
+
 # [1.17.0](https://github.com/javascriptdata/scikit.js/compare/v1.16.0...v1.17.0) (2022-04-21)
 
 
