@@ -15,7 +15,7 @@
 
 import * as fc from 'fast-check'
 import { KFold } from './KFold'
-import { alea } from 'seedrandom'
+import { alea } from '../randUtils'
 import '../jestTensorMatchers'
 import { tf } from '../shared/globals'
 type Tensor2D = tf.Tensor2D

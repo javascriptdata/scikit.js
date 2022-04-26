@@ -17,7 +17,7 @@ import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
 import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import * as randUtils from '../randUtils'
-import { alea } from 'seedrandom'
+import { alea } from '../randUtils'
 import { CappedMaxHeap } from './CappedMaxHeap'
 
 const child = (parent: number) => (parent << 1) + 1
