@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/javascriptdata/scikit.js/compare/v1.18.0...v1.19.0) (2022-04-26)
+
+
+### Features
+
+* changed lodash imports to support building on esm.sh ([3eabad9](https://github.com/javascriptdata/scikit.js/commit/3eabad9e10b9155eefdc9ae93e2c2a1b548e9496))
+
 # [1.18.0](https://github.com/javascriptdata/scikit.js/compare/v1.17.0...v1.18.0) (2022-04-26)
 
 
