@@ -3,7 +3,7 @@ import {
   RegressionCriterion,
   ImpurityMeasure
 } from './Criterion'
-import { shuffle } from 'lodash'
+import shuffle from 'lodash/shuffle'
 import { int } from '../randUtils'
 import Serialize from '../serialize'
 
