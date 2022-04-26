@@ -15,7 +15,7 @@
 
 import * as fc from 'fast-check'
 import { tf } from '../shared/globals'
-import { alea } from 'seedrandom'
+import { alea } from '../randUtils'
 import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import { lhs, shuffle } from '../randUtils'
 import { minkowskiMetric } from './Metric'
