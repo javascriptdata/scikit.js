@@ -49,8 +49,8 @@
   },
   "homepage": "https://github.com/javascriptdata/scikit.js#readme",
   "dependencies": {
-    "@tensorflow/tfjs": "3.13.0",
-    "@tensorflow/tfjs-node": "3.13.0",
+    "@tensorflow/tfjs": "^3.16.0",
+    "@tensorflow/tfjs-node": "^3.16.0",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "simple-statistics": "^7.7.0"
