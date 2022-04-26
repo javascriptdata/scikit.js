@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/javascriptdata/scikit.js/compare/v1.19.0...v1.20.0) (2022-04-26)
+
+
+### Features
+
+* updated tensorflow ([00d1863](https://github.com/javascriptdata/scikit.js/commit/00d1863e42979940810d49a3b63c0ff7fdc0c109))
+
 # [1.19.0](https://github.com/javascriptdata/scikit.js/compare/v1.18.0...v1.19.0) (2022-04-26)
 
 
