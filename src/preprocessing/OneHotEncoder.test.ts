@@ -1,6 +1,7 @@
-import { tf } from '../shared/globals'
-import { OneHotEncoder } from './OneHotEncoder'
+import { OneHotEncoder, setBackend } from '../index'
 import { arrayTo2DColumn } from '../utils'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('OneHotEncoder', function () {
   it('OneHotEncoder works on array', function () {

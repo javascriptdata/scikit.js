@@ -1,5 +1,6 @@
-import { tf } from '../shared/globals'
-import { SimpleImputer } from './SimpleImputer'
+import { SimpleImputer, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {

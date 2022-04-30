@@ -1,6 +1,7 @@
 import { optimizer, initializer, getLoss } from '../utils'
 import { tf } from '../shared/globals'
 import { OneHotEncoder } from '../preprocessing/OneHotEncoder'
+import omit from 'lodash/omit'
 
 function getModelWeight(
   model: tf.Sequential
@@ -12,9 +13,10 @@ export async function toJSON(
   classConstructor: any,
   classifierJson: any
 ): Promise<string> {
+  let cj = omit(classifierJson, ['tf', 'oneHot.tf'])
   const modelConfig = classConstructor.model.getConfig()
   const modelWeight = await getModelWeight(classConstructor.model)
-  classifierJson.model = {
+  cj.model = {
     config: modelConfig,
     weight: modelWeight
   }
@@ -22,17 +24,16 @@ export async function toJSON(
   if (classConstructor.denseLayerArgs.kernelInitializer) {
     const initializerName =
       classConstructor.denseLayerArgs.kernelInitializer.constructor.name
-    classifierJson.denseLayerArgs.kernelInitializer = initializerName
+    cj.denseLayerArgs.kernelInitializer = initializerName
   }
   if (classConstructor.denseLayerArgs.biasInitializer) {
     const biasName =
       classConstructor.denseLayerArgs.biasInitializer.constructor.name
-    classifierJson.denseLayerArgs.biasInitializer = biasName
+    cj.denseLayerArgs.biasInitializer = biasName
   }
   // set optimizer
-  classifierJson.modelCompileArgs.optimizer =
-    classConstructor.model.optimizer.getConfig()
-  return JSON.stringify(classifierJson)
+  cj.modelCompileArgs.optimizer = classConstructor.model.optimizer.getConfig()
+  return JSON.stringify(cj)
 }
 
 export function fromJson(classConstructor: any, model: string) {

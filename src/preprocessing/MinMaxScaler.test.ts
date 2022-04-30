@@ -1,8 +1,9 @@
-import { MinMaxScaler } from './MinMaxScaler'
+import { MinMaxScaler, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
 import { isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { ScikitVecOrMatrix } from '../types'
-import { tf } from '../shared/globals'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 export function convertTensorToInputType(
   tensor: tf.Tensor,

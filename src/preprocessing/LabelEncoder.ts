@@ -13,11 +13,10 @@
 * ==========================================================================
 */
 
-import { Scikit1D } from '../types'
-import { tf } from '../shared/globals'
-import { isSeriesInterface } from '../typesUtils'
+import { Scikit1D, Tensor1D } from '../types'
+import { isSeriesInterface, isTensor } from '../typesUtils'
 import Serialize from '../serialize'
-
+import { getBackend } from '../tf-singleton'
 /*
 Next steps:
 1. Pass the next 5 tests
@@ -43,8 +42,11 @@ export class LabelEncoder extends Serialize {
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'LabelEncoder'
 
+  tf: any
+
   constructor() {
     super()
+    this.tf = getBackend()
     this.classes = []
   }
 
@@ -52,7 +54,7 @@ export class LabelEncoder extends Serialize {
     if (isSeriesInterface(X)) {
       return X.values as any[]
     }
-    if (X instanceof tf.Tensor) {
+    if (isTensor(X)) {
       return X.arraySync()
     }
     return X
@@ -93,7 +95,7 @@ export class LabelEncoder extends Serialize {
    * // [0, 1, 2, 3]
    * ```
    */
-  public transform(X: Scikit1D): tf.Tensor1D {
+  public transform(X: Scikit1D): Tensor1D {
     const arr = this.convertTo1DArray(X)
 
     const labels = this.classesToMapping(this.classes)
@@ -101,10 +103,10 @@ export class LabelEncoder extends Serialize {
       let val = labels.get(value)
       return val === undefined ? -1 : val
     })
-    return tf.tensor1d(encodedData)
+    return this.tf.tensor1d(encodedData)
   }
 
-  public fitTransform(X: Scikit1D): tf.Tensor1D {
+  public fitTransform(X: Scikit1D): Tensor1D {
     return this.fit(X).transform(X)
   }
 

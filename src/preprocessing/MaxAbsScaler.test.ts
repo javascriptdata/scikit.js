@@ -1,6 +1,7 @@
-import { MaxAbsScaler } from './MaxAbsScaler'
+import { MaxAbsScaler, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
-import { tf } from '../shared/globals'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 import { arrayEqual } from '../utils'
 
 describe('MaxAbsScaler', function () {

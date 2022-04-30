@@ -13,11 +13,9 @@
 * ==========================================================================
 */
 
-import { Scikit1D, Scikit2D } from '../types'
+import { getBackend } from '../tf-singleton'
+import { Scikit1D, Scikit2D, Scalar, Tensor1D } from '../types'
 import { convertToTensor1D } from '../utils'
-import { tf } from '../shared/globals'
-type Scalar = tf.Scalar
-type Tensor1D = tf.Tensor1D
 
 export function negMeanAbsoluteError(
   this: {
@@ -26,6 +24,7 @@ export function negMeanAbsoluteError(
   X: Scikit2D,
   y: Scikit1D
 ): Scalar {
+  let tf = getBackend()
   return tf.tidy(() => {
     y = convertToTensor1D(y)
     const yPred = this.predict(X)
@@ -40,6 +39,7 @@ export function negMeanSquaredError(
   X: Scikit2D,
   y: Scikit1D
 ): Scalar {
+  let tf = getBackend()
   return tf.tidy(() => {
     y = convertToTensor1D(y)
     const yPred = this.predict(X)
@@ -54,6 +54,7 @@ export function accuracy(
   X: Scikit2D,
   y: Scikit1D
 ): Scalar {
+  let tf = getBackend()
   return tf.tidy(() => {
     y = convertToTensor1D(y)
     const yPred = this.predict(X)

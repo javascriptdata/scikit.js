@@ -24,8 +24,8 @@ import { assert } from '../typesUtils'
  * tree traversal.
  */
 export class CappedMaxHeap {
-  private _keys: Float32Array
-  private _vals: Int32Array
+  _keys: Float32Array
+  _vals: Int32Array
   /**
    * Index of the currently first entry.
    * The entries are added from right to
@@ -33,7 +33,7 @@ export class CappedMaxHeap {
    * adding further elements results in
    * replacement.
    */
-  private _pos: number
+  _pos: number
 
   /**
    * Creates a new heap using the given key

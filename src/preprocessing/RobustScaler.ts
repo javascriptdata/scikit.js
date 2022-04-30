@@ -14,12 +14,12 @@
 */
 
 import { convertToNumericTensor2D } from '../utils'
-import { Scikit2D } from '../types'
+import { Scikit2D, Tensor1D, Tensor2D } from '../types'
 import { isScikit2D, assert, isDataFrameInterface } from '../typesUtils'
 import { turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
 import { quantileSeq } from 'mathjs'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps:
@@ -91,10 +91,10 @@ function removeMissingValuesFromArray(arr: any[]) {
  */
 export class RobustScaler extends TransformerMixin {
   /** The per-feature scale that we see in the dataset. We divide by this number. */
-  scale: tf.Tensor1D
+  scale: Tensor1D
 
   /** The per-feature median that we see in the dataset. We subtrace this number. */
-  center: tf.Tensor1D
+  center: Tensor1D
 
   /** The number of features seen during fit */
   nFeaturesIn: number
@@ -115,8 +115,9 @@ export class RobustScaler extends TransformerMixin {
     withScaling = true
   }: RobustScalerParams = {}) {
     super()
-    this.scale = tf.tensor1d([])
-    this.center = tf.tensor1d([])
+    this.tf = getBackend()
+    this.scale = this.tf.tensor1d([])
+    this.center = this.tf.tensor1d([])
     this.quantileRange = quantileRange
     this.withScaling = withScaling
     this.withCentering = withCentering
@@ -146,13 +147,13 @@ export class RobustScaler extends TransformerMixin {
     )
 
     const tensorArray = convertToNumericTensor2D(X)
-    const rowOrientedArray = tensorArray.transpose<tf.Tensor2D>().arraySync()
+    const rowOrientedArray = tensorArray.transpose<Tensor2D>().arraySync()
 
     if (this.withCentering) {
       const quantiles = rowOrientedArray.map((arr: number[] | string[]) =>
         quantileSeq(removeMissingValuesFromArray(arr), 0.5)
       )
-      this.center = tf.tensor1d(quantiles as number[])
+      this.center = this.tf.tensor1d(quantiles as number[])
     }
     if (this.withScaling) {
       const quantiles = rowOrientedArray.map((arr: number[] | string[]) =>
@@ -161,13 +162,13 @@ export class RobustScaler extends TransformerMixin {
           highPercentile / 100
         ])
       )
-      const scale = tf.tensor1d(quantiles.map((el: any) => el[1] - el[0]))
+      const scale = this.tf.tensor1d(quantiles.map((el: any) => el[1] - el[0]))
 
       // But what happens if max = min, ie.. we are dealing with a constant vector?
       // In the case above, scale = max - min = 0 and we'll divide by 0 which is no bueno.
       // The common practice in cases where the vector is constant is to change the 0 elements
       // in scale to 1, so that the division doesn't fail. We do that below
-      this.scale = turnZerosToOnes(scale) as tf.Tensor1D
+      this.scale = turnZerosToOnes(scale) as Tensor1D
     }
 
     this.nFeaturesIn = tensorArray.shape[1]
@@ -177,7 +178,7 @@ export class RobustScaler extends TransformerMixin {
     return this
   }
 
-  public transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     let tensorArray = convertToNumericTensor2D(X)
 
@@ -185,17 +186,17 @@ export class RobustScaler extends TransformerMixin {
       tensorArray = tensorArray.sub(this.center)
     }
     if (this.withScaling) {
-      tensorArray = tensorArray.div<tf.Tensor2D>(this.scale)
+      tensorArray = tensorArray.div<Tensor2D>(this.scale)
     }
     return tensorArray
   }
 
-  public inverseTransform(X: Scikit2D): tf.Tensor2D {
+  public inverseTransform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     let tensorArray = convertToNumericTensor2D(X)
 
     if (this.withScaling) {
-      tensorArray = tensorArray.mul<tf.Tensor2D>(this.scale)
+      tensorArray = tensorArray.mul<Tensor2D>(this.scale)
     }
     if (this.withCentering) {
       tensorArray = tensorArray.add(this.center)

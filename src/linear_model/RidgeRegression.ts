@@ -14,7 +14,7 @@
 */
 
 import { SGDRegressor } from './SgdRegressor'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 // RidgeRegression implementation using gradient descent
 // This is a placeholder until we can do an analytic solution instead
@@ -30,13 +30,11 @@ export interface RidgeRegressionParams {
 
 /** Linear least squares with l2 regularization. */
 export class RidgeRegression extends SGDRegressor {
-  /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'RidgeRegression'
-
   constructor({
     fitIntercept = true,
     alpha = 0.01
   }: RidgeRegressionParams = {}) {
+    let tf = getBackend()
     super({
       modelCompileArgs: {
         optimizer: tf.train.adam(0.1),
@@ -59,5 +57,7 @@ export class RidgeRegression extends SGDRegressor {
       optimizerType: 'adam',
       lossType: 'meanSquaredError'
     })
+    /** Useful for pipelines and column transformers to have a default name for transforms */
+    this.name = 'RidgeRegression'
   }
 }

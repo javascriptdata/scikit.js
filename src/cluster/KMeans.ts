@@ -1,7 +1,7 @@
-import { Scikit2D } from '../types'
+import { Scikit2D, Tensor1D, Tensor2D } from '../types'
 import { convertToNumericTensor2D, sampleWithoutReplacement } from '../utils'
 import Serialize from '../serialize'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps
@@ -68,10 +68,11 @@ export class KMeans extends Serialize {
 
   // Attributes
   /** The actual cluster centers found by KMeans */
-  clusterCenters: tf.Tensor2D
+  clusterCenters: Tensor2D
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'KMeans'
+  tf: any
 
   constructor({
     nClusters = 8,
@@ -82,51 +83,58 @@ export class KMeans extends Serialize {
     randomState
   }: KMeansParams = {}) {
     super()
+    this.tf = getBackend()
     this.nClusters = nClusters
     this.init = init
     this.maxIter = maxIter
     this.tol = tol
     this.randomState = randomState
     this.nInit = nInit
-    this.clusterCenters = tf.tensor2d([[]])
+    this.clusterCenters = this.tf.tensor2d([[]])
   }
 
-  initCentroids(X: tf.Tensor2D) {
+  initCentroids(X: Tensor2D) {
     if (this.init === 'random') {
       let indices = sampleWithoutReplacement(
         X.shape[0],
         this.nClusters,
         this.randomState
       )
-      this.clusterCenters = tf.gather(X, indices)
+      this.clusterCenters = this.tf.gather(X, indices)
       return
     }
     throw new Error(`init ${this.init} is not currently implemented`)
   }
 
-  closestCentroid(X: tf.Tensor2D): tf.Tensor1D {
-    return tf.tidy(() => {
-      const expandedX = tf.expandDims(X, 1)
-      const expandedClusters = tf.expandDims(this.clusterCenters, 0)
-      return tf.squaredDifference(expandedX, expandedClusters).sum(2).argMin(1)
+  closestCentroid(X: Tensor2D): Tensor1D {
+    return this.tf.tidy(() => {
+      const expandedX = this.tf.expandDims(X, 1)
+      const expandedClusters = this.tf.expandDims(this.clusterCenters, 0)
+      return this.tf
+        .squaredDifference(expandedX, expandedClusters)
+        .sum(2)
+        .argMin(1)
     })
   }
 
-  updateCentroids(X: tf.Tensor2D, nearestIndices: tf.Tensor1D): tf.Tensor2D {
-    return tf.tidy(() => {
+  updateCentroids(X: Tensor2D, nearestIndices: Tensor1D): Tensor2D {
+    return this.tf.tidy(() => {
       const newCentroids = []
       for (let i = 0; i < this.nClusters; i++) {
-        const mask = tf.equal(nearestIndices, tf.scalar(i).toInt())
-        const currentCentroid = tf.div(
+        const mask = this.tf.equal(nearestIndices, this.tf.scalar(i).toInt())
+        const currentCentroid = this.tf.div(
           // set all masked instances to 0 by multiplying the mask tensor,
           // then sum across all instances
-          tf.sum(tf.mul(tf.expandDims(mask.toFloat(), 1), X), 0),
+          this.tf.sum(
+            this.tf.mul(this.tf.expandDims(mask.toFloat(), 1), X),
+            0
+          ),
           // divided by number of instances
-          tf.sum(mask.toFloat())
+          this.tf.sum(mask.toFloat())
         )
         newCentroids.push(currentCentroid)
       }
-      return tf.stack(newCentroids) as tf.Tensor2D
+      return this.tf.stack(newCentroids) as Tensor2D
     })
   }
 
@@ -148,20 +156,20 @@ export class KMeans extends Serialize {
    * Converts 2D input into a 1D Tensor which holds the KMeans cluster Class label
    * @param X The 2D Matrix that you wish to cluster
    */
-  public predict(X: Scikit2D): tf.Tensor1D {
+  public predict(X: Scikit2D): Tensor1D {
     let XTensor2D = convertToNumericTensor2D(X)
     return this.closestCentroid(XTensor2D)
   }
 
-  public transform(X: Scikit2D): tf.Tensor2D {
-    return tf.tidy(() => {
+  public transform(X: Scikit2D): Tensor2D {
+    return this.tf.tidy(() => {
       const XTensor2D = convertToNumericTensor2D(X)
-      const expandedX = tf.expandDims(XTensor2D, 1)
-      const expandedClusters = tf.expandDims(this.clusterCenters, 0)
-      return tf
+      const expandedX = this.tf.expandDims(XTensor2D, 1)
+      const expandedClusters = this.tf.expandDims(this.clusterCenters, 0)
+      return this.tf
         .squaredDifference(expandedX, expandedClusters)
         .sum(2)
-        .sqrt() as tf.Tensor2D
+        .sqrt() as Tensor2D
     })
   }
 
@@ -173,12 +181,12 @@ export class KMeans extends Serialize {
     return this.fit(X).transform(X)
   }
 
-  public score(X: Scikit2D): tf.Tensor1D {
-    return tf.tidy(() => {
+  public score(X: Scikit2D): Tensor1D {
+    return this.tf.tidy(() => {
       const XTensor2D = convertToNumericTensor2D(X)
-      const expandedX = tf.expandDims(XTensor2D, 1)
-      const expandedClusters = tf.expandDims(this.clusterCenters, 0)
-      return tf
+      const expandedX = this.tf.expandDims(XTensor2D, 1)
+      const expandedClusters = this.tf.expandDims(this.clusterCenters, 0)
+      return this.tf
         .squaredDifference(expandedX, expandedClusters)
         .sum(2)
         .min(1)

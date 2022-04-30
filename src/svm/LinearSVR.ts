@@ -14,7 +14,7 @@
 // */
 
 import { SGDRegressor } from '../linear_model/SgdRegressor'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 // First pass at a LinearSVC implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearSVC.html
@@ -64,9 +64,6 @@ export interface LinearSVRParams {
  * ```
 */
 export class LinearSVR extends SGDRegressor {
-  /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'LinearSVR'
-
   constructor({
     epsilon = 0,
     C = 1,
@@ -74,6 +71,7 @@ export class LinearSVR extends SGDRegressor {
   }: LinearSVRParams = {}) {
     // Assume Binary classification
     // If we call fit, and it isn't binary then update args
+    let tf = getBackend()
     super({
       modelCompileArgs: {
         optimizer: tf.train.adam(0.1),
@@ -98,5 +96,7 @@ export class LinearSVR extends SGDRegressor {
       optimizerType: 'adam',
       lossType: 'custom'
     })
+    /** Useful for pipelines and column transformers to have a default name for transforms */
+    this.name = 'LinearSVR'
   }
 }

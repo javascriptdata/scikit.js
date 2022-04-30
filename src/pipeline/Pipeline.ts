@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assert } from '../typesUtils'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor2D } from '../types'
 import Serialize from '../serialize'
 import { toJson, fromJson } from '../ensemble/serializeEnsemble'
-import { tf } from '../shared/globals'
 
 /*
 Next steps:
@@ -171,22 +170,22 @@ export class Pipeline extends Serialize {
     return this
   }
 
-  public transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): Tensor2D {
     this.validateSteps(this.steps)
     const lastEstimator = this.getLastEstimator()
     this.assertEstimatorHasFunction(lastEstimator, 'transform')
 
     let XT = this.transformExceptLast(X)
-    return lastEstimator.transform(XT) as tf.Tensor2D
+    return lastEstimator.transform(XT) as Tensor2D
   }
 
-  public fitTransform(X: Scikit2D, y: Scikit1D): tf.Tensor2D {
+  public fitTransform(X: Scikit2D, y: Scikit1D): Tensor2D {
     this.validateSteps(this.steps)
     const lastEstimator = this.getLastEstimator()
     this.assertEstimatorHasFunction(lastEstimator, 'fitTransform')
 
     let XT = this.fitTransformExceptLast(X)
-    return lastEstimator.fitTransform(XT) as tf.Tensor2D
+    return lastEstimator.fitTransform(XT) as Tensor2D
   }
 
   public predict(X: Scikit2D) {

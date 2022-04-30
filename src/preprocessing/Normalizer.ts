@@ -14,10 +14,10 @@
 */
 
 import { convertToNumericTensor2D } from '../utils'
-import { Scikit2D } from '../types'
+import { Scikit2D, Tensor2D } from '../types'
 import { isScikit2D, assert, isDataFrameInterface } from '../typesUtils'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps:
@@ -69,6 +69,7 @@ export class Normalizer extends TransformerMixin {
 
   constructor({ norm = 'l2' }: NormalizerParams = {}) {
     super()
+    this.tf = getBackend()
     this.norm = norm
     this.nFeaturesIn = 0
     this.featureNamesIn = []
@@ -90,11 +91,11 @@ export class Normalizer extends TransformerMixin {
   /**
    * Transform the data using the Normalizer
    * */
-  public transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
     if (this.norm === 'l1') {
-      const means = tf.abs(tensorArray).sum(1).reshape([-1, 1])
+      const means = this.tf.abs(tensorArray).sum(1).reshape([-1, 1])
       return tensorArray.divNoNan(means)
     }
     if (this.norm === 'l2') {
@@ -102,7 +103,7 @@ export class Normalizer extends TransformerMixin {
       return tensorArray.divNoNan(means)
     }
     // max case
-    const means = tf.abs(tensorArray).max(1).reshape([-1, 1])
+    const means = this.tf.abs(tensorArray).max(1).reshape([-1, 1])
     return tensorArray.divNoNan(means)
   }
 }

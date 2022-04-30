@@ -14,11 +14,13 @@
 */
 
 import { assert } from '../typesUtils'
-import { tf } from '../shared/globals'
+
 import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import * as randUtils from '../randUtils'
 import { alea } from '../randUtils'
 import { CappedMaxHeap } from './CappedMaxHeap'
+import { Tensor2D } from '../types'
+import { getBackend } from '../tf-singleton'
 
 const child = (parent: number) => (parent << 1) + 1
 const parent = (child: number) => (child - 1) >> 1
@@ -62,35 +64,36 @@ interface KdMetric {
  * set of points.
  */
 export class KdTree implements Neighborhood {
-  private _nSamples: number
-  private _nFeatures: number
+  _nSamples: number
+  _nFeatures: number
 
-  private _metric: KdMetric
+  _metric: KdMetric
 
   /**
    * Coordinates of the points contained in this kdTree, not in the order
    * as they were passed to {@link KdTree.build}.
    */
-  private _points: Vec[]
+  _points: Vec[]
 
   /**
    * Keeps track of the order, in which the points were originally passed
    * to {@link KdTree.build}. The `i+1`-th point in `_points` was originally
    * passed as `_indices[i]+1`-th point to {@link KdTree.build}.
    */
-  private _indices: Int32Array
+  _indices: Int32Array
 
   /**
    * The bounding box of each tree node.
    */
-  private _bBoxes: Float32Array[]
+  _bBoxes: Float32Array[]
   /**
    * The (i+1)-th leaf of this tree contains the points
    * `_points[_offsets[i]]` to `_points[_offsets[i+1]-1]`.
    */
-  private _offsets: Int32Array
+  _offsets: Int32Array
 
-  private constructor(
+  tf: any
+  constructor(
     nSamples: number,
     nFeatures: number,
     metric: KdMetric,
@@ -99,6 +102,7 @@ export class KdTree implements Neighborhood {
     offsets: Int32Array,
     indices: Int32Array
   ) {
+    this.tf = getBackend()
     this._nSamples = nSamples
     this._nFeatures = nFeatures
 
@@ -280,8 +284,8 @@ export class KdTree implements Neighborhood {
 
   kNearest(
     k: number,
-    queryPoints: tf.Tensor2D
-  ): { distances: tf.Tensor2D; indices: tf.Tensor2D } {
+    queryPoints: Tensor2D
+  ): { distances: Tensor2D; indices: Tensor2D } {
     const {
       _nSamples,
       _nFeatures,
@@ -364,8 +368,8 @@ export class KdTree implements Neighborhood {
     // KNeighborsBaseParams and add backpropagation support
     // to KdTree.
     return {
-      distances: tf.tensor2d(dists, [nQueries, k], 'float32'),
-      indices: tf.tensor2d(indxs, [nQueries, k], 'int32')
+      distances: this.tf.tensor2d(dists, [nQueries, k], 'float32'),
+      indices: this.tf.tensor2d(indxs, [nQueries, k], 'int32')
     }
   }
 }

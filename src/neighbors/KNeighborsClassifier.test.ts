@@ -13,17 +13,17 @@
 * ==========================================================================
 */
 
-import { KNeighborsClassifier } from './KNeighborsClassifier'
+import { KNeighborsClassifier, setBackend } from '../index'
 import { KNeighborsParams } from './KNeighborsBase'
 import { dataUrls } from '../datasets/datasets'
 import { crossValScore } from '../model_selection/crossValScore'
 import { KFold } from '../model_selection/KFold'
 import { arrayEqual } from '../utils'
+import { Tensor1D, Tensor2D } from '../types'
 import '../jestTensorMatchers'
 import * as dfd from 'danfojs-node'
-import { tf } from '../shared/globals'
-type Tensor1D = tf.Tensor1D
-type Tensor2D = tf.Tensor2D
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 function testWithDataset(
   loadDataUrl: string,

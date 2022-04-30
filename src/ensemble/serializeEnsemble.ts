@@ -7,8 +7,9 @@ import { LassoRegression } from '../linear_model/LassoRegression'
 import { ElasticNet } from '../linear_model/ElasticNet'
 import { LabelEncoder } from '../preprocessing/LabelEncoder'
 import { SimpleImputer } from '../impute/SimpleImputer'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 import { MinMaxScaler } from '../preprocessing/MinMaxScaler'
+import omit from 'lodash/omit'
 
 function getEstimator(name: string, serialJson: string) {
   switch (name) {
@@ -36,6 +37,7 @@ function getEstimator(name: string, serialJson: string) {
 }
 
 export function fromJson(classConstructor: any, model: string) {
+  let tf = getBackend()
   let jsonClass = JSON.parse(model)
   if (jsonClass.name != classConstructor.name) {
     throw new Error(
@@ -43,7 +45,7 @@ export function fromJson(classConstructor: any, model: string) {
     )
   }
 
-  const copyThis: any = Object.assign({}, classConstructor)
+  const copyThis: any = Object.assign({}, omit(classConstructor, 'tf'))
   for (let key of Object.keys(classConstructor)) {
     let value = copyThis[key]
     if (value instanceof tf.Tensor) {

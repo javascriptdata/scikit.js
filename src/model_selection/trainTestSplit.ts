@@ -1,7 +1,7 @@
 import { Scikit1D, Scikit2D } from '../types'
 import { assert, isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { getLength, sampleWithoutReplacement } from '../utils'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /**
  * Validation helper to check if the test/test sizes are meaningful wrt to the
@@ -111,6 +111,7 @@ export function validateShuffleSplit(
 }
 
 export function getIndices(X: Scikit2D | Scikit1D, indices: number[]) {
+  let tf = getBackend()
   if (X instanceof tf.Tensor) {
     return tf.gather(X, indices)
   }
@@ -120,7 +121,7 @@ export function getIndices(X: Scikit2D | Scikit1D, indices: number[]) {
   if (isSeriesInterface(X)) {
     return X.iloc(indices)
   }
-  return indices.map((i) => X[i])
+  return indices.map((i) => (X as any)[i])
 }
 /**
  *

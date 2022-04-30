@@ -13,7 +13,19 @@
 * ==========================================================================
 */
 
-import { tf } from './shared/globals'
+import {
+  Scalar,
+  Tensor1D,
+  Tensor2D,
+  TensorLike,
+  Tensor,
+  RecursiveArray
+} from '@tensorflow/tfjs-core/dist/index.d'
+
+import {
+  ModelCompileArgs,
+  ModelFitArgs
+} from '@tensorflow/tfjs-layers/dist/index.d'
 /////////////////////////Danfo types
 
 export interface NDframeInterface {
@@ -298,11 +310,21 @@ export interface DataFrameInterface extends NDframeInterface {
 
 ////////////////////////////////////
 // The Types that Scikit uses
+export {
+  Tensor1D,
+  Tensor2D,
+  TensorLike,
+  Tensor,
+  ModelCompileArgs,
+  ModelFitArgs,
+  RecursiveArray,
+  Scalar
+}
 export type TypedArray = Float32Array | Int32Array | Uint8Array
 export type ScikitLike1D = TypedArray | number[] | boolean[] | string[]
 export type ScikitLike2D = TypedArray[] | number[][] | boolean[][] | string[][]
-export type Scikit1D = ScikitLike1D | tf.Tensor1D | SeriesInterface
-export type Scikit2D = ScikitLike2D | tf.Tensor2D | DataFrameInterface
+export type Scikit1D = ScikitLike1D | Tensor1D | SeriesInterface
+export type Scikit2D = ScikitLike2D | Tensor2D | DataFrameInterface
 export type ScikitVecOrMatrix = Scikit1D | Scikit2D
 export type OptimizerTypes =
   | 'sgd'
@@ -342,6 +364,6 @@ export type int = number
 
 export interface Transformer {
   fit(X: Scikit2D, y?: Scikit1D): any
-  transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D
-  fitTransform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D
+  transform(X: Scikit2D, y?: Scikit1D): Tensor2D
+  fitTransform(X: Scikit2D, y?: Scikit1D): Tensor2D
 }

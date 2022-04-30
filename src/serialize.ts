@@ -4,6 +4,7 @@
  */
 
 import { tf } from './shared/globals'
+import omit from 'lodash/omit'
 export default class Serialize {
   public name = 'Serialize' // default name for all inherited class
 
@@ -13,9 +14,11 @@ export default class Serialize {
    * @returns Json string
    */
   public toJson(): string | Promise<string> {
-    const thisCopy: any = Object.assign({}, this)
+    const thisCopy: any = Object.assign({}, omit(this, 'tf'))
+    console.log(thisCopy)
     for (const key of Object.keys(thisCopy)) {
       let value = thisCopy[key]
+
       if (value instanceof tf.Tensor) {
         thisCopy[key] = {
           type: 'Tensor',

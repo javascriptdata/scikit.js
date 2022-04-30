@@ -14,13 +14,15 @@
 */
 
 import * as fc from 'fast-check'
-import { tf } from '../shared/globals'
 import { alea } from '../randUtils'
+import { setBackend } from '../tf-singleton'
+import * as tf from '@tensorflow/tfjs-node'
 import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import { lhs, shuffle } from '../randUtils'
 import { minkowskiMetric } from './Metric'
 import { polyfillUnique } from '../tfUtils'
 import '../jestTensorMatchers'
+setBackend(tf)
 
 export function neighborhoodGenericTests(
   name: string,

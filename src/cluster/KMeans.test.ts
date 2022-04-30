@@ -1,5 +1,6 @@
-import { KMeans } from './KMeans'
-
+import * as tf from '@tensorflow/tfjs-node'
+import { KMeans, setBackend } from '../index'
+setBackend(tf)
 // Next steps: Improve on kmeans cluster testing
 describe('KMeans', () => {
   const X = [

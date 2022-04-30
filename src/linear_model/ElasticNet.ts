@@ -14,7 +14,7 @@
 */
 
 import { SGDRegressor } from './SgdRegressor'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 // First pass at a ElasticNet implementation using gradient descent
 // Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html#sklearn.linear_model.ElasticNet
@@ -33,14 +33,12 @@ export interface ElasticNetParams {
  * Linear regression with combined L1 and L2 priors as regularizer.
  */
 export class ElasticNet extends SGDRegressor {
-  /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'ElasticNet'
-
   constructor({
     alpha = 1,
     l1Ratio = 0.5,
     fitIntercept = true
   }: ElasticNetParams = {}) {
+    let tf = getBackend()
     super({
       modelCompileArgs: {
         optimizer: tf.train.adam(0.1),
@@ -66,5 +64,7 @@ export class ElasticNet extends SGDRegressor {
       optimizerType: 'adam',
       lossType: 'meanSquaredError'
     })
+    /** Useful for pipelines and column transformers to have a default name for transforms */
+    this.name = 'ElasticNet'
   }
 }

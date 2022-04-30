@@ -1,5 +1,6 @@
-import { LogisticRegression } from './LogisticRegression'
-import { tf } from '../shared/globals'
+import { LogisticRegression, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('LogisticRegression', function () {
   it('Works on arrays (small example)', async function () {

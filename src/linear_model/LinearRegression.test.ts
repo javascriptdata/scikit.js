@@ -1,6 +1,7 @@
-import { LinearRegression } from './LinearRegression'
+import { LinearRegression, setBackend } from '../index'
 import { tensorEqual } from '../utils'
-import { tf } from '../shared/globals'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 function roughlyEqual(a: number, b: number, tol = 0.1) {
   return Math.abs(a - b) < tol

@@ -1,7 +1,12 @@
-import { ColumnTransformer } from './ColumnTransformer'
-import { MinMaxScaler } from '../preprocessing/MinMaxScaler'
-import { SimpleImputer } from '../impute/SimpleImputer'
+import {
+  ColumnTransformer,
+  MinMaxScaler,
+  SimpleImputer,
+  setBackend
+} from '../index'
 import * as dfd from 'danfojs-node'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('ColumnTransformer', function () {
   it('ColumnTransformer simple test', function () {

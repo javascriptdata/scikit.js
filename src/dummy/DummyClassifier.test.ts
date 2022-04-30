@@ -1,4 +1,6 @@
-import { DummyClassifier } from './DummyClassifier'
+import { DummyClassifier, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {

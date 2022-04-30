@@ -1,12 +1,9 @@
-import {
-  trainTestSplit,
-  validateShuffleSplit,
-  getIndices
-} from './trainTestSplit'
-
+import { validateShuffleSplit, getIndices } from './trainTestSplit'
+import { trainTestSplit, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
-import { tf } from '../shared/globals'
+import * as tf from '@tensorflow/tfjs-node'
 import { DataFrameInterface } from '../types'
+setBackend(tf)
 
 describe('Testing trainTestSplit', function () {
   it('Testing train/test validation logic', () => {

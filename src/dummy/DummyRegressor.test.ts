@@ -1,4 +1,6 @@
-import { DummyRegressor } from './DummyRegressor'
+import { DummyRegressor, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {

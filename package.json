@@ -21,7 +21,8 @@
     "doc": "docs"
   },
   "browser": {
-    "danfojs-node": "danfojs"
+    "danfojs-node": "danfojs",
+    "@tensorflow/tfjs-node": "@tensorflow/tfjs"
   },
   "scripts": {
     "test": "node_modules/.bin/jest src/**/*.test.ts src/*.test.ts --coverage && npm run prettier:check && npm run test:browser",

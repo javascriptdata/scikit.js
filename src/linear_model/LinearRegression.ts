@@ -14,7 +14,7 @@
 */
 
 import { SGDRegressor } from './SgdRegressor'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /**
  * LinearRegression implementation using gradient descent
@@ -66,10 +66,8 @@ Next steps:
  * ```
  */
 export class LinearRegression extends SGDRegressor {
-  /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'LinearRegression'
-
   constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
+    let tf = getBackend()
     super({
       modelCompileArgs: {
         optimizer: tf.train.adam(0.1),
@@ -91,5 +89,7 @@ export class LinearRegression extends SGDRegressor {
       optimizerType: 'adam',
       lossType: 'meanSquaredError'
     })
+    /** Useful for pipelines and column transformers to have a default name for transforms */
+    this.name = 'LinearRegression'
   }
 }

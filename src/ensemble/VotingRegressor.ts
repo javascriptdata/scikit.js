@@ -1,7 +1,7 @@
-import { Scikit1D, Scikit2D } from '../types'
-import { tf } from '../shared/globals'
+import { Scikit1D, Scikit2D, Tensor1D } from '../types'
 import { RegressorMixin } from '../mixins'
 import { fromJson, toJson } from './serializeEnsemble'
+import { getBackend } from '../tf-singleton'
 /*
   Next steps:
   0. Write validation code to check Estimator inputs
@@ -56,6 +56,7 @@ export class VotingRegressor extends RegressorMixin {
     weights = undefined
   }: VotingRegressorParams = {}) {
     super()
+    this.tf = getBackend()
     this.estimators = estimators
     this.weights = weights
   }
@@ -68,7 +69,7 @@ export class VotingRegressor extends RegressorMixin {
     return this
   }
 
-  public predict(X: Scikit2D): tf.Tensor1D {
+  public predict(X: Scikit2D): Tensor1D {
     let responses = []
     let numEstimators = this.estimators.length
     const weights =
@@ -79,10 +80,10 @@ export class VotingRegressor extends RegressorMixin {
       responses.push(curEstimator.predict(X).mul(curWeight))
     }
 
-    return tf.addN(responses)
+    return this.tf.addN(responses)
   }
 
-  public transform(X: Scikit2D): Array<tf.Tensor1D> {
+  public transform(X: Scikit2D): Array<Tensor1D> {
     let responses = []
     let numEstimators = this.estimators.length
     for (let i = 0; i < numEstimators; i++) {

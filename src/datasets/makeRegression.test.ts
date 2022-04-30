@@ -1,5 +1,6 @@
-import { makeLowRankMatrix, makeRegression } from './makeRegression'
-import { tf } from '../shared/globals'
+import { makeLowRankMatrix, makeRegression, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('makeRegression tests', () => {
   it('returns the right size', () => {

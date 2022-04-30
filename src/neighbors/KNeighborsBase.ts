@@ -16,19 +16,21 @@
 import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import { BruteNeighborhood } from './BruteNeighborhood'
 import { minkowskiMetric } from './Metric'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor2D, Tensor1D } from '../types'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
-import { tf } from '../shared/globals'
 import { KdTree } from './KdTree'
 import Serialize from '../serialize'
+import { getBackend } from '../tf-singleton'
 
 const WEIGHTS_FUNCTIONS = {
-  uniform(distances: tf.Tensor2D) {
+  uniform(distances: Tensor2D) {
+    let tf = getBackend()
     const { shape } = distances
-    return tf.fill(shape, 1 / shape[1]) as tf.Tensor2D
+    return tf.fill(shape, 1 / shape[1]) as Tensor2D
   },
-  distance(distances: tf.Tensor2D) {
+  distance(distances: Tensor2D) {
+    let tf = getBackend()
     return tf.tidy(() => {
       // scale inverse distances by min. to avoid `1/tinyVal == Infinity`
       const min = distances.min(1, /*keepDims=*/ true)
@@ -111,8 +113,8 @@ export class KNeighborsBase extends Serialize implements KNeighborsParams {
     Object.keys(ALGORITHMS)
   ) as (keyof typeof ALGORITHMS)[]
 
-  private _neighborhood: Neighborhood | undefined
-  private _y: tf.Tensor1D | undefined
+  _neighborhood: Neighborhood | undefined
+  _y: Tensor1D | undefined
 
   weights: KNeighborsParams['weights']
   algorithm: KNeighborsParams['algorithm']
@@ -148,7 +150,7 @@ export class KNeighborsBase extends Serialize implements KNeighborsParams {
       nNeighbors,
       weightsFn,
       neighborhood: _neighborhood as Neighborhood,
-      y: _y as tf.Tensor1D
+      y: _y as Tensor1D
     }
   }
 

@@ -14,11 +14,11 @@
 */
 
 import { convertToNumericTensor2D } from '../utils'
-import { Scikit2D } from '../types'
+import { Scikit2D, Tensor1D, Tensor2D, Tensor } from '../types'
 import { isScikit2D, assert, isDataFrameInterface } from '../typesUtils'
 import { tensorMean, tensorStd, turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps:
@@ -65,10 +65,10 @@ export interface StandardScalerParams {
  */
 export class StandardScaler extends TransformerMixin {
   /** The per-feature scale that we see in the dataset. We divide by this number. */
-  scale: tf.Tensor
+  scale: Tensor
 
   /** The per-feature mean that we see in the dataset. We subtract by this number. */
-  mean: tf.Tensor
+  mean: Tensor
 
   /** Whether or not we should subtract the mean */
   withMean: boolean
@@ -90,10 +90,11 @@ export class StandardScaler extends TransformerMixin {
 
   constructor({ withMean = true, withStd = true }: StandardScalerParams = {}) {
     super()
+    this.tf = getBackend()
     this.withMean = withMean
     this.withStd = withStd
-    this.scale = tf.tensor1d([])
-    this.mean = tf.tensor1d([])
+    this.scale = this.tf.tensor1d([])
+    this.mean = this.tf.tensor1d([])
     this.nFeaturesIn = 0
     this.nSamplesSeen = 0
     this.featureNamesIn = []
@@ -111,7 +112,7 @@ export class StandardScaler extends TransformerMixin {
     if (this.withStd) {
       const std = tensorStd(tensorArray, 0, true)
       // Deal with zero variance issues
-      this.scale = turnZerosToOnes(std) as tf.Tensor1D
+      this.scale = turnZerosToOnes(std) as Tensor1D
     }
 
     this.nSamplesSeen = tensorArray.shape[0]
@@ -125,7 +126,7 @@ export class StandardScaler extends TransformerMixin {
   /**
    * Transform the data using the fitted scaler
    */
-  public transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     let tensorArray = convertToNumericTensor2D(X)
     if (this.withMean) {
@@ -140,7 +141,7 @@ export class StandardScaler extends TransformerMixin {
   /**
    * Inverse transform the data using the fitted scaler
    */
-  public inverseTransform(X: Scikit2D): tf.Tensor2D {
+  public inverseTransform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     let tensorArray = convertToNumericTensor2D(X)
     if (this.withStd) {

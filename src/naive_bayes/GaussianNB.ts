@@ -12,9 +12,9 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { tf } from '../shared/globals'
 import { BaseNaiveBayes } from './BaseNaiveBayes'
-
+import { getBackend } from '../tf-singleton'
+import { Tensor1D, Tensor2D } from '../types'
 /**
  * Gaussian Naive Bayes classifier
  *
@@ -47,10 +47,11 @@ import { BaseNaiveBayes } from './BaseNaiveBayes'
 export class GaussianNB extends BaseNaiveBayes {
   name = 'GaussianNB'
   protected kernel(
-    features: tf.Tensor2D,
-    mean: tf.Tensor1D,
-    variance: tf.Tensor1D
-  ): tf.Tensor1D {
+    features: Tensor2D,
+    mean: Tensor1D,
+    variance: Tensor1D
+  ): Tensor1D {
+    let tf = getBackend()
     return tf.tidy(() => {
       return tf
         .sub(features, mean.expandDims(0))
@@ -63,7 +64,7 @@ export class GaussianNB extends BaseNaiveBayes {
             .expandDims(0)
             .sqrt()
         )
-        .prod(1) as tf.Tensor1D
+        .prod(1) as Tensor1D
     })
   }
 }

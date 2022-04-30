@@ -13,6 +13,8 @@
 * ==========================================================================
 */
 export { KNeighborsRegressor } from './neighbors/KNeighborsRegressor'
+export { KNeighborsClassifier } from './neighbors/KNeighborsClassifier'
+export { makeRegression, makeLowRankMatrix } from './datasets/makeRegression'
 export {
   LinearRegression,
   LinearRegressionParams
@@ -83,3 +85,6 @@ export {
   DecisionTreeRegressor,
   DecisionTreeRegressorParams
 } from './tree/DecisionTree'
+export { trainTestSplit } from './model_selection/trainTestSplit'
+export { KFold } from './model_selection/KFold'
+export { setBackend, getBackend } from './tf-singleton'

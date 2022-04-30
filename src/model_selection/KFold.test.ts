@@ -14,11 +14,12 @@
 */
 
 import * as fc from 'fast-check'
-import { KFold } from './KFold'
+import { KFold, setBackend } from '../index'
 import { alea } from '../randUtils'
+import { Tensor2D } from '../types'
 import '../jestTensorMatchers'
-import { tf } from '../shared/globals'
-type Tensor2D = tf.Tensor2D
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('KFold', () => {
   const numRuns = 128

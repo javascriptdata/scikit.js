@@ -13,9 +13,7 @@
 * ==========================================================================
 */
 
-import { Scikit1D, Scikit2D } from '../types'
-import { tf } from '../shared/globals'
-type Tensor1D = tf.Tensor1D
+import { Scikit1D, Scikit2D, Tensor1D } from '../types'
 
 /**
  * Interface for cross validation splitting strategies.

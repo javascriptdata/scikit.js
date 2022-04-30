@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { KNeighborsRegressor } from './KNeighborsRegressor'
+import { KNeighborsRegressor, setBackend } from '../index'
 import { KNeighborsParams } from './KNeighborsBase'
 import { dataUrls } from '../datasets/datasets'
 import { arrayEqual } from '../utils'
@@ -22,10 +22,9 @@ import { KFold } from '../model_selection/KFold'
 import { negMeanSquaredError } from '../model_selection/scorers'
 import '../jestTensorMatchers'
 import * as dfd from 'danfojs-node'
-import { tf } from '../shared/globals'
-
-type Tensor1D = tf.Tensor1D
-type Tensor2D = tf.Tensor2D
+import { Tensor1D, Tensor2D } from '../types'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 function testWithDataset(
   loadDataUrl: string,

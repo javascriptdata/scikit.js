@@ -12,7 +12,9 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { GaussianNB } from './GaussianNB'
+import { GaussianNB, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('GaussianNB', function () {
   it('without priors', async () => {

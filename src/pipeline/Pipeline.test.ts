@@ -1,9 +1,14 @@
-import { Pipeline, makePipeline } from './Pipeline'
-import { tf } from '../shared/globals'
+import {
+  Pipeline,
+  makePipeline,
+  LinearRegression,
+  SimpleImputer,
+  MinMaxScaler,
+  setBackend
+} from '../index'
+import * as tf from '@tensorflow/tfjs-node'
 import { tensorEqual } from '../utils'
-import { LinearRegression } from '../linear_model/LinearRegression'
-import { SimpleImputer } from '../impute/SimpleImputer'
-import { MinMaxScaler } from '../preprocessing/MinMaxScaler'
+setBackend(tf)
 
 describe('Pipeline', function () {
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {

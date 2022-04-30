@@ -1,6 +1,8 @@
-import { Normalizer } from './Normalizer'
+import { Normalizer, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
 import { arrayEqual } from '../utils'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('Normalizer', function () {
   it('Standardize values in a DataFrame using a Normalizer (l1 case)', function () {

@@ -1,7 +1,12 @@
-import { makeVotingClassifier, VotingClassifier } from './VotingClassifier'
-import { DummyClassifier } from '../dummy/DummyClassifier'
-
-import { LogisticRegression } from '../linear_model/LogisticRegression'
+import {
+  makeVotingClassifier,
+  VotingClassifier,
+  DummyClassifier,
+  LogisticRegression,
+  setBackend
+} from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('VotingClassifier', function () {
   it('Use VotingClassifier on simple example (voting = hard)', async function () {

@@ -1,6 +1,7 @@
-import { DataFrameInterface, Scikit1D, Scikit2D, Transformer } from '../types'
-import { isDataFrameInterface, isScikitLike2D } from '../typesUtils'
-import { tf } from '../shared/globals'
+import { DataFrameInterface, Scikit1D, Transformer, Tensor2D } from '../types'
+import { isDataFrameInterface } from '../typesUtils'
+import { getBackend } from '../tf-singleton'
+
 /*
 Next steps:
 1. Support 'passthrough' and 'drop' and estimator for remainder (also in transformer list)
@@ -70,16 +71,18 @@ export class ColumnTransformer {
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'ColumnTransformer'
+  tf: any
 
   constructor({
     transformers = [],
     remainder = 'drop'
   }: ColumnTransformerParams = {}) {
+    this.tf = getBackend()
     this.transformers = transformers
     this.remainder = remainder
   }
 
-  public fit(X: tf.Tensor2D | DataFrameInterface, y?: Scikit1D) {
+  public fit(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
 
@@ -89,7 +92,7 @@ export class ColumnTransformer {
     return this
   }
 
-  public transform(X: tf.Tensor2D | DataFrameInterface, y?: Scikit1D) {
+  public transform(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
@@ -98,10 +101,10 @@ export class ColumnTransformer {
 
       output.push(curTransform.transform(subsetX, y))
     }
-    return tf.concat(output, 1)
+    return this.tf.concat(output, 1)
   }
 
-  public fitTransform(X: tf.Tensor2D | DataFrameInterface, y?: Scikit1D) {
+  public fitTransform(X: Tensor2D | DataFrameInterface, y?: Scikit1D) {
     let output = []
     for (let i = 0; i < this.transformers.length; i++) {
       let [, curTransform, selection] = this.transformers[i]
@@ -110,27 +113,27 @@ export class ColumnTransformer {
 
       output.push(curTransform.fitTransform(subsetX, y))
     }
-    return tf.concat(output, 1)
+    return this.tf.concat(output, 1)
   }
 
   getColumns(
-    X: DataFrameInterface | tf.Tensor2D,
+    X: DataFrameInterface | Tensor2D,
     selectedColumns: Selection
-  ): tf.Tensor2D {
+  ): Tensor2D {
     if (isDataFrameInterface(X)) {
       if (isStringArray(selectedColumns)) {
         return X.loc({ columns: selectedColumns })
-          .tensor as unknown as tf.Tensor2D
+          .tensor as unknown as Tensor2D
       }
       if (Array.isArray(selectedColumns)) {
         return X.iloc({ columns: selectedColumns })
-          .tensor as unknown as tf.Tensor2D
+          .tensor as unknown as Tensor2D
       }
       if (typeof selectedColumns === 'string') {
         return X[selectedColumns].tensor
       }
       return X.iloc({ columns: [selectedColumns] })
-        .tensor as unknown as tf.Tensor2D
+        .tensor as unknown as Tensor2D
     } else {
       if (
         isStringArray(selectedColumns) ||
@@ -141,10 +144,10 @@ export class ColumnTransformer {
         )
       }
       if (typeof selectedColumns === 'number') {
-        let columns = tf.tensor1d([selectedColumns])
+        let columns = this.tf.tensor1d([selectedColumns])
         return X.gather(columns, 1)
       } else {
-        let columns = tf.tensor1d(selectedColumns)
+        let columns = this.tf.tensor1d(selectedColumns)
         return X.gather(columns, 1)
       }
     }

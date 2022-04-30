@@ -20,9 +20,10 @@ import {
   ScikitLike1D,
   ScikitLike2D,
   ScikitVecOrMatrix,
-  SeriesInterface
+  SeriesInterface,
+  Tensor
 } from './types'
-
+import { getBackend } from './tf-singleton'
 import { tf } from './shared/globals'
 
 export function isString(value: unknown): value is string {
@@ -134,6 +135,11 @@ export function isScikitLike2D(arr: any): arr is ScikitLike2D {
   const shape = inferShape(arr)
   const dtype = inferDtype(arr)
   return shape.length === 2 && dtype !== null
+}
+
+export function isTensor(arr: any): arr is Tensor {
+  let tf = getBackend()
+  return arr instanceof tf.Tensor
 }
 
 export function isSeriesInterface(arr: any): arr is SeriesInterface {

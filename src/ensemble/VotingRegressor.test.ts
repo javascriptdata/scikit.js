@@ -1,6 +1,12 @@
-import { makeVotingRegressor, VotingRegressor } from './VotingRegressor'
-import { DummyRegressor } from '../dummy/DummyRegressor'
-import { LinearRegression } from '../linear_model/LinearRegression'
+import {
+  makeVotingRegressor,
+  VotingRegressor,
+  DummyRegressor,
+  LinearRegression,
+  setBackend
+} from '../index'
+import * as tf from '@tensorflow/tfjs-node'
+setBackend(tf)
 
 describe('VotingRegressor', function () {
   it('Use VotingRegressor on simple example ', async function () {
