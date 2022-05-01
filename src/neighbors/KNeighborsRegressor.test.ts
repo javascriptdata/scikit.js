@@ -13,12 +13,11 @@
 * ==========================================================================
 */
 
-import { KNeighborsRegressor, setBackend } from '../index'
+import { KNeighborsRegressor, setBackend, KFold } from '../index'
+import { crossValScore } from '../model_selection/crossValScore'
 import { KNeighborsParams } from './KNeighborsBase'
 import { dataUrls } from '../datasets/datasets'
 import { arrayEqual } from '../utils'
-import { crossValScore } from '../model_selection/crossValScore'
-import { KFold } from '../model_selection/KFold'
 import { negMeanSquaredError } from '../model_selection/scorers'
 import '../jestTensorMatchers'
 import * as dfd from 'danfojs-node'
@@ -45,7 +44,7 @@ function testWithDataset(
       const X = Xy.slice([0, 0], [nSamples, nFeatures])
       const y = Xy.slice([0, nFeatures]).reshape([nSamples]) as Tensor1D
 
-      const scores = await crossValScore(
+      const scores = await (crossValScore as any)(
         new KNeighborsRegressor(params),
         X,
         y,

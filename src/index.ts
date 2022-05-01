@@ -12,9 +12,7 @@
 * limitations under the License.
 * ==========================================================================
 */
-export { KNeighborsRegressor } from './neighbors/KNeighborsRegressor'
-export { KNeighborsClassifier } from './neighbors/KNeighborsClassifier'
-export { makeRegression, makeLowRankMatrix } from './datasets/makeRegression'
+
 export {
   LinearRegression,
   LinearRegressionParams
@@ -71,6 +69,9 @@ export {
   VotingClassifier,
   VotingClassifierParams
 } from './ensemble/VotingClassifier'
+export { KNeighborsRegressor } from './neighbors/KNeighborsRegressor'
+export { KNeighborsClassifier } from './neighbors/KNeighborsClassifier'
+
 export { LinearSVC, LinearSVCParams } from './svm/LinearSVC'
 export { LinearSVR, LinearSVRParams } from './svm/LinearSVR'
 
@@ -87,4 +88,6 @@ export {
 } from './tree/DecisionTree'
 export { trainTestSplit } from './model_selection/trainTestSplit'
 export { KFold } from './model_selection/KFold'
+export { crossValScore } from './model_selection/crossValScore'
+export { makeRegression, makeLowRankMatrix } from './datasets/makeRegression'
 export { setBackend, getBackend } from './tf-singleton'
