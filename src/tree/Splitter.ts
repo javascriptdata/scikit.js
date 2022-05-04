@@ -41,16 +41,23 @@ export class Splitter extends Serialize {
   sampleMap: Int32Array
   nSamplesTotal: int
   nFeatures: int
-  name = 'splitter'
+  name = 'Splitter'
 
-  constructor(
-    X: number[][],
-    y: int[],
-    minSamplesLeaf: int,
-    impurityMeasure: ImpurityMeasure,
-    maxFeatures: int,
-    samplesSubset: int[] = []
-  ) {
+  constructor({
+    X,
+    y,
+    minSamplesLeaf,
+    impurityMeasure,
+    maxFeatures,
+    samplesSubset = []
+  }: {
+    X: number[][]
+    y: int[]
+    minSamplesLeaf: int
+    impurityMeasure: ImpurityMeasure
+    maxFeatures: int
+    samplesSubset: int[]
+  }) {
     super()
     this.X = X
     this.y = y
@@ -74,9 +81,9 @@ export class Splitter extends Serialize {
       }
     }
     if (impurityMeasure === 'squared_error') {
-      this.criterion = new RegressionCriterion(impurityMeasure, y)
+      this.criterion = new RegressionCriterion({ impurityMeasure, y })
     } else {
-      this.criterion = new ClassificationCriterion(impurityMeasure, y)
+      this.criterion = new ClassificationCriterion({ impurityMeasure, y })
     }
     this.featureOrder = []
     for (let i = 0; i < this.nFeatures; i++) {
@@ -237,13 +244,14 @@ export class Splitter extends Serialize {
       jsonClass.sampleMap = new Int32Array(jsonClass.sampleMap)
     }
 
-    const splitter = new Splitter(
-      jsonClass.X,
-      jsonClass.y,
-      jsonClass.minSamplesLeaf,
-      'squared_error',
-      jsonClass.samplesSubset
-    )
+    const splitter = new Splitter({
+      X: jsonClass.X,
+      y: jsonClass.y,
+      minSamplesLeaf: jsonClass.minSamplesLeaf,
+      impurityMeasure: 'squared_error',
+      maxFeatures: jsonClass.maxFeatures,
+      samplesSubset: jsonClass.samplesSubset
+    })
 
     return Object.assign(splitter, jsonClass) as Splitter
   }

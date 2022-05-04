@@ -413,4 +413,13 @@ export class SGDClassifier extends ClassifierMixin {
   public fromJson(model: string) {
     return fromJson(this, model) as this
   }
+
+  // public async toObject(): Promise<any> {
+  //   let { toObject } = await import('../simpleSerializer')
+  //   return await toObject(this, [
+  //     'modelCompileArgs',
+  //     'modelFitArgs',
+  //     'denseLayerArgs'
+  //   ])
+  // }
 }

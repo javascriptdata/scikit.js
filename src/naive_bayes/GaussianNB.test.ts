@@ -13,6 +13,7 @@
 * ==========================================================================
 */
 import { GaussianNB } from './GaussianNB'
+import { toObject, fromObject } from '../simpleSerializer'
 
 describe('GaussianNB', function () {
   it('without priors', async () => {
@@ -101,8 +102,8 @@ describe('GaussianNB', function () {
     await model.fit(X, y)
     const labels = model.predict(X)
 
-    const serializeModel = model.toJson()
-    const newModel = new GaussianNB().fromJson(serializeModel)
+    const serializeModel = await toObject(model)
+    const newModel = await fromObject(serializeModel)
     expect(newModel.predict(X).arraySync()).toEqual([0, 0, 1, 1, 1])
   })
 })

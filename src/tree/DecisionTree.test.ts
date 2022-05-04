@@ -1,6 +1,7 @@
 import { DecisionTreeClassifier, DecisionTreeRegressor } from './DecisionTree'
 import { dataUrls } from '../datasets/datasets'
 import * as dfd from 'danfojs-node'
+import { toObject, fromObject } from '../simpleSerializer'
 
 describe('DecisionTree', function () {
   it('Use the DecisionTree (toy)', async function () {
@@ -620,8 +621,8 @@ describe('DecisionTree', function () {
     let tree_classifier = new DecisionTreeClassifier()
     tree_classifier.fit(X, y)
 
-    const serial = tree_classifier.toJson()
-    const newTree = new DecisionTreeClassifier().fromJson(serial)
+    const serial = await toObject(tree_classifier)
+    const newTree = await fromObject(serial)
     expect(newTree.predict(T)).toEqual(true_result)
   }, 1000)
 })

@@ -48,9 +48,10 @@ function argMax(array: number[]) {
   return array.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1]
 }
 
-class DecisionTree {
+export class DecisionTree {
   nodes: Node[] = []
   isBuilt = false
+  name = 'DecisionTree'
 
   getLeafNodes(X: number[][]): int[] {
     let leafNodeIds: int[] = []
@@ -140,7 +141,7 @@ interface DecisionTreeBaseParams {
   minImpurityDecrease?: number
 }
 
-class DecisionTreeBase extends Serialize {
+export class DecisionTreeBase extends Serialize {
   splitter!: Splitter
   stack: NodeRecord[] = []
   minSamplesLeaf: int
@@ -173,6 +174,7 @@ class DecisionTreeBase extends Serialize {
     this.minImpurityDecrease = minImpurityDecrease
     this.maxFeaturesNumb = 0
     this.tree = new DecisionTree()
+    this.name = 'DecisionTreeBase'
   }
   calcMaxFeatures(
     nFeatures: int,
@@ -203,14 +205,14 @@ class DecisionTreeBase extends Serialize {
     // CheckNegativeLabels(yptr);
     this.maxFeaturesNumb = this.calcMaxFeatures(X[0].length, this.maxFeatures)
 
-    this.splitter = new Splitter(
+    this.splitter = new Splitter({
       X,
       y,
-      this.minSamplesLeaf,
-      this.criterion,
-      this.maxFeaturesNumb,
-      newSamplesSubset
-    )
+      minSamplesLeaf: this.minSamplesLeaf,
+      impurityMeasure: this.criterion,
+      maxFeatures: this.maxFeaturesNumb,
+      samplesSubset: newSamplesSubset
+    })
 
     // put root node on stack
     let rootNode: NodeRecord = {

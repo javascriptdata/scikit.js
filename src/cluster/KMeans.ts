@@ -1,6 +1,6 @@
 import { Scikit2D } from '../types'
 import { convertToNumericTensor2D, sampleWithoutReplacement } from '../utils'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 import { tf } from '../shared/globals'
 
 /*

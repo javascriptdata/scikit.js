@@ -21,6 +21,7 @@ import {
 import { Scikit2D, Scikit1D, OptimizerTypes, LossTypes } from '../types'
 import { RegressorMixin } from '../mixins'
 import { fromJson, toJSON } from './modelSerializer'
+
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -206,6 +207,15 @@ export class SGDRegressor extends RegressorMixin {
     let myIntercept = tf.tensor1d([params.intercept], 'float32')
     this.initializeModel(myCoef, myIntercept, [myCoef, myIntercept])
     return this
+  }
+
+  public async toObject(): Promise<any> {
+    let { toObject } = await import('../simpleSerializer')
+    return await toObject(this, [
+      'modelCompileArgs',
+      'modelFitArgs',
+      'denseLayerArgs'
+    ])
   }
 
   /**

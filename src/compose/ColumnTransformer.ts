@@ -1,5 +1,6 @@
-import { DataFrameInterface, Scikit1D, Scikit2D, Transformer } from '../types'
-import { isDataFrameInterface, isScikitLike2D } from '../typesUtils'
+import { DataFrameInterface, Scikit1D, Transformer } from '../types'
+import { isDataFrameInterface } from '../typesUtils'
+import { Serialize } from '../simpleSerializer'
 import { tf } from '../shared/globals'
 /*
 Next steps:
@@ -64,7 +65,7 @@ export interface ColumnTransformerParams {
     ]
  * ```
  */
-export class ColumnTransformer {
+export class ColumnTransformer extends Serialize {
   transformers: TransformerTriple
   remainder: Transformer | 'drop' | 'passthrough'
 

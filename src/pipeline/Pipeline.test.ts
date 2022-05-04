@@ -4,6 +4,7 @@ import { tensorEqual } from '../utils'
 import { LinearRegression } from '../linear_model/LinearRegression'
 import { SimpleImputer } from '../impute/SimpleImputer'
 import { MinMaxScaler } from '../preprocessing/MinMaxScaler'
+import { toObject, fromObject } from '../simpleSerializer'
 
 describe('Pipeline', function () {
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {
@@ -96,8 +97,9 @@ describe('Pipeline', function () {
 
     await pipeline.fit(X, y)
 
-    const saveModel = (await pipeline.toJson()) as string
-    const newPipeLine = new Pipeline().fromJson(saveModel)
+    const saveModel = await toObject(pipeline)
+    console.log(saveModel)
+    const newPipeLine = await fromObject(saveModel)
 
     expect(newPipeLine.steps[1][1].min.arraySync()).toEqual([0, 0])
     expect(

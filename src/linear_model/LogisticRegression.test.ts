@@ -1,6 +1,6 @@
 import { LogisticRegression } from './LogisticRegression'
 import { tf } from '../shared/globals'
-
+import { fromObject } from '../simpleSerializer'
 describe('LogisticRegression', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new LogisticRegression()
@@ -133,8 +133,8 @@ describe('LogisticRegression', function () {
     let logreg = new LogisticRegression({ penalty: 'l2' })
     await logreg.fit(X, y)
 
-    const serializeModel = await logreg.toJson()
-    const newModel = logreg.fromJson(serializeModel)
+    const serializeModel = await logreg.toObject()
+    const newModel = await fromObject(serializeModel)
     const newModelResult = newModel.predict(Xtest)
 
     expect(newModelResult.arraySync()).toEqual([0, 0, 0, 0, 0, 0, 2, 2, 2])

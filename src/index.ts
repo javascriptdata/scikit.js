@@ -1,3 +1,5 @@
+import Serialize from './serialize'
+
 /**
 *  @license
 * Copyright 2021, JsData. All rights reserved.
@@ -83,3 +85,9 @@ export {
   DecisionTreeRegressor,
   DecisionTreeRegressorParams
 } from './tree/DecisionTree'
+
+export { fromObject, Serialize } from './simpleSerializer'
+
+export { ClassificationCriterion, RegressionCriterion } from './tree/Criterion'
+export { Splitter } from './tree/Splitter'
+export { DecisionTreeBase, DecisionTree } from './tree/DecisionTree'

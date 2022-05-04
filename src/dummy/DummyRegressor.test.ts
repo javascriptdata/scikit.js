@@ -1,5 +1,5 @@
 import { DummyRegressor } from './DummyRegressor'
-
+import { toObject, fromObject } from '../simpleSerializer'
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {
     const reg = new DummyRegressor()
@@ -55,7 +55,7 @@ describe('DummyRegressor', function () {
     reg.fit(X, y)
     expect(reg.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })
-  it('Should save DummyRegressor', function () {
+  it('Should save DummyRegressor', async function () {
     const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
 
     const X = [
@@ -73,10 +73,10 @@ describe('DummyRegressor', function () {
 
     reg.fit(X, y)
 
-    expect(saveResult).toEqual(JSON.parse(reg.toJson() as string))
+    expect(saveResult).toEqual(await toObject(reg))
   })
 
-  it('Should load serialized DummyRegressor', function () {
+  it('Should load serialized DummyRegressor', async function () {
     const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
 
     const X = [
@@ -92,8 +92,8 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    const saveReg = reg.toJson() as string
-    const newReg = new DummyRegressor().fromJson(saveReg)
+    const saveReg = await toObject(reg)
+    const newReg = await fromObject(saveReg)
 
     expect(newReg.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })
