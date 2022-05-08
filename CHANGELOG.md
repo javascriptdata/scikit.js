@@ -1,3 +1,12 @@
+# [1.21.0](https://github.com/javascriptdata/scikit.js/compare/v1.20.0...v1.21.0) (2022-05-08)
+
+
+### Features
+
+* not complete serialization ([7fbea07](https://github.com/javascriptdata/scikit.js/commit/7fbea07431dbd194259e44e868df74617814f6de))
+* updated serialization ([ec71323](https://github.com/javascriptdata/scikit.js/commit/ec713230efbf07ac228c0291c21f5fcc0b1bd995))
+* updated test ([260c134](https://github.com/javascriptdata/scikit.js/commit/260c1347d7c06c494b24b813c00c11d68c4da354))
+
 # [1.20.0](https://github.com/javascriptdata/scikit.js/compare/v1.19.0...v1.20.0) (2022-04-26)
 
 
