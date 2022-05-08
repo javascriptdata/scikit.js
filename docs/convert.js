@@ -189,7 +189,6 @@ function getTypeName(val, bigObj) {
 }
 
 function generateProperties(jsonClass, bigObj) {
-  // console.log(jsonClass.children)
   let interface = getInterfaceForClass(jsonClass, bigObj)
   let allConstructorArgs = []
   if (interface && interface.children) {

@@ -1,7 +1,7 @@
 import {
   makeVotingRegressor,
   VotingRegressor,
-  fromObject,
+  fromJSON,
   DummyRegressor,
   LinearRegression
 } from '../index'
@@ -55,8 +55,8 @@ describe('VotingRegressor', function () {
 
     await voter.fit(X, y)
 
-    const savedModel = await voter.toObject()
-    const newModel = await fromObject(savedModel)
+    const savedModel = await voter.toJSON()
+    const newModel = await fromJSON(savedModel)
     expect(newModel.score(X, y)).toEqual(voter.score(X, y))
   }, 30000)
 })

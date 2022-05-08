@@ -1,4 +1,4 @@
-import { fromObject, KMeans } from '../index'
+import { fromJSON, KMeans } from '../index'
 // Next steps: Improve on kmeans cluster testing
 describe('KMeans', () => {
   const X = [
@@ -68,8 +68,8 @@ describe('KMeans', () => {
     ]
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
-    const ksave = await kmean.toObject()
-    const ksaveModel = await fromObject(ksave)
+    const ksave = await kmean.toJSON()
+    const ksaveModel = await fromJSON(ksave)
     expect(centroids).toEqual(ksaveModel.clusterCenters.arraySync())
   })
 

@@ -1,4 +1,4 @@
-import { DummyRegressor, fromObject } from '../index'
+import { DummyRegressor, fromJSON } from '../index'
 
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {
@@ -93,8 +93,8 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    const saveReg = await reg.toObject()
-    const newReg = await fromObject(saveReg)
+    const saveReg = await reg.toJSON()
+    const newReg = await fromJSON(saveReg)
 
     expect(newReg.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })

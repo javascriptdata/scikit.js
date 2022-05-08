@@ -87,7 +87,7 @@ export {
 export { KFold } from './model_selection/KFold'
 export { trainTestSplit } from './model_selection/trainTestSplit'
 export { crossValScore } from './model_selection/crossValScore'
-export { fromObject, Serialize } from './simpleSerializer'
+export { fromObject, fromJSON, Serialize } from './simpleSerializer'
 
 export { ClassificationCriterion, RegressionCriterion } from './tree/Criterion'
 export { Splitter } from './tree/Splitter'

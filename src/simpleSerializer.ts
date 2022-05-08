@@ -1,5 +1,5 @@
 import { tf } from './shared/globals'
-
+import { encode, decode } from 'base64-arraybuffer'
 const EstimatorList = [
   'KNeighborsRegressor',
   'LinearRegression',
@@ -48,6 +48,7 @@ class JSONHandler {
 
   async save(artifacts: any) {
     // Base 64 encoding
+    artifacts.weightData = encode(artifacts.weightData)
     this.savedArtifacts = artifacts
     return {
       modelArtifactsInfo: {
@@ -62,6 +63,7 @@ class JSONHandler {
 
   async load() {
     // Base64 decode
+    this.savedArtifacts.weightData = decode(this.savedArtifacts.weightData)
     return this.savedArtifacts
   }
 }
@@ -70,7 +72,6 @@ export async function toObjectInner(
   val: any,
   ignoreKeys: string[] = []
 ): Promise<any> {
-  // console.log(val)
   if (['number', 'string', 'undefined', 'boolean'].includes(typeof val)) {
     return val
   }
@@ -208,6 +209,10 @@ export async function fromObject(val: any): Promise<any> {
   }
 }
 
+export async function fromJSON(val: string): Promise<any> {
+  return await fromObject(JSON.parse(val))
+}
+
 let ignoredKeysForSGDRegressor = [
   'modelCompileArgs',
   'modelFitArgs',
@@ -221,5 +226,9 @@ export class Serialize {
     } catch (e) {
       console.error(e)
     }
+  }
+
+  async toJSON(): Promise<string> {
+    return JSON.stringify(await this.toObject())
   }
 }

@@ -1,5 +1,5 @@
 import { tf } from '../shared/globals'
-import { SimpleImputer, fromObject } from '../index'
+import { SimpleImputer, fromJSON } from '../index'
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
@@ -163,8 +163,8 @@ describe('SimpleImputer', function () {
     ]
 
     imputer.fitTransform(data)
-    const thing = await imputer.toObject()
-    const newImputer = await fromObject(thing)
+    const thing = await imputer.toJSON()
+    const newImputer = await fromJSON(thing)
     const newReturned = newImputer.transform(data)
     expect(newReturned.arraySync()).toEqual(expected)
     expect(newImputer.transform([[NaN, NaN]]).arraySync()).toEqual([[4, 3]])

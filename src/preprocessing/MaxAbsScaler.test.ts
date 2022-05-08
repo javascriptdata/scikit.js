@@ -1,4 +1,4 @@
-import { MaxAbsScaler, fromObject } from '../index'
+import { MaxAbsScaler, fromJSON } from '../index'
 import * as dfd from 'danfojs-node'
 import { tf } from '../shared/globals'
 import { arrayEqual } from '../utils'
@@ -139,8 +139,8 @@ describe('MaxAbsScaler', function () {
     const data = tf.tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
     const scaler = new MaxAbsScaler()
     scaler.fit(data)
-    const serial = await scaler.toObject()
-    const newModel = await fromObject(serial)
+    const serial = await scaler.toJSON()
+    const newModel = await fromJSON(serial)
     expect(newModel.transform(data).arraySync().flat()).toEqual([
       1,
       1,

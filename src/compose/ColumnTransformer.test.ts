@@ -1,5 +1,5 @@
 import {
-  fromObject,
+  fromJSON,
   SimpleImputer,
   MinMaxScaler,
   ColumnTransformer
@@ -50,8 +50,8 @@ describe('ColumnTransformer', function () {
     })
 
     transformer.fitTransform(newDf)
-    let obj = await transformer.toObject()
-    let myResult = await fromObject(obj)
+    let obj = await transformer.toJSON()
+    let myResult = await fromJSON(obj)
 
     expect(myResult.transformers.length).toEqual(2)
   })

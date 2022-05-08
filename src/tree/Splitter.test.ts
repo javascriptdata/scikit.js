@@ -1,6 +1,6 @@
 import { ImpurityMeasure } from './Criterion'
 import { Splitter } from './Splitter'
-import { fromObject } from '../simpleSerializer'
+import { fromJSON } from '../simpleSerializer'
 
 describe('Splitter', function () {
   let types = ['gini', 'entropy', 'squared_error']
@@ -203,8 +203,8 @@ describe('Splitter', function () {
       samplesSubset: []
     })
     splitter.splitNode()
-    const serial = await splitter.toObject()
-    const newSplitter = await fromObject(serial)
+    const serial = await splitter.toJSON()
+    const newSplitter = await fromJSON(serial)
     const newBestSplitter = newSplitter.splitNode()
     expect(newBestSplitter.foundSplit).toEqual(true)
     expect(newBestSplitter.feature).toEqual(1)

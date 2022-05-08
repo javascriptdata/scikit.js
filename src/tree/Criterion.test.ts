@@ -1,5 +1,5 @@
 import { ClassificationCriterion, giniCoefficient, entropy } from './Criterion'
-import { fromObject } from '../simpleSerializer'
+import { fromJSON } from '../simpleSerializer'
 describe('Criterion', function () {
   let X = [
     [-2, -1],
@@ -83,8 +83,8 @@ describe('Criterion', function () {
       y
     })
     criterion.init(0, 6, sampleMap)
-    const serial = await criterion.toObject()
-    const newCriterion = await fromObject(serial)
+    const serial = await criterion.toJSON()
+    const newCriterion = await fromJSON(serial)
     expect(newCriterion.nodeImpurity()).toEqual(1)
   }, 1000)
 })

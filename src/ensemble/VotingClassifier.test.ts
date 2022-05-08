@@ -3,7 +3,7 @@ import {
   VotingClassifier,
   DummyClassifier,
   LogisticRegression,
-  fromObject
+  fromJSON
 } from '../index'
 
 describe('VotingClassifier', function () {
@@ -121,8 +121,8 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
 
-    const savedModel = await voter.toObject()
-    const newModel = await fromObject(savedModel)
+    const savedModel = await voter.toJSON()
+    const newModel = await fromJSON(savedModel)
 
     expect(newModel.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
   }, 30000)

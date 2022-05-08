@@ -4,7 +4,7 @@ import {
   LinearRegression,
   SimpleImputer,
   MinMaxScaler,
-  fromObject
+  fromJSON
 } from '../index'
 import { tf } from '../shared/globals'
 import { tensorEqual } from '../utils'
@@ -100,8 +100,8 @@ describe('Pipeline', function () {
 
     await pipeline.fit(X, y)
 
-    const saveModel = await pipeline.toObject()
-    const newPipeLine = await fromObject(saveModel)
+    const saveModel = await pipeline.toJSON()
+    const newPipeLine = await fromJSON(saveModel)
 
     expect(newPipeLine.steps[1][1].min.arraySync()).toEqual([0, 0])
     expect(

@@ -1,4 +1,4 @@
-import { DummyClassifier, fromObject } from '../index'
+import { DummyClassifier, fromJSON } from '../index'
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {
     const clf = new DummyClassifier()
@@ -84,8 +84,8 @@ describe('DummyClassifier', function () {
     const y = [10, 20, 20, 30]
 
     clf.fit(X, y)
-    const clfSave = await clf.toObject()
-    const newClf = await fromObject(clfSave)
+    const clfSave = await clf.toJSON()
+    const newClf = await fromJSON(clfSave)
     expect(clf).toEqual(newClf)
   })
 })
