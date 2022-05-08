@@ -13,7 +13,7 @@
 * ==========================================================================
 */
 
-import { KNeighborsClassifier } from './KNeighborsClassifier'
+import { KNeighborsClassifier } from '../index'
 import { KNeighborsParams } from './KNeighborsBase'
 import { dataUrls } from '../datasets/datasets'
 import { crossValScore } from '../model_selection/crossValScore'

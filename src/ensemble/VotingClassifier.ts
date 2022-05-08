@@ -2,7 +2,6 @@ import { Scikit1D, Scikit2D } from '../types'
 import { tf } from '../shared/globals'
 import { ClassifierMixin } from '../mixins'
 import { LabelEncoder } from '../preprocessing/LabelEncoder'
-import { fromJson, toJson } from './serializeEnsemble'
 
 /*
   Next steps:
@@ -153,15 +152,6 @@ export class VotingClassifier extends ClassifierMixin {
     y: Scikit1D
   ): Promise<Array<tf.Tensor1D> | Array<tf.Tensor2D>> {
     return (await this.fit(X, y)).transform(X)
-  }
-
-  public fromJson(model: string) {
-    return fromJson(this, model)
-  }
-
-  public async toJson(): Promise<string> {
-    const classJson = JSON.parse(super.toJson() as string)
-    return toJson(this, classJson)
   }
 }
 

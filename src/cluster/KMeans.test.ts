@@ -1,5 +1,4 @@
-import { KMeans } from './KMeans'
-
+import { fromJSON, KMeans } from '../index'
 // Next steps: Improve on kmeans cluster testing
 describe('KMeans', () => {
   const X = [
@@ -38,7 +37,7 @@ describe('KMeans', () => {
     )
   })
 
-  it('should save kmeans model', () => {
+  it('should save kmeans model', async () => {
     const expectedResult = {
       name: 'KMeans',
       nClusters: 2,
@@ -48,7 +47,7 @@ describe('KMeans', () => {
       randomState: 0,
       nInit: 10,
       clusterCenters: {
-        type: 'Tensor',
+        name: 'Tensor',
         value: [
           [2.5, 1],
           [2.5, 4]
@@ -57,20 +56,20 @@ describe('KMeans', () => {
     }
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
-    const ksave = kmean.toJson() as string
+    const ksave = await kmean.toObject()
 
-    expect(expectedResult).toEqual(JSON.parse(ksave))
+    expect(expectedResult).toEqual(ksave)
   })
 
-  it('should load serialized kmeans model', () => {
+  it('should load serialized kmeans model', async () => {
     const centroids = [
       [2.5, 1],
       [2.5, 4]
     ]
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
-    const ksave = kmean.toJson() as string
-    const ksaveModel = new KMeans().fromJson(ksave)
+    const ksave = await kmean.toJSON()
+    const ksaveModel = await fromJSON(ksave)
     expect(centroids).toEqual(ksaveModel.clusterCenters.arraySync())
   })
 

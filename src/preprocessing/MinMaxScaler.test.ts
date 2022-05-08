@@ -1,9 +1,8 @@
-import { MinMaxScaler } from './MinMaxScaler'
+import { MinMaxScaler, fromJSON } from '../index'
 import * as dfd from 'danfojs-node'
 import { isDataFrameInterface, isSeriesInterface } from '../typesUtils'
 import { ScikitVecOrMatrix } from '../types'
 import { tf } from '../shared/globals'
-
 export function convertTensorToInputType(
   tensor: tf.Tensor,
   inputData: ScikitVecOrMatrix
@@ -161,12 +160,12 @@ describe('MinMaxscaler', function () {
       0
     ])
   })
-  it('Serialize and unserialize MinMaxScaler', function () {
+  it('Serialize and unserialize MinMaxScaler', async function () {
     const data = tf.tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
     const scaler = new MinMaxScaler()
     scaler.fit(data)
-    const serial = scaler.toJson() as string
-    const newModel = new MinMaxScaler().fromJson(serial)
+    const serial = await scaler.toJSON()
+    const newModel = await fromJSON(serial)
     expect(newModel.transform(data).arraySync().flat()).toEqual([
       1,
       1,

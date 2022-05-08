@@ -1,5 +1,4 @@
-import { DummyClassifier } from './DummyClassifier'
-
+import { DummyClassifier, fromJSON } from '../index'
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {
     const clf = new DummyClassifier()
@@ -51,7 +50,7 @@ describe('DummyClassifier', function () {
 
     expect(scaler.classes).toEqual([1, 2, 3])
   })
-  it('should serialize DummyClassifier', function () {
+  it('should serialize DummyClassifier', async function () {
     const clf = new DummyClassifier()
 
     const X = [
@@ -70,10 +69,10 @@ describe('DummyClassifier', function () {
     }
 
     clf.fit(X, y)
-    const clfSave = clf.toJson() as string
-    expect(expectedResult).toEqual(JSON.parse(clfSave))
+    const clfSave = await clf.toObject()
+    expect(expectedResult).toEqual(clfSave)
   })
-  it('should load DummyClassifier', function () {
+  it('should load DummyClassifier', async function () {
     const clf = new DummyClassifier()
 
     const X = [
@@ -85,8 +84,8 @@ describe('DummyClassifier', function () {
     const y = [10, 20, 20, 30]
 
     clf.fit(X, y)
-    const clfSave = clf.toJson() as string
-    const newClf = new DummyClassifier().fromJson(clfSave)
+    const clfSave = await clf.toJSON()
+    const newClf = await fromJSON(clfSave)
     expect(clf).toEqual(newClf)
   })
 })

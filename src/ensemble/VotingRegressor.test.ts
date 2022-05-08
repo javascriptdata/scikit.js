@@ -1,6 +1,10 @@
-import { makeVotingRegressor, VotingRegressor } from './VotingRegressor'
-import { DummyRegressor } from '../dummy/DummyRegressor'
-import { LinearRegression } from '../linear_model/LinearRegression'
+import {
+  makeVotingRegressor,
+  VotingRegressor,
+  fromJSON,
+  DummyRegressor,
+  LinearRegression
+} from '../index'
 
 describe('VotingRegressor', function () {
   it('Use VotingRegressor on simple example ', async function () {
@@ -51,8 +55,8 @@ describe('VotingRegressor', function () {
 
     await voter.fit(X, y)
 
-    const savedModel = (await voter.toJson()) as string
-    const newModel = new VotingRegressor({}).fromJson(savedModel)
+    const savedModel = await voter.toJSON()
+    const newModel = await fromJSON(savedModel)
     expect(newModel.score(X, y)).toEqual(voter.score(X, y))
   }, 30000)
 })

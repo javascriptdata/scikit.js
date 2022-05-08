@@ -20,7 +20,7 @@ import { Scikit2D, Scikit1D, OptimizerTypes, LossTypes } from '../types'
 import { OneHotEncoder } from '../preprocessing/OneHotEncoder'
 import { assert } from '../typesUtils'
 import { ClassifierMixin } from '../mixins'
-import { fromJson, toJSON } from './modelSerializer'
+
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -403,14 +403,5 @@ export class SGDClassifier extends ClassifierMixin {
 
   private getModelWeight(): Promise<tf.RecursiveArray<number>> {
     return Promise.all(this.model.getWeights().map((weight) => weight.array()))
-  }
-
-  public async toJson(): Promise<string> {
-    const classifierJson = JSON.parse(super.toJson() as string)
-    return toJSON(this, classifierJson)
-  }
-
-  public fromJson(model: string) {
-    return fromJson(this, model) as this
   }
 }
