@@ -1,4 +1,4 @@
-import { OrdinalEncoder } from './OrdinalEncoder'
+import { OrdinalEncoder } from '../index'
 import { arrayTo2DColumn } from '../utils'
 
 describe('OrdinalEncoder', function () {

@@ -1,6 +1,5 @@
-import { LogisticRegression } from './LogisticRegression'
+import { LogisticRegression, fromObject } from '../index'
 import { tf } from '../shared/globals'
-import { fromObject } from '../simpleSerializer'
 describe('LogisticRegression', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new LogisticRegression()

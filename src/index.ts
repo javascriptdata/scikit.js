@@ -1,5 +1,3 @@
-import Serialize from './serialize'
-
 /**
 *  @license
 * Copyright 2021, JsData. All rights reserved.
@@ -15,6 +13,7 @@ import Serialize from './serialize'
 * ==========================================================================
 */
 export { KNeighborsRegressor } from './neighbors/KNeighborsRegressor'
+export { KNeighborsClassifier } from './neighbors/KNeighborsClassifier'
 export {
   LinearRegression,
   LinearRegressionParams
@@ -85,7 +84,9 @@ export {
   DecisionTreeRegressor,
   DecisionTreeRegressorParams
 } from './tree/DecisionTree'
-
+export { KFold } from './model_selection/KFold'
+export { trainTestSplit } from './model_selection/trainTestSplit'
+export { crossValScore } from './model_selection/crossValScore'
 export { fromObject, Serialize } from './simpleSerializer'
 
 export { ClassificationCriterion, RegressionCriterion } from './tree/Criterion'

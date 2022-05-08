@@ -1,5 +1,5 @@
-import { DummyRegressor } from './DummyRegressor'
-import { toObject, fromObject } from '../simpleSerializer'
+import { DummyRegressor, fromObject } from '../index'
+
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {
     const reg = new DummyRegressor()
@@ -68,12 +68,13 @@ describe('DummyRegressor', function () {
       name: 'DummyRegressor',
       EstimatorType: 'regressor',
       strategy: 'constant',
-      constant: 10
+      constant: 10,
+      quantile: undefined
     }
 
     reg.fit(X, y)
 
-    expect(saveResult).toEqual(await toObject(reg))
+    expect(saveResult).toEqual(await reg.toObject())
   })
 
   it('Should load serialized DummyRegressor', async function () {
@@ -92,7 +93,7 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    const saveReg = await toObject(reg)
+    const saveReg = await reg.toObject()
     const newReg = await fromObject(saveReg)
 
     expect(newReg.predict(predictX).arraySync()).toEqual([10, 10, 10])

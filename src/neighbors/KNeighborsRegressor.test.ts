@@ -13,12 +13,10 @@
 * ==========================================================================
 */
 
-import { KNeighborsRegressor } from './KNeighborsRegressor'
+import { KNeighborsRegressor, crossValScore, KFold } from '../index'
 import { KNeighborsParams } from './KNeighborsBase'
 import { dataUrls } from '../datasets/datasets'
 import { arrayEqual } from '../utils'
-import { crossValScore } from '../model_selection/crossValScore'
-import { KFold } from '../model_selection/KFold'
 import { negMeanSquaredError } from '../model_selection/scorers'
 import '../jestTensorMatchers'
 import * as dfd from 'danfojs-node'

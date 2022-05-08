@@ -1,6 +1,5 @@
 import { Scikit2D, Scikit1D } from './types'
 import { r2Score, accuracyScore } from './metrics/metrics'
-// import Serialize from './serialize'
 import { Serialize } from './simpleSerializer'
 import { tf } from './shared/globals'
 export class TransformerMixin extends Serialize {

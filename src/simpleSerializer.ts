@@ -91,7 +91,9 @@ export async function toObjectInner(
     }
     // Array case
     if (Array.isArray(val)) {
-      return await Promise.all(val.map(async (el) => await toObjectInner(el)))
+      return await Promise.all(
+        val.map(async (el) => await toObjectInner(el, ignoreKeys))
+      )
     }
 
     // Serialize a Tensor
@@ -128,12 +130,6 @@ export async function toObjectInner(
       }
     }
 
-    if (EstimatorList.includes(val.name)) {
-      if (val.toObject) {
-        return val.toObject()
-      }
-    }
-
     // Generic object case / class case
     let response: any = {}
     for (let key of Object.keys(val)) {
@@ -145,7 +141,7 @@ export async function toObjectInner(
       // if (typeof val[key] === 'function') {
       //   continue
       // }
-      response[key] = await toObjectInner(val[key])
+      response[key] = await toObjectInner(val[key], ignoreKeys)
     }
     return response
   }
@@ -212,10 +208,16 @@ export async function fromObject(val: any): Promise<any> {
   }
 }
 
+let ignoredKeysForSGDRegressor = [
+  'modelCompileArgs',
+  'modelFitArgs',
+  'denseLayerArgs'
+]
+
 export class Serialize {
-  async toObject(ignoreKeys: string[] = []): Promise<any> {
+  async toObject(): Promise<any> {
     try {
-      return await toObjectInner(this, ignoreKeys)
+      return await toObjectInner(this, ignoredKeysForSGDRegressor)
     } catch (e) {
       console.error(e)
     }

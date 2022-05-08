@@ -16,7 +16,7 @@
 import { Scikit1D } from '../types'
 import { tf } from '../shared/globals'
 import { isSeriesInterface } from '../typesUtils'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 
 /*
 Next steps:

@@ -1,6 +1,6 @@
 import { tf } from '../shared/globals'
-import { SimpleImputer } from './SimpleImputer'
-import { toObject, fromObject } from '../simpleSerializer'
+import { SimpleImputer, fromObject } from '../index'
+
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
     const imputer = new SimpleImputer({ strategy: 'constant', fillValue: 3 })
@@ -141,7 +141,7 @@ describe('SimpleImputer', function () {
     }
 
     imputer.fitTransform(data)
-    expect(await toObject(imputer)).toEqual(expected)
+    expect(await imputer.toObject()).toEqual(expected)
   })
   it('Should load serialized Imputer', async function () {
     const imputer = new SimpleImputer({ strategy: 'mostFrequent' })
@@ -163,7 +163,7 @@ describe('SimpleImputer', function () {
     ]
 
     imputer.fitTransform(data)
-    const thing = await toObject(imputer)
+    const thing = await imputer.toObject()
     const newImputer = await fromObject(thing)
     const newReturned = newImputer.transform(data)
     expect(newReturned.arraySync()).toEqual(expected)

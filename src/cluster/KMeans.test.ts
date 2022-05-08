@@ -1,5 +1,4 @@
-import { KMeans } from './KMeans'
-import { fromObject } from '../index'
+import { fromObject, KMeans } from '../index'
 // Next steps: Improve on kmeans cluster testing
 describe('KMeans', () => {
   const X = [

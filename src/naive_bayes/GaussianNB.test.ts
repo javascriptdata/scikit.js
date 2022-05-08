@@ -12,8 +12,7 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { GaussianNB } from './GaussianNB'
-import { toObject, fromObject } from '../simpleSerializer'
+import { GaussianNB, fromObject } from '../index'
 
 describe('GaussianNB', function () {
   it('without priors', async () => {
@@ -100,9 +99,9 @@ describe('GaussianNB', function () {
     const model = new GaussianNB({ priors: [0.5, 0.5], varSmoothing: 1.0 })
 
     await model.fit(X, y)
-    const labels = model.predict(X)
+    model.predict(X)
 
-    const serializeModel = await toObject(model)
+    const serializeModel = await model.toObject()
     const newModel = await fromObject(serializeModel)
     expect(newModel.predict(X).arraySync()).toEqual([0, 0, 1, 1, 1])
   })

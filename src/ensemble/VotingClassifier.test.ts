@@ -1,7 +1,10 @@
-import { makeVotingClassifier, VotingClassifier } from './VotingClassifier'
-import { DummyClassifier } from '../dummy/DummyClassifier'
-
-import { LogisticRegression } from '../linear_model/LogisticRegression'
+import {
+  makeVotingClassifier,
+  VotingClassifier,
+  DummyClassifier,
+  LogisticRegression,
+  fromObject
+} from '../index'
 
 describe('VotingClassifier', function () {
   it('Use VotingClassifier on simple example (voting = hard)', async function () {
@@ -118,8 +121,8 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
 
-    const savedModel = (await voter.toJson()) as string
-    const newModel = new VotingClassifier({}).fromJson(savedModel)
+    const savedModel = await voter.toObject()
+    const newModel = await fromObject(savedModel)
 
     expect(newModel.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
   }, 30000)

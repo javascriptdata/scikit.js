@@ -20,7 +20,6 @@ import {
 } from '../utils'
 import { Scikit2D, Scikit1D, OptimizerTypes, LossTypes } from '../types'
 import { RegressorMixin } from '../mixins'
-import { fromJson, toJSON } from './modelSerializer'
 
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
@@ -209,15 +208,6 @@ export class SGDRegressor extends RegressorMixin {
     return this
   }
 
-  public async toObject(): Promise<any> {
-    let { toObject } = await import('../simpleSerializer')
-    return await toObject(this, [
-      'modelCompileArgs',
-      'modelFitArgs',
-      'denseLayerArgs'
-    ])
-  }
-
   /**
    * Similar to scikit-learn, this returns the object of configuration params for SGD
    * @returns {SGDRegressorParams} Returns an object of configuration params.
@@ -389,14 +379,5 @@ export class SGDRegressor extends RegressorMixin {
     }
 
     return intercept
-  }
-
-  public async toJson(): Promise<string> {
-    const classifierJson = JSON.parse(super.toJson() as string)
-    return toJSON(this, classifierJson)
-  }
-
-  public fromJson(model: string) {
-    return fromJson(this, model) as this
   }
 }

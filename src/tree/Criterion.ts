@@ -1,6 +1,5 @@
-import { assert } from '../typesUtils'
 import { int } from '../randUtils'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 
 export type ImpurityMeasure = 'gini' | 'entropy' | 'squared_error'
 

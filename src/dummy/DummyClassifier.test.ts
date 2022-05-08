@@ -1,5 +1,4 @@
-import { DummyClassifier } from './DummyClassifier'
-import { fromObject } from '../simpleSerializer'
+import { DummyClassifier, fromObject } from '../index'
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {
     const clf = new DummyClassifier()

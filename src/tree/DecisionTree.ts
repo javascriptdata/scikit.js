@@ -8,7 +8,7 @@ import { validateX, validateY } from './utils'
 import { Scikit1D, Scikit2D } from '../types'
 import { convertScikit2DToArray, convertScikit1DToArray } from '../utils'
 import { LabelEncoder } from '../preprocessing/LabelEncoder'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 
 /*
 Next steps:
@@ -155,6 +155,7 @@ export class DecisionTreeBase extends Serialize {
   X: number[][] = []
   y: number[] = []
   labelEncoder?: LabelEncoder
+  name: string
 
   constructor({
     criterion = 'gini',
@@ -299,37 +300,6 @@ export class DecisionTreeBase extends Serialize {
     }
     this.tree.populateChildIds()
     this.tree.isBuilt = true
-  }
-
-  public toJson(): string {
-    const jsonClass = JSON.parse(super.toJson() as string)
-
-    if (this.splitter) {
-      jsonClass.splitter = this.splitter.toJson() as string
-    }
-    if (this.labelEncoder) {
-      jsonClass.labelEncoder = this.labelEncoder.toJson()
-    }
-    return JSON.stringify(jsonClass)
-  }
-
-  public fromJson(model: string) {
-    const jsonClass = JSON.parse(model)
-
-    if (jsonClass.tree) {
-      const tree = new DecisionTree()
-      jsonClass.tree = Object.assign(tree, jsonClass.tree)
-    }
-
-    if (jsonClass.splitter) {
-      jsonClass.splitter = Splitter.fromJson(jsonClass.splitter)
-    }
-    if (jsonClass.labelEncoder) {
-      jsonClass.labelEncoder = new LabelEncoder().fromJson(
-        jsonClass.labelEncoder
-      )
-    }
-    return Object.assign(this, jsonClass) as this
   }
 }
 

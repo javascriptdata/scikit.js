@@ -21,7 +21,7 @@ import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { tf } from '../shared/globals'
 import { KdTree } from './KdTree'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 
 const WEIGHTS_FUNCTIONS = {
   uniform(distances: tf.Tensor2D) {

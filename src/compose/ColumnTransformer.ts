@@ -76,6 +76,7 @@ export class ColumnTransformer extends Serialize {
     transformers = [],
     remainder = 'drop'
   }: ColumnTransformerParams = {}) {
+    super()
     this.transformers = transformers
     this.remainder = remainder
   }

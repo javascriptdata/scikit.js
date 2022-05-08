@@ -1,4 +1,4 @@
-import { LabelEncoder } from './LabelEncoder'
+import { LabelEncoder } from '../index'
 import * as dfd from 'danfojs-node'
 
 describe('LabelEncoder', function () {

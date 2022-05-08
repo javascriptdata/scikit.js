@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assert } from '../typesUtils'
 import { Scikit1D, Scikit2D } from '../types'
-import Serialize from '../serialize'
-import { toJson, fromJson } from '../ensemble/serializeEnsemble'
+import { Serialize } from '../simpleSerializer'
 import { tf } from '../shared/globals'
 
 /*
@@ -205,15 +204,6 @@ export class Pipeline extends Serialize {
 
     let XT = this.fitTransformExceptLast(X)
     return await lastEstimator.fitPredict(XT, y)
-  }
-
-  public async toJson(): Promise<string> {
-    const classJson = JSON.parse(super.toJson() as string)
-    return toJson(this, classJson)
-  }
-
-  public fromJson(model: string) {
-    return fromJson(this, model) as this
   }
 }
 

@@ -5,7 +5,7 @@ import {
 } from './Criterion'
 import shuffle from 'lodash/shuffle'
 import { int } from '../randUtils'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 
 export interface Split {
   feature: int
@@ -214,45 +214,5 @@ export class Splitter extends Serialize {
       // passing back split.foundSplit = false
       return currentSplit
     }
-  }
-
-  public toJson(): string {
-    const jsonClass = JSON.parse(super.toJson() as string)
-
-    if (jsonClass.criterion) {
-      jsonClass.criterion = this.criterion.toJson() as string
-    }
-    if (this.sampleMap) jsonClass.sampleMap = Array.from(this.sampleMap)
-    return JSON.stringify(jsonClass)
-  }
-
-  static fromJson(model: string) {
-    const jsonClass = JSON.parse(model)
-
-    if (jsonClass.criterion) {
-      const criterionName = JSON.parse(jsonClass.criterion).name
-      if (criterionName == 'classificationCriterion') {
-        jsonClass.criterion = ClassificationCriterion.fromJson(
-          jsonClass.criterion
-        )
-      } else {
-        jsonClass.criterion = RegressionCriterion.fromJson(jsonClass.criterion)
-      }
-    }
-
-    if (jsonClass.sampleMap) {
-      jsonClass.sampleMap = new Int32Array(jsonClass.sampleMap)
-    }
-
-    const splitter = new Splitter({
-      X: jsonClass.X,
-      y: jsonClass.y,
-      minSamplesLeaf: jsonClass.minSamplesLeaf,
-      impurityMeasure: 'squared_error',
-      maxFeatures: jsonClass.maxFeatures,
-      samplesSubset: jsonClass.samplesSubset
-    })
-
-    return Object.assign(splitter, jsonClass) as Splitter
   }
 }
