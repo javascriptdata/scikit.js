@@ -1,6 +1,5 @@
-import { assert } from '../typesUtils'
 import { int } from '../randUtils'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 
 export type ImpurityMeasure = 'gini' | 'entropy' | 'squared_error'
 
@@ -43,7 +42,7 @@ function arrayMax(labels: int[]) {
 export class ClassificationCriterion extends Serialize {
   y: int[]
   impurityMeasure: ImpurityMeasure
-  impurityFunc: (labelFreqs: int[], nSamples: int) => number
+  // impurityFunc: (labelFreqs: int[], nSamples: int) => number
   start: int = 0
   end: int = 0
   pos: int = 0
@@ -54,21 +53,19 @@ export class ClassificationCriterion extends Serialize {
   nSamples: int = 0
   nSamplesLeft: int = 0
   nSamplesRight: int = 0
-  name = 'classificationCriterion'
+  name = 'ClassificationCriterion'
 
-  constructor(impurityMeasure: ImpurityMeasure, y: number[]) {
+  constructor({
+    impurityMeasure,
+    y
+  }: {
+    impurityMeasure: ImpurityMeasure
+    y: number[]
+  }) {
     super()
-    assert(
-      ['gini', 'entropy'].includes(impurityMeasure),
-      'Unkown impurity measure. Only supports gini, and entropy'
-    )
 
     this.impurityMeasure = impurityMeasure
-    if (this.impurityMeasure === 'gini') {
-      this.impurityFunc = giniCoefficient
-    } else {
-      this.impurityFunc = entropy
-    }
+
     // This assumes that the labels are 0,1,2,...,(n-1)
     this.nLabels = arrayMax(y) + 1
     this.y = y
@@ -116,12 +113,12 @@ export class ClassificationCriterion extends Serialize {
   }
 
   childrenImpurities() {
+    let impurityFunc =
+      this.impurityMeasure === 'gini' ? giniCoefficient : entropy
+
     return {
-      impurityLeft: this.impurityFunc(this.labelFreqsLeft, this.nSamplesLeft),
-      impurityRight: this.impurityFunc(
-        this.labelFreqsRight,
-        this.nSamplesRight
-      )
+      impurityLeft: impurityFunc(this.labelFreqsLeft, this.nSamplesLeft),
+      impurityRight: impurityFunc(this.labelFreqsRight, this.nSamplesRight)
     }
   }
 
@@ -134,7 +131,10 @@ export class ClassificationCriterion extends Serialize {
   }
 
   nodeImpurity() {
-    return this.impurityFunc(this.labelFreqsTotal, this.nSamples)
+    let impurityFunc =
+      this.impurityMeasure === 'gini' ? giniCoefficient : entropy
+
+    return impurityFunc(this.labelFreqsTotal, this.nSamples)
   }
 
   nodeValue() {
@@ -143,10 +143,10 @@ export class ClassificationCriterion extends Serialize {
 
   static fromJson(model: string) {
     const jsonClass = JSON.parse(model)
-    const newModel = new ClassificationCriterion(
-      jsonClass.impurityMeasure,
-      jsonClass.y
-    )
+    const newModel = new ClassificationCriterion({
+      impurityMeasure: jsonClass.impurityMeasure,
+      y: jsonClass.y
+    })
     return Object.assign(newModel, jsonClass)
   }
 }
@@ -154,7 +154,7 @@ export class ClassificationCriterion extends Serialize {
 export class RegressionCriterion extends Serialize {
   y: number[]
   impurityMeasure: 'squared_error'
-  impurityFunc: (ySquaredSum: number, ySum: number, nSamples: int) => number
+  // impurityFunc: (ySquaredSum: number, ySum: number, nSamples: int) => number
   start: int = 0
   end: int = 0
   pos: int = 0
@@ -167,18 +167,23 @@ export class RegressionCriterion extends Serialize {
   nSamples: int = 0
   nSamplesLeft: int = 0
   nSamplesRight: int = 0
-  name = 'regressionCriterion'
+  name = 'RegressionCriterion'
 
-  constructor(impurityMeasure: 'squared_error', y: number[]) {
+  constructor({
+    impurityMeasure,
+    y
+  }: {
+    impurityMeasure: 'squared_error'
+    y: number[]
+  }) {
     super()
-    assert(
-      ['squared_error'].includes(impurityMeasure),
-      'Unkown impurity measure. Only supports squared_error'
-    )
+
+    // We don't assert in the constructor, we assert in fit in accordance with the sklearn docs
 
     // Support MAE one day
     this.impurityMeasure = impurityMeasure
-    this.impurityFunc = mse
+    // We don't set the impurityFunc here because we need it to be serializable as an object
+    // this.impurityFunc = mse
     this.y = y
   }
 
@@ -224,13 +229,15 @@ export class RegressionCriterion extends Serialize {
   }
 
   childrenImpurities() {
+    // once we get another impurity function we can do a ternary here
+    let impurityFunc = mse
     return {
-      impurityLeft: this.impurityFunc(
+      impurityLeft: impurityFunc(
         this.squaredSumLeft,
         this.sumTotalLeft,
         this.nSamplesLeft
       ),
-      impurityRight: this.impurityFunc(
+      impurityRight: impurityFunc(
         this.squaredSumRight,
         this.sumTotalRight,
         this.nSamplesRight
@@ -247,7 +254,9 @@ export class RegressionCriterion extends Serialize {
   }
 
   nodeImpurity() {
-    return this.impurityFunc(this.squaredSum, this.sumTotal, this.nSamples)
+    // once we get another impurity function we can do a ternary here
+    let impurityFunc = mse
+    return impurityFunc(this.squaredSum, this.sumTotal, this.nSamples)
   }
 
   nodeValue() {
@@ -256,10 +265,10 @@ export class RegressionCriterion extends Serialize {
 
   static fromJson(model: string) {
     const jsonClass = JSON.parse(model)
-    const newModel = new RegressionCriterion(
-      jsonClass.impurityMeasure,
-      jsonClass.y
-    )
+    const newModel = new RegressionCriterion({
+      impurityMeasure: jsonClass.impurityMeasure,
+      y: jsonClass.y
+    })
     return Object.assign(newModel, jsonClass)
   }
 }

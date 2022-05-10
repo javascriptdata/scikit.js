@@ -12,8 +12,8 @@
 * limitations under the License.
 * ==========================================================================
 */
-import { GaussianNB, setBackend } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import { GaussianNB, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('GaussianNB', function () {
@@ -101,10 +101,10 @@ describe('GaussianNB', function () {
     const model = new GaussianNB({ priors: [0.5, 0.5], varSmoothing: 1.0 })
 
     await model.fit(X, y)
-    const labels = model.predict(X)
+    model.predict(X)
 
-    const serializeModel = model.toJson()
-    const newModel = new GaussianNB().fromJson(serializeModel)
+    const serializeModel = await model.toJSON()
+    const newModel = await fromJSON(serializeModel)
     expect(newModel.predict(X).arraySync()).toEqual([0, 0, 1, 1, 1])
   })
 })

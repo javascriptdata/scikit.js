@@ -14,6 +14,9 @@
 */
 
 import './jestTensorMatchers'
+import * as tf from '@tensorflow/tfjs'
+import { setBackend } from './index'
+setBackend(tf)
 
 describe('Custom Jest Tensor Matchers', () => {
   it('passes handcrafted tests', () => {

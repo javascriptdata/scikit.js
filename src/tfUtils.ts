@@ -13,7 +13,6 @@
 * ==========================================================================
 */
 
-import { tf as _tf } from './shared/globals'
 import { assert } from './typesUtils'
 
 /**
@@ -27,7 +26,7 @@ import { assert } from './typesUtils'
  *
  * @param tf The TFJS instance to be polyfilled.
  */
-export function polyfillUnique(tf: typeof _tf) {
+export function polyfillUnique(tf: any) {
   // TODO: remove this method as soon as tfjs-node supports tf.unique
   if (
     tf.engine().backendNames().includes('tensorflow') &&
@@ -38,8 +37,8 @@ export function polyfillUnique(tf: typeof _tf) {
     tf.registerKernel({
       kernelName: 'Unique',
       backendName: 'tensorflow',
-      kernelFunc: (args) => {
-        const x = args.inputs.x as _tf.Tensor
+      kernelFunc: (args: any) => {
+        const x = args.inputs.x
         const backend = args.backend as any
         const { axis } = args.attrs as { axis: number }
 

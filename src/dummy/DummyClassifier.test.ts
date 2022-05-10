@@ -1,5 +1,5 @@
-import { DummyClassifier, setBackend } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import { DummyClassifier, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('DummyClassifier', function () {
@@ -53,7 +53,7 @@ describe('DummyClassifier', function () {
 
     expect(scaler.classes).toEqual([1, 2, 3])
   })
-  it('should serialize DummyClassifier', function () {
+  it('should serialize DummyClassifier', async function () {
     const clf = new DummyClassifier()
 
     const X = [
@@ -72,10 +72,12 @@ describe('DummyClassifier', function () {
     }
 
     clf.fit(X, y)
-    const clfSave = clf.toJson() as string
-    expect(expectedResult).toEqual(JSON.parse(clfSave))
+    const clfSave = await clf.toObject()
+    // We don't care what version of tf is saved on there
+    delete clfSave.tf
+    expect(expectedResult).toEqual(clfSave)
   })
-  it('should load DummyClassifier', function () {
+  it('should load DummyClassifier', async function () {
     const clf = new DummyClassifier()
 
     const X = [
@@ -87,8 +89,8 @@ describe('DummyClassifier', function () {
     const y = [10, 20, 20, 30]
 
     clf.fit(X, y)
-    const clfSave = clf.toJson() as string
-    const newClf = new DummyClassifier().fromJson(clfSave)
+    const clfSave = await clf.toJSON()
+    const newClf = await fromJSON(clfSave)
     expect(clf).toEqual(newClf)
   })
 })

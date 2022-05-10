@@ -52,6 +52,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.16.0",
     "@tensorflow/tfjs-node": "^3.16.0",
+    "base64-arraybuffer": "^1.0.2",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.0",
     "simple-statistics": "^7.7.0"

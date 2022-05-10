@@ -1,5 +1,5 @@
-import { SimpleImputer, setBackend } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import { SimpleImputer, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('SimpleImputer', function () {
@@ -120,7 +120,7 @@ describe('SimpleImputer', function () {
     expect(returned.arraySync()).toEqual(expected)
     expect(imputer.transform([[NaN, NaN]]).arraySync()).toEqual([[4, 3]])
   })
-  it('Should serialized Imputer', function () {
+  it('Should serialized Imputer', async function () {
     const imputer = new SimpleImputer({ strategy: 'mostFrequent' })
 
     const data = [
@@ -130,21 +130,22 @@ describe('SimpleImputer', function () {
       [4, 2],
       [6, NaN]
     ]
-
     const expected = {
       name: 'SimpleImputer',
-      missingValues: null,
+      missingValues: NaN,
+      fillValue: undefined,
       strategy: 'mostFrequent',
       statistics: {
-        type: 'Tensor',
+        name: 'Tensor',
         value: [4, 3]
       }
     }
 
-    const returned = imputer.fitTransform(data)
-    expect(JSON.parse(imputer.toJson() as string)).toEqual(expected)
+    imputer.fitTransform(data)
+    delete imputer.tf
+    expect(await imputer.toObject()).toEqual(expected)
   })
-  it('Should load serialized Imputer', function () {
+  it('Should load serialized Imputer', async function () {
     const imputer = new SimpleImputer({ strategy: 'mostFrequent' })
 
     const data = [
@@ -163,8 +164,9 @@ describe('SimpleImputer', function () {
       [6, 3]
     ]
 
-    const returned = imputer.fitTransform(data)
-    const newImputer = new SimpleImputer().fromJson(imputer.toJson() as string)
+    imputer.fitTransform(data)
+    const thing = await imputer.toJSON()
+    const newImputer = await fromJSON(thing)
     const newReturned = newImputer.transform(data)
     expect(newReturned.arraySync()).toEqual(expected)
     expect(newImputer.transform([[NaN, NaN]]).arraySync()).toEqual([[4, 3]])

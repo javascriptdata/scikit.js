@@ -12,7 +12,6 @@
 * limitations under the License.
 * ==========================================================================
 */
-// import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
 import {
   convertToNumericTensor1D_2D,
   convertToNumericTensor2D
@@ -29,8 +28,8 @@ import {
   ModelFitArgs
 } from '../types'
 import { RegressorMixin } from '../mixins'
-import { fromJson, toJSON } from './modelSerializer'
 import { getBackend } from '../tf-singleton'
+
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
  * With this base class and different error functions / regularizers we can
@@ -397,14 +396,5 @@ export class SGDRegressor extends RegressorMixin {
     }
 
     return intercept
-  }
-
-  public async toJson(): Promise<string> {
-    const classifierJson = JSON.parse(super.toJson() as string)
-    return toJSON(this, classifierJson)
-  }
-
-  public fromJson(model: string) {
-    return fromJson(this, model) as this
   }
 }

@@ -4,9 +4,10 @@ import {
   LinearRegression,
   SimpleImputer,
   MinMaxScaler,
-  setBackend
+  setBackend,
+  fromJSON
 } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 import { tensorEqual } from '../utils'
 setBackend(tf)
 
@@ -101,8 +102,8 @@ describe('Pipeline', function () {
 
     await pipeline.fit(X, y)
 
-    const saveModel = (await pipeline.toJson()) as string
-    const newPipeLine = new Pipeline().fromJson(saveModel)
+    const saveModel = await pipeline.toJSON()
+    const newPipeLine = await fromJSON(saveModel)
 
     expect(newPipeLine.steps[1][1].min.arraySync()).toEqual([0, 0])
     expect(

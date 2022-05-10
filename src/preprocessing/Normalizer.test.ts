@@ -1,7 +1,7 @@
 import { Normalizer, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
 import { arrayEqual } from '../utils'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('Normalizer', function () {

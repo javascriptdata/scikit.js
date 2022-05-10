@@ -18,7 +18,7 @@ import { KFold, setBackend } from '../index'
 import { alea } from '../randUtils'
 import { Tensor2D } from '../types'
 import '../jestTensorMatchers'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('KFold', () => {

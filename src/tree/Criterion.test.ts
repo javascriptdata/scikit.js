@@ -1,5 +1,8 @@
 import { ClassificationCriterion, giniCoefficient, entropy } from './Criterion'
-
+import { fromJSON } from '../simpleSerializer'
+import { setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 describe('Criterion', function () {
   let X = [
     [-2, -1],
@@ -15,7 +18,7 @@ describe('Criterion', function () {
     sampleMap[i] = i
   }
   it('Use the criterion (init)', async function () {
-    let criterion = new ClassificationCriterion('gini', y)
+    let criterion = new ClassificationCriterion({ impurityMeasure: 'gini', y })
 
     criterion.init(0, 6, sampleMap)
     expect(criterion.start).toEqual(0)
@@ -29,7 +32,7 @@ describe('Criterion', function () {
     expect(criterion.labelFreqsRight[1]).toEqual(0)
   }, 1000)
   it('Use the criterion (update)', async function () {
-    let criterion = new ClassificationCriterion('gini', y)
+    let criterion = new ClassificationCriterion({ impurityMeasure: 'gini', y })
     criterion.init(0, 6, sampleMap)
     criterion.update(3, sampleMap)
 
@@ -40,20 +43,23 @@ describe('Criterion', function () {
     expect(criterion.labelFreqsRight[1]).toEqual(3)
   }, 1000)
   it('Use the criterion (gini)', async function () {
-    let criterion = new ClassificationCriterion('gini', y)
+    let criterion = new ClassificationCriterion({ impurityMeasure: 'gini', y })
 
     criterion.init(0, 6, sampleMap)
 
     expect(criterion.nodeImpurity()).toEqual(0.5)
   }, 1000)
   it('Use the criterion (entropy)', async function () {
-    let criterion = new ClassificationCriterion('entropy', y)
+    let criterion = new ClassificationCriterion({
+      impurityMeasure: 'entropy',
+      y
+    })
     criterion.init(0, 6, sampleMap)
 
     expect(criterion.nodeImpurity()).toEqual(1)
   }, 1000)
   it('Use the criterion (gini update)', async function () {
-    let criterion = new ClassificationCriterion('gini', y)
+    let criterion = new ClassificationCriterion({ impurityMeasure: 'gini', y })
 
     criterion.init(0, 6, sampleMap)
     criterion.update(4, sampleMap)
@@ -75,10 +81,13 @@ describe('Criterion', function () {
     expect(entropy(labelFreqs, nSamples)).toEqual(0.7219280948873623)
   }, 1000)
   it('Use the criterion (entropy)', async function () {
-    let criterion = new ClassificationCriterion('entropy', y)
+    let criterion = new ClassificationCriterion({
+      impurityMeasure: 'entropy',
+      y
+    })
     criterion.init(0, 6, sampleMap)
-    const serial = criterion.toJson() as string
-    const newCriterion = ClassificationCriterion.fromJson(serial)
+    const serial = await criterion.toJSON()
+    const newCriterion = await fromJSON(serial)
     expect(newCriterion.nodeImpurity()).toEqual(1)
   }, 1000)
 })

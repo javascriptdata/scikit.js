@@ -15,8 +15,8 @@
 import { polyfillUnique } from '../tfUtils'
 import { Scikit1D, Scikit2D, Tensor1D, Tensor2D, Tensor } from '../types'
 import { convertToNumericTensor2D, convertToTensor1D } from '../utils'
-import Serialize from '../serialize'
 import { getBackend } from '../tf-singleton'
+import { Serialize } from '../simpleSerializer'
 
 export interface NaiveBayesParams {
   /**
@@ -154,37 +154,4 @@ export abstract class BaseNaiveBayes extends Serialize {
     mean: Tensor1D,
     variance: Tensor1D
   ): Tensor1D
-
-  public toJson(): string {
-    const jsonClass = JSON.parse(super.toJson() as string)
-
-    if (this.priors) {
-      jsonClass.priors = this.priors.arraySync()
-    }
-    jsonClass.classes = this.classes.arraySync()
-    jsonClass.means = this.means.map((t: Tensor1D) => t.arraySync())
-    jsonClass.variances = this.variances.map((v: Tensor1D) => v.arraySync())
-    return JSON.stringify(jsonClass)
-  }
-
-  public fromJson(model: string) {
-    const jsonModel = JSON.parse(model)
-
-    if (jsonModel.priors) {
-      jsonModel.priors = this.tf.tensor(jsonModel.priors)
-    }
-    jsonModel.classes = this.tf.tensor(jsonModel.classes)
-
-    const means = []
-    for (const wMeans of jsonModel.means) {
-      means.push(this.tf.tensor(wMeans))
-    }
-    const variances = []
-    for (const variance of jsonModel.variances) {
-      variances.push(this.tf.tensor(variance))
-    }
-    jsonModel.means = means
-    jsonModel.variances = variances
-    return Object.assign(this, jsonModel) as this
-  }
 }

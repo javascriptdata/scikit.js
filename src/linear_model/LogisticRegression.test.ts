@@ -1,5 +1,5 @@
-import { LogisticRegression, setBackend } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import { LogisticRegression, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('LogisticRegression', function () {
@@ -92,7 +92,7 @@ describe('LogisticRegression', function () {
     expect(finalResults.arraySync()).toEqual([0, 0, 0, 1, 1, 1, 2, 2, 2])
   }, 30000)
 
-  it('Should save and load  trained model', async function () {
+  it('Should save and load trained model', async function () {
     let X = [
       [0, -1],
       [1, 0],
@@ -134,8 +134,8 @@ describe('LogisticRegression', function () {
     let logreg = new LogisticRegression({ penalty: 'l2' })
     await logreg.fit(X, y)
 
-    const serializeModel = await logreg.toJson()
-    const newModel = logreg.fromJson(serializeModel)
+    const serializeModel = await logreg.toJSON()
+    const newModel = await fromJSON(serializeModel)
     const newModelResult = newModel.predict(Xtest)
 
     expect(newModelResult.arraySync()).toEqual([0, 0, 0, 0, 0, 0, 2, 2, 2])

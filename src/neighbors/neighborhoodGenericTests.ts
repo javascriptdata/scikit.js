@@ -16,7 +16,7 @@
 import * as fc from 'fast-check'
 import { alea } from '../randUtils'
 import { setBackend } from '../tf-singleton'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 import { Neighborhood, NeighborhoodParams } from './Neighborhood'
 import { lhs, shuffle } from '../randUtils'
 import { minkowskiMetric } from './Metric'

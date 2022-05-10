@@ -1,12 +1,11 @@
-import { Scikit2D, Scikit1D } from './types'
+import { Scikit2D, Scikit1D, Tensor2D, Tensor1D } from './types'
 import { r2Score, accuracyScore } from './metrics/metrics'
-import Serialize from './serialize'
-import { tf } from './shared/globals'
+import { Serialize } from './simpleSerializer'
 export class TransformerMixin extends Serialize {
   // We assume that fit and transform exist
   [x: string]: any
 
-  public fitTransform(X: Scikit2D): tf.Tensor2D {
+  public fitTransform(X: Scikit2D): Tensor2D {
     return this.fit(X).transform(X)
   }
 }
@@ -15,7 +14,7 @@ export class PredictorMixin {
   // We assume that fit and predict exist
   [x: string]: any
 
-  public fitPredict(X: Scikit2D, y: Scikit1D): tf.Tensor1D {
+  public fitPredict(X: Scikit2D, y: Scikit1D): Tensor1D {
     return this.fit(X, y).predict(X)
   }
 }

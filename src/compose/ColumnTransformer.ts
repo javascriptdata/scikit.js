@@ -1,7 +1,7 @@
 import { DataFrameInterface, Scikit1D, Transformer, Tensor2D } from '../types'
 import { isDataFrameInterface } from '../typesUtils'
 import { getBackend } from '../tf-singleton'
-
+import { Serialize } from '../simpleSerializer'
 /*
 Next steps:
 1. Support 'passthrough' and 'drop' and estimator for remainder (also in transformer list)
@@ -65,7 +65,7 @@ export interface ColumnTransformerParams {
     ]
  * ```
  */
-export class ColumnTransformer {
+export class ColumnTransformer extends Serialize {
   transformers: TransformerTriple
   remainder: Transformer | 'drop' | 'passthrough'
 
@@ -77,6 +77,7 @@ export class ColumnTransformer {
     transformers = [],
     remainder = 'drop'
   }: ColumnTransformerParams = {}) {
+    super()
     this.tf = getBackend()
     this.transformers = transformers
     this.remainder = remainder

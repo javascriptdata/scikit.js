@@ -19,7 +19,8 @@ import {
   Tensor2D,
   TensorLike,
   Tensor,
-  RecursiveArray
+  RecursiveArray,
+  DataType
 } from '@tensorflow/tfjs-core/dist/index.d'
 
 import {
@@ -318,7 +319,8 @@ export {
   ModelCompileArgs,
   ModelFitArgs,
   RecursiveArray,
-  Scalar
+  Scalar,
+  DataType
 }
 export type TypedArray = Float32Array | Int32Array | Uint8Array
 export type ScikitLike1D = TypedArray | number[] | boolean[] | string[]

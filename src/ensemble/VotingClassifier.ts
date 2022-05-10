@@ -2,7 +2,6 @@ import { Scikit1D, Scikit2D, Tensor1D, Tensor2D } from '../types'
 import { getBackend } from '../tf-singleton'
 import { ClassifierMixin } from '../mixins'
 import { LabelEncoder } from '../preprocessing/LabelEncoder'
-import { fromJson, toJson } from './serializeEnsemble'
 
 /*
   Next steps:
@@ -155,15 +154,6 @@ export class VotingClassifier extends ClassifierMixin {
     y: Scikit1D
   ): Promise<Array<Tensor1D> | Array<Tensor2D>> {
     return (await this.fit(X, y)).transform(X)
-  }
-
-  public fromJson(model: string) {
-    return fromJson(this, model)
-  }
-
-  public async toJson(): Promise<string> {
-    const classJson = JSON.parse(super.toJson() as string)
-    return toJson(this, classJson)
   }
 }
 

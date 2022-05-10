@@ -1,6 +1,5 @@
 import { Scikit1D, Scikit2D, Tensor1D } from '../types'
 import { RegressorMixin } from '../mixins'
-import { fromJson, toJson } from './serializeEnsemble'
 import { getBackend } from '../tf-singleton'
 /*
   Next steps:
@@ -95,15 +94,6 @@ export class VotingRegressor extends RegressorMixin {
 
   public async fitTransform(X: Scikit2D, y: Scikit1D) {
     return (await this.fit(X, y)).transform(X)
-  }
-
-  public fromJson(model: string) {
-    return fromJson(this, model) as this
-  }
-
-  public async toJson(): Promise<string> {
-    const classJson = JSON.parse(super.toJson() as string)
-    return toJson(this, classJson)
   }
 }
 

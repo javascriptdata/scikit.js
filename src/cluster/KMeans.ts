@@ -1,7 +1,7 @@
 import { Scikit2D, Tensor1D, Tensor2D } from '../types'
 import { convertToNumericTensor2D, sampleWithoutReplacement } from '../utils'
-import Serialize from '../serialize'
 import { getBackend } from '../tf-singleton'
+import { Serialize } from '../simpleSerializer'
 
 /*
 Next steps

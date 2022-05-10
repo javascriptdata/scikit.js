@@ -1,5 +1,10 @@
 import { Scikit1D, Scikit2D } from '../types'
-import { assert, isDataFrameInterface, isSeriesInterface } from '../typesUtils'
+import {
+  assert,
+  isDataFrameInterface,
+  isSeriesInterface,
+  isTensor
+} from '../typesUtils'
 import { getLength, sampleWithoutReplacement } from '../utils'
 import { getBackend } from '../tf-singleton'
 
@@ -112,7 +117,7 @@ export function validateShuffleSplit(
 
 export function getIndices(X: Scikit2D | Scikit1D, indices: number[]) {
   let tf = getBackend()
-  if (X instanceof tf.Tensor) {
+  if (isTensor(X)) {
     return tf.gather(X, indices)
   }
   if (isDataFrameInterface(X)) {

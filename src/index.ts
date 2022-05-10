@@ -86,8 +86,13 @@ export {
   DecisionTreeRegressor,
   DecisionTreeRegressorParams
 } from './tree/DecisionTree'
-export { trainTestSplit } from './model_selection/trainTestSplit'
-export { KFold } from './model_selection/KFold'
-export { crossValScore } from './model_selection/crossValScore'
 export { makeRegression, makeLowRankMatrix } from './datasets/makeRegression'
 export { setBackend, getBackend } from './tf-singleton'
+export { KFold } from './model_selection/KFold'
+export { trainTestSplit } from './model_selection/trainTestSplit'
+export { crossValScore } from './model_selection/crossValScore'
+export { fromObject, fromJSON, Serialize } from './simpleSerializer'
+
+export { ClassificationCriterion, RegressionCriterion } from './tree/Criterion'
+export { Splitter } from './tree/Splitter'
+export { DecisionTreeBase, DecisionTree } from './tree/DecisionTree'

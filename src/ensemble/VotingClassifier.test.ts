@@ -3,9 +3,10 @@ import {
   VotingClassifier,
   DummyClassifier,
   LogisticRegression,
-  setBackend
+  setBackend,
+  fromJSON
 } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('VotingClassifier', function () {
@@ -123,8 +124,8 @@ describe('VotingClassifier', function () {
 
     await voter.fit(X, y)
 
-    const savedModel = (await voter.toJson()) as string
-    const newModel = new VotingClassifier({}).fromJson(savedModel)
+    const savedModel = await voter.toJSON()
+    const newModel = await fromJSON(savedModel)
 
     expect(newModel.predict(X).arraySync()).toEqual([1, 1, 1, 1, 1])
   }, 30000)

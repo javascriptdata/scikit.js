@@ -13,8 +13,12 @@
 * ==========================================================================
 */
 
-import { KNeighborsRegressor, setBackend, KFold } from '../index'
-import { crossValScore } from '../model_selection/crossValScore'
+import {
+  KNeighborsRegressor,
+  setBackend,
+  KFold,
+  crossValScore
+} from '../index'
 import { KNeighborsParams } from './KNeighborsBase'
 import { dataUrls } from '../datasets/datasets'
 import { arrayEqual } from '../utils'

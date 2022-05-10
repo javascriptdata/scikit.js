@@ -1,7 +1,7 @@
 import { validateShuffleSplit, getIndices } from './trainTestSplit'
 import { trainTestSplit, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 import { DataFrameInterface } from '../types'
 setBackend(tf)
 

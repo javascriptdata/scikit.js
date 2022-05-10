@@ -3,9 +3,10 @@ import {
   VotingRegressor,
   DummyRegressor,
   LinearRegression,
-  setBackend
+  setBackend,
+  fromJSON
 } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('VotingRegressor', function () {
@@ -57,8 +58,8 @@ describe('VotingRegressor', function () {
 
     await voter.fit(X, y)
 
-    const savedModel = (await voter.toJson()) as string
-    const newModel = new VotingRegressor({}).fromJson(savedModel)
+    const savedModel = await voter.toJSON()
+    const newModel = await fromJSON(savedModel)
     expect(newModel.score(X, y)).toEqual(voter.score(X, y))
   }, 30000)
 })

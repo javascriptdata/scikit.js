@@ -1,5 +1,5 @@
 import { LinearSVC, setBackend } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('LinearSVC', function () {

@@ -15,8 +15,9 @@
 
 import { Scikit1D, Tensor1D } from '../types'
 import { isSeriesInterface, isTensor } from '../typesUtils'
-import Serialize from '../serialize'
 import { getBackend } from '../tf-singleton'
+import { Serialize } from '../simpleSerializer'
+
 /*
 Next steps:
 1. Pass the next 5 tests

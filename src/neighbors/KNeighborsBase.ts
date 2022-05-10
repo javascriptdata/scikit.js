@@ -20,8 +20,8 @@ import { Scikit1D, Scikit2D, Tensor2D, Tensor1D } from '../types'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
 import { assert } from '../typesUtils'
 import { KdTree } from './KdTree'
-import Serialize from '../serialize'
 import { getBackend } from '../tf-singleton'
+import { Serialize } from '../simpleSerializer'
 
 const WEIGHTS_FUNCTIONS = {
   uniform(distances: Tensor2D) {

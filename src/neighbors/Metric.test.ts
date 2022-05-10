@@ -16,7 +16,7 @@
 import * as fc from 'fast-check'
 import { setBackend } from '../index'
 import { Metric, minkowskiMetric } from './Metric'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 const NDIMS = Object.freeze([1, 2, 7])

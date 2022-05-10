@@ -1,6 +1,6 @@
-import { MaxAbsScaler, setBackend } from '../index'
+import { MaxAbsScaler, setBackend, fromJSON } from '../index'
 import * as dfd from 'danfojs-node'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 import { arrayEqual } from '../utils'
 
@@ -135,6 +135,20 @@ describe('MaxAbsScaler', function () {
     ]
 
     expect(arrayEqual(X_trans_new, X_expected_new, 0.01)).toBe(true)
+  })
+  it('Serialize and unserialize MaxAbsScaler', async function () {
+    const data = tf.tensor2d([4, 4, 'whoops', 3, 3] as any, [5, 1])
+    const scaler = new MaxAbsScaler()
+    scaler.fit(data)
+    const serial = await scaler.toJSON()
+    const newModel = await fromJSON(serial)
+    expect(newModel.transform(data).arraySync().flat()).toEqual([
+      1,
+      1,
+      NaN,
+      0.75,
+      0.75
+    ])
   })
   /* Streaming test
   def test_maxabs_scaler_partial_fit():

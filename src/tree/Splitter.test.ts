@@ -1,5 +1,9 @@
 import { ImpurityMeasure } from './Criterion'
 import { Splitter } from './Splitter'
+import { fromJSON } from '../simpleSerializer'
+import { setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('Splitter', function () {
   let types = ['gini', 'entropy', 'squared_error']
@@ -8,7 +12,14 @@ describe('Splitter', function () {
     let y = [0, 0, 0, 1, 1, 1]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 1,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 1,
+        samplesSubset: []
+      })
 
       let bestSplit = splitter.splitNode()
       expect(bestSplit.threshold).toEqual(0)
@@ -21,7 +32,14 @@ describe('Splitter', function () {
     let y = [1, 1, 0, 1, 1, 1]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 1,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 1,
+        samplesSubset: []
+      })
 
       let bestSplit = splitter.splitNode()
       expect(bestSplit.threshold).toEqual(0)
@@ -34,7 +52,14 @@ describe('Splitter', function () {
     let y = [1, 0, 1, 1, 1, 1]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 1,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 1,
+        samplesSubset: []
+      })
       let bestSplit = splitter.splitNode()
       expect(bestSplit.threshold).toEqual(-0.5)
       expect(bestSplit.feature).toEqual(0)
@@ -47,7 +72,14 @@ describe('Splitter', function () {
     let y = [1, 1, 1, 1, 2, 2, 2, 2]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 1, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 1,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 1,
+        samplesSubset: []
+      })
       let bestSplit = splitter.splitNode()
       expect(bestSplit.foundSplit).toEqual(false)
       expect(bestSplit.threshold).toEqual(0)
@@ -60,7 +92,14 @@ describe('Splitter', function () {
     let y = [1, 1, 1, 2, 2, 2, 2, 2]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 4, type as ImpurityMeasure, 1, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 4,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 1,
+        samplesSubset: []
+      })
       let bestSplit = splitter.splitNode()
       expect(bestSplit.foundSplit).toEqual(true)
       expect(bestSplit.feature).toEqual(0)
@@ -73,7 +112,14 @@ describe('Splitter', function () {
     let y = [1, 1, 1, 2, 2, 2, 2, 2]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 4, type as ImpurityMeasure, 1, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 4,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 1,
+        samplesSubset: []
+      })
       let bestSplit = splitter.splitNode()
       expect(bestSplit.foundSplit).toEqual(true)
       expect(bestSplit.feature).toEqual(0)
@@ -95,7 +141,14 @@ describe('Splitter', function () {
     let y = [1, 1, 1, 1, 2, 2, 2, 2]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 20, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 1,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 20,
+        samplesSubset: []
+      })
       let bestSplit = splitter.splitNode()
       expect(bestSplit.foundSplit).toEqual(true)
       expect(bestSplit.feature).toEqual(1)
@@ -117,7 +170,14 @@ describe('Splitter', function () {
     let y = [2, 1, 1, 2, 1, 2, 2, 1]
 
     types.forEach((type) => {
-      let splitter = new Splitter(X, y, 1, type as ImpurityMeasure, 20, [])
+      let splitter = new Splitter({
+        X,
+        y,
+        minSamplesLeaf: 1,
+        impurityMeasure: type as ImpurityMeasure,
+        maxFeatures: 20,
+        samplesSubset: []
+      })
       let bestSplit = splitter.splitNode()
       expect(bestSplit.foundSplit).toEqual(true)
       expect(bestSplit.feature).toEqual(1)
@@ -137,11 +197,18 @@ describe('Splitter', function () {
       [0, 1]
     ]
     let y = [2, 1, 1, 2, 1, 2, 2, 1]
-    let splitter = new Splitter(X, y, 1, 'gini', 20, [])
-    let bestSplit = splitter.splitNode()
-    const serial = splitter.toJson()
-    const newSpliter = Splitter.fromJson(serial)
-    const newBestSplitter = newSpliter.splitNode()
+    let splitter = new Splitter({
+      X,
+      y,
+      minSamplesLeaf: 1,
+      impurityMeasure: 'gini',
+      maxFeatures: 20,
+      samplesSubset: []
+    })
+    splitter.splitNode()
+    const serial = await splitter.toJSON()
+    const newSplitter = await fromJSON(serial)
+    const newBestSplitter = newSplitter.splitNode()
     expect(newBestSplitter.foundSplit).toEqual(true)
     expect(newBestSplitter.feature).toEqual(1)
     expect(newBestSplitter.threshold).toEqual(2.5)

@@ -16,7 +16,7 @@
 import { neighborhoodGenericTests } from './neighborhoodGenericTests'
 import { BruteNeighborhood } from './BruteNeighborhood'
 import { setBackend } from '../tf-singleton'
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 neighborhoodGenericTests(

@@ -1,5 +1,5 @@
-import { DummyRegressor, setBackend } from '../index'
-import * as tf from '@tensorflow/tfjs-node'
+import { DummyRegressor, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
 setBackend(tf)
 
 describe('DummyRegressor', function () {
@@ -57,7 +57,7 @@ describe('DummyRegressor', function () {
     reg.fit(X, y)
     expect(reg.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })
-  it('Should save DummyRegressor', function () {
+  it('Should save DummyRegressor', async function () {
     const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
 
     const X = [
@@ -70,15 +70,16 @@ describe('DummyRegressor', function () {
       name: 'DummyRegressor',
       EstimatorType: 'regressor',
       strategy: 'constant',
-      constant: 10
+      constant: 10,
+      quantile: undefined
     }
 
     reg.fit(X, y)
-
-    expect(saveResult).toEqual(JSON.parse(reg.toJson() as string))
+    delete reg.tf
+    expect(saveResult).toEqual(await reg.toObject())
   })
 
-  it('Should load serialized DummyRegressor', function () {
+  it('Should load serialized DummyRegressor', async function () {
     const reg = new DummyRegressor({ strategy: 'constant', constant: 10 })
 
     const X = [
@@ -94,8 +95,8 @@ describe('DummyRegressor', function () {
     ]
 
     reg.fit(X, y)
-    const saveReg = reg.toJson() as string
-    const newReg = new DummyRegressor().fromJson(saveReg)
+    const saveReg = await reg.toJSON()
+    const newReg = await fromJSON(saveReg)
 
     expect(newReg.predict(predictX).arraySync()).toEqual([10, 10, 10])
   })

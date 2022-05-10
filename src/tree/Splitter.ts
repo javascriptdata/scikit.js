@@ -5,7 +5,7 @@ import {
 } from './Criterion'
 import shuffle from 'lodash/shuffle'
 import { int } from '../randUtils'
-import Serialize from '../serialize'
+import { Serialize } from '../simpleSerializer'
 
 export interface Split {
   feature: int
@@ -41,16 +41,23 @@ export class Splitter extends Serialize {
   sampleMap: Int32Array
   nSamplesTotal: int
   nFeatures: int
-  name = 'splitter'
+  name = 'Splitter'
 
-  constructor(
-    X: number[][],
-    y: int[],
-    minSamplesLeaf: int,
-    impurityMeasure: ImpurityMeasure,
-    maxFeatures: int,
-    samplesSubset: int[] = []
-  ) {
+  constructor({
+    X,
+    y,
+    minSamplesLeaf,
+    impurityMeasure,
+    maxFeatures,
+    samplesSubset = []
+  }: {
+    X: number[][]
+    y: int[]
+    minSamplesLeaf: int
+    impurityMeasure: ImpurityMeasure
+    maxFeatures: int
+    samplesSubset: int[]
+  }) {
     super()
     this.X = X
     this.y = y
@@ -74,9 +81,9 @@ export class Splitter extends Serialize {
       }
     }
     if (impurityMeasure === 'squared_error') {
-      this.criterion = new RegressionCriterion(impurityMeasure, y)
+      this.criterion = new RegressionCriterion({ impurityMeasure, y })
     } else {
-      this.criterion = new ClassificationCriterion(impurityMeasure, y)
+      this.criterion = new ClassificationCriterion({ impurityMeasure, y })
     }
     this.featureOrder = []
     for (let i = 0; i < this.nFeatures; i++) {
@@ -207,44 +214,5 @@ export class Splitter extends Serialize {
       // passing back split.foundSplit = false
       return currentSplit
     }
-  }
-
-  public toJson(): string {
-    const jsonClass = JSON.parse(super.toJson() as string)
-
-    if (jsonClass.criterion) {
-      jsonClass.criterion = this.criterion.toJson() as string
-    }
-    if (this.sampleMap) jsonClass.sampleMap = Array.from(this.sampleMap)
-    return JSON.stringify(jsonClass)
-  }
-
-  static fromJson(model: string) {
-    const jsonClass = JSON.parse(model)
-
-    if (jsonClass.criterion) {
-      const criterionName = JSON.parse(jsonClass.criterion).name
-      if (criterionName == 'classificationCriterion') {
-        jsonClass.criterion = ClassificationCriterion.fromJson(
-          jsonClass.criterion
-        )
-      } else {
-        jsonClass.criterion = RegressionCriterion.fromJson(jsonClass.criterion)
-      }
-    }
-
-    if (jsonClass.sampleMap) {
-      jsonClass.sampleMap = new Int32Array(jsonClass.sampleMap)
-    }
-
-    const splitter = new Splitter(
-      jsonClass.X,
-      jsonClass.y,
-      jsonClass.minSamplesLeaf,
-      'squared_error',
-      jsonClass.samplesSubset
-    )
-
-    return Object.assign(splitter, jsonClass) as Splitter
   }
 }
