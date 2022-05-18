@@ -1,3 +1,15 @@
+# [1.22.0](https://github.com/javascriptdata/scikit.js/compare/v1.21.0...v1.22.0) (2022-05-18)
+
+
+### Features
+
+* added back in logistic regression tests ([dc2ec4a](https://github.com/javascriptdata/scikit.js/commit/dc2ec4a5caf7f2eb95e9f91a730a28af6914a144))
+* first pass at removing tensorflow from bundle ([7562da2](https://github.com/javascriptdata/scikit.js/commit/7562da244513f43e8e9d4ccbfb490c80f81f2704))
+* more tests moved over ([76509d8](https://github.com/javascriptdata/scikit.js/commit/76509d8cc34628cf8f9e1ec2eeb076ecc332e191))
+* removed hard dependency on tensorflow ([0f2736e](https://github.com/javascriptdata/scikit.js/commit/0f2736ef7abdfa47f535b396cc9cdac2ee40de47))
+* removed unneeded build steps ([d3814ca](https://github.com/javascriptdata/scikit.js/commit/d3814caff4e204a0e919977ffec3686f69e28d24))
+* updated serialize / deserialize to avoid tfjs error ([1bf508d](https://github.com/javascriptdata/scikit.js/commit/1bf508dd2e4baea5867c81183fdb609adde1938a))
+
 # [1.21.0](https://github.com/javascriptdata/scikit.js/compare/v1.20.0...v1.21.0) (2022-05-08)
 
 
