@@ -1,7 +1,13 @@
-import { DecisionTreeClassifier, DecisionTreeRegressor } from './DecisionTree'
+import {
+  DecisionTreeClassifier,
+  DecisionTreeRegressor,
+  setBackend,
+  fromJSON
+} from '../index'
 import { dataUrls } from '../datasets/datasets'
 import * as dfd from 'danfojs-node'
-import { fromJSON } from '../simpleSerializer'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('DecisionTree', function () {
   it('Use the DecisionTree (toy)', async function () {

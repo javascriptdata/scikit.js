@@ -1,4 +1,6 @@
-import { fromJSON, KMeans } from '../index'
+import * as tf from '@tensorflow/tfjs'
+import { KMeans, setBackend, fromJSON } from '../index'
+setBackend(tf)
 // Next steps: Improve on kmeans cluster testing
 describe('KMeans', () => {
   const X = [
@@ -56,6 +58,7 @@ describe('KMeans', () => {
     }
     const kmean = new KMeans({ nClusters: 2, randomState: 0 })
     kmean.fit(X)
+    delete kmean.tf
     const ksave = await kmean.toObject()
 
     expect(expectedResult).toEqual(ksave)

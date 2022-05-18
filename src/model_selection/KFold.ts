@@ -16,10 +16,9 @@
 import { assert } from '../typesUtils'
 import { CrossValidator } from './CrossValidator'
 import * as randUtils from '../randUtils'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor1D } from '../types'
 import { getLength } from '../utils'
-import { tf } from '../shared/globals'
-type Tensor1D = tf.Tensor1D
+import { getBackend } from '../tf-singleton'
 
 export interface KFoldParams {
   /**
@@ -82,6 +81,7 @@ export class KFold implements CrossValidator {
   shuffle: boolean
   randomState?: number
   name: string
+  tf: any
   constructor({
     nSplits = 5,
     shuffle = false,
@@ -92,6 +92,7 @@ export class KFold implements CrossValidator {
       Number.isInteger(nSplits) && nSplits > 1,
       'new KFold({nSplits}): nSplits must be an int greater than 1.'
     )
+    this.tf = getBackend()
     this.nSplits = nSplits
     this.shuffle = Boolean(shuffle)
     this.randomState = randomState
@@ -153,8 +154,8 @@ export class KFold implements CrossValidator {
       const test = range.slice(offset, offset + chunk)
 
       yield {
-        trainIndex: tf.tensor1d(train, 'int32'),
-        testIndex: tf.tensor1d(test, 'int32')
+        trainIndex: this.tf.tensor1d(train, 'int32'),
+        testIndex: this.tf.tensor1d(test, 'int32')
       }
 
       offset += chunk

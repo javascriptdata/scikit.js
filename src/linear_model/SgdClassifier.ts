@@ -13,13 +13,23 @@
 * ==========================================================================
 */
 
-import { tf } from '../shared/globals'
-// import { DenseLayerArgs } from '@tensorflow/tfjs-layers/dist/layers/core'
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
-import { Scikit2D, Scikit1D, OptimizerTypes, LossTypes } from '../types'
+import {
+  Scikit2D,
+  Scikit1D,
+  OptimizerTypes,
+  LossTypes,
+  Tensor1D,
+  Tensor2D,
+  Tensor,
+  ModelCompileArgs,
+  ModelFitArgs,
+  RecursiveArray
+} from '../types'
 import { OneHotEncoder } from '../preprocessing/OneHotEncoder'
 import { assert } from '../typesUtils'
 import { ClassifierMixin } from '../mixins'
+import { getBackend } from '../tf-singleton'
 
 /**
  * SGD is a thin Wrapper around Tensorflow's model api with a single dense layer.
@@ -42,7 +52,7 @@ export interface SGDClassifierParams {
         metrics: ['mse'],
       })
    */
-  modelCompileArgs: tf.ModelCompileArgs
+  modelCompileArgs: ModelCompileArgs
 
   /**
    * The complete list of `model.fit` args from Tensorflow.js
@@ -55,7 +65,7 @@ export interface SGDClassifierParams {
         callbacks: [callbacks.earlyStopping({ monitor: 'mse', patience: 50 })],
       })
    */
-  modelFitArgs: tf.ModelFitArgs
+  modelFitArgs: ModelFitArgs
 
   /**
    * The arguments for a single dense layer in tensorflow. This also defaults to
@@ -85,14 +95,14 @@ export interface SGDClassifierParams {
 }
 
 export class SGDClassifier extends ClassifierMixin {
-  model: tf.Sequential
-  modelFitArgs: tf.ModelFitArgs
-  modelCompileArgs: tf.ModelCompileArgs
+  model: any //tf.Sequential
+  modelFitArgs: ModelFitArgs
+  modelCompileArgs: ModelCompileArgs
   denseLayerArgs: any //DenseLayerArgs
   optimizerType: OptimizerTypes
   lossType: LossTypes
-
   oneHot: OneHotEncoder
+  tf: any
 
   constructor({
     modelFitArgs,
@@ -102,7 +112,8 @@ export class SGDClassifier extends ClassifierMixin {
     lossType
   }: SGDClassifierParams) {
     super()
-    this.model = tf.sequential()
+    this.tf = getBackend()
+    this.model = this.tf.sequential()
     this.modelFitArgs = modelFitArgs
     this.modelCompileArgs = modelCompileArgs
     this.denseLayerArgs = denseLayerArgs
@@ -114,22 +125,22 @@ export class SGDClassifier extends ClassifierMixin {
     this.oneHot = new OneHotEncoder()
   }
 
-  initializeModelForClassification(y: tf.Tensor1D | tf.Tensor2D): tf.Tensor2D {
+  initializeModelForClassification(y: Tensor1D | Tensor2D): Tensor2D {
     let yToInt = y.toInt()
     // This covers the case of a dependent variable that is already one hot encoded.
     // There are other cases where you do "multi-variable output which isn't one hot encoded"
     // Like say you were predicting which diseases a person could have (hasCancer, hasMeningitis, etc)
     // Then you would have to run a sigmoid on each independent variable
     if (yToInt.shape.length === 2) {
-      this.modelCompileArgs.loss = tf.losses.softmaxCrossEntropy
-      return yToInt as tf.Tensor2D
+      this.modelCompileArgs.loss = this.tf.losses.softmaxCrossEntropy
+      return yToInt as Tensor2D
     } else {
-      const yTwoD = y.reshape([-1, 1]) as tf.Tensor2D
+      const yTwoD = y.reshape([-1, 1]) as Tensor2D
       const yTwoDOneHotEncoded = this.oneHot.fitTransform(yTwoD)
       if (this.oneHot.categories[0].length > 2) {
-        this.modelCompileArgs.loss = tf.losses.softmaxCrossEntropy
+        this.modelCompileArgs.loss = this.tf.losses.softmaxCrossEntropy
       } else {
-        this.modelCompileArgs.loss = tf.losses.sigmoidCrossEntropy
+        this.modelCompileArgs.loss = this.tf.losses.sigmoidCrossEntropy
       }
       return yTwoDOneHotEncoded
     }
@@ -148,14 +159,17 @@ export class SGDClassifier extends ClassifierMixin {
    */
 
   initializeModel(
-    X: tf.Tensor2D,
-    y: tf.Tensor1D | tf.Tensor2D,
-    weightsTensors: tf.Tensor[] = []
+    X: Tensor2D,
+    y: Tensor1D | Tensor2D,
+    weightsTensors: Tensor[] = []
   ): void {
     this.denseLayerArgs.units = y.shape.length === 1 ? 1 : y.shape[1]
-    const model = tf.sequential()
+    const model = this.tf.sequential()
     model.add(
-      tf.layers.dense({ inputShape: [X.shape[1]], ...this.denseLayerArgs })
+      this.tf.layers.dense({
+        inputShape: [X.shape[1]],
+        ...this.denseLayerArgs
+      })
     )
     model.compile(this.modelCompileArgs)
     if (weightsTensors?.length) {
@@ -223,8 +237,12 @@ export class SGDClassifier extends ClassifierMixin {
 
   importModel(params: { coef: number[]; intercept: number }): SGDClassifier {
     // Next steps: Need to update for possible 2D coef case, and 1D intercept case
-    let myCoef = tf.tensor2d(params.coef, [params.coef.length, 1], 'float32')
-    let myIntercept = tf.tensor1d([params.intercept], 'float32')
+    let myCoef = this.tf.tensor2d(
+      params.coef,
+      [params.coef.length, 1],
+      'float32'
+    )
+    let myIntercept = this.tf.tensor1d([params.intercept], 'float32')
     this.initializeModel(myCoef, myIntercept, [myCoef, myIntercept])
     return this
   }
@@ -295,10 +313,10 @@ export class SGDClassifier extends ClassifierMixin {
     return this
   }
 
-  public predictProba(X: Scikit2D): tf.Tensor2D {
+  public predictProba(X: Scikit2D): Tensor2D {
     assert(this.model.layers.length > 0, 'Need to call "fit" before "predict"')
     let XTwoD = convertToNumericTensor2D(X)
-    return this.model.predict(XTwoD) as tf.Tensor2D
+    return this.model.predict(XTwoD) as Tensor2D
   }
   /**
    * Similar to scikit-learn, this returns a Tensor2D (2D Matrix) of predictions.
@@ -323,10 +341,10 @@ export class SGDClassifier extends ClassifierMixin {
    * // => tensor2d([[ 4.5, 10.3, 19.1, 0.22 ]])
    */
 
-  public predict(X: Scikit2D): tf.Tensor1D {
+  public predict(X: Scikit2D): Tensor1D {
     assert(this.model.layers.length > 0, 'Need to call "fit" before "predict"')
     const y2D = this.predictProba(X)
-    return tf.tensor1d(this.oneHot.inverseTransform(y2D))
+    return this.tf.tensor1d(this.oneHot.inverseTransform(y2D))
   }
 
   /**
@@ -352,16 +370,16 @@ export class SGDClassifier extends ClassifierMixin {
 
    */
 
-  get coef(): tf.Tensor1D | tf.Tensor2D {
+  get coef(): Tensor1D | Tensor2D {
     const modelWeights = this.model.getWeights()
     if (modelWeights.length === 0) {
-      return tf.tensor2d([])
+      return this.tf.tensor2d([])
     }
     let coefficients = modelWeights[0]
     if (coefficients.shape[1] === 1) {
-      return coefficients.reshape([coefficients.shape[0]]) as tf.Tensor1D
+      return coefficients.reshape([coefficients.shape[0]]) as Tensor1D
     }
-    return coefficients as tf.Tensor2D
+    return coefficients as Tensor2D
   }
 
   /**
@@ -388,12 +406,12 @@ export class SGDClassifier extends ClassifierMixin {
    * lr.intercept
    * // => tensor1d([1.2, 2.3])
    */
-  get intercept(): number | tf.Tensor1D {
+  get intercept(): number | Tensor1D {
     const modelWeights = this.model.getWeights()
     if (modelWeights.length < 2) {
       return 0.0
     }
-    let intercept = modelWeights[1] as tf.Tensor1D
+    let intercept = modelWeights[1] as Tensor1D
     if (intercept.size === 1) {
       return intercept.arraySync()[0]
     }
@@ -401,7 +419,9 @@ export class SGDClassifier extends ClassifierMixin {
     return intercept
   }
 
-  private getModelWeight(): Promise<tf.RecursiveArray<number>> {
-    return Promise.all(this.model.getWeights().map((weight) => weight.array()))
+  private getModelWeight(): Promise<RecursiveArray<number>> {
+    return Promise.all(
+      this.model.getWeights().map((weight: any) => weight.array())
+    )
   }
 }

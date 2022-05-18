@@ -20,10 +20,13 @@ import {
   ScikitLike1D,
   ScikitLike2D,
   ScikitVecOrMatrix,
-  SeriesInterface
+  SeriesInterface,
+  Tensor,
+  TensorLike,
+  DataType
 } from './types'
 
-import { tf } from './shared/globals'
+import { getBackend } from './tf-singleton'
 
 export function isString(value: unknown): value is string {
   return typeof value === 'string' || value instanceof String
@@ -42,7 +45,7 @@ export function assert(expr: boolean, msg: string) {
     throw new Error(msg)
   }
 }
-export function inferShape(val: tf.TensorLike, dtype?: tf.DataType): number[] {
+export function inferShape(val: TensorLike, dtype?: DataType): number[] {
   let firstElem: typeof val = val
 
   if (isTypedArray(val)) {
@@ -68,7 +71,7 @@ export function inferShape(val: tf.TensorLike, dtype?: tf.DataType): number[] {
 }
 
 export function deepAssertShapeConsistency(
-  val: tf.TensorLike,
+  val: TensorLike,
   shape: number[],
   indices: number[]
 ) {
@@ -97,7 +100,7 @@ export function deepAssertShapeConsistency(
   }
 }
 
-export function inferDtype(values: tf.TensorLike): tf.DataType | null {
+export function inferDtype(values: TensorLike): DataType | null {
   if (Array.isArray(values)) {
     return inferDtype(values[0])
   }
@@ -136,6 +139,11 @@ export function isScikitLike2D(arr: any): arr is ScikitLike2D {
   return shape.length === 2 && dtype !== null
 }
 
+export function isTensor(arr: any): arr is Tensor {
+  let tf = getBackend()
+  return arr instanceof tf.Tensor
+}
+
 export function isSeriesInterface(arr: any): arr is SeriesInterface {
   if (typeof arr !== 'object') {
     return false
@@ -159,7 +167,7 @@ export function isScikit1D(arr: unknown): arr is Scikit1D {
   if (isSeriesInterface(arr)) {
     return true
   }
-  if (arr instanceof tf.Tensor) {
+  if (isTensor(arr)) {
     return arr.rank === 1
   }
   return isScikitLike1D(arr)
@@ -169,7 +177,7 @@ export function isScikit2D(arr: unknown): arr is Scikit2D {
   if (isDataFrameInterface(arr)) {
     return true
   }
-  if (arr instanceof tf.Tensor) {
+  if (isTensor(arr)) {
     return arr.rank === 2
   }
   return isScikitLike2D(arr)

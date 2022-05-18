@@ -14,12 +14,12 @@
 */
 
 import { convertToNumericTensor2D, convertToTensor2D } from '../utils'
-import { Scikit2D } from '../types'
+import { Scikit2D, Tensor2D, Tensor1D, TensorLike } from '../types'
 import { tensorMean } from '../math'
 import { median } from 'mathjs'
 import { modeFast } from 'simple-statistics'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps:
@@ -63,21 +63,23 @@ export class SimpleImputer extends TransformerMixin {
   fillValue: string | number | undefined
   strategy: 'mean' | 'median' | 'mostFrequent' | 'constant'
 
-  statistics: tf.Tensor1D
+  statistics: Tensor1D
 
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'SimpleImputer'
 
+  tf: any
   constructor({
     strategy = 'mean',
     fillValue = undefined,
     missingValues = NaN
   }: SimpleImputerParams = {}) {
     super()
+    this.tf = getBackend()
     this.missingValues = missingValues
     this.strategy = strategy
     this.fillValue = fillValue
-    this.statistics = tf.tensor1d([])
+    this.statistics = this.tf.tensor1d([])
   }
 
   public fit(X: Scikit2D): SimpleImputer {
@@ -88,29 +90,29 @@ export class SimpleImputer extends TransformerMixin {
     if (this.strategy === 'mean') {
       const newTensor = convertToNumericTensor2D(X)
       const mean = tensorMean(newTensor, 0, true)
-      this.statistics = mean as tf.Tensor1D
+      this.statistics = mean as Tensor1D
       return this
     }
     if (this.strategy === 'mostFrequent') {
       const newTensor = convertToNumericTensor2D(X)
       const mostFrequents = newTensor
-        .transpose<tf.Tensor2D>()
+        .transpose<Tensor2D>()
         .arraySync()
         .map((arr: number[] | string[]) =>
           modeFast(removeMissingValuesFromArray(arr))
         )
-      this.statistics = tf.tensor1d(mostFrequents)
+      this.statistics = this.tf.tensor1d(mostFrequents)
       return this
     }
     if (this.strategy === 'median') {
       const newTensor = convertToNumericTensor2D(X)
       const medians = newTensor
-        .transpose<tf.Tensor2D>()
+        .transpose<Tensor2D>()
         .arraySync()
         .map((arr: number[] | string[]) =>
           median(removeMissingValuesFromArray(arr))
         )
-      this.statistics = tf.tensor1d(medians)
+      this.statistics = this.tf.tensor1d(medians)
       return this
     }
     throw new Error(
@@ -118,37 +120,37 @@ export class SimpleImputer extends TransformerMixin {
     )
   }
 
-  public transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): Tensor2D {
     if (this.strategy === 'constant') {
       const newTensor = convertToTensor2D(X)
       if (this.fillValue === undefined) {
         if (newTensor.dtype !== 'string') {
-          return tf.where(
+          return this.tf.where(
             newTensor.isNaN(),
             0,
-            newTensor as unknown as tf.TensorLike
-          ) as tf.Tensor2D
+            newTensor as unknown as TensorLike
+          ) as Tensor2D
         } else {
-          return tf.where(
+          return this.tf.where(
             newTensor.isNaN(),
             'missing_value',
-            newTensor as unknown as tf.TensorLike
-          ) as tf.Tensor2D
+            newTensor as unknown as TensorLike
+          ) as Tensor2D
         }
       }
-      return tf.where(
+      return this.tf.where(
         newTensor.isNaN(),
         this.fillValue,
-        newTensor as unknown as tf.TensorLike
-      ) as tf.Tensor2D
+        newTensor as unknown as TensorLike
+      ) as Tensor2D
     }
 
     // Not strategy constant
     const newTensor = convertToNumericTensor2D(X)
-    return tf.where<tf.Tensor2D>(
+    return this.tf.where(
       newTensor.isNaN(),
-      this.statistics.reshape([1, -1]) as tf.Tensor2D,
+      this.statistics.reshape([1, -1]) as Tensor2D,
       newTensor
-    ) as tf.Tensor2D
+    ) as Tensor2D
   }
 }

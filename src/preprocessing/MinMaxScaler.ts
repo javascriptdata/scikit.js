@@ -14,11 +14,11 @@
 */
 
 import { convertToNumericTensor2D } from '../utils'
-import { Scikit2D, Transformer } from '../types'
+import { Scikit2D, Tensor1D, Tensor2D, Transformer } from '../types'
 import { isScikit2D, assert, isDataFrameInterface } from '../typesUtils'
 import { tensorMin, tensorMax, turnZerosToOnes } from '../math'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps:
@@ -63,16 +63,16 @@ export class MinMaxScaler extends TransformerMixin implements Transformer {
   featureRange: [number, number]
 
   /** The per-feature scale that we see in the dataset. */
-  scale: tf.Tensor1D
+  scale: Tensor1D
 
-  min: tf.Tensor1D
+  min: Tensor1D
 
   /** The per-feature minimum that we see in the dataset. */
-  dataMin: tf.Tensor1D
+  dataMin: Tensor1D
   /** The per-feature maximum that we see in the dataset. */
-  dataMax: tf.Tensor1D
+  dataMax: Tensor1D
   /** The per-feature range that we see in the dataset. */
-  dataRange: tf.Tensor1D
+  dataRange: Tensor1D
   /** The number of features seen during fit */
   nFeaturesIn: number
 
@@ -87,13 +87,14 @@ export class MinMaxScaler extends TransformerMixin implements Transformer {
 
   constructor({ featureRange = [0, 1] }: MinMaxScalerParams = {}) {
     super()
+    this.tf = getBackend()
     this.featureRange = featureRange
 
-    this.scale = tf.tensor1d([])
-    this.min = tf.tensor1d([])
-    this.dataMin = tf.tensor1d([])
-    this.dataMax = tf.tensor1d([])
-    this.dataRange = tf.tensor1d([])
+    this.scale = this.tf.tensor1d([])
+    this.min = this.tf.tensor1d([])
+    this.dataMin = this.tf.tensor1d([])
+    this.dataMax = this.tf.tensor1d([])
+    this.dataRange = this.tf.tensor1d([])
 
     this.nFeaturesIn = 0
     this.nSamplesSeen = 0
@@ -115,14 +116,14 @@ export class MinMaxScaler extends TransformerMixin implements Transformer {
       'featureRange needs to contain exactly two numbers where the first is less than the second'
     )
     const tensorArray = convertToNumericTensor2D(X)
-    const max = tensorMax(tensorArray, 0, true) as tf.Tensor1D
-    const min = tensorMin(tensorArray, 0, true) as tf.Tensor1D
-    const range = max.sub<tf.Tensor1D>(min)
-    this.scale = tf.div(
+    const max = tensorMax(tensorArray, 0, true) as Tensor1D
+    const min = tensorMin(tensorArray, 0, true) as Tensor1D
+    const range = max.sub<Tensor1D>(min)
+    this.scale = this.tf.div(
       this.featureRange[1] - this.featureRange[0],
       turnZerosToOnes(range)
     )
-    this.min = tf.sub(this.featureRange[0], min.mul(this.scale))
+    this.min = this.tf.sub(this.featureRange[0], min.mul(this.scale))
     this.dataMin = min
     this.dataMax = max
     this.dataRange = range
@@ -137,20 +138,20 @@ export class MinMaxScaler extends TransformerMixin implements Transformer {
   /**
    * Transform the data using the fitted scaler
    * */
-  public transform(X: Scikit2D): tf.Tensor2D {
+  public transform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.mul(this.scale).add<tf.Tensor2D>(this.min)
+    const outputData = tensorArray.mul(this.scale).add<Tensor2D>(this.min)
     return outputData
   }
 
   /**
    * Inverse transform the data using the fitted scaler
    * */
-  public inverseTransform(X: Scikit2D): tf.Tensor2D {
+  public inverseTransform(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     const tensorArray = convertToNumericTensor2D(X)
-    const outputData = tensorArray.sub(this.min).div<tf.Tensor2D>(this.scale)
+    const outputData = tensorArray.sub(this.min).div<Tensor2D>(this.scale)
     return outputData
   }
 }

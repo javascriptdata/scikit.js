@@ -1,5 +1,7 @@
-import { OrdinalEncoder } from '../index'
+import { OrdinalEncoder, setBackend } from '../index'
 import { arrayTo2DColumn } from '../utils'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('OrdinalEncoder', function () {
   it('OrdinalEncoder works on array', function () {

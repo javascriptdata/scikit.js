@@ -14,9 +14,10 @@
 */
 
 import { convertScikit2DToArray } from '../utils'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor1D, Tensor2D } from '../types'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
+
 import { isDataFrameInterface } from '../typesUtils'
 
 /*
@@ -106,6 +107,7 @@ export class OneHotEncoder extends TransformerMixin {
     drop
   }: OneHotEncoderParams = {}) {
     super()
+    this.tf = getBackend()
     this.categoriesParam = categories
     this.categories = []
     this.handleUnknown = handleUnknown
@@ -192,26 +194,23 @@ export class OneHotEncoder extends TransformerMixin {
   /** Generalization of the tf.oneHot that can handle "one-hotting" with a single column
    * output.
    */
-  convertToOneHot(
-    tensor: tf.Tensor1D,
-    numberOfOneHotColumns: number
-  ): tf.Tensor2D {
+  convertToOneHot(tensor: Tensor1D, numberOfOneHotColumns: number): Tensor2D {
     if (numberOfOneHotColumns >= 2) {
-      return tf.oneHot(tensor, numberOfOneHotColumns) as tf.Tensor2D
+      return this.tf.oneHot(tensor, numberOfOneHotColumns) as Tensor2D
     }
     if (numberOfOneHotColumns === 1) {
       // Every integer that isn't 0 becomes 0
-      tensor = tf.where(
+      tensor = this.tf.where(
         tensor.equal(0),
-        tf.ones(tensor.shape, 'int32'),
-        tf.zeros(tensor.shape, 'int32')
+        this.tf.ones(tensor.shape, 'int32'),
+        this.tf.zeros(tensor.shape, 'int32')
       )
 
       return tensor.reshape([-1, 1])
     }
 
     // Case where numberOfOneHotColumns = 0
-    return tf.tensor2d([])
+    return this.tf.tensor2d([])
   }
 
   /**
@@ -225,12 +224,16 @@ export class OneHotEncoder extends TransformerMixin {
    * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
+  public transform(X: Scikit2D, y?: Scikit1D): Tensor2D {
     const array2D = convertScikit2DToArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
-    const newTensor = tf.tensor2d(result2D as number[][], undefined, 'int32')
-    return tf.concat(
-      newTensor.unstack<tf.Tensor1D>(1).map((el, i) => {
+    const newTensor = this.tf.tensor2d(
+      result2D as number[][],
+      undefined,
+      'int32'
+    )
+    return this.tf.concat(
+      newTensor.unstack(1).map((el: any, i: any) => {
         let categoryNumber = this.categories[i].length
         let numberOfOneHotColumns =
           this.drop === 'first' ? categoryNumber - 1 : categoryNumber
@@ -238,13 +241,13 @@ export class OneHotEncoder extends TransformerMixin {
         return val
       }),
       1
-    ) as tf.Tensor2D
+    ) as Tensor2D
   }
 
   /** Only works for single column OneHotEncoding */
-  public inverseTransform(X: tf.Tensor2D): any[] {
+  public inverseTransform(X: Tensor2D): any[] {
     let labels = this.classesToMapping(this.categories[0])
-    const tensorLabels = X.argMax(1) as tf.Tensor1D
+    const tensorLabels = X.argMax(1) as Tensor1D
     const invMap = new Map(Array.from(labels, (a) => a.reverse()) as any)
 
     const tempData = tensorLabels.arraySync().map((value) => {

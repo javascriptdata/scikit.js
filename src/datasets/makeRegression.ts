@@ -1,6 +1,6 @@
-import { tf } from '../shared/globals'
-type Tensor2D = tf.Tensor2D
-type Tensor1D = tf.Tensor1D
+import { Tensor1D, Tensor2D } from '../types'
+import { getBackend } from '../tf-singleton'
+
 interface MakeRegressionInput {
   nSamples?: number
   nFeatures?: number
@@ -29,10 +29,11 @@ export const makeRegression = ({
   | [Tensor2D, Tensor1D | Tensor2D]
   | [Tensor2D, Tensor1D, Tensor1D]
   | [Tensor2D, Tensor2D, Tensor2D] => {
+  let tf = getBackend()
   return tf.tidy(() => {
     const numberInformative = Math.min(nFeatures, nInformative)
 
-    let X: tf.Tensor2D
+    let X: Tensor2D
     if (effectiveRank === null) {
       // Randomly generate a well conditioned input set
       X = tf.randomNormal([nSamples, nFeatures])
@@ -87,7 +88,9 @@ export const makeLowRankMatrix = ({
   nFeatures = 100,
   effectiveRank = 10,
   tailStrength = 0.5
-}: MakeLowRankMatrixInput = {}): tf.Tensor2D => {
+}: MakeLowRankMatrixInput = {}): Tensor2D => {
+  let tf = getBackend()
+
   return tf.tidy(() => {
     let n = Math.min(nSamples, nFeatures)
 
@@ -107,6 +110,6 @@ export const makeLowRankMatrix = ({
 
     let s = lowRank.add(tail)
 
-    return u.mul(s).dot(v.transpose()) as tf.Tensor2D
+    return u.mul(s).dot(v.transpose()) as Tensor2D
   })
 }

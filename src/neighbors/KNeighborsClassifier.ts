@@ -13,14 +13,12 @@
 * ==========================================================================
 */
 
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor1D, Tensor2D } from '../types'
 import { KNeighborsBase } from './KNeighborsBase'
 import { convertToNumericTensor2D, convertToTensor1D } from '../utils'
 import { polyfillUnique } from '../tfUtils'
 import { accuracy } from '../model_selection/scorers'
-import { tf } from '../shared/globals'
-type Tensor1D = tf.Tensor1D
-type Tensor2D = tf.Tensor2D
+import { getBackend } from '../tf-singleton'
 
 /**
  * K-Nearest neighbor regressor.
@@ -58,7 +56,7 @@ export class KNeighborsClassifier extends KNeighborsBase {
   public predictProba(X: Scikit2D): Tensor2D {
     const { neighborhood, y, nNeighbors, weightsFn } = this._getFitParams()
     const [nClasses] = this.classes_?.shape as [number]
-
+    let tf = getBackend()
     return tf.tidy(() => {
       const _X = convertToNumericTensor2D(X)
       const nSamples = _X.shape[0]
@@ -88,7 +86,7 @@ export class KNeighborsClassifier extends KNeighborsBase {
    */
   public predict(X: Scikit2D): Tensor1D {
     const classes = this.classes_ as Tensor1D
-
+    let tf = getBackend()
     return tf.tidy(() => {
       const probs = this.predictProba(X)
       const labels = probs.argMax(1)
@@ -97,6 +95,7 @@ export class KNeighborsClassifier extends KNeighborsBase {
   }
 
   public async fit(X: Scikit2D, labels: Scikit1D): Promise<this> {
+    let tf = getBackend()
     const { values, indices } = tf.tidy(() => {
       const _labels = convertToTensor1D(labels)
       polyfillUnique(tf)

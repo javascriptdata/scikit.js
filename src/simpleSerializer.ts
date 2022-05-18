@@ -1,5 +1,5 @@
-import { tf } from './shared/globals'
 import { encode, decode } from 'base64-arraybuffer'
+import { getBackend } from './tf-singleton'
 const EstimatorList = [
   'KNeighborsRegressor',
   'LinearRegression',
@@ -35,6 +35,16 @@ const EstimatorList = [
   'DecisionTree'
 ]
 
+let letters = 'abcdefghijklmnopqrstuvwxy'
+function randomString(numLetters: number) {
+  let curLetter = ''
+  for (let i = 0; i < numLetters; i++) {
+    let index = Math.floor(Math.random() * letters.length)
+    curLetter += letters[index]
+  }
+  return curLetter
+}
+
 /**
  * 1. Make a list called EstimatorList
  * 2. Do a dynamic import here
@@ -49,6 +59,29 @@ class JSONHandler {
   async save(artifacts: any) {
     // Base 64 encoding
     artifacts.weightData = encode(artifacts.weightData)
+
+    // Remaps the names of the layers, so that when we deserialize we
+    // don't run into a tfjs error where it says "you've already created these
+    // names in our backend"
+    let mapping: any = {}
+
+    for (let i = 0; i < artifacts.modelTopology.config.layers.length; i++) {
+      let curWeightSpec = artifacts.modelTopology.config.layers[i]
+      let randomName = randomString(6)
+      mapping[curWeightSpec.config.name] = randomName
+      curWeightSpec.config.name = randomName
+    }
+
+    for (let i = 0; i < artifacts.weightSpecs.length; i++) {
+      let cur = artifacts.weightSpecs[i]
+      let allMaps = Object.keys(mapping)
+      allMaps.forEach((el) => {
+        if (cur.name.includes(el)) {
+          cur.name = cur.name.replace(el, mapping[el])
+        }
+      })
+    }
+
     this.savedArtifacts = artifacts
     return {
       modelArtifactsInfo: {
@@ -72,6 +105,7 @@ export async function toObjectInner(
   val: any,
   ignoreKeys: string[] = []
 ): Promise<any> {
+  let tf = getBackend()
   if (['number', 'string', 'undefined', 'boolean'].includes(typeof val)) {
     return val
   }
@@ -113,11 +147,10 @@ export async function toObjectInner(
       }
     }
 
-    // The tf object
-    if (val.ENV && val.AdadeltaOptimizer && val.version) {
+    if (val instanceof Float32Array) {
       return {
-        name: 'TF',
-        version: val.version.tfjs
+        name: 'Float32Array',
+        value: Array.from(val)
       }
     }
 
@@ -131,6 +164,14 @@ export async function toObjectInner(
       }
     }
 
+    // The tf object
+    if (val.ENV && val.AdadeltaOptimizer && val.version) {
+      return {
+        name: 'TF',
+        version: val.version.tfjs
+      }
+    }
+
     // Generic object case / class case
     let response: any = {}
     for (let key of Object.keys(val)) {
@@ -138,10 +179,7 @@ export async function toObjectInner(
       if (ignoreKeys.includes(key)) {
         continue
       }
-      // Ignore any function when we serialize
-      // if (typeof val[key] === 'function') {
-      //   continue
-      // }
+
       response[key] = await toObjectInner(val[key], ignoreKeys)
     }
     return response
@@ -149,6 +187,7 @@ export async function toObjectInner(
 }
 
 export async function fromObjectInner(val: any): Promise<any> {
+  let tf = getBackend()
   // Ignores all types that aren't objects
   if (typeof val !== 'object') {
     return val
@@ -171,6 +210,14 @@ export async function fromObjectInner(val: any): Promise<any> {
 
   if (val.name === 'Int32Array') {
     return new Int32Array(val.value)
+  }
+
+  if (val.name === 'Float32Array') {
+    return new Float32Array(val.value)
+  }
+
+  if (val.name === 'TF') {
+    return tf
   }
 
   // Array case
@@ -221,11 +268,11 @@ let ignoredKeysForSGDRegressor = [
 
 export class Serialize {
   async toObject(): Promise<any> {
-    try {
-      return await toObjectInner(this, ignoredKeysForSGDRegressor)
-    } catch (e) {
-      console.error(e)
-    }
+    // try {
+    return await toObjectInner(this, ignoredKeysForSGDRegressor)
+    // } catch (e) {
+    //   console.error(e)
+    // }
   }
 
   async toJSON(): Promise<string> {

@@ -1,5 +1,8 @@
 import { ClassificationCriterion, giniCoefficient, entropy } from './Criterion'
 import { fromJSON } from '../simpleSerializer'
+import { setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 describe('Criterion', function () {
   let X = [
     [-2, -1],

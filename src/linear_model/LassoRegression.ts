@@ -14,7 +14,7 @@
 */
 
 import { SGDRegressor } from './SgdRegressor'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 // First pass at a LassoRegression implementation using gradient descent
 // Trying to mimic the API of https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html#sklearn.linear_model.Lasso
@@ -28,10 +28,8 @@ export interface LassoParams {
 
 /** Linear Model trained with L1 prior as regularizer (aka the Lasso). */
 export class LassoRegression extends SGDRegressor {
-  /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'LassoRegression'
-
   constructor({ fitIntercept = true, alpha = 1.0 }: LassoParams = {}) {
+    let tf = getBackend()
     super({
       modelCompileArgs: {
         optimizer: tf.train.adam(0.1),
@@ -54,5 +52,7 @@ export class LassoRegression extends SGDRegressor {
       optimizerType: 'adam',
       lossType: 'meanSquaredError'
     })
+    /** Useful for pipelines and column transformers to have a default name for transforms */
+    this.name = 'LassoRegression'
   }
 }

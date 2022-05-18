@@ -4,10 +4,12 @@ import {
   LinearRegression,
   SimpleImputer,
   MinMaxScaler,
+  setBackend,
   fromJSON
 } from '../index'
-import { tf } from '../shared/globals'
+import * as tf from '@tensorflow/tfjs'
 import { tensorEqual } from '../utils'
+setBackend(tf)
 
 describe('Pipeline', function () {
   it('Use a Pipeline (min-max scaler, and linear regression)', async function () {

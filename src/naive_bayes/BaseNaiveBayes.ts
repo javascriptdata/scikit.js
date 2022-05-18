@@ -13,9 +13,9 @@
 * ==========================================================================
 */
 import { polyfillUnique } from '../tfUtils'
-import { tf } from '../shared/globals'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor1D, Tensor2D, Tensor } from '../types'
 import { convertToNumericTensor2D, convertToTensor1D } from '../utils'
+import { getBackend } from '../tf-singleton'
 import { Serialize } from '../simpleSerializer'
 
 export interface NaiveBayesParams {
@@ -32,16 +32,18 @@ export interface NaiveBayesParams {
 }
 
 export abstract class BaseNaiveBayes extends Serialize {
-  priors?: tf.Tensor1D
+  priors?: Tensor1D
   varSmoothing: number
 
-  public classes: tf.Tensor1D
-  public means: tf.Tensor1D[]
-  public variances: tf.Tensor1D[]
+  public classes: Tensor1D
+  public means: Tensor1D[]
+  public variances: Tensor1D[]
 
+  tf: any
   constructor(params: NaiveBayesParams = {}) {
     super()
-    this.classes = tf.tensor1d([])
+    this.tf = getBackend()
+    this.classes = this.tf.tensor1d([])
     this.means = []
     this.variances = []
     if (params.priors) {
@@ -60,25 +62,25 @@ export abstract class BaseNaiveBayes extends Serialize {
     const features = convertToNumericTensor2D(X)
     const labels = convertToTensor1D(y)
 
-    const { values, meansByLabel, variancesByLabel } = tf.tidy(() => {
-      polyfillUnique(tf)
-      const meansByLabel: tf.Tensor1D[] = []
-      const variancesByLabel: tf.Tensor1D[] = []
+    const { values, meansByLabel, variancesByLabel } = this.tf.tidy(() => {
+      polyfillUnique(this.tf)
+      const meansByLabel: Tensor1D[] = []
+      const variancesByLabel: Tensor1D[] = []
 
       // Get the list of unique labels
-      const { values } = tf.unique(labels)
+      const { values } = this.tf.unique(labels)
 
-      const { variance } = tf.moments(features, 0)
+      const { variance } = this.tf.moments(features, 0)
       const epsilon = variance.max().mul(this.varSmoothing)
 
-      tf.unstack(values).forEach((c: tf.Tensor) => {
-        const mask = tf.equal(labels, c).toFloat()
-        const numInstances = tf.sum(mask)
-        const mean = tf
+      this.tf.unstack(values).forEach((c: Tensor) => {
+        const mask = this.tf.equal(labels, c).toFloat()
+        const numInstances = this.tf.sum(mask)
+        const mean = this.tf
           .mul(features, mask.expandDims(1))
           .sum(0)
           .div(numInstances)
-        const variance = tf
+        const variance = this.tf
           .sub(features, mean)
           .mul(mask.expandDims(1))
           .pow(2)
@@ -86,8 +88,8 @@ export abstract class BaseNaiveBayes extends Serialize {
           .div(numInstances)
           .add(epsilon)
 
-        meansByLabel.push(mean as tf.Tensor1D)
-        variancesByLabel.push(variance as tf.Tensor1D)
+        meansByLabel.push(mean as Tensor1D)
+        variancesByLabel.push(variance as Tensor1D)
       })
 
       return { values, meansByLabel, variancesByLabel }
@@ -104,23 +106,23 @@ export abstract class BaseNaiveBayes extends Serialize {
   /**
    * Predict the probability of samples assigned to each observed label.
    * @param X
-   * @returns {tf.Tensor} Probabilities
+   * @returns {this.tf.Tensor} Probabilities
    */
   public predictProba(X: Scikit2D) {
     const features = convertToNumericTensor2D(X)
 
-    const probabilities = tf.tidy(() => {
-      let probs: tf.Tensor1D[] = []
+    const probabilities = this.tf.tidy(() => {
+      let probs: Tensor1D[] = []
       this.classes.unstack().forEach((_, idx) => {
         // Get the mean for this label
         const mean = this.means[idx]
         const variance = this.variances[idx]
 
         const prob = this.kernel(features, mean, variance)
-        probs.push(prob as tf.Tensor1D)
+        probs.push(prob as Tensor1D)
       })
 
-      const withoutPriors = tf.stack(probs, 1) as tf.Tensor2D
+      const withoutPriors = this.tf.stack(probs, 1) as Tensor2D
       if (this.priors) {
         return withoutPriors.mul(this.priors)
       } else {
@@ -134,7 +136,7 @@ export abstract class BaseNaiveBayes extends Serialize {
   /**
    * Predict the labels assigned to each sample
    * @param X
-   * @returns {tf.Tensor} Labels
+   * @returns {this.tf.Tensor} Labels
    */
   public predict(X: Scikit2D) {
     const probs = this.predictProba(X)
@@ -148,8 +150,8 @@ export abstract class BaseNaiveBayes extends Serialize {
    * @param variance
    */
   protected abstract kernel(
-    features: tf.Tensor2D,
-    mean: tf.Tensor1D,
-    variance: tf.Tensor1D
-  ): tf.Tensor1D
+    features: Tensor2D,
+    mean: Tensor1D,
+    variance: Tensor1D
+  ): Tensor1D
 }

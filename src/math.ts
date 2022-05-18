@@ -1,6 +1,6 @@
-import { Iterable } from './types'
+import { Iterable, Tensor } from './types'
 import { assert } from './typesUtils'
-import { tf } from './shared/globals'
+import { getBackend } from './tf-singleton'
 /*
 In creating the preprocessors, I wanted functions that computed the min, max, mean,
 etc... but that also ignored NaN values. The min / max functions that come from
@@ -44,10 +44,11 @@ export function simpleMin<T extends Iterable<number | string | boolean>>(
 }
 
 export function tensorMin(
-  tensor: tf.Tensor,
+  tensor: Tensor,
   axis: number,
   ignoreNaN: boolean
-): tf.Tensor {
+): Tensor {
+  let tf = getBackend()
   if (ignoreNaN) {
     return tf.tidy(() => tf.where(tensor.isNaN(), Infinity, tensor).min(axis))
   }
@@ -80,10 +81,11 @@ export function simpleMax<T extends Iterable<number | string | boolean>>(
 }
 
 export function tensorMax(
-  tensor: tf.Tensor,
+  tensor: Tensor,
   axis: number,
   ignoreNaN?: boolean
-): tf.Tensor {
+): Tensor {
+  let tf = getBackend()
   if (ignoreNaN) {
     return tf.tidy(() => tf.where(tensor.isNaN(), -Infinity, tensor).max(axis))
   }
@@ -109,11 +111,8 @@ export function simpleSum<T extends Iterable<number | boolean>>(
   return total
 }
 
-export function tensorSum(
-  tensor: tf.Tensor,
-  axis: number,
-  ignoreNaN?: boolean
-) {
+export function tensorSum(tensor: Tensor, axis: number, ignoreNaN?: boolean) {
+  let tf = getBackend()
   if (ignoreNaN) {
     return tf.tidy(() => tf.where(tensor.isNaN(), 0, tensor).sum(axis))
   }
@@ -144,10 +143,11 @@ export function simpleCount<T extends Iterable<number | string | boolean>>(
 }
 
 export function tensorCount(
-  tensor: tf.Tensor,
+  tensor: Tensor,
   axis: number,
   ignoreNaN?: boolean
 ) {
+  let tf = getBackend()
   if (ignoreNaN) {
     return tf.tidy(() => tf.logicalNot(tensor.isNaN()).sum(axis))
   }
@@ -172,11 +172,12 @@ export function simpleMean<T extends Iterable<number | boolean>>(
 }
 
 export function tensorMean(
-  tensor: tf.Tensor,
+  tensor: Tensor,
   axis: number,
   ignoreNaN?: boolean,
   safe?: boolean
 ) {
+  let tf = getBackend()
   if (!ignoreNaN) {
     return tensor.mean(axis)
   }
@@ -200,16 +201,12 @@ export function tensorMean(
 // Std Functions
 //////////////////////////////////////////////////////////////////////////
 
-export function tensorStd(
-  tensor: tf.Tensor,
-  dim: number,
-  ignoreNaN?: boolean
-) {
+export function tensorStd(tensor: Tensor, dim: number, ignoreNaN?: boolean) {
   assert(
     Boolean(ignoreNaN),
     'We only need to call this function when ignoreNaN is true'
   )
-
+  let tf = getBackend()
   return tf.tidy(() => {
     const mean = tensorMean(tensor, dim, ignoreNaN)
     const countNaN = tensorCount(tensor, dim, ignoreNaN)
@@ -223,7 +220,8 @@ export function tensorStd(
   })
 }
 
-export function turnZerosToOnes(tensor: tf.Tensor) {
+export function turnZerosToOnes(tensor: Tensor) {
+  let tf = getBackend()
   return tf.tidy(() => {
     const zeros = tf.zerosLike(tensor)
     const booleanAddition = tensor.equal(zeros)

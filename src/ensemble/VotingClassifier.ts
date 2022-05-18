@@ -1,5 +1,5 @@
-import { Scikit1D, Scikit2D } from '../types'
-import { tf } from '../shared/globals'
+import { Scikit1D, Scikit2D, Tensor1D, Tensor2D } from '../types'
+import { getBackend } from '../tf-singleton'
 import { ClassifierMixin } from '../mixins'
 import { LabelEncoder } from '../preprocessing/LabelEncoder'
 
@@ -62,12 +62,14 @@ export class VotingClassifier extends ClassifierMixin {
   le: any
   name = 'VotingClassifier'
 
+  tf: any
   constructor({
     estimators = [],
     weights = undefined,
     voting = 'hard'
   }: VotingClassifierParams = {}) {
     super()
+    this.tf = getBackend()
     this.estimators = estimators
     this.weights = weights
     this.voting = voting
@@ -83,7 +85,7 @@ export class VotingClassifier extends ClassifierMixin {
     return this
   }
 
-  public predictProba(X: Scikit2D): tf.Tensor1D {
+  public predictProba(X: Scikit2D): Tensor1D {
     let responses = []
     let numEstimators = this.estimators.length
     const weights =
@@ -94,11 +96,11 @@ export class VotingClassifier extends ClassifierMixin {
       responses.push(curEstimator.predictProba(X).mul(curWeight))
     }
 
-    return tf.addN(responses)
+    return this.tf.addN(responses)
   }
 
   // only hard case
-  public predict(X: Scikit2D): tf.Tensor1D {
+  public predict(X: Scikit2D): Tensor1D {
     let responses = []
     let numEstimators = this.estimators.length
     const weights =
@@ -109,11 +111,11 @@ export class VotingClassifier extends ClassifierMixin {
         let [_, curEstimator] = this.estimators[i]
         let curWeight = weights[i]
         let predictions = curEstimator.predict(X).toInt()
-        let oneHot = tf.oneHot(predictions, this.le.classes.length)
+        let oneHot = this.tf.oneHot(predictions, this.le.classes.length)
         responses.push(oneHot.mul(curWeight))
       }
-      return tf.tensor1d(
-        this.le.inverseTransform(tf.addN(responses).argMax(1))
+      return this.tf.tensor1d(
+        this.le.inverseTransform(this.tf.addN(responses).argMax(1))
       )
     } else {
       for (let i = 0; i < numEstimators; i++) {
@@ -122,13 +124,13 @@ export class VotingClassifier extends ClassifierMixin {
         let predictions = curEstimator.predictProba(X)
         responses.push(predictions.mul(curWeight))
       }
-      return tf.tensor1d(
-        this.le.inverseTransform(tf.addN(responses).argMax(1))
+      return this.tf.tensor1d(
+        this.le.inverseTransform(this.tf.addN(responses).argMax(1))
       )
     }
   }
 
-  public transform(X: Scikit2D): Array<tf.Tensor1D> | Array<tf.Tensor2D> {
+  public transform(X: Scikit2D): Array<Tensor1D> | Array<Tensor2D> {
     let responses = []
     let numEstimators = this.estimators.length
 
@@ -150,7 +152,7 @@ export class VotingClassifier extends ClassifierMixin {
   public async fitTransform(
     X: Scikit2D,
     y: Scikit1D
-  ): Promise<Array<tf.Tensor1D> | Array<tf.Tensor2D>> {
+  ): Promise<Array<Tensor1D> | Array<Tensor2D>> {
     return (await this.fit(X, y)).transform(X)
   }
 }

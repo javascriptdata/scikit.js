@@ -14,9 +14,9 @@
 */
 
 import { convertScikit2DToArray } from '../utils'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor2D } from '../types'
 import { TransformerMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 import { isDataFrameInterface } from '../typesUtils'
 
 /*
@@ -97,6 +97,7 @@ export class OrdinalEncoder extends TransformerMixin {
     unknownValue = NaN
   }: OrdinalEncoderParams = {}) {
     super()
+    this.tf = getBackend()
     this.categoriesParam = categories
     this.categories = []
     this.handleUnknown = handleUnknown
@@ -172,9 +173,9 @@ export class OrdinalEncoder extends TransformerMixin {
    * Encodes the data using the fitted OrdinalEncoder.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public transform(X: Scikit2D, y?: Scikit1D): tf.Tensor2D {
+  public transform(X: Scikit2D, y?: Scikit1D): Tensor2D {
     const array2D = convertScikit2DToArray(X)
     const result2D = this.loopOver2DArrayToUseLabels(array2D)
-    return tf.tensor2d(result2D as number[][], undefined, 'int32')
+    return this.tf.tensor2d(result2D as number[][], undefined, 'int32')
   }
 }

@@ -1,10 +1,13 @@
 import {
   makeVotingRegressor,
   VotingRegressor,
-  fromJSON,
   DummyRegressor,
-  LinearRegression
+  LinearRegression,
+  setBackend,
+  fromJSON
 } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('VotingRegressor', function () {
   it('Use VotingRegressor on simple example ', async function () {

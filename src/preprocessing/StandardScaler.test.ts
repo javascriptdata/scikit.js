@@ -1,5 +1,7 @@
-import { StandardScaler } from '../index'
+import { StandardScaler, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('StandardScaler', function () {
   it('StandardScaler works for DataFrame', function () {

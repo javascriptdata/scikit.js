@@ -1,4 +1,4 @@
-// import { tf } from '../shared/globals'
+// import { getBackend } from '../tf-singleton'
 // import { Scikit1D, Scikit2D } from '../index'
 // import { SVM, SVMParam, KERNEL_TYPE, ISVMParam, SVM_TYPE } from 'libsvm-wasm'
 // import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
@@ -18,9 +18,9 @@
 // }
 
 // export class SVR {
-//   private svm?: SVM
-//   private svmParam: SVMParam
-//   private gammaMode = 'scale'
+//   svm?: SVM
+//   svmParam: SVMParam
+//   gammaMode = 'scale'
 
 //   constructor({
 //     kernel = 'RBF',

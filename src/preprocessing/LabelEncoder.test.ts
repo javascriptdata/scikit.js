@@ -1,5 +1,7 @@
-import { LabelEncoder } from '../index'
+import { LabelEncoder, setBackend } from '../index'
 import * as dfd from 'danfojs-node'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('LabelEncoder', function () {
   it('LabelEncoder works for Series', function () {

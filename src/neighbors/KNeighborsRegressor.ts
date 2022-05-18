@@ -16,7 +16,7 @@
 import { Scikit2D } from '../types'
 import { KNeighborsBase } from './KNeighborsBase'
 import { convertToNumericTensor2D } from '../utils'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /**
  * K-Nearest neighbor regressor.
@@ -46,7 +46,9 @@ export class KNeighborsRegressor extends KNeighborsBase {
    *          for sample `X[i,:]`
    */
   name = 'KNeighborsRegressor'
+
   public predict(X: Scikit2D) {
+    let tf = getBackend()
     const { neighborhood, y, nNeighbors, weightsFn } = this._getFitParams()
 
     return tf.tidy(() => {
@@ -56,7 +58,6 @@ export class KNeighborsRegressor extends KNeighborsBase {
       const targets = y.gather(indices)
       const weights = weightsFn(distances)
 
-      // return tf.einsum('ij,ij->i', targets, weights) as Tensor1D
       return tf
         .matMul(
           targets.reshape([-1, 1, nNeighbors]),

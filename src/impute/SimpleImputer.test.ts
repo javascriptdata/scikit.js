@@ -1,5 +1,6 @@
-import { tf } from '../shared/globals'
-import { SimpleImputer, fromJSON } from '../index'
+import { SimpleImputer, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('SimpleImputer', function () {
   it('Imputes with "constant" strategy 2D one column. In this strategy, we give the fill value', function () {
@@ -141,6 +142,7 @@ describe('SimpleImputer', function () {
     }
 
     imputer.fitTransform(data)
+    delete imputer.tf
     expect(await imputer.toObject()).toEqual(expected)
   })
   it('Should load serialized Imputer', async function () {

@@ -14,13 +14,13 @@
 */
 
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor2D, Tensor1D } from '../types'
 import { isScikit2D, assert, isScikit1D } from '../typesUtils'
 import { modeFast } from 'simple-statistics'
 import uniq from 'lodash/uniq'
 import sample from 'lodash/sample'
 import { ClassifierMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps:
@@ -88,11 +88,13 @@ export class DummyClassifier extends ClassifierMixin {
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'DummyClassifier'
 
+  tf: any
   constructor({
     strategy = 'mostFrequent',
     constant = 0
   }: DummyClassifierParams = {}) {
     super()
+    this.tf = getBackend()
     this.constant = constant
     this.strategy = strategy
     this.classes = []
@@ -118,19 +120,19 @@ export class DummyClassifier extends ClassifierMixin {
     return this
   }
 
-  public predictProba(X: Scikit2D): tf.Tensor2D {
+  public predictProba(X: Scikit2D): Tensor2D {
     assert(isScikit2D(X), 'Data can not be converted to a 1D or 2D matrix.')
     assert(
       ['mostFrequent', 'uniform', 'constant'].includes(this.strategy),
       `Strategy ${this.strategy} not supported. We support 'mostFrequent', 'uniform', and 'constant'`
     )
-    return tf.oneHot(
+    return this.tf.oneHot(
       this.predict(X).toInt(),
       this.classes.length
-    ) as tf.Tensor2D
+    ) as Tensor2D
   }
 
-  public predict(X: Scikit2D): tf.Tensor1D {
+  public predict(X: Scikit2D): Tensor1D {
     assert(isScikit2D(X), 'Data can not be converted to a 1D or 2D matrix.')
     assert(
       ['mostFrequent', 'uniform', 'constant'].includes(this.strategy),
@@ -139,7 +141,7 @@ export class DummyClassifier extends ClassifierMixin {
     let newData = convertToNumericTensor2D(X)
     let length = newData.shape[0]
     if (this.strategy === 'mostFrequent' || this.strategy === 'constant') {
-      return tf.tensor1d(Array(length).fill(this.constant))
+      return this.tf.tensor1d(Array(length).fill(this.constant))
     }
 
     // "Uniform case"
@@ -147,6 +149,6 @@ export class DummyClassifier extends ClassifierMixin {
     for (let i = 0; i < length; i++) {
       returnArr.push(sample(this.classes))
     }
-    return tf.tensor1d(returnArr as number[])
+    return this.tf.tensor1d(returnArr as number[])
   }
 }

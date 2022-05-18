@@ -14,11 +14,11 @@
 */
 
 import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Tensor1D } from '../types'
 import { assert, isScikit1D, isScikit2D } from '../typesUtils'
 import { median, quantileSeq } from 'mathjs'
 import { RegressorMixin } from '../mixins'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 /*
 Next steps:
@@ -86,12 +86,14 @@ export class DummyRegressor extends RegressorMixin {
   /** Useful for pipelines and column transformers to have a default name for transforms */
   name = 'DummyRegressor'
 
+  tf: any
   constructor({
     strategy = 'mean',
     constant,
     quantile
   }: DummyRegressorParams = {}) {
     super()
+    this.tf = getBackend()
     this.strategy = strategy
     this.constant = constant
     this.quantile = quantile
@@ -135,10 +137,10 @@ export class DummyRegressor extends RegressorMixin {
     return this
   }
 
-  public predict(X: Scikit2D): tf.Tensor1D {
+  public predict(X: Scikit2D): Tensor1D {
     assert(isScikit2D(X), 'Data can not be converted to a 2D matrix.')
     let newData = convertToNumericTensor2D(X)
     let length = newData.shape[0]
-    return tf.tensor1d(Array(length).fill(this.constant))
+    return this.tf.tensor1d(Array(length).fill(this.constant))
   }
 }

@@ -1,4 +1,4 @@
-// import { tf } from '../shared/globals'
+// import { getBackend } from '../tf-singleton'
 // import { Scikit1D, Scikit2D } from '../index'
 // import { SVM, SVMParam, KERNEL_TYPE, ISVMParam, SVM_TYPE } from 'libsvm-wasm'
 // import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
@@ -19,10 +19,10 @@
 // }
 
 // export class SVC {
-//   private svm?: SVM
-//   private svmParam: SVMParam
-//   private gammaMode = 'scale'
-//   private classWeight: { [key: number]: number } | 'balanced' | undefined
+//   svm?: SVM
+//   svmParam: SVMParam
+//   gammaMode = 'scale'
+//   classWeight: { [key: number]: number } | 'balanced' | undefined
 
 //   constructor({
 //     kernel = 'RBF',

@@ -1,4 +1,6 @@
-import { DummyRegressor, fromJSON } from '../index'
+import { DummyRegressor, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('DummyRegressor', function () {
   it('Use DummyRegressor on simple example (mean)', function () {
@@ -73,7 +75,7 @@ describe('DummyRegressor', function () {
     }
 
     reg.fit(X, y)
-
+    delete reg.tf
     expect(saveResult).toEqual(await reg.toObject())
   })
 

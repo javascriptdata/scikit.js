@@ -3,8 +3,11 @@ import {
   VotingClassifier,
   DummyClassifier,
   LogisticRegression,
+  setBackend,
   fromJSON
 } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('VotingClassifier', function () {
   it('Use VotingClassifier on simple example (voting = hard)', async function () {

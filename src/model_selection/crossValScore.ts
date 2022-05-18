@@ -16,13 +16,10 @@
 import { assert } from '../typesUtils'
 import { CrossValidator } from './CrossValidator'
 import { KFold } from './KFold'
-import { Scikit1D, Scikit2D } from '../types'
+import { Scikit1D, Scikit2D, Scalar, Tensor1D, Tensor2D } from '../types'
 import { isScikit1D } from '../typesUtils'
 import { convertToTensor1D, convertToTensor2D } from '../utils'
-import { tf } from '../shared/globals'
-type Scalar = tf.Scalar
-type Tensor1D = tf.Tensor1D
-type Tensor2D = tf.Tensor2D
+import { getBackend } from '../tf-singleton'
 
 /**
  * Evaluates a score by cross-validation. This particular overload
@@ -176,6 +173,7 @@ export async function crossValScore(
     scoring?: any
   }
 ): Promise<Tensor1D> {
+  let tf = getBackend()
   let unsupervised = y == null || (params == null && !isScikit1D(y))
   if (unsupervised) {
     params = params ?? y

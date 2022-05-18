@@ -1,6 +1,9 @@
 import { ImpurityMeasure } from './Criterion'
 import { Splitter } from './Splitter'
 import { fromJSON } from '../simpleSerializer'
+import { setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('Splitter', function () {
   let types = ['gini', 'entropy', 'squared_error']

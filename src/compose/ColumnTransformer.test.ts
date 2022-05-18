@@ -1,10 +1,13 @@
 import {
-  fromJSON,
-  SimpleImputer,
+  ColumnTransformer,
   MinMaxScaler,
-  ColumnTransformer
+  SimpleImputer,
+  setBackend,
+  fromJSON
 } from '../index'
 import * as dfd from 'danfojs-node'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('ColumnTransformer', function () {
   it('ColumnTransformer simple test', function () {

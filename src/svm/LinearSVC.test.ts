@@ -1,4 +1,6 @@
-import { LinearSVC } from './LinearSVC'
+import { LinearSVC, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 
 describe('LinearSVC', function () {
   it('Works on arrays (small example)', async function () {

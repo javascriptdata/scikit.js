@@ -14,7 +14,7 @@
 // */
 
 import { SGDClassifier } from '../linear_model/SgdClassifier'
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 // First pass at a LinearSVC implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearSVC.html
@@ -60,9 +60,6 @@ export interface LinearSVCParams {
  * ```
 */
 export class LinearSVC extends SGDClassifier {
-  /** Useful for pipelines and column transformers to have a default name for transforms */
-  name = 'LinearSVC'
-
   constructor({
     penalty = 'l2',
     C = 1,
@@ -70,6 +67,7 @@ export class LinearSVC extends SGDClassifier {
   }: LinearSVCParams = {}) {
     // Assume Binary classification
     // If we call fit, and it isn't binary then update args
+    let tf = getBackend()
     super({
       modelCompileArgs: {
         optimizer: tf.train.adam(0.1),
@@ -101,5 +99,7 @@ export class LinearSVC extends SGDClassifier {
       optimizerType: 'adam',
       lossType: 'hingeLoss'
     })
+    /** Useful for pipelines and column transformers to have a default name for transforms */
+    this.name = 'LinearSVC'
   }
 }

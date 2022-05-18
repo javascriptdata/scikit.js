@@ -17,8 +17,7 @@ import { convertToNumericTensor1D } from '../utils'
 import { Scikit1D } from '../types'
 import { assert, isScikit1D } from '../typesUtils'
 import uniq from 'lodash/uniq'
-
-import { tf } from '../shared/globals'
+import { getBackend } from '../tf-singleton'
 
 function assertInputIsWellFormed(labels: Scikit1D, predictions: Scikit1D) {
   assert(isScikit1D(labels), "Labels can't be converted to a 1D Tensor")
@@ -64,6 +63,7 @@ export function accuracyScore(
 }
 
 export function precisionScore(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -73,6 +73,7 @@ export function precisionScore(labels: Scikit1D, predictions: Scikit1D) {
 }
 
 export function recallScore(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -82,6 +83,7 @@ export function recallScore(labels: Scikit1D, predictions: Scikit1D) {
 }
 
 export function r2Score(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -102,6 +104,7 @@ export function meanAbsoluteError(
   labels: Scikit1D,
   predictions: Scikit1D
 ): number {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -111,6 +114,7 @@ export function meanAbsoluteError(
 }
 
 export function meanSquaredError(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -120,6 +124,7 @@ export function meanSquaredError(labels: Scikit1D, predictions: Scikit1D) {
 }
 
 export function meanSquaredLogError(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -132,6 +137,7 @@ export function meanSquaredLogError(labels: Scikit1D, predictions: Scikit1D) {
 }
 
 export function hingeLoss(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -141,6 +147,7 @@ export function hingeLoss(labels: Scikit1D, predictions: Scikit1D) {
 }
 
 export function huberLoss(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -150,6 +157,7 @@ export function huberLoss(labels: Scikit1D, predictions: Scikit1D) {
 }
 
 export function logLoss(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -159,6 +167,7 @@ export function logLoss(labels: Scikit1D, predictions: Scikit1D) {
 }
 
 export function zeroOneLoss(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions
@@ -172,6 +181,7 @@ export function zeroOneLoss(labels: Scikit1D, predictions: Scikit1D) {
 //////////////////////////////////////
 
 export function confusionMatrix(labels: Scikit1D, predictions: Scikit1D) {
+  let tf = getBackend()
   const { labelsT, predictionsT } = assertInputIsWellFormed(
     labels,
     predictions

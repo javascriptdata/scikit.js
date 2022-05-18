@@ -1,4 +1,7 @@
-import { DummyClassifier, fromJSON } from '../index'
+import { DummyClassifier, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
+
 describe('DummyClassifier', function () {
   it('Use DummyClassifier on simple example (mostFrequent)', function () {
     const clf = new DummyClassifier()
@@ -70,6 +73,8 @@ describe('DummyClassifier', function () {
 
     clf.fit(X, y)
     const clfSave = await clf.toObject()
+    // We don't care what version of tf is saved on there
+    delete clfSave.tf
     expect(expectedResult).toEqual(clfSave)
   })
   it('should load DummyClassifier', async function () {

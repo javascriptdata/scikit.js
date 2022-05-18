@@ -1,7 +1,7 @@
-import { LinearSVR } from './LinearSVR'
-
+import { LinearSVR, setBackend } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 import { tensorEqual } from '../utils'
-import { tf } from '../shared/globals'
 
 describe('LinearSVR', function () {
   it('Works on arrays (small example)', async function () {

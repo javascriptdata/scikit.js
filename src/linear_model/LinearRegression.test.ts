@@ -1,6 +1,10 @@
-import { LinearRegression, fromJSON } from '../index'
+import { LinearRegression, setBackend, fromJSON, fromObject } from '../index'
 import { tensorEqual } from '../utils'
-import { tf } from '../shared/globals'
+// Needs to be tfjs and not tfjs-node because the node
+// version messes with jest unit tests
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
+
 function roughlyEqual(a: number, b: number, tol = 0.1) {
   return Math.abs(a - b) < tol
 }
@@ -147,8 +151,8 @@ describe('LinearRegression', function () {
     const lr = new LinearRegression({ fitIntercept: false })
     await lr.fit(mediumX, yPlusJitter)
 
-    const serialized = await lr.toJSON()
-    const newModel = await fromJSON(serialized)
+    const serialized = await lr.toObject()
+    const newModel = await fromObject(serialized)
 
     expect(tensorEqual(newModel.coef, tf.tensor1d([2.5, 1]), 0.1)).toBe(true)
     expect(roughlyEqual(newModel.intercept as number, 0)).toBe(true)

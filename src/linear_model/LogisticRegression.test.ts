@@ -1,5 +1,7 @@
-import { LogisticRegression, fromJSON } from '../index'
-import { tf } from '../shared/globals'
+import { LogisticRegression, setBackend, fromJSON } from '../index'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
+
 describe('LogisticRegression', function () {
   it('Works on arrays (small example)', async function () {
     const lr = new LogisticRegression()
@@ -90,7 +92,7 @@ describe('LogisticRegression', function () {
     expect(finalResults.arraySync()).toEqual([0, 0, 0, 1, 1, 1, 2, 2, 2])
   }, 30000)
 
-  it('Should save and load  trained model', async function () {
+  it('Should save and load trained model', async function () {
     let X = [
       [0, -1],
       [1, 0],

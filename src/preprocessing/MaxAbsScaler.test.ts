@@ -1,6 +1,7 @@
-import { MaxAbsScaler, fromJSON } from '../index'
+import { MaxAbsScaler, setBackend, fromJSON } from '../index'
 import * as dfd from 'danfojs-node'
-import { tf } from '../shared/globals'
+import * as tf from '@tensorflow/tfjs'
+setBackend(tf)
 import { arrayEqual } from '../utils'
 
 describe('MaxAbsScaler', function () {
