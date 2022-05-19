@@ -15,6 +15,7 @@
 
 import { SGDRegressor } from './SgdRegressor'
 import { getBackend } from '../tf-singleton'
+import { ModelFitArgs } from '../types'
 
 /**
  * LinearRegression implementation using gradient descent
@@ -39,6 +40,8 @@ export interface LinearRegressionParams {
    * **default = true**
    */
   fitIntercept?: boolean
+  modelFitOptions?: Partial<ModelFitArgs>
+
 }
 
 /*
@@ -66,7 +69,7 @@ Next steps:
  * ```
  */
 export class LinearRegression extends SGDRegressor {
-  constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
+  constructor({ fitIntercept = true, modelFitOptions }: LinearRegressionParams = {}) {
     let tf = getBackend()
     super({
       modelCompileArgs: {
@@ -80,7 +83,8 @@ export class LinearRegression extends SGDRegressor {
         verbose: 0,
         callbacks: [
           tf.callbacks.earlyStopping({ monitor: 'mse', patience: 30 })
-        ]
+        ],
+        ...modelFitOptions
       },
       denseLayerArgs: {
         units: 1,

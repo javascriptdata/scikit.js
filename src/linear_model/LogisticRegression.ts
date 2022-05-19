@@ -15,6 +15,7 @@
 
 import { SGDClassifier } from './SgdClassifier'
 import { getBackend } from '../tf-singleton'
+import { ModelFitArgs } from '../types'
 
 // First pass at a LogisticRegression implementation using gradient descent
 // Trying to mimic the API of scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
@@ -35,6 +36,7 @@ export interface LogisticRegressionParams {
   C?: number
   /** Whether or not the intercept should be estimator not. **default = true** */
   fitIntercept?: boolean
+  modelFitOptions?: Partial<ModelFitArgs>
 }
 
 /** Builds a linear classification model with associated penalty and regularization
@@ -63,7 +65,8 @@ export class LogisticRegression extends SGDClassifier {
   constructor({
     penalty = 'l2',
     C = 1,
-    fitIntercept = true
+    fitIntercept = true,
+    modelFitOptions
   }: LogisticRegressionParams = {}) {
     // Assume Binary classification
     // If we call fit, and it isn't binary then update args
@@ -80,7 +83,8 @@ export class LogisticRegression extends SGDClassifier {
         verbose: 0,
         callbacks: [
           tf.callbacks.earlyStopping({ monitor: 'loss', patience: 50 })
-        ]
+        ],
+        ...modelFitOptions
       },
       denseLayerArgs: {
         units: 1,
