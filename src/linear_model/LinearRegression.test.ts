@@ -17,6 +17,38 @@ describe('LinearRegression', function () {
     expect(roughlyEqual(lr.intercept as number, 0)).toBe(true)
   }, 30000)
 
+  it('Works on arrays (small example) with custom callbacks', async function () {
+    let trainingHasStarted = false
+    const onTrainBegin = async (logs: any) => {
+      trainingHasStarted = true
+      console.log('training begins')
+    }
+    const lr = new LinearRegression({
+      modelFitOptions: { callbacks: [new tf.CustomCallback({ onTrainBegin })] }
+    })
+    await lr.fit([[1], [2]], [2, 4])
+    expect(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1)).toBe(true)
+    expect(roughlyEqual(lr.intercept as number, 0)).toBe(true)
+    expect(trainingHasStarted).toBe(true)
+  }, 30000)
+
+  it('Works on arrays (small example) with custom callbacks', async function () {
+    let trainingHasStarted = false
+    const onTrainBegin = async (logs: any) => {
+      trainingHasStarted = true
+      console.log('training begins')
+    }
+    const lr = new LinearRegression({
+      modelFitOptions: { callbacks: [new tf.CustomCallback({ onTrainBegin })] }
+    })
+    await lr.fit([[1], [2]], [2, 4])
+
+    const serialized = await lr.toJSON()
+    const newModel = await fromJSON(serialized)
+    expect(tensorEqual(newModel.coef, tf.tensor1d([2]), 0.1)).toBe(true)
+    expect(roughlyEqual(newModel.intercept as number, 0)).toBe(true)
+  }, 30000)
+
   it('Works on small multi-output example (small example)', async function () {
     const lr = new LinearRegression()
     await lr.fit(
