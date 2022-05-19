@@ -1,3 +1,11 @@
+# [1.23.0](https://github.com/javascriptdata/scikit.js/compare/v1.22.0...v1.23.0) (2022-05-19)
+
+
+### Features
+
+* added test case for custom callbacks. works great and somehow serializes. ([7fa5c42](https://github.com/javascriptdata/scikit.js/commit/7fa5c4259902d7dca0a925002cbfaf1937dc2b1b))
+* custom modelfitargs for linear models ([2ddcad9](https://github.com/javascriptdata/scikit.js/commit/2ddcad9053097c75bcdd97d234c1f8b605a88241))
+
 # [1.22.0](https://github.com/javascriptdata/scikit.js/compare/v1.21.0...v1.22.0) (2022-05-18)
 
 
