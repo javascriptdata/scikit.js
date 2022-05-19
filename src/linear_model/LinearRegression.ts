@@ -15,6 +15,7 @@
 
 import { SGDRegressor } from './SgdRegressor'
 import { getBackend } from '../tf-singleton'
+import { ModelFitArgs } from '../types'
 
 /**
  * LinearRegression implementation using gradient descent
@@ -39,6 +40,7 @@ export interface LinearRegressionParams {
    * **default = true**
    */
   fitIntercept?: boolean
+  modelFitOptions?: Partial<ModelFitArgs>
 }
 
 /*
@@ -50,7 +52,7 @@ Next steps:
 /** Linear Least Squares
  * @example
  * ```js
- * import {LinearRegression} from 'scikitjs'
+ * import { LinearRegression } from 'scikitjs'
  *
  * let X = [
  *  [1, 2],
@@ -60,13 +62,16 @@ Next steps:
  *  [10, 20]
  * ]
  * let y = [3, 5, 8, 8, 30]
- * const lr = new LinearRegression({fitIntercept: false})
+ * const lr = new LinearRegression({ fitIntercept: false })
   await lr.fit(X, y)
   lr.coef.print() // probably around [1, 1]
  * ```
  */
 export class LinearRegression extends SGDRegressor {
-  constructor({ fitIntercept = true }: LinearRegressionParams = {}) {
+  constructor({
+    fitIntercept = true,
+    modelFitOptions
+  }: LinearRegressionParams = {}) {
     let tf = getBackend()
     super({
       modelCompileArgs: {
@@ -80,7 +85,8 @@ export class LinearRegression extends SGDRegressor {
         verbose: 0,
         callbacks: [
           tf.callbacks.earlyStopping({ monitor: 'mse', patience: 30 })
-        ]
+        ],
+        ...modelFitOptions
       },
       denseLayerArgs: {
         units: 1,
