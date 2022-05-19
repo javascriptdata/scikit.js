@@ -24,15 +24,18 @@ For use with modern bundlers in a frontend application, simply
 npm i scikitjs
 ```
 
-Usage is similar to other js libraries.
+Usage is similar to other js libraries. We depend on the tensorflow library in order to make our calculations fast, but we don't ship it in our bundle. We use it as a peer dependency. General usage is as follows.
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs'
+import { LinearRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 ```
 
+This allows us to build a library that can be used in Deno, Node, and the browser with the same configuration.
 ### Backend Users
 
-For Node.js users who wish to bind to the Tensorflow C++ library, simply
+For Node.js users who wish to bind to the Tensorflow C++ library, simply import the tensorflow C++ version, and use that as the tf library
 
 ```bash
 npm i scikitjs
@@ -41,14 +44,9 @@ npm i scikitjs
 But then import the node bindings
 
 ```js
-import { LinearRegression } from 'scikitjs/node'
-```
-
-The `scikitjs/node` path uses the new "exports" feature of node (which is available in node v13.3+).
-If you are using an older version of node, simply pass in the path to the cjs build
-
-```js
-import { LinearRegression } from 'scikitjs/dist/cjs/index.js'
+import * as tf from '@tensorflow/tfjs-node'
+import { LinearRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 ```
 
 ### Script src
@@ -57,16 +55,19 @@ For those that wish to use script src tags, simply
 
 ```html
 <script type="module">
+  import * as tf from 'https://cdn.skypack.dev/@tensorflow/tfjs'
   import * as sk from 'https://cdn.skypack.dev/scikitjs'
-  // or alternatively you can pull the bundle from unpkg
-  import * as sk from "https://unpkg.com/scikitjs/dist/web/index.min.js"
+  // or alternatively you can pull the bundle from unpkg >>> import * as sk from "https://unpkg.com/scikitjs/dist/web index.min.js"
+  sk.setBackend(tf)
 </script>
 ```
 
 ## Simple Example
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs-node'
+import { LinearRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 
 const lr = new LinearRegression({ fitIntercept: false })
 const X = [[1], [2]] // 2D Matrix with a single column vector
@@ -124,7 +125,9 @@ Turns into
 #### JavaScript
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs-node'
+import { LinearRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 
 let X = [[1], [2]]
 let y = [10, 20]
@@ -154,7 +157,9 @@ Turns into
 #### JavaScript
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs-node'
+import { LinearRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 
 let X = [[1], [2]]
 let y = [10, 20]
@@ -189,7 +194,9 @@ Turns into
 #### JavaScript
 
 ```js
-import { LogisticRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs-node'
+import { LogisticRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 
 let X = [[1], [-1]]
 let y = [1, 0]
