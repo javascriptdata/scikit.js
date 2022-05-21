@@ -48,7 +48,7 @@ const sk = require('scikitjs')
 sk.setBackend(tf)
 ```
 
-Note: If you have ESM enabled (by setting type="module" in your package.json), then you can consume this libary with import / export, like in the following code block.
+Note: If you have ESM enabled (by setting type="module" in your package.json), then you can consume this library with import / export, like in the following code block.
 
 ```js
 import * as tf from '@tensorflow/tfjs-node'
