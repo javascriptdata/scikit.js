@@ -47,7 +47,9 @@ Turns into
 #### javascript
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs'
+import { LinearRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 
 let X = [[1], [2]]
 let y = [10, 20]
@@ -77,7 +79,9 @@ Turns into
 #### javascript
 
 ```js
-import { LinearRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs'
+import { LinearRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 
 let X = [[1], [2]]
 let y = [10, 20]
@@ -112,7 +116,9 @@ Turns into
 #### javascript
 
 ```js
-import { LogisticRegression } from 'scikitjs'
+import * as tf from '@tensorflow/tfjs'
+import { LogisticRegression, setBackend } from 'scikitjs'
+setBackend(tf)
 
 let X = [[1], [-1]]
 let y = [1, 0]
