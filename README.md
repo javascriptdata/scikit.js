@@ -21,8 +21,7 @@ Documentation site: [www.scikitjs.org](https://www.scikitjs.org)
 For use with modern bundlers in a frontend application, simply
 
 ```bash
-npm i @tensorflow/tfjs
-npm i scikitjs
+npm i @tensorflow/tfjs scikitjs
 ```
 
 We depend on the tensorflow library in order to make our calculations fast, but we don't ship it in our bundle. 
@@ -40,15 +39,23 @@ This allows us to build a library that can be used in Deno, Node, and the browse
 For Node.js users who wish to bind to the Tensorflow C++ library, simply import the tensorflow C++ version, and use that as the tf library
 
 ```bash
-npm i @tensorflow/tfjs-node
-npm i scikitjs
+npm i @tensorflow/tfjs-node scikitjs
 ```
+
+```js
+const tf = require('@tensorflow/tfjs-node')
+const sk = require('scikitjs')
+sk.setBackend(tf)
+```
+
+Note: If you have ESM enabled (by setting type="module" in your package.json), then you can consume this libary with import / export, like in the following code block.
 
 ```js
 import * as tf from '@tensorflow/tfjs-node'
 import * as sk from 'scikitjs'
 sk.setBackend(tf)
 ```
+
 
 ### Script src
 
@@ -68,7 +75,7 @@ For those that wish to use script src tags, simply
 ## Simple Example
 
 ```js
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 import { setBackend, LinearRegression } from 'scikitjs'
 setBackend(tf)
 
@@ -128,7 +135,7 @@ Turns into
 #### JavaScript
 
 ```js
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 import { setBackend, LinearRegression } from 'scikitjs'
 setBackend(tf)
 
@@ -160,7 +167,7 @@ Turns into
 #### JavaScript
 
 ```js
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 import { setBackend, LinearRegression } from 'scikitjs'
 setBackend(tf)
 
@@ -197,7 +204,7 @@ Turns into
 #### JavaScript
 
 ```js
-import * as tf from '@tensorflow/tfjs-node'
+import * as tf from '@tensorflow/tfjs'
 import { setBackend, LogisticRegression } from 'scikitjs'
 setBackend(tf)
 
