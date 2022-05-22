@@ -13,7 +13,10 @@
 * ==========================================================================
 */
 
-import { convertToNumericTensor1D, convertToNumericTensor2D } from '../utils'
+import {
+  convertToNumericTensor1D_2D,
+  convertToNumericTensor2D
+} from '../utils'
 import {
   Scikit2D,
   Scikit1D,
@@ -23,8 +26,7 @@ import {
   Tensor2D,
   Tensor,
   ModelCompileArgs,
-  ModelFitArgs,
-  RecursiveArray
+  ModelFitArgs
 } from '../types'
 import { OneHotEncoder } from '../preprocessing/OneHotEncoder'
 import { assert } from '../typesUtils'
@@ -103,6 +105,7 @@ export class SGDClassifier extends ClassifierMixin {
   lossType: LossTypes
   oneHot: OneHotEncoder
   tf: any
+  isMultiOutput: boolean
 
   constructor({
     modelFitArgs,
@@ -119,6 +122,7 @@ export class SGDClassifier extends ClassifierMixin {
     this.denseLayerArgs = denseLayerArgs
     this.optimizerType = optimizerType
     this.lossType = lossType
+    this.isMultiOutput = false
     // Next steps: Implement "drop" mechanics for OneHotEncoder
     // There is a possibility to do a drop => if_binary which would
     // squash down on the number of variables that we'd have to learn
@@ -200,12 +204,17 @@ export class SGDClassifier extends ClassifierMixin {
    * // lr model weights have been updated
    */
 
-  public async fit(X: Scikit2D, y: Scikit1D): Promise<SGDClassifier> {
+  public async fit(
+    X: Scikit2D,
+    y: Scikit1D | Scikit2D
+  ): Promise<SGDClassifier> {
     let XTwoD = convertToNumericTensor2D(X)
-    let yOneD = convertToNumericTensor1D(y)
+    let yOneD = convertToNumericTensor1D_2D(y)
 
     const yTwoD = this.initializeModelForClassification(yOneD)
-
+    if (yOneD.shape.length > 1) {
+      this.isMultiOutput = true
+    }
     if (this.model.layers.length === 0) {
       this.initializeModel(XTwoD, yTwoD)
     }
@@ -344,6 +353,9 @@ export class SGDClassifier extends ClassifierMixin {
   public predict(X: Scikit2D): Tensor1D {
     assert(this.model.layers.length > 0, 'Need to call "fit" before "predict"')
     const y2D = this.predictProba(X)
+    if (this.isMultiOutput) {
+      return this.tf.oneHot(y2D.argMax(1), y2D.shape[1])
+    }
     return this.tf.tensor1d(this.oneHot.inverseTransform(y2D))
   }
 
@@ -417,11 +429,5 @@ export class SGDClassifier extends ClassifierMixin {
     }
 
     return intercept
-  }
-
-  private getModelWeight(): Promise<RecursiveArray<number>> {
-    return Promise.all(
-      this.model.getWeights().map((weight: any) => weight.array())
-    )
   }
 }
