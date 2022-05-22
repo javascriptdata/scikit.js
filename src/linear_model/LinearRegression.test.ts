@@ -11,7 +11,7 @@ function roughlyEqual(a: number, b: number, tol = 0.1) {
 
 describe('LinearRegression', function () {
   it('Works on arrays (small example)', async function () {
-    const lr = new LinearRegression()
+    const lr = new LinearRegression({ randomState: 42 })
     await lr.fit([[1], [2]], [2, 4])
     expect(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1)).toBe(true)
     expect(roughlyEqual(lr.intercept as number, 0)).toBe(true)
@@ -24,6 +24,7 @@ describe('LinearRegression', function () {
       console.log('training begins')
     }
     const lr = new LinearRegression({
+      randomState: 42,
       modelFitOptions: { callbacks: [new tf.CustomCallback({ onTrainBegin })] }
     })
     await lr.fit([[1], [2]], [2, 4])
@@ -39,6 +40,7 @@ describe('LinearRegression', function () {
       console.log('training begins')
     }
     const lr = new LinearRegression({
+      randomState: 42,
       modelFitOptions: { callbacks: [new tf.CustomCallback({ onTrainBegin })] }
     })
     await lr.fit([[1], [2]], [2, 4])
@@ -50,7 +52,7 @@ describe('LinearRegression', function () {
   }, 30000)
 
   it('Works on small multi-output example (small example)', async function () {
-    const lr = new LinearRegression()
+    const lr = new LinearRegression({ randomState: 42 })
     await lr.fit(
       [[1], [2]],
       [
@@ -63,14 +65,14 @@ describe('LinearRegression', function () {
   }, 30000)
 
   it('Works on arrays with no intercept (small example)', async function () {
-    const lr = new LinearRegression({ fitIntercept: false })
+    const lr = new LinearRegression({ fitIntercept: false, randomState: 42 })
     await lr.fit([[1], [2]], [2, 4])
     expect(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1)).toBe(true)
     expect(roughlyEqual(lr.intercept as number, 0)).toBe(true)
   }, 30000)
 
   it('Works on arrays with none zero intercept (small example)', async function () {
-    const lr = new LinearRegression({ fitIntercept: true })
+    const lr = new LinearRegression({ fitIntercept: true, randomState: 42 })
     await lr.fit([[1], [2]], [3, 5])
     expect(tensorEqual(lr.coef, tf.tensor1d([2]), 0.1)).toBe(true)
     expect(roughlyEqual(lr.intercept as number, 1)).toBe(true)
@@ -95,7 +97,7 @@ describe('LinearRegression', function () {
     const yPlusJitter = y.add(
       tf.randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
     ) as tf.Tensor1D
-    const lr = new LinearRegression({ fitIntercept: false })
+    const lr = new LinearRegression({ fitIntercept: false, randomState: 42 })
     await lr.fit(mediumX, yPlusJitter)
 
     expect(tensorEqual(lr.coef, tf.tensor1d([2.5, 1]), 0.1)).toBe(true)
@@ -121,7 +123,7 @@ describe('LinearRegression', function () {
     const yPlusJitter = y.add(
       tf.randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
     ) as tf.Tensor1D
-    const lr = new LinearRegression({ fitIntercept: false })
+    const lr = new LinearRegression({ fitIntercept: false, randomState: 42 })
     await lr.fit(mediumX, yPlusJitter)
 
     expect(tensorEqual(lr.coef, tf.tensor1d([2.5, 1]), 0.1)).toBe(true)
@@ -158,7 +160,7 @@ describe('LinearRegression', function () {
     let score = 1.0
     /*[[[end]]]*/
 
-    const lr = new LinearRegression()
+    const lr = new LinearRegression({ randomState: 42 })
     await lr.fit(X, y)
     expect(lr.score(X, y)).toBeCloseTo(score)
   }, 30000)
@@ -180,7 +182,7 @@ describe('LinearRegression', function () {
     const yPlusJitter = y.add(
       tf.randomNormal([sizeOfMatrix], 0, 1, 'float32', seed)
     ) as tf.Tensor1D
-    const lr = new LinearRegression({ fitIntercept: false })
+    const lr = new LinearRegression({ fitIntercept: false, randomState: 42 })
     await lr.fit(mediumX, yPlusJitter)
 
     const serialized = await lr.toObject()

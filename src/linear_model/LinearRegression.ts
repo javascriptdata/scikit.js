@@ -41,6 +41,7 @@ export interface LinearRegressionParams {
    */
   fitIntercept?: boolean
   modelFitOptions?: Partial<ModelFitArgs>
+  randomState?: number
 }
 
 /*
@@ -70,7 +71,8 @@ Next steps:
 export class LinearRegression extends SGDRegressor {
   constructor({
     fitIntercept = true,
-    modelFitOptions
+    modelFitOptions,
+    randomState
   }: LinearRegressionParams = {}) {
     let tf = getBackend()
     super({
@@ -92,6 +94,7 @@ export class LinearRegression extends SGDRegressor {
         units: 1,
         useBias: Boolean(fitIntercept)
       },
+      randomState,
       optimizerType: 'adam',
       lossType: 'meanSquaredError'
     })

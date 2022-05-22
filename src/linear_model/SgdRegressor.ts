@@ -91,6 +91,8 @@ export interface SGDRegressorParams {
   optimizerType: OptimizerTypes
 
   lossType: LossTypes
+
+  randomState?: number
 }
 
 export class SGDRegressor extends RegressorMixin {
@@ -101,13 +103,15 @@ export class SGDRegressor extends RegressorMixin {
   isMultiOutput: boolean
   optimizerType: OptimizerTypes
   lossType: LossTypes
+  randomState?: number
 
   constructor({
     modelFitArgs,
     modelCompileArgs,
     denseLayerArgs,
     optimizerType,
-    lossType
+    lossType,
+    randomState
   }: SGDRegressorParams) {
     super()
     this.tf = getBackend()
@@ -118,6 +122,7 @@ export class SGDRegressor extends RegressorMixin {
     this.isMultiOutput = false
     this.optimizerType = optimizerType
     this.lossType = lossType
+    this.randomState = randomState
   }
 
   /**
@@ -139,12 +144,17 @@ export class SGDRegressor extends RegressorMixin {
   ): void {
     this.denseLayerArgs.units = y.shape.length === 1 ? 1 : y.shape[1]
     const model = this.tf.sequential()
-    model.add(
-      this.tf.layers.dense({
-        inputShape: [X.shape[1]],
-        ...this.denseLayerArgs
+    let denseLayerArgs = {
+      inputShape: [X.shape[1]],
+      ...this.denseLayerArgs
+    }
+    // If randomState is set, then use it to set the args in this layer
+    if (this.randomState) {
+      denseLayerArgs.kernelInitializer = this.tf.initializers.glorotUniform({
+        seed: this.randomState
       })
-    )
+    }
+    model.add(this.tf.layers.dense(denseLayerArgs))
     model.compile(this.modelCompileArgs)
     if (weightsTensors?.length) {
       model.setWeights(weightsTensors)
