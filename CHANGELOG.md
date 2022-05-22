@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/javascriptdata/scikit.js/compare/v1.23.0...v1.24.0) (2022-05-22)
+
+
+### Features
+
+* sgd classifier can not train on categorical variables, as well as one-hot encoded variables ([10141cd](https://github.com/javascriptdata/scikit.js/commit/10141cd9213a2da7aa1d3122f3143d29abb574d8))
+
 # [1.23.0](https://github.com/javascriptdata/scikit.js/compare/v1.22.0...v1.23.0) (2022-05-19)
 
 
