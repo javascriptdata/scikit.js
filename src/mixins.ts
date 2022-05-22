@@ -1,6 +1,8 @@
 import { Scikit2D, Scikit1D, Tensor2D, Tensor1D } from './types'
 import { r2Score, accuracyScore } from './metrics/metrics'
 import { Serialize } from './simpleSerializer'
+import { assert, isScikit2D } from './typesUtils'
+import { convertToNumericTensor1D_2D } from './utils'
 export class TransformerMixin extends Serialize {
   // We assume that fit and transform exist
   [x: string]: any
@@ -35,8 +37,17 @@ export class ClassifierMixin extends Serialize {
   [x: string]: any
 
   EstimatorType = 'classifier'
-  public score(X: Scikit2D, y: Scikit1D): number {
+  public score(X: Scikit2D, y: Scikit1D | Scikit2D): number {
     const yPred = this.predict(X)
+    const yTrue = convertToNumericTensor1D_2D(y)
+    assert(
+      yPred.shape.length === yTrue.shape.length,
+      "The shape of the model output doesn't match the shape of the actual y values"
+    )
+
+    if (isScikit2D(y)) {
+      return accuracyScore(yTrue.argMax(1) as Scikit1D, yPred.argMax(1))
+    }
     return accuracyScore(y, yPred)
   }
 }

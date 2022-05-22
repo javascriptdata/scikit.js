@@ -47,6 +47,68 @@ describe('LogisticRegression', function () {
     expect(results.arraySync()).toEqual([0, 0, 0, 1, 1, 1])
     expect(logreg.score(X, y) > 0.5).toBe(true)
   }, 30000)
+  it('Test of the function used with 2 classes (one hot)', async function () {
+    let X = [
+      [0, -1],
+      [1, 0],
+      [1, 1],
+      [1, -1],
+      [2, 0],
+      [2, 1],
+      [2, -1],
+      [3, 2],
+      [0, 4],
+      [1, 3],
+      [1, 4],
+      [1, 5],
+      [2, 3],
+      [2, 4],
+      [2, 5],
+      [3, 4]
+    ]
+    let y = [
+      [1, 0],
+      [1, 0],
+      [1, 0],
+      [1, 0],
+      [1, 0],
+      [1, 0],
+      [1, 0],
+      [1, 0],
+      [0, 1],
+      [0, 1],
+      [0, 1],
+      [0, 1],
+      [0, 1],
+      [0, 1],
+      [0, 1],
+      [0, 1]
+    ]
+
+    let Xtest = [
+      [0, -2],
+      [1, 0.5],
+      [1.5, -1],
+      [1, 4.5],
+      [2, 3.5],
+      [1.5, 5]
+    ]
+
+    let logreg = new LogisticRegression({ penalty: 'none' })
+    await logreg.fit(X, y)
+    let probabilities = logreg.predictProba(X)
+    expect(probabilities instanceof tf.Tensor).toBe(true)
+    let results = logreg.predict(Xtest) // compute results of the training set
+    expect(results.arraySync()).toEqual([
+      [1, 0],
+      [1, 0],
+      [1, 0],
+      [0, 1],
+      [0, 1],
+      [0, 1]
+    ])
+    expect(logreg.score(X, y) > 0.5).toBe(true)
+  }, 30000)
   it('Test of the prediction with 3 classes', async function () {
     let X = [
       [0, -1],
